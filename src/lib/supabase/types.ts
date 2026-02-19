@@ -34,6 +34,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_activity_log: {
+        Row: {
+          id: string
+          action_type: string
+          details: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          action_type: string
+          details?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          action_type?: string
+          details?: Json | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       chapter_progress: {
         Row: {
           chapter_id: string
@@ -178,6 +199,48 @@ export type Database = {
         }
         Relationships: []
       }
+      message_progress: {
+        Row: {
+          id: string
+          track: string
+          progress_key: string
+          status: string
+          scheduled_at: string | null
+          sent_at: string | null
+          delivered_at: string | null
+          companion_status: string
+          companion_sent_at: string | null
+          error: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          track: string
+          progress_key: string
+          status?: string
+          scheduled_at?: string | null
+          sent_at?: string | null
+          delivered_at?: string | null
+          companion_status?: string
+          companion_sent_at?: string | null
+          error?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          track?: string
+          progress_key?: string
+          status?: string
+          scheduled_at?: string | null
+          sent_at?: string | null
+          delivered_at?: string | null
+          companion_status?: string
+          companion_sent_at?: string | null
+          error?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       moments: {
         Row: {
           assets: Json
@@ -238,6 +301,30 @@ export type Database = {
           question?: string
           response?: string
           tokens_used?: number | null
+        }
+        Relationships: []
+      }
+      player_events: {
+        Row: {
+          id: string
+          track: string
+          event_type: string
+          details: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          track: string
+          event_type: string
+          details?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          track?: string
+          event_type?: string
+          details?: Json | null
+          created_at?: string
         }
         Relationships: []
       }

@@ -1,34 +1,48 @@
 import Link from "next/link";
 
+const LINKS = [
+  { href: "/the-order/settings/enroll", label: "Device Enrollment" },
+  { href: "/the-order/settings/chapters", label: "Chapters & Quests" },
+  { href: "/the-order/settings/oracle", label: "Oracle Review" },
+  { href: "/the-order/settings/moments", label: "Moments" },
+  { href: "/the-order/settings/summons", label: "Summons" },
+] as const;
+
 export default function AdminSettingsPage() {
   return (
-    <div style={{ padding: "40px 24px", maxWidth: "600px" }}>
-      <h1
+    <div style={{ padding: "16px", maxWidth: "600px" }}>
+      <div
         style={{
-          fontSize: "20px",
-          fontWeight: 400,
-          letterSpacing: "2px",
+          fontSize: "11px",
+          fontWeight: 600,
+          letterSpacing: "1.5px",
           textTransform: "uppercase",
-          marginBottom: "32px",
+          color: "#6b7280",
+          marginBottom: "16px",
         }}
       >
         Settings
-      </h1>
-      <nav style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-        <Link
-          href="/the-order/settings/enroll"
-          style={{
-            display: "block",
-            padding: "16px",
-            border: "1px solid #ddd",
-            color: "#1a1a1a",
-            textDecoration: "none",
-            fontSize: "14px",
-            letterSpacing: "1px",
-          }}
-        >
-          Device Enrollment →
-        </Link>
+      </div>
+      <nav style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        {LINKS.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            style={{
+              display: "block",
+              padding: "14px 16px",
+              background: "#fff",
+              border: "1px solid #e5e7eb",
+              borderRadius: "8px",
+              color: "#1a1a1a",
+              textDecoration: "none",
+              fontSize: "14px",
+              fontWeight: 500,
+            }}
+          >
+            {link.label} →
+          </Link>
+        ))}
       </nav>
     </div>
   );

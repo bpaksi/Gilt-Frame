@@ -1,23 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { verifyAdminSession } from "@/lib/admin/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@supabase/supabase-js";
-
-async function verifyAdminSession(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const adminSession = cookieStore.get("admin_session");
-
-  if (!adminSession?.value) return false;
-
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { auth: { persistSession: false } }
-  );
-
-  const { data, error } = await supabase.auth.getUser(adminSession.value);
-  return !error && !!data.user;
-}
 
 export async function DELETE(
   _request: NextRequest,

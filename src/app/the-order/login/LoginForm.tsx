@@ -51,9 +51,10 @@ export default function LoginForm() {
       <div style={{ width: "100%", maxWidth: "360px" }}>
         <h1
           style={{
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontFamily:
+              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             fontSize: "20px",
-            fontWeight: 400,
+            fontWeight: 600,
             letterSpacing: "2px",
             textTransform: "uppercase",
             color: "#1a1a1a",
@@ -78,7 +79,8 @@ export default function LoginForm() {
               padding: "0 16px",
               border: "1px solid #ddd",
               fontSize: "16px",
-              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontFamily:
+                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
               outline: "none",
               background: "#fff",
               color: "#1a1a1a",
@@ -95,7 +97,8 @@ export default function LoginForm() {
               padding: "0 16px",
               border: "1px solid #ddd",
               fontSize: "16px",
-              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontFamily:
+                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
               outline: "none",
               background: "#fff",
               color: "#1a1a1a",
@@ -118,10 +121,11 @@ export default function LoginForm() {
             disabled={loading}
             style={{
               height: "48px",
-              background: loading ? "#888" : "#1a1a1a",
+              background: loading ? "#93b5f5" : "#2563eb",
               color: "#fafafa",
               border: "none",
-              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontFamily:
+                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
               fontSize: "14px",
               letterSpacing: "2px",
               textTransform: "uppercase",

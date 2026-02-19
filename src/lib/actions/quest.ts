@@ -112,6 +112,19 @@ export async function advanceQuest(
     .eq("track", trackInfo.track)
     .eq("chapter_id", chapterId);
 
+  // Record event for timeline
+  const currentStep = orderedFlow[currentFlowIndex];
+  await supabase.from("player_events").insert({
+    track: trackInfo.track,
+    event_type: "quest_advanced",
+    details: {
+      chapter_id: chapterId,
+      from_index: currentFlowIndex,
+      to_index: nextIndex,
+      step_name: currentStep?.name ?? null,
+    },
+  });
+
   return getQuestState();
 }
 
@@ -133,6 +146,18 @@ export async function recordAnswer(
     question_index: questionIndex,
     selected_option: selectedOption,
     correct,
+  });
+
+  // Record event for timeline
+  await supabase.from("player_events").insert({
+    track: trackInfo.track,
+    event_type: "answer_submitted",
+    details: {
+      chapter_id: chapterId,
+      flow_index: flowIndex,
+      question_index: questionIndex,
+      correct,
+    },
   });
 }
 
@@ -162,6 +187,17 @@ export async function revealHint(
     chapter_id: chapterId,
     flow_index: flowIndex,
     hint_tier: hintTier,
+  });
+
+  // Record event for timeline
+  await supabase.from("player_events").insert({
+    track: trackInfo.track,
+    event_type: "hint_requested",
+    details: {
+      chapter_id: chapterId,
+      flow_index: flowIndex,
+      hint_tier: hintTier,
+    },
   });
 
   return { hint: hintItem.hint };

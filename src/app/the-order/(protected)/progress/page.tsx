@@ -1,12 +1,26 @@
-export default function AdminProgressPage() {
+import { getAdminTrack } from "@/lib/admin/track";
+import { getPlayerEvents } from "@/lib/admin/actions";
+import EventTimeline from "@/components/admin/EventTimeline";
+
+export default async function AdminProgressPage() {
+  const track = await getAdminTrack();
+  const events = await getPlayerEvents(track);
+
   return (
-    <div style={{ padding: "40px 24px" }}>
-      <h1 style={{ fontSize: "20px", fontWeight: 400, letterSpacing: "1px" }}>
-        Progress
-      </h1>
-      <p style={{ marginTop: "16px", color: "#666", fontSize: "14px" }}>
-        Player progress tracking — coming in Phase 3.
-      </p>
+    <div style={{ padding: "16px" }}>
+      <div
+        style={{
+          fontSize: "11px",
+          fontWeight: 600,
+          letterSpacing: "1.5px",
+          textTransform: "uppercase",
+          color: "#6b7280",
+          marginBottom: "12px",
+        }}
+      >
+        Event Timeline
+      </div>
+      <EventTimeline events={events} />
     </div>
   );
 }
