@@ -131,6 +131,8 @@ export type LetterStepConfig = {
   _signature?: string;
   _content_notes?: string;
   companion_message?: CompanionMessage;
+  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
+  delay_hours?: number;
   progress_key: string;
 };
 
@@ -141,6 +143,8 @@ export type EmailStepConfig = {
   template: string;
   companion_message?: CompanionMessage;
   side_effect?: SideEffect;
+  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
+  delay_hours?: number;
   progress_key: string;
 };
 
@@ -150,6 +154,8 @@ export type SmsStepConfig = {
   body: string;
   companion_message?: CompanionMessage;
   side_effect?: SideEffect;
+  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
+  delay_hours?: number;
   progress_key: string;
 };
 
@@ -160,6 +166,8 @@ export type MmsStepConfig = {
   image?: string;
   companion_message?: CompanionMessage;
   side_effect?: SideEffect;
+  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
+  delay_hours?: number;
   progress_key: string;
 };
 

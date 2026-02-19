@@ -1,3 +1,4 @@
+import { gameConfig } from "@/config";
 import type { PlayerState } from "@/lib/admin/actions";
 
 function timeAgo(dateStr: string | null): string {
@@ -12,8 +13,22 @@ function timeAgo(dateStr: string | null): string {
   return `${days}d ago`;
 }
 
-export default function PlayerStateCard({ state }: { state: PlayerState }) {
+function getChapterNumber(chapterId: string | null): number | null {
+  if (!chapterId) return null;
+  const ids = Object.keys(gameConfig.chapters);
+  const idx = ids.indexOf(chapterId);
+  return idx >= 0 ? idx : null;
+}
+
+export default function PlayerStateCard({
+  state,
+  stepType,
+}: {
+  state: PlayerState;
+  stepType?: string;
+}) {
   const trackColor = state.track === "live" ? "#c62828" : "#336699";
+  const chapterNum = getChapterNumber(state.chapterId);
 
   return (
     <div
@@ -67,11 +82,32 @@ export default function PlayerStateCard({ state }: { state: PlayerState }) {
 
       {state.chapterName ? (
         <>
-          <div
-            style={{ fontSize: "16px", fontWeight: 600, marginBottom: "4px" }}
-          >
+          <div style={{ fontSize: "16px", fontWeight: 600, marginBottom: "6px" }}>
+            {chapterNum !== null && (
+              <span style={{ color: "#999999", fontWeight: 500 }}>
+                {chapterNum}.{" "}
+              </span>
+            )}
             {state.chapterName}
           </div>
+          <div style={{ fontSize: "14px", color: "#333333", marginBottom: "4px" }}>
+            {state.stepIndex}.{" "}
+            {state.stepName ?? `Step #${state.stepIndex}`}
+          </div>
+          {stepType && (
+            <div
+              style={{
+                fontSize: "10px",
+                fontWeight: 600,
+                letterSpacing: "0.5px",
+                textTransform: "uppercase",
+                color: "#999999",
+                marginBottom: "8px",
+              }}
+            >
+              {stepType}
+            </div>
+          )}
           {state.location && (
             <div style={{ fontSize: "13px", color: "#666666", marginBottom: "8px" }}>
               {state.location}
@@ -79,19 +115,11 @@ export default function PlayerStateCard({ state }: { state: PlayerState }) {
           )}
           <div
             style={{
-              display: "flex",
-              gap: "16px",
               fontSize: "12px",
               color: "#666666",
-              flexWrap: "wrap",
             }}
           >
-            <span>
-              Step: <strong style={{ color: "#333333" }}>{state.stepName ?? `#${state.stepIndex}`}</strong>
-            </span>
-            <span>
-              Last: <strong style={{ color: "#333333" }}>{timeAgo(state.lastActivity)}</strong>
-            </span>
+            Last: <strong style={{ color: "#333333" }}>{timeAgo(state.lastActivity)}</strong>
           </div>
           {state.lastActionSummary && (
             <div

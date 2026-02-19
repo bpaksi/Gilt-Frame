@@ -5,9 +5,11 @@ import { gameConfig } from "@/config";
 export default function TimelineFilters({
   selectedChapter,
   onChapterChange,
+  completedChapterIds,
 }: {
   selectedChapter: string;
   onChapterChange: (chapterId: string) => void;
+  completedChapterIds?: Set<string>;
 }) {
   const chapters = Object.entries(gameConfig.chapters);
 
@@ -37,7 +39,7 @@ export default function TimelineFilters({
       >
         {chapters.map(([id, ch], index) => (
           <option key={id} value={id}>
-            {index} — {ch.name}
+            {index} — {ch.name}{completedChapterIds?.has(id) ? " \u2713" : ""}
           </option>
         ))}
       </select>

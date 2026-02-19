@@ -67,7 +67,7 @@ export default async function AdminCurrentPage() {
 
   return (
     <div style={{ padding: "16px" }}>
-      <PlayerStateCard state={enrichedState} />
+      <PlayerStateCard state={enrichedState} stepType={currentStep?.type} />
 
       {currentStep && (
         <CurrentStepAction

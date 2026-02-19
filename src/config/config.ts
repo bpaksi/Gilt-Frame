@@ -92,9 +92,10 @@ export const gameConfig: GameConfig = {
           config: {
             to: "player",
             _trigger_note:
-              "Auto-send day after she enters the site and completes the passphrase. MMS with Marker image.",
+              "Auto-send 3 hours after she enters the site and completes the passphrase. MMS with Marker image.",
             body: "The Order has noted your acceptance. Prepare yourself. The first trial is near.",
             image: "assets/prologue-sms-marker.png",
+            delay_hours: 3,
             progress_key: "prologue.acceptance_confirmed",
           },
         },

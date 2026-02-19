@@ -97,6 +97,14 @@ export default function EventTimeline({
 }) {
   const [chapterFilter, setChapterFilter] = useState(initialChapter);
 
+  const completedChapterIds = useMemo(() => {
+    return new Set(
+      chapterProgress
+        .filter((cp) => !!cp.completed_at)
+        .map((cp) => cp.chapter_id)
+    );
+  }, [chapterProgress]);
+
   const filtered = events.filter((e) => {
     if (chapterFilter) {
       const details = e.details as Record<string, unknown> | null;
@@ -131,6 +139,7 @@ export default function EventTimeline({
       <TimelineFilters
         selectedChapter={chapterFilter}
         onChapterChange={setChapterFilter}
+        completedChapterIds={completedChapterIds}
       />
 
       {chapterFilter && (

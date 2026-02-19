@@ -11,7 +11,7 @@ import {
   type AdvanceCondition,
   type HintItem,
 } from "@/config";
-import { sendStep } from "@/lib/messaging/send";
+import { sendStep, scheduleStep } from "@/lib/messaging/send";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type QuestState = {
@@ -112,7 +112,12 @@ export async function autoAdvanceMessagingSteps(
     if (step.type === "website") break;
     if (step.trigger !== "auto") break;
 
-    await sendStep(track, chapterId, step.config.progress_key);
+    const delayHours = step.config.delay_hours;
+    if (delayHours && delayHours > 0) {
+      await scheduleStep(track, chapterId, step.config.progress_key, delayHours);
+    } else {
+      await sendStep(track, chapterId, step.config.progress_key);
+    }
   }
 
   // Check if all steps are now completed — if so, complete the chapter

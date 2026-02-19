@@ -200,6 +200,81 @@ export async function sendStep(
   };
 }
 
+export async function scheduleStep(
+  track: "test" | "live",
+  chapterId: string,
+  progressKey: string,
+  delayHours: number
+): Promise<void> {
+  const chapter = gameConfig.chapters[chapterId];
+  if (!chapter) return;
+
+  const orderedSteps = getOrderedSteps(chapter);
+  const matchedStep = orderedSteps.find(
+    (s) => s.type !== "website" && s.config.progress_key === progressKey
+  );
+  if (!matchedStep) return;
+
+  const stepId = matchedStep.id;
+  const scheduledAt = new Date(Date.now() + delayHours * 60 * 60 * 1000).toISOString();
+  const supabase = createAdminClient();
+
+  console.log("[scheduleStep] Scheduling", {
+    progressKey,
+    delayHours,
+    scheduledAt,
+  });
+
+  // Insert message_progress as scheduled
+  await supabase.from("message_progress").upsert(
+    {
+      track,
+      progress_key: progressKey,
+      status: "scheduled",
+      scheduled_at: scheduledAt,
+    },
+    { onConflict: "track,progress_key" }
+  );
+
+  // Mark step as completed so the pipeline continues
+  const { data: progress } = await supabase
+    .from("chapter_progress")
+    .select("id")
+    .eq("track", track)
+    .eq("chapter_id", chapterId)
+    .single();
+
+  if (!progress) {
+    await supabase.from("chapter_progress").insert({
+      track,
+      chapter_id: chapterId,
+    });
+  }
+
+  await supabase.from("completed_steps").upsert(
+    {
+      track,
+      chapter_id: chapterId,
+      step_id: stepId,
+    },
+    { onConflict: "track,chapter_id,step_id" }
+  );
+
+  await supabase.from("activity_log").insert({
+    track,
+    source: "system",
+    event_type: "step_scheduled",
+    details: {
+      chapter_id: chapterId,
+      progress_key: progressKey,
+      step_name: matchedStep.name,
+      step_type: matchedStep.type,
+      delay_hours: delayHours,
+      scheduled_at: scheduledAt,
+    },
+  });
+}
+
 export async function sendAdHocMessage(
   track: "test" | "live",
   channel: "sms" | "email",

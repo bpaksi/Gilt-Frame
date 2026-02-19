@@ -77,7 +77,7 @@ export default function StepList({
           marginBottom: "8px",
         }}
       >
-        Pipeline — {chapter.name}
+        {chapter.name}
       </div>
       {orderedSteps.map((step, index) => (
         <StepRow

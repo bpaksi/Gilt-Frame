@@ -20,7 +20,7 @@ export default async function AdminProgressPage() {
 
   const completedIds = new Set(
     chapterProgress
-      .filter((cp) => cp.completed_at !== null)
+      .filter((cp) => !!cp.completed_at)
       .map((cp) => cp.chapter_id)
   );
 
