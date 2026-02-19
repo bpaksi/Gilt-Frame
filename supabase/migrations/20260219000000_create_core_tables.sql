@@ -71,7 +71,7 @@ CREATE TABLE moments (
   quest_id       text,
   chapter_id     text,
   narrative_text text,
-  moment_type    text NOT NULL CHECK (moment_type IN ('quest_complete', 'chapter_start', 'chapter_complete', 'summons_received')),
+  moment_type    text NOT NULL CHECK (moment_type IN ('quest_complete', 'chapter_start', 'chapter_complete')),
   share_token    text UNIQUE NOT NULL DEFAULT gen_random_uuid()::text,
   assets         jsonb NOT NULL DEFAULT '[]',
   created_at     timestamptz NOT NULL DEFAULT now()
@@ -103,38 +103,3 @@ CREATE TABLE lore_entries (
 );
 
 ALTER TABLE lore_entries ENABLE ROW LEVEL SECURITY;
-
--- Summons: chapter trigger log
-CREATE TABLE summons (
-  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  chapter_id      text NOT NULL,
-  scheduled_at    timestamptz,
-  sent_at         timestamptz,
-  delivery_method text,
-  content         text
-);
-
-ALTER TABLE summons ENABLE ROW LEVEL SECURITY;
-
--- Vault items: collectible tokens
-CREATE TABLE vault_items (
-  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  quest_id     text,
-  name         text NOT NULL,
-  description  text,
-  image_url    text,
-  collected_at timestamptz
-);
-
-ALTER TABLE vault_items ENABLE ROW LEVEL SECURITY;
-
--- Marker sightings: side quest photo submissions
-CREATE TABLE marker_sightings (
-  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  location    text,
-  photo_url   text,
-  confirmed   boolean NOT NULL DEFAULT false,
-  reported_at timestamptz NOT NULL DEFAULT now()
-);
-
-ALTER TABLE marker_sightings ENABLE ROW LEVEL SECURITY;

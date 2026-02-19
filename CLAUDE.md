@@ -104,9 +104,8 @@ pnpm start                  # Start production server
 | Progression | `chapter_progress`, `completed_steps`, `quest_answers`, `hint_views` | Chapter activation/completion, step completion log, answer history, hint tier tracking |
 | Content | `moments` | Journey snapshots (share_token) |
 | Oracle | `oracle_conversations` | Q&A history with Gemini, flagging, token usage |
-| Messaging | `message_progress`, `summons` | Offline message delivery tracking, scheduled summons |
+| Messaging | `message_progress` | Offline message delivery tracking |
 | Admin | `activity_log` | Unified audit trail + event timeline (source: player/admin/system) |
-| Collectibles | `vault_items`, `marker_sightings` | Collected tokens, side quest submissions |
 
 RLS enabled on all tables. App uses `service_role` to bypass. Public read on `moments` (by share_token). Lore entries (Scrolls of Knowledge) are static Markdown files in `src/config/lore/`, loaded by `src/lib/lore.ts`.
 

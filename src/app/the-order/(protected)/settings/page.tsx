@@ -10,7 +10,6 @@ const LINKS = [
   { href: "/the-order/settings/chapters", label: "Workflows" },
   { href: "/the-order/settings/oracle", label: "AI Chat Review" },
   { href: "/the-order/settings/moments", label: "Snapshots" },
-  { href: "/the-order/settings/summons", label: "Activation" },
 ] as const;
 
 export default async function AdminSettingsPage() {

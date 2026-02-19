@@ -172,30 +172,6 @@ export type Database = {
         }
         Relationships: []
       }
-      marker_sightings: {
-        Row: {
-          confirmed: boolean
-          id: string
-          location: string | null
-          photo_url: string | null
-          reported_at: string
-        }
-        Insert: {
-          confirmed?: boolean
-          id?: string
-          location?: string | null
-          photo_url?: string | null
-          reported_at?: string
-        }
-        Update: {
-          confirmed?: boolean
-          id?: string
-          location?: string | null
-          photo_url?: string | null
-          reported_at?: string
-        }
-        Relationships: []
-      }
       message_progress: {
         Row: {
           companion_sent_at: string | null
@@ -336,63 +312,6 @@ export type Database = {
           question_index?: number
           selected_option?: string
           step_index?: number
-          track?: string
-        }
-        Relationships: []
-      }
-      summons: {
-        Row: {
-          chapter_id: string
-          content: string | null
-          delivery_method: string | null
-          id: string
-          scheduled_at: string | null
-          sent_at: string | null
-        }
-        Insert: {
-          chapter_id: string
-          content?: string | null
-          delivery_method?: string | null
-          id?: string
-          scheduled_at?: string | null
-          sent_at?: string | null
-        }
-        Update: {
-          chapter_id?: string
-          content?: string | null
-          delivery_method?: string | null
-          id?: string
-          scheduled_at?: string | null
-          sent_at?: string | null
-        }
-        Relationships: []
-      }
-      vault_items: {
-        Row: {
-          collected_at: string | null
-          description: string | null
-          id: string
-          image_url: string | null
-          name: string
-          quest_id: string | null
-          track: string
-        }
-        Insert: {
-          collected_at?: string | null
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          name: string
-          quest_id?: string | null
-          track?: string
-        }
-        Update: {
-          collected_at?: string | null
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          name?: string
-          quest_id?: string | null
           track?: string
         }
         Relationships: []
