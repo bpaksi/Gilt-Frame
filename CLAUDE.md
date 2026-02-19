@@ -34,13 +34,13 @@ The Order of the Gilt Frame is an immersive, location-based interactive narrativ
 
 | Kind | Style | Example |
 |---|---|---|
-| DB tables/columns | snake_case | `chapter_progress`, `flow_index` |
+| DB tables/columns | snake_case | `chapter_progress`, `step_index` |
 | Components | PascalCase | `MultipleChoice.tsx`, `MarkerButton.tsx` |
 | Utilities/lib files | camelCase | `getQuestState.ts`, `haversineDistance` |
 | Functions/variables | camelCase | `advanceQuest`, `deviceToken` |
 | Constants | UPPER_CASE | `PASSPHRASE`, `R` |
 | API routes | nested folders | `/api/admin/enroll/`, `/api/auth/passphrase/` |
-| Types | PascalCase | `Chapter`, `FlowStep`, `PlayerState` |
+| Types | PascalCase | `Chapter`, `Step`, `PlayerState` |
 
 ## Directory Map
 
@@ -52,7 +52,7 @@ The Order of the Gilt Frame is an immersive, location-based interactive narrativ
 - **`src/components/`** — React components: `game/` (player UI, quests, puzzles), `admin/` (dashboard panels), `ui/` (shared)
 - **`src/config/`** — `chapters.ts`: entire game structure (~816 lines), types, chapter config, helper functions
 - **`src/lib/`** — Shared logic: `supabase/` (client, types), `admin/` (auth, actions, logging), `actions/` (quest, moments), `messaging/` (Twilio, Resend), `hooks/` (geolocation, orientation), geo utils, rate limiting, oracle prompt
-- **`supabase/`** — Migrations (3 files), `seed.sql`, `config.toml`
+- **`supabase/`** — Migrations (4 files), `seed.sql`, `config.toml`
 - **`docs/`** — Design documents: `BUILD_PROMPT.md`, `INDEX.md`, `MOBILE_DESIGN.md`
 - **`public/`** — Static assets: favicons, marker SVGs, OG image, robots.txt
 
@@ -85,10 +85,10 @@ pnpm start                  # Start production server
 ## Design & Domain Rules
 
 - **Track isolation is critical**: `test` track routes all messages to Bob's phone/email via `test_overrides`. `live` track is Christine's real game — never reset, never mock.
-- **Chapter progression**: `locked` → `active` → `complete`. Only one chapter active at a time. Advancement via quest completion or admin trigger.
+- **Chapter progression**: no row = locked, row with `completed_at IS NULL` = active, `completed_at IS NOT NULL` = complete. Only one chapter active at a time. Advancement via quest completion or admin trigger. Step position is derived from `count(*)` of `completed_steps` rows for the chapter.
 - **Quest state machine**: advance conditions include `geofence`, `compass_alignment`, `correct_answers`, `tap`, `admin_trigger`, `animation_complete`.
 - **Hints are tiered**: tier reveals tracked in `hint_views`. Once revealed, cannot be un-revealed.
-- **Message delivery**: offline flow steps use `progress_key` (e.g., `"ch1.prologue_letter"`) tracked in `message_progress` with status `pending → sent → delivered/failed`.
+- **Message delivery**: offline steps use `progress_key` (e.g., `"ch1.prologue_letter"`) tracked in `message_progress` with status `pending → sent → delivered/failed`.
 - **Oracle (Gemini)**: daily conversation limits with progressive delay throttling. System prompt includes completed chapters + unlocked lore for context.
 - **Enrollment**: one-time tokens, max 5 active per track, revocable.
 - **DO NOT** expose `SUPABASE_SERVICE_ROLE_KEY` to the browser.
@@ -100,7 +100,7 @@ pnpm start                  # Start production server
 | Group | Tables | Purpose |
 |---|---|---|
 | Enrollment | `device_enrollments` | Maps enrollment tokens → devices, tracks user_agent, track |
-| Progression | `chapter_progress`, `quest_answers`, `hint_views` | Chapter status, flow index, answer history, hint tier tracking |
+| Progression | `chapter_progress`, `completed_steps`, `quest_answers`, `hint_views` | Chapter activation/completion, step completion log, answer history, hint tier tracking |
 | Content | `moments`, `lore_entries` | Journey snapshots (share_token), Scrolls of Knowledge |
 | Oracle | `oracle_conversations` | Q&A history with Gemini, flagging, token usage |
 | Messaging | `message_progress`, `summons` | Offline message delivery tracking, scheduled summons |
@@ -146,7 +146,7 @@ RLS enabled on all tables. App uses `service_role` to bypass. Public read on `mo
 ```
 topic | location
 ------|--------
-game config, chapters, flow steps, types | src/config/chapters.ts
+game config, chapters, steps, types | src/config/chapters.ts
 quest state, advance logic | src/lib/actions/quest.ts
 moments, journey data | src/lib/actions/moments.ts
 supabase client, admin client | src/lib/supabase/admin.ts

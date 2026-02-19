@@ -59,28 +59,46 @@ export type Database = {
         Row: {
           chapter_id: string
           completed_at: string | null
-          current_flow_index: number
           id: string
-          started_at: string | null
-          status: string
+          started_at: string
           track: string
         }
         Insert: {
           chapter_id: string
           completed_at?: string | null
-          current_flow_index?: number
           id?: string
-          started_at?: string | null
-          status?: string
+          started_at?: string
           track: string
         }
         Update: {
           chapter_id?: string
           completed_at?: string | null
-          current_flow_index?: number
           id?: string
-          started_at?: string | null
-          status?: string
+          started_at?: string
+          track?: string
+        }
+        Relationships: []
+      }
+      completed_steps: {
+        Row: {
+          chapter_id: string
+          completed_at: string
+          id: string
+          step_index: number
+          track: string
+        }
+        Insert: {
+          chapter_id: string
+          completed_at?: string
+          id?: string
+          step_index: number
+          track: string
+        }
+        Update: {
+          chapter_id?: string
+          completed_at?: string
+          id?: string
+          step_index?: number
           track?: string
         }
         Relationships: []
@@ -124,25 +142,25 @@ export type Database = {
       hint_views: {
         Row: {
           chapter_id: string
-          flow_index: number
           hint_tier: number
           id: string
+          step_index: number
           track: string
           viewed_at: string
         }
         Insert: {
           chapter_id: string
-          flow_index: number
           hint_tier: number
           id?: string
+          step_index: number
           track: string
           viewed_at?: string
         }
         Update: {
           chapter_id?: string
-          flow_index?: number
           hint_tier?: number
           id?: string
+          step_index?: number
           track?: string
           viewed_at?: string
         }
@@ -339,30 +357,30 @@ export type Database = {
           answered_at: string
           chapter_id: string
           correct: boolean
-          flow_index: number
           id: string
           question_index: number
           selected_option: string
+          step_index: number
           track: string
         }
         Insert: {
           answered_at?: string
           chapter_id: string
           correct: boolean
-          flow_index: number
           id?: string
           question_index: number
           selected_option: string
+          step_index: number
           track: string
         }
         Update: {
           answered_at?: string
           chapter_id?: string
           correct?: boolean
-          flow_index?: number
           id?: string
           question_index?: number
           selected_option?: string
+          step_index?: number
           track?: string
         }
         Relationships: []

@@ -48,7 +48,7 @@ export default async function OraclePage() {
     .from("chapter_progress")
     .select("chapter_id")
     .eq("track", trackInfo.track)
-    .eq("status", "complete");
+    .not("completed_at", "is", null);
 
   const completedChapters = (completedProgress ?? []).map((p) => p.chapter_id);
 

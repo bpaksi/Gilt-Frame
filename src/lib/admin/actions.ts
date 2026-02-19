@@ -1,14 +1,15 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { chaptersConfig, getOrderedFlow } from "@/config/chapters";
+import { chaptersConfig, getOrderedSteps } from "@/config/chapters";
+import { getCurrentStepIndex } from "@/lib/actions/quest";
 
 export type PlayerState = {
   track: "test" | "live";
   chapterId: string | null;
   chapterName: string | null;
   location: string | null;
-  flowIndex: number;
+  stepIndex: number;
   stepName: string | null;
   status: string;
   lastActivity: string | null;
@@ -24,7 +25,7 @@ export async function getPlayerState(
     .from("chapter_progress")
     .select("*")
     .eq("track", track)
-    .eq("status", "active")
+    .is("completed_at", null)
     .single();
 
   if (!progress) {
@@ -33,7 +34,7 @@ export async function getPlayerState(
       chapterId: null,
       chapterName: null,
       location: null,
-      flowIndex: 0,
+      stepIndex: 0,
       stepName: null,
       status: "idle",
       lastActivity: null,
@@ -42,8 +43,13 @@ export async function getPlayerState(
   }
 
   const chapter = chaptersConfig.chapters[progress.chapter_id];
-  const orderedFlow = chapter ? getOrderedFlow(chapter) : [];
-  const currentStep = orderedFlow[progress.current_flow_index];
+  const orderedSteps = chapter ? getOrderedSteps(chapter) : [];
+  const stepIndex = await getCurrentStepIndex(
+    supabase,
+    track,
+    progress.chapter_id
+  );
+  const currentStep = orderedSteps[stepIndex];
 
   // Get last event for this track
   const { data: lastEvent } = await supabase
@@ -59,9 +65,9 @@ export async function getPlayerState(
     chapterId: progress.chapter_id,
     chapterName: chapter?.name ?? progress.chapter_id,
     location: chapter?.location ?? null,
-    flowIndex: progress.current_flow_index,
+    stepIndex,
     stepName: currentStep?.name ?? null,
-    status: progress.status,
+    status: "active",
     lastActivity: lastEvent?.created_at ?? progress.started_at,
     lastActionSummary: lastEvent
       ? `${lastEvent.event_type}: ${(lastEvent.details as Record<string, unknown>)?.step_name ?? ""}`
@@ -150,9 +156,8 @@ export type ChapterProgressRow = {
   id: string;
   track: string;
   chapter_id: string;
-  status: string;
-  current_flow_index: number;
   started_at: string;
+  completed_at: string | null;
 };
 
 export async function getAllChapterProgress(
@@ -168,6 +173,33 @@ export async function getAllChapterProgress(
   return (data ?? []) as ChapterProgressRow[];
 }
 
+export type CompletedStepCount = {
+  chapter_id: string;
+  count: number;
+};
+
+export async function getCompletedStepCounts(
+  track: "test" | "live"
+): Promise<CompletedStepCount[]> {
+  const supabase = createAdminClient();
+
+  // Get all completed steps for this track, grouped by chapter
+  const { data } = await supabase
+    .from("completed_steps")
+    .select("chapter_id")
+    .eq("track", track);
+
+  if (!data || data.length === 0) return [];
+
+  // Count by chapter_id
+  const counts = new Map<string, number>();
+  for (const row of data) {
+    counts.set(row.chapter_id, (counts.get(row.chapter_id) ?? 0) + 1);
+  }
+
+  return Array.from(counts, ([chapter_id, count]) => ({ chapter_id, count }));
+}
+
 export async function resetChapter(
   track: "test" | "live",
   chapterId: string
@@ -181,6 +213,13 @@ export async function resetChapter(
   // Delete chapter progress
   await supabase
     .from("chapter_progress")
+    .delete()
+    .eq("track", "test")
+    .eq("chapter_id", chapterId);
+
+  // Delete completed steps
+  await supabase
+    .from("completed_steps")
     .delete()
     .eq("track", "test")
     .eq("chapter_id", chapterId);
@@ -236,18 +275,22 @@ export async function activateChapter(
     .single();
 
   if (existing) {
-    // Reactivate
+    // Reactivate: clear completed_at and remove completed steps
     await supabase
       .from("chapter_progress")
-      .update({ status: "active", current_flow_index: 0 })
+      .update({ completed_at: null })
+      .eq("track", track)
+      .eq("chapter_id", chapterId);
+
+    await supabase
+      .from("completed_steps")
+      .delete()
       .eq("track", track)
       .eq("chapter_id", chapterId);
   } else {
     await supabase.from("chapter_progress").insert({
       track,
       chapter_id: chapterId,
-      status: "active",
-      current_flow_index: 0,
     });
   }
 

@@ -4,24 +4,38 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { resolveTrack } from "@/lib/track";
 import {
   chaptersConfig,
-  getOrderedFlow,
+  getOrderedSteps,
   type ComponentName,
   type ComponentConfig,
   type AdvanceCondition,
   type HintItem,
 } from "@/config/chapters";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type QuestState = {
   status: "waiting" | "active";
   chapterId?: string;
   chapterName?: string;
-  flowIndex?: number;
+  stepIndex?: number;
   component?: ComponentName;
   advance?: AdvanceCondition;
   config?: ComponentConfig;
   track?: "test" | "live";
   revealedHintTiers?: number[];
 };
+
+export async function getCurrentStepIndex(
+  supabase: SupabaseClient,
+  track: string,
+  chapterId: string
+): Promise<number> {
+  const { count } = await supabase
+    .from("completed_steps")
+    .select("*", { count: "exact", head: true })
+    .eq("track", track)
+    .eq("chapter_id", chapterId);
+  return count ?? 0;
+}
 
 export async function getQuestState(): Promise<QuestState> {
   const trackInfo = await resolveTrack();
@@ -32,7 +46,7 @@ export async function getQuestState(): Promise<QuestState> {
     .from("chapter_progress")
     .select("*")
     .eq("track", trackInfo.track)
-    .eq("status", "active")
+    .is("completed_at", null)
     .single();
 
   if (!progress) return { status: "waiting" };
@@ -40,8 +54,13 @@ export async function getQuestState(): Promise<QuestState> {
   const chapter = chaptersConfig.chapters[progress.chapter_id];
   if (!chapter) return { status: "waiting" };
 
-  const orderedFlow = getOrderedFlow(chapter);
-  const currentStep = orderedFlow[progress.current_flow_index];
+  const orderedSteps = getOrderedSteps(chapter);
+  const stepIndex = await getCurrentStepIndex(
+    supabase,
+    trackInfo.track,
+    progress.chapter_id
+  );
+  const currentStep = orderedSteps[stepIndex];
 
   if (!currentStep || currentStep.type !== "website") {
     return { status: "waiting" };
@@ -53,7 +72,7 @@ export async function getQuestState(): Promise<QuestState> {
     .select("hint_tier")
     .eq("track", trackInfo.track)
     .eq("chapter_id", progress.chapter_id)
-    .eq("flow_index", progress.current_flow_index);
+    .eq("step_index", stepIndex);
 
   const revealedHintTiers = (hintViews ?? []).map((h) => h.hint_tier);
 
@@ -61,7 +80,7 @@ export async function getQuestState(): Promise<QuestState> {
     status: "active",
     chapterId: progress.chapter_id,
     chapterName: chapter.name,
-    flowIndex: progress.current_flow_index,
+    stepIndex,
     component: currentStep.component,
     advance: currentStep.advance,
     config: currentStep.config,
@@ -72,54 +91,55 @@ export async function getQuestState(): Promise<QuestState> {
 
 export async function advanceQuest(
   chapterId: string,
-  currentFlowIndex: number
+  stepIndex: number
 ): Promise<QuestState> {
   const trackInfo = await resolveTrack();
   if (!trackInfo) return { status: "waiting" };
 
   const supabase = createAdminClient();
 
-  // Verify current state matches
+  // Verify chapter is active
   const { data: progress } = await supabase
     .from("chapter_progress")
     .select("*")
     .eq("track", trackInfo.track)
     .eq("chapter_id", chapterId)
-    .eq("status", "active")
+    .is("completed_at", null)
     .single();
 
-  if (!progress || progress.current_flow_index !== currentFlowIndex) {
+  if (!progress) return getQuestState();
+
+  // Verify current step matches via completed_steps count
+  const currentIndex = await getCurrentStepIndex(
+    supabase,
+    trackInfo.track,
+    chapterId
+  );
+  if (currentIndex !== stepIndex) {
     return getQuestState();
   }
 
   const chapter = chaptersConfig.chapters[chapterId];
   if (!chapter) return { status: "waiting" };
 
-  const orderedFlow = getOrderedFlow(chapter);
-  const nextIndex = currentFlowIndex + 1;
+  const orderedSteps = getOrderedSteps(chapter);
+  const nextIndex = stepIndex + 1;
 
-  // Find the next website step (skip offline steps)
-  let websiteIndex = nextIndex;
-  while (websiteIndex < orderedFlow.length) {
-    if (orderedFlow[websiteIndex].type === "website") break;
-    websiteIndex++;
-  }
-
-  // Update flow index to the next step (even offline — admin needs to see real position)
-  await supabase
-    .from("chapter_progress")
-    .update({ current_flow_index: nextIndex })
-    .eq("track", trackInfo.track)
-    .eq("chapter_id", chapterId);
+  // Mark the current step as completed
+  await supabase.from("completed_steps").insert({
+    track: trackInfo.track,
+    chapter_id: chapterId,
+    step_index: stepIndex,
+  });
 
   // Record event for timeline
-  const currentStep = orderedFlow[currentFlowIndex];
+  const currentStep = orderedSteps[stepIndex];
   await supabase.from("player_events").insert({
     track: trackInfo.track,
     event_type: "quest_advanced",
     details: {
       chapter_id: chapterId,
-      from_index: currentFlowIndex,
+      from_index: stepIndex,
       to_index: nextIndex,
       step_name: currentStep?.name ?? null,
     },
@@ -130,7 +150,7 @@ export async function advanceQuest(
 
 export async function recordAnswer(
   chapterId: string,
-  flowIndex: number,
+  stepIndex: number,
   questionIndex: number,
   selectedOption: string,
   correct: boolean
@@ -142,7 +162,7 @@ export async function recordAnswer(
   await supabase.from("quest_answers").insert({
     track: trackInfo.track,
     chapter_id: chapterId,
-    flow_index: flowIndex,
+    step_index: stepIndex,
     question_index: questionIndex,
     selected_option: selectedOption,
     correct,
@@ -154,7 +174,7 @@ export async function recordAnswer(
     event_type: "answer_submitted",
     details: {
       chapter_id: chapterId,
-      flow_index: flowIndex,
+      step_index: stepIndex,
       question_index: questionIndex,
       correct,
     },
@@ -163,7 +183,7 @@ export async function recordAnswer(
 
 export async function revealHint(
   chapterId: string,
-  flowIndex: number,
+  stepIndex: number,
   hintTier: number
 ): Promise<{ hint: string } | null> {
   const trackInfo = await resolveTrack();
@@ -173,8 +193,8 @@ export async function revealHint(
   const chapter = chaptersConfig.chapters[chapterId];
   if (!chapter) return null;
 
-  const orderedFlow = getOrderedFlow(chapter);
-  const step = orderedFlow[flowIndex];
+  const orderedSteps = getOrderedSteps(chapter);
+  const step = orderedSteps[stepIndex];
   if (!step || step.type !== "website") return null;
 
   const config = step.config as { hints?: HintItem[] };
@@ -185,7 +205,7 @@ export async function revealHint(
   await supabase.from("hint_views").insert({
     track: trackInfo.track,
     chapter_id: chapterId,
-    flow_index: flowIndex,
+    step_index: stepIndex,
     hint_tier: hintTier,
   });
 
@@ -195,7 +215,7 @@ export async function revealHint(
     event_type: "hint_requested",
     details: {
       chapter_id: chapterId,
-      flow_index: flowIndex,
+      step_index: stepIndex,
       hint_tier: hintTier,
     },
   });
@@ -205,19 +225,27 @@ export async function revealHint(
 
 export async function pollChapterProgress(
   chapterId: string
-): Promise<{ flowIndex: number } | null> {
+): Promise<{ stepIndex: number } | null> {
   const trackInfo = await resolveTrack();
   if (!trackInfo) return null;
 
   const supabase = createAdminClient();
+
+  // Verify chapter is active
   const { data: progress } = await supabase
     .from("chapter_progress")
-    .select("current_flow_index")
+    .select("id")
     .eq("track", trackInfo.track)
     .eq("chapter_id", chapterId)
-    .eq("status", "active")
+    .is("completed_at", null)
     .single();
 
   if (!progress) return null;
-  return { flowIndex: progress.current_flow_index };
+
+  const stepIndex = await getCurrentStepIndex(
+    supabase,
+    trackInfo.track,
+    chapterId
+  );
+  return { stepIndex };
 }

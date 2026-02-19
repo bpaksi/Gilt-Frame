@@ -5,10 +5,11 @@ import type {
   PlayerEvent,
   ChapterProgressRow,
   MessageProgressRow,
+  CompletedStepCount,
 } from "@/lib/admin/actions";
-import { chaptersConfig, getOrderedFlow } from "@/config/chapters";
+import { chaptersConfig, getOrderedSteps } from "@/config/chapters";
 import TimelineFilters from "./TimelineFilters";
-import FlowList from "./FlowList";
+import StepList from "./StepList";
 
 function formatTime(dateStr: string): string {
   const d = new Date(dateStr);
@@ -72,12 +73,14 @@ export default function EventTimeline({
   initialChapter,
   chapterProgress,
   messageProgress,
+  completedStepCounts,
   track,
 }: {
   events: PlayerEvent[];
   initialChapter: string;
   chapterProgress: ChapterProgressRow[];
   messageProgress: MessageProgressRow[];
+  completedStepCounts: CompletedStepCount[];
   track: "test" | "live";
 }) {
   const [chapterFilter, setChapterFilter] = useState(initialChapter);
@@ -90,16 +93,19 @@ export default function EventTimeline({
     return true;
   });
 
-  const chapterFlowIndex = useMemo(() => {
+  const chapterStepIndex = useMemo(() => {
     if (!chapterFilter) return 0;
     const cp = chapterProgress.find((c) => c.chapter_id === chapterFilter);
     if (!cp) return 0;
-    if (cp.status === "complete") {
+    if (cp.completed_at !== null) {
       const chapter = chaptersConfig.chapters[chapterFilter];
-      return chapter ? getOrderedFlow(chapter).length : 0;
+      return chapter ? getOrderedSteps(chapter).length : 0;
     }
-    return cp.current_flow_index;
-  }, [chapterFilter, chapterProgress]);
+    const stepCount = completedStepCounts.find(
+      (c) => c.chapter_id === chapterFilter
+    );
+    return stepCount?.count ?? 0;
+  }, [chapterFilter, chapterProgress, completedStepCounts]);
 
   const chapterMessages = useMemo(() => {
     if (!chapterFilter) return [];
@@ -116,9 +122,9 @@ export default function EventTimeline({
       />
 
       {chapterFilter && (
-        <FlowList
+        <StepList
           chapterId={chapterFilter}
-          currentFlowIndex={chapterFlowIndex}
+          currentStepIndex={chapterStepIndex}
           messageProgress={chapterMessages}
           track={track}
           readOnly

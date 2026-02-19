@@ -2,8 +2,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { logAdminAction } from "@/lib/admin/log";
 import {
   chaptersConfig,
-  getOrderedFlow,
-  type FlowStep,
+  getOrderedSteps,
+  type Step,
   type SmsStep,
   type MmsStep,
   type EmailStep,
@@ -62,7 +62,7 @@ function getMediaUrl(image?: string): string | null {
   return `${baseUrl}/${image}`;
 }
 
-export async function sendFlowStep(
+export async function sendStep(
   track: "test" | "live",
   chapterId: string,
   progressKey: string
@@ -70,12 +70,12 @@ export async function sendFlowStep(
   const chapter = chaptersConfig.chapters[chapterId];
   if (!chapter) return { success: false, error: "Chapter not found." };
 
-  const orderedFlow = getOrderedFlow(chapter);
-  const step = orderedFlow.find(
+  const orderedSteps = getOrderedSteps(chapter);
+  const step = orderedSteps.find(
     (s) => "progress_key" in s && s.progress_key === progressKey
   ) as (SmsStep | MmsStep | EmailStep | LetterStep) | undefined;
 
-  if (!step) return { success: false, error: "Flow step not found." };
+  if (!step) return { success: false, error: "Step not found." };
 
   const supabase = createAdminClient();
   let messageStatus = "sent";
@@ -163,7 +163,7 @@ export async function sendFlowStep(
   });
 
   // Log admin action
-  await logAdminAction("send_flow_step", {
+  await logAdminAction("send_step", {
     track,
     chapter_id: chapterId,
     progress_key: progressKey,
@@ -171,23 +171,33 @@ export async function sendFlowStep(
     status: messageStatus,
   });
 
-  // Advance current_flow_index if this step's order is at or past current index
-  const stepIndex = orderedFlow.indexOf(step as FlowStep);
-  if (stepIndex >= 0) {
+  // Mark this step as completed if not already
+  const idx = orderedSteps.indexOf(step as Step);
+  if (idx >= 0) {
+    // Ensure chapter_progress row exists
     const { data: progress } = await supabase
       .from("chapter_progress")
-      .select("current_flow_index")
+      .select("id")
       .eq("track", track)
       .eq("chapter_id", chapterId)
       .single();
 
-    if (progress && stepIndex >= progress.current_flow_index) {
-      await supabase
-        .from("chapter_progress")
-        .update({ current_flow_index: stepIndex + 1 })
-        .eq("track", track)
-        .eq("chapter_id", chapterId);
+    if (!progress) {
+      await supabase.from("chapter_progress").insert({
+        track,
+        chapter_id: chapterId,
+      });
     }
+
+    // Insert completed step (ignore conflict if already completed)
+    await supabase.from("completed_steps").upsert(
+      {
+        track,
+        chapter_id: chapterId,
+        step_index: idx,
+      },
+      { onConflict: "track,chapter_id,step_index" }
+    );
   }
 
   return {

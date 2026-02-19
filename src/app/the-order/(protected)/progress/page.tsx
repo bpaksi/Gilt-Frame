@@ -3,21 +3,24 @@ import {
   getPlayerEvents,
   getAllChapterProgress,
   getAllMessageProgress,
+  getCompletedStepCounts,
 } from "@/lib/admin/actions";
 import { chaptersConfig } from "@/config/chapters";
 import EventTimeline from "@/components/admin/EventTimeline";
 
 export default async function AdminProgressPage() {
   const track = await getAdminTrack();
-  const [events, chapterProgress, messageProgress] = await Promise.all([
-    getPlayerEvents(track),
-    getAllChapterProgress(track),
-    getAllMessageProgress(track),
-  ]);
+  const [events, chapterProgress, messageProgress, completedStepCounts] =
+    await Promise.all([
+      getPlayerEvents(track),
+      getAllChapterProgress(track),
+      getAllMessageProgress(track),
+      getCompletedStepCounts(track),
+    ]);
 
   const completedIds = new Set(
     chapterProgress
-      .filter((cp) => cp.status === "complete")
+      .filter((cp) => cp.completed_at !== null)
       .map((cp) => cp.chapter_id)
   );
 
@@ -43,6 +46,7 @@ export default async function AdminProgressPage() {
         initialChapter={firstIncomplete}
         chapterProgress={chapterProgress}
         messageProgress={messageProgress}
+        completedStepCounts={completedStepCounts}
         track={track}
       />
     </div>

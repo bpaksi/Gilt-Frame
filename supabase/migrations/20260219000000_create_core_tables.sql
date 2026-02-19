@@ -13,19 +13,31 @@ CREATE TABLE device_enrollments (
 
 ALTER TABLE device_enrollments ENABLE ROW LEVEL SECURITY;
 
--- Chapter progress: player position in the unified flow[]
+-- Chapter progress: chapter-level activation/completion
+-- No row = locked, row with completed_at IS NULL = active, completed_at IS NOT NULL = complete
 CREATE TABLE chapter_progress (
-  id                 uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  track              text NOT NULL CHECK (track IN ('test', 'live')),
-  chapter_id         text NOT NULL,
-  current_flow_index int NOT NULL DEFAULT 0,
-  status             text NOT NULL DEFAULT 'locked' CHECK (status IN ('locked', 'active', 'complete')),
-  started_at         timestamptz,
-  completed_at       timestamptz,
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  track        text NOT NULL CHECK (track IN ('test', 'live')),
+  chapter_id   text NOT NULL,
+  started_at   timestamptz NOT NULL DEFAULT now(),
+  completed_at timestamptz,
   UNIQUE (track, chapter_id)
 );
 
 ALTER TABLE chapter_progress ENABLE ROW LEVEL SECURITY;
+
+-- Completed steps: append-only log of completed step indices per chapter
+-- Current step = count(*) from completed_steps for (track, chapter_id)
+CREATE TABLE completed_steps (
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  track        text NOT NULL CHECK (track IN ('test', 'live')),
+  chapter_id   text NOT NULL,
+  step_index   int NOT NULL,
+  completed_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (track, chapter_id, step_index)
+);
+
+ALTER TABLE completed_steps ENABLE ROW LEVEL SECURITY;
 
 -- Quest answers: individual MultipleChoice answers
 CREATE TABLE quest_answers (
