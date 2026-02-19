@@ -172,33 +172,6 @@ export type Database = {
         }
         Relationships: []
       }
-      lore_entries: {
-        Row: {
-          content: string
-          created_at: string
-          id: string
-          order: number
-          title: string
-          unlock_chapter_id: string | null
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          id?: string
-          order?: number
-          title: string
-          unlock_chapter_id?: string | null
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          id?: string
-          order?: number
-          title?: string
-          unlock_chapter_id?: string | null
-        }
-        Relationships: []
-      }
       marker_sightings: {
         Row: {
           confirmed: boolean

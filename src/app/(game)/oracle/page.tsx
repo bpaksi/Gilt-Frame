@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { resolveTrack } from "@/lib/track";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getAllLore } from "@/lib/lore";
 import OracleView from "@/components/game/OracleView";
 
 export const metadata: Metadata = {
@@ -53,12 +54,7 @@ export default async function OraclePage() {
   const completedChapters = (completedProgress ?? []).map((p) => p.chapter_id);
 
   // Get lore entries
-  const { data: loreData } = await supabase
-    .from("lore_entries")
-    .select("id, title, content, unlock_chapter_id")
-    .order("order", { ascending: true });
-
-  const loreEntries = (loreData ?? []).map((l) => ({
+  const loreEntries = getAllLore().map((l) => ({
     ...l,
     unlocked: !l.unlock_chapter_id || completedChapters.includes(l.unlock_chapter_id),
   }));

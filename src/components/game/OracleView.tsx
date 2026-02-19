@@ -1,15 +1,8 @@
 "use client";
 
+import type { DisplayLoreEntry } from "@/lib/lore";
 import ScrollsOfKnowledge from "./ScrollsOfKnowledge";
 import AskTheOracle from "./AskTheOracle";
-
-type LoreEntry = {
-  id: string;
-  title: string;
-  content: string;
-  unlock_chapter_id: string | null;
-  unlocked: boolean;
-};
 
 type Conversation = {
   question: string;
@@ -17,7 +10,7 @@ type Conversation = {
 };
 
 interface OracleViewProps {
-  loreEntries: LoreEntry[];
+  loreEntries: DisplayLoreEntry[];
   completedChapters: string[];
   conversations: Conversation[];
 }

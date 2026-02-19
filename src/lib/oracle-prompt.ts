@@ -1,9 +1,5 @@
 import type { Chapter } from "@/config/chapters";
-
-type LoreEntry = {
-  title: string;
-  content: string;
-};
+import type { LoreEntry } from "@/lib/lore";
 
 export function buildOracleSystemPrompt(
   completedChapters: string[],

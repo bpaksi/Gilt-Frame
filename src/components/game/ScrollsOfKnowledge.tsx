@@ -1,17 +1,10 @@
 "use client";
 
 import { useState } from "react";
-
-type LoreEntry = {
-  id: string;
-  title: string;
-  content: string;
-  unlock_chapter_id: string | null;
-  unlocked: boolean;
-};
+import type { DisplayLoreEntry } from "@/lib/lore";
 
 interface ScrollsOfKnowledgeProps {
-  entries: LoreEntry[];
+  entries: DisplayLoreEntry[];
   completedChapters: string[];
 }
 

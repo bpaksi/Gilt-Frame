@@ -50,9 +50,9 @@ The Order of the Gilt Frame is an immersive, location-based interactive narrativ
   - **`api/`** — REST endpoints: auth, oracle, admin CRUD, OG image generation
   - **`e/[token]/`** — One-time enrollment link handler
 - **`src/components/`** — React components: `game/` (player UI, quests, puzzles), `admin/` (dashboard panels), `ui/` (shared)
-- **`src/config/`** — `types.ts` (type definitions), `contacts.ts` (PII, gitignored), `chapters.ts` (gameConfig data + helpers)
+- **`src/config/`** — `types.ts` (type definitions), `contacts.ts` (PII, gitignored), `chapters.ts` (gameConfig data + helpers), `lore/` (Markdown lore entries)
 - **`src/lib/`** — Shared logic: `supabase/` (client, types), `admin/` (auth, actions, logging), `actions/` (quest, moments), `messaging/` (Twilio, Resend), `hooks/` (geolocation, orientation), geo utils, rate limiting, oracle prompt
-- **`supabase/`** — Migrations (4 files), `seed.sql`, `config.toml`
+- **`supabase/`** — Migrations (5 files), `seed.sql`, `config.toml`
 - **`docs/`** — Design documents: `BUILD_PROMPT.md`, `INDEX.md`, `MOBILE_DESIGN.md`
 - **`public/`** — Static assets: favicons, marker SVGs, OG image, robots.txt
 
@@ -102,13 +102,13 @@ pnpm start                  # Start production server
 |---|---|---|
 | Enrollment | `device_enrollments` | Maps enrollment tokens → devices, tracks user_agent, track |
 | Progression | `chapter_progress`, `completed_steps`, `quest_answers`, `hint_views` | Chapter activation/completion, step completion log, answer history, hint tier tracking |
-| Content | `moments`, `lore_entries` | Journey snapshots (share_token), Scrolls of Knowledge |
+| Content | `moments` | Journey snapshots (share_token) |
 | Oracle | `oracle_conversations` | Q&A history with Gemini, flagging, token usage |
 | Messaging | `message_progress`, `summons` | Offline message delivery tracking, scheduled summons |
 | Admin | `activity_log` | Unified audit trail + event timeline (source: player/admin/system) |
 | Collectibles | `vault_items`, `marker_sightings` | Collected tokens, side quest submissions |
 
-RLS enabled on all tables. App uses `service_role` to bypass. Public read on `moments` (by share_token) and `lore_entries`.
+RLS enabled on all tables. App uses `service_role` to bypass. Public read on `moments` (by share_token). Lore entries (Scrolls of Knowledge) are static Markdown files in `src/config/lore/`, loaded by `src/lib/lore.ts`.
 
 ## External APIs
 
@@ -150,6 +150,8 @@ topic | location
 game config, chapters, steps, data | src/config/chapters.ts
 config types, abstractions | src/config/types.ts
 contacts (PII, gitignored) | src/config/contacts.ts
+lore entries (Scrolls of Knowledge) | src/config/lore/*.md
+lore loader, LoreEntry type | src/lib/lore.ts
 config architecture docs | src/config/CLAUDE.md
 config validation | scripts/validate-config.ts
 quest state, advance logic | src/lib/actions/quest.ts

@@ -37,18 +37,3 @@ INSERT INTO auth.identities (
   '{"sub":"a1b2c3d4-e5f6-7890-abcd-ef1234567890","email":"bpaksi@gmail.com","email_verified":false,"phone_verified":false}',
   'email', now(), now(), now()
 );
-
--- Sample lore entries (always-unlocked Scrolls of Knowledge)
-INSERT INTO lore_entries (title, content, unlock_chapter_id, "order") VALUES
-  ('The Founding of the Order',
-   'Long before the great museums rose from marble and ambition, a secret fellowship gathered in candlelit chambers. They called themselves the Order of the Gilt Frame, sworn to preserve beauty that the careless world would forget. Their first act was to commission a frame of impossible craftsmanship — gold leaf over ancient oak, carved with symbols only the worthy could read.',
-   NULL, 1),
-  ('The Language of Markers',
-   'The Order communicates through Markers — symbols placed in the world for those with eyes to see. Each Marker contains an hourglass formed by two crossing curves, representing the passage of time and the persistence of art. When you find a Marker, you have found a threshold. What lies beyond is yours to discover.',
-   NULL, 2),
-  ('The Sparrow''s Role',
-   'In the Order''s hierarchy, the Sparrow is the seeker — the one who moves between worlds, carrying fragments of truth from one trial to the next. The Sparrow is not chosen by blood or rank, but by the quality of their seeing. To be named Sparrow is to be entrusted with the Order''s most sacred task: to prove that beauty endures.',
-   NULL, 3),
-  ('The Compass and Its Secrets',
-   'The compass is the Order''s oldest instrument. Not merely a tool for navigation, it is a cipher. Every bearing the Order assigns points toward the next revelation. The needle does not merely find north — it finds meaning. Those who follow the compass with patience will discover that every direction was chosen with purpose.',
-   'ch1', 4);

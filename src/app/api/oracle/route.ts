@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { gameConfig } from "@/config/chapters";
+import { getUnlockedLore } from "@/lib/lore";
 import { buildOracleSystemPrompt } from "@/lib/oracle-prompt";
 
 export async function POST(request: Request) {
@@ -72,14 +73,7 @@ export async function POST(request: Request) {
   const completedChapters = (completedProgress ?? []).map((p) => p.chapter_id);
 
   // Get unlocked lore entries
-  const { data: loreEntries } = await supabase
-    .from("lore_entries")
-    .select("title, content, unlock_chapter_id")
-    .order("order", { ascending: true });
-
-  const unlockedLore = (loreEntries ?? []).filter(
-    (l) => !l.unlock_chapter_id || completedChapters.includes(l.unlock_chapter_id)
-  );
+  const unlockedLore = getUnlockedLore(completedChapters);
 
   const systemPrompt = buildOracleSystemPrompt(
     completedChapters,
