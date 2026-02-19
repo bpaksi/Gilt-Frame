@@ -1,0 +1,184 @@
+import { cookies } from "next/headers";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { chaptersConfig } from "@/config/chapters";
+import { buildOracleSystemPrompt } from "@/lib/oracle-prompt";
+
+export async function POST(request: Request) {
+  // Resolve track from cookie
+  const cookieStore = await cookies();
+  const deviceTokenCookie = cookieStore.get("device_token");
+
+  if (!deviceTokenCookie?.value) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const supabase = createAdminClient();
+  const { data: enrollment } = await supabase
+    .from("device_enrollments")
+    .select("track")
+    .eq("device_token", deviceTokenCookie.value)
+    .eq("revoked", false)
+    .single();
+
+  if (!enrollment) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const track = enrollment.track;
+  const { question, skipDelay } = await request.json();
+
+  if (!question || typeof question !== "string" || question.trim().length === 0) {
+    return Response.json({ error: "No question provided" }, { status: 400 });
+  }
+
+  // Count today's conversations
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  const { count } = await supabase
+    .from("oracle_conversations")
+    .select("*", { count: "exact", head: true })
+    .eq("track", track)
+    .gte("created_at", today.toISOString());
+
+  const conversationCount = count ?? 0;
+
+  // Delay logic
+  if (!skipDelay) {
+    if (conversationCount >= 11) {
+      const waitSeconds = 180 + Math.floor(Math.random() * 420);
+      return Response.json({ delayed: true, waitSeconds });
+    }
+
+    let delayMs = 0;
+    if (conversationCount >= 6) {
+      delayMs = 30000 + Math.floor(Math.random() * 30000); // 30-60s
+    } else if (conversationCount >= 1) {
+      delayMs = 5000 + Math.floor(Math.random() * 10000); // 5-15s
+    }
+
+    if (delayMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+
+  // Get completed chapters for context
+  const { data: completedProgress } = await supabase
+    .from("chapter_progress")
+    .select("chapter_id")
+    .eq("track", track)
+    .eq("status", "complete");
+
+  const completedChapters = (completedProgress ?? []).map((p) => p.chapter_id);
+
+  // Get unlocked lore entries
+  const { data: loreEntries } = await supabase
+    .from("lore_entries")
+    .select("title, content, unlock_chapter_id")
+    .order("order", { ascending: true });
+
+  const unlockedLore = (loreEntries ?? []).filter(
+    (l) => !l.unlock_chapter_id || completedChapters.includes(l.unlock_chapter_id)
+  );
+
+  const systemPrompt = buildOracleSystemPrompt(
+    completedChapters,
+    chaptersConfig.chapters,
+    unlockedLore
+  );
+
+  // Call Gemini API
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (!geminiKey) {
+    return Response.json(
+      { error: "The Oracle is not yet awakened." },
+      { status: 503 }
+    );
+  }
+
+  const geminiResponse = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse&key=${geminiKey}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: systemPrompt }] },
+        contents: [{ parts: [{ text: question }] }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 300,
+        },
+      }),
+    }
+  );
+
+  if (!geminiResponse.ok || !geminiResponse.body) {
+    return Response.json(
+      { error: "The Oracle is silent." },
+      { status: 502 }
+    );
+  }
+
+  // Stream the response
+  const reader = geminiResponse.body.getReader();
+  const decoder = new TextDecoder();
+  let fullResponse = "";
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      const encoder = new TextEncoder();
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split("\n");
+
+          for (const line of lines) {
+            if (!line.startsWith("data: ")) continue;
+            const jsonStr = line.slice(6).trim();
+            if (jsonStr === "[DONE]") continue;
+
+            try {
+              const parsed = JSON.parse(jsonStr);
+              const text =
+                parsed?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+              if (text) {
+                fullResponse += text;
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
+              }
+            } catch {
+              // Skip malformed JSON
+            }
+          }
+        }
+
+        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+        controller.close();
+      } catch {
+        controller.close();
+      }
+
+      // Persist conversation after streaming completes
+      supabase
+        .from("oracle_conversations")
+        .insert({
+          question: question.trim(),
+          response: fullResponse,
+          gemini_model: "gemini-2.0-flash",
+          track,
+        })
+        .then(() => {});
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
+    },
+  });
+}

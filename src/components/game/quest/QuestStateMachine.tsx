@@ -1,0 +1,79 @@
+"use client";
+
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { componentRegistry } from "./registry";
+import StateFader from "./StateFader";
+import type { QuestState } from "@/lib/actions/quest";
+import { advanceQuest, pollChapterProgress } from "@/lib/actions/quest";
+
+interface QuestStateMachineProps {
+  initialState: QuestState;
+}
+
+export default function QuestStateMachine({ initialState }: QuestStateMachineProps) {
+  const [state, setState] = useState(initialState);
+  const router = useRouter();
+  const pollRef = useRef<ReturnType<typeof setInterval>>(undefined);
+
+  const handleAdvance = useCallback(async () => {
+    if (!state.chapterId || state.flowIndex === undefined) return;
+    const next = await advanceQuest(state.chapterId, state.flowIndex);
+    setState(next);
+    router.refresh();
+  }, [state.chapterId, state.flowIndex, router]);
+
+  // Poll for admin-triggered advances
+  useEffect(() => {
+    if (state.advance !== "admin_trigger" || !state.chapterId) return;
+
+    pollRef.current = setInterval(async () => {
+      if (!state.chapterId) return;
+      const result = await pollChapterProgress(state.chapterId);
+      if (result && result.flowIndex !== state.flowIndex) {
+        router.refresh();
+      }
+    }, 30_000);
+
+    return () => clearInterval(pollRef.current);
+  }, [state.advance, state.chapterId, state.flowIndex, router]);
+
+  // Sync with server on initial state changes
+  useEffect(() => {
+    setState(initialState);
+  }, [initialState]);
+
+  if (state.status !== "active" || !state.component) {
+    return null;
+  }
+
+  const Component = componentRegistry[state.component];
+  if (!Component) return null;
+
+  return (
+    <StateFader stateKey={`${state.chapterId}-${state.flowIndex}`}>
+      <Suspense
+        fallback={
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
+              minHeight: "100%",
+            }}
+          />
+        }
+      >
+        <Component
+          config={state.config}
+          onAdvance={handleAdvance}
+          chapterId={state.chapterId}
+          chapterName={state.chapterName}
+          flowIndex={state.flowIndex}
+          revealedHintTiers={state.revealedHintTiers}
+        />
+      </Suspense>
+    </StateFader>
+  );
+}
