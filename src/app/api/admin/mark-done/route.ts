@@ -39,10 +39,9 @@ export async function POST(request: NextRequest) {
   }
 
   await logAdminAction("mark_done", {
-    track,
     chapter_id: chapterId,
     progress_key: progressKey,
-  });
+  }, track);
 
   return NextResponse.json({ success: true });
 }

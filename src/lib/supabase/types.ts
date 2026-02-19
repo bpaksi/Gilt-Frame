@@ -34,24 +34,30 @@ export type Database = {
   }
   public: {
     Tables: {
-      admin_activity_log: {
+      activity_log: {
         Row: {
-          action_type: string
           created_at: string | null
           details: Json | null
+          event_type: string
           id: string
+          source: string
+          track: string | null
         }
         Insert: {
-          action_type: string
           created_at?: string | null
           details?: Json | null
+          event_type: string
           id?: string
+          source: string
+          track?: string | null
         }
         Update: {
-          action_type?: string
           created_at?: string | null
           details?: Json | null
+          event_type?: string
           id?: string
+          source?: string
+          track?: string | null
         }
         Relationships: []
       }
@@ -324,30 +330,6 @@ export type Database = {
           question?: string
           response?: string
           tokens_used?: number | null
-          track?: string
-        }
-        Relationships: []
-      }
-      player_events: {
-        Row: {
-          created_at: string | null
-          details: Json | null
-          event_type: string
-          id: string
-          track: string
-        }
-        Insert: {
-          created_at?: string | null
-          details?: Json | null
-          event_type: string
-          id?: string
-          track: string
-        }
-        Update: {
-          created_at?: string | null
-          details?: Json | null
-          event_type?: string
-          id?: string
           track?: string
         }
         Relationships: []

@@ -1,5 +1,4 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { logAdminAction } from "@/lib/admin/log";
 import {
   gameConfig,
   getOrderedSteps,
@@ -134,25 +133,18 @@ export async function sendStep(
     { onConflict: "track,progress_key" }
   );
 
-  // Insert player event
-  await supabase.from("player_events").insert({
+  // Log activity
+  await supabase.from("activity_log").insert({
     track,
-    event_type: step.type === "email" ? "email_sent" : "sms_sent",
+    source: "admin",
+    event_type: "send_step",
     details: {
       chapter_id: chapterId,
       progress_key: progressKey,
       step_name: step.name,
       step_type: step.type,
+      status: messageStatus,
     },
-  });
-
-  // Log admin action
-  await logAdminAction("send_step", {
-    track,
-    chapter_id: chapterId,
-    progress_key: progressKey,
-    step_name: step.name,
-    status: messageStatus,
   });
 
   // Mark this step as completed if not already
@@ -222,18 +214,18 @@ export async function sendAdHocMessage(
   }
 
   const supabase = createAdminClient();
-  await supabase.from("player_events").insert({
+  await supabase.from("activity_log").insert({
     track,
-    event_type: channel === "sms" ? "sms_sent" : "email_sent",
+    source: "admin",
+    event_type: "send_ad_hoc",
     details: {
       ad_hoc: true,
       to,
       channel,
       body_preview: body.slice(0, 100),
+      success,
     },
   });
-
-  await logAdminAction("send_ad_hoc", { track, channel, to, success });
 
   return { success, error, messageStatus: success ? "sent" : "failed" };
 }

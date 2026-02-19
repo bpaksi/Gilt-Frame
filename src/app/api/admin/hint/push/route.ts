@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminSession } from "@/lib/admin/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { logAdminAction } from "@/lib/admin/log";
 import {
   gameConfig,
   getOrderedSteps,
@@ -56,8 +55,9 @@ export async function POST(request: NextRequest) {
     hint_tier: hintTier,
   });
 
-  await supabase.from("player_events").insert({
+  await supabase.from("activity_log").insert({
     track,
+    source: "admin",
     event_type: "hint_pushed",
     details: {
       chapter_id: chapterId,
@@ -65,13 +65,6 @@ export async function POST(request: NextRequest) {
       hint_tier: hintTier,
       admin_pushed: true,
     },
-  });
-
-  await logAdminAction("push_hint", {
-    track,
-    chapterId,
-    stepIndex,
-    hintTier,
   });
 
   return NextResponse.json({

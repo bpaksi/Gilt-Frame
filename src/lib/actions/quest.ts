@@ -134,8 +134,9 @@ export async function advanceQuest(
 
   // Record event for timeline
   const currentStep = orderedSteps[stepIndex];
-  await supabase.from("player_events").insert({
+  await supabase.from("activity_log").insert({
     track: trackInfo.track,
+    source: "player",
     event_type: "quest_advanced",
     details: {
       chapter_id: chapterId,
@@ -169,8 +170,9 @@ export async function recordAnswer(
   });
 
   // Record event for timeline
-  await supabase.from("player_events").insert({
+  await supabase.from("activity_log").insert({
     track: trackInfo.track,
+    source: "player",
     event_type: "answer_submitted",
     details: {
       chapter_id: chapterId,
@@ -210,8 +212,9 @@ export async function revealHint(
   });
 
   // Record event for timeline
-  await supabase.from("player_events").insert({
+  await supabase.from("activity_log").insert({
     track: trackInfo.track,
+    source: "player",
     event_type: "hint_requested",
     details: {
       chapter_id: chapterId,

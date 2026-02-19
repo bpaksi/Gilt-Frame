@@ -80,9 +80,10 @@ export async function POST(request: NextRequest) {
 
   // Record passphrase_entered event
   supabase
-    .from("player_events")
+    .from("activity_log")
     .insert({
       track,
+      source: "player",
       event_type: "passphrase_entered",
       details: { chapter_id: "prologue", step_name: "The Passphrase" },
     })

@@ -23,6 +23,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
 
-  await logAdminAction("activate_chapter", { track, chapterId });
+  await logAdminAction("activate_chapter", { chapterId }, track);
   return NextResponse.json({ success: true });
 }

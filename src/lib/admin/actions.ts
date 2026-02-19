@@ -53,7 +53,7 @@ export async function getPlayerState(
 
   // Get last event for this track
   const { data: lastEvent } = await supabase
-    .from("player_events")
+    .from("activity_log")
     .select("event_type, created_at, details")
     .eq("track", track)
     .order("created_at", { ascending: false })
@@ -122,6 +122,7 @@ export async function getChapterMessageProgress(
 export type PlayerEvent = {
   id: string;
   track: string;
+  source: string;
   event_type: string;
   details: Record<string, unknown> | null;
   created_at: string;
@@ -134,7 +135,7 @@ export async function getPlayerEvents(
   const supabase = createAdminClient();
 
   let query = supabase
-    .from("player_events")
+    .from("activity_log")
     .select("*")
     .eq("track", track)
     .order("created_at", { ascending: false })
@@ -245,9 +246,9 @@ export async function resetChapter(
     .eq("track", "test")
     .eq("chapter_id", chapterId);
 
-  // Delete player events for this chapter
+  // Delete activity log entries for this chapter
   await supabase
-    .from("player_events")
+    .from("activity_log")
     .delete()
     .eq("track", "test")
     .filter("details->>chapter_id", "eq", chapterId);

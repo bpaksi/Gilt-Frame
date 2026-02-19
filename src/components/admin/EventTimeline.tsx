@@ -28,8 +28,10 @@ function formatTime(dateStr: string): string {
 function eventIcon(type: string): string {
   switch (type) {
     case "sms_sent":
+    case "send_step":
       return "\uD83D\uDCF1";
     case "email_sent":
+    case "send_ad_hoc":
       return "\u2709\uFE0F";
     case "quest_advanced":
       return "\u25B6";
@@ -43,11 +45,16 @@ function eventIcon(type: string): string {
     case "oracle_question":
       return "\uD83D\uDD2E";
     case "chapter_activated":
+    case "activate_chapter":
       return "\uD83D\uDD13";
     case "moment_created":
       return "\uD83D\uDCF8";
     case "passphrase_entered":
       return "\uD83D\uDD11";
+    case "mark_done":
+      return "\u2705";
+    case "reset_chapter":
+      return "\uD83D\uDD04";
     default:
       return "\u25CF";
   }
@@ -62,6 +69,11 @@ const EVENT_DISPLAY_NAMES: Record<string, string> = {
   hint_requested: "alert requested",
   hint_pushed: "alert pushed",
   passphrase_entered: "passphrase entered",
+  send_step: "message sent",
+  send_ad_hoc: "ad-hoc message sent",
+  mark_done: "marked delivered",
+  activate_chapter: "chapter activated",
+  reset_chapter: "chapter reset",
 };
 
 function eventDisplayName(eventType: string): string {
@@ -161,8 +173,13 @@ export default function EventTimeline({
                   {eventIcon(event.event_type)}
                 </span>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: "13px", fontWeight: 500 }}>
+                  <div style={{ fontSize: "13px", fontWeight: 500, display: "flex", alignItems: "center", gap: "6px" }}>
                     {eventDisplayName(event.event_type)}
+                    {event.source === "admin" && (
+                      <span style={{ fontSize: "9px", background: "#e8e0f0", color: "#6b4c9a", padding: "1px 5px", borderRadius: "3px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        admin
+                      </span>
+                    )}
                   </div>
                   {typeof details?.step_name === "string" && (
                     <div style={{ fontSize: "11px", color: "#666666" }}>

@@ -105,7 +105,7 @@ pnpm start                  # Start production server
 | Content | `moments`, `lore_entries` | Journey snapshots (share_token), Scrolls of Knowledge |
 | Oracle | `oracle_conversations` | Q&A history with Gemini, flagging, token usage |
 | Messaging | `message_progress`, `summons` | Offline message delivery tracking, scheduled summons |
-| Admin | `admin_activity_log`, `player_events` | Audit trail, event timeline |
+| Admin | `activity_log` | Unified audit trail + event timeline (source: player/admin/system) |
 | Collectibles | `vault_items`, `marker_sightings` | Collected tokens, side quest submissions |
 
 RLS enabled on all tables. App uses `service_role` to bypass. Public read on `moments` (by share_token) and `lore_entries`.

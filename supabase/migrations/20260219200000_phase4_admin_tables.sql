@@ -1,5 +1,5 @@
 -- Phase 4: Admin Panel tables
--- message_progress, admin_activity_log, player_events
+-- message_progress, activity_log
 
 -- Tracks delivery status for each offline step
 create table message_progress (
@@ -19,23 +19,14 @@ create table message_progress (
 
 alter table message_progress enable row level security;
 
--- Audit trail for admin actions
-create table admin_activity_log (
+-- Unified activity log (replaces admin_activity_log + player_events)
+create table activity_log (
   id uuid primary key default gen_random_uuid(),
-  action_type text not null,
-  details jsonb,
-  created_at timestamptz default now()
-);
-
-alter table admin_activity_log enable row level security;
-
--- Unified event stream for timeline (track-scoped)
-create table player_events (
-  id uuid primary key default gen_random_uuid(),
-  track text not null check (track in ('test', 'live')),
+  track text check (track in ('test', 'live')),
+  source text not null check (source in ('player', 'admin', 'system')),
   event_type text not null,
   details jsonb,
   created_at timestamptz default now()
 );
 
-alter table player_events enable row level security;
+alter table activity_log enable row level security;
