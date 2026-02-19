@@ -5,7 +5,7 @@ import {
   getChapterMessageProgress,
 } from "@/lib/admin/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { gameConfig, getOrderedSteps } from "@/config/chapters";
+import { gameConfig, getOrderedSteps } from "@/config";
 import PlayerStateCard from "@/components/admin/PlayerStateCard";
 import CurrentStepAction from "@/components/admin/CurrentStepAction";
 
@@ -33,10 +33,10 @@ export default async function AdminCurrentPage() {
       const orderedSteps = getOrderedSteps(chapter);
       currentStep = orderedSteps[stepIndex] ?? null;
 
-      if (currentStep && "progress_key" in currentStep) {
+      if (currentStep && currentStep.type !== "website") {
         currentStepProgress =
           messageProgress.find(
-            (mp) => mp.progress_key === currentStep!.progress_key
+            (mp) => mp.progress_key === currentStep!.config.progress_key
           ) ?? null;
       }
 

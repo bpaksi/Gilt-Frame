@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from "react";
 import HintSystem from "./HintSystem";
 import { recordAnswer } from "@/lib/actions/quest";
-import type { MultipleChoiceConfig, HintItem } from "@/config/chapters";
+import type { MultipleChoiceConfig, HintItem } from "@/config";
 
 interface MultipleChoiceProps {
   config: MultipleChoiceConfig;

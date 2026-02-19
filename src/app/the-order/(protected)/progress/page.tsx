@@ -5,7 +5,7 @@ import {
   getAllMessageProgress,
   getCompletedStepCounts,
 } from "@/lib/admin/actions";
-import { gameConfig } from "@/config/chapters";
+import { gameConfig } from "@/config";
 import EventTimeline from "@/components/admin/EventTimeline";
 
 export default async function AdminProgressPage() {

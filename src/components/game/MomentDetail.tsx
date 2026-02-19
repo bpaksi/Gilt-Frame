@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import TextReveal from "./quest/TextReveal";
 import MarkerSVG from "./MarkerSVG";
 import type { MomentRow } from "@/lib/actions/moments";
-import { gameConfig } from "@/config/chapters";
+import { gameConfig } from "@/config";
 
 interface MomentDetailProps {
   moment: MomentRow;

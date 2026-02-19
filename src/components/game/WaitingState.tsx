@@ -1,7 +1,7 @@
 "use client";
 
 import GiltFrame from "./GiltFrame";
-import type { WaitingStateConfig } from "@/config/chapters";
+import type { WaitingStateConfig } from "@/config";
 
 interface WaitingStateProps {
   config?: WaitingStateConfig;

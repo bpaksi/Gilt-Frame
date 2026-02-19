@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminFetch } from "@/lib/admin/fetch";
-import type { Step } from "@/config/chapters";
+import type { Step } from "@/config";
 import type { MessageProgressRow } from "@/lib/admin/actions";
 import HintPush from "./HintPush";
 
@@ -30,7 +30,7 @@ export default function CurrentStepAction({
   const [error, setError] = useState("");
 
   const isLetter = step.type === "letter";
-  const hasProgressKey = "progress_key" in step;
+  const hasProgressKey = step.type !== "website";
 
   const alreadySent =
     messageProgress?.status === "sent" ||
@@ -50,7 +50,7 @@ export default function CurrentStepAction({
         body: JSON.stringify({
           track,
           chapterId,
-          progressKey: (step as { progress_key: string }).progress_key,
+          progressKey: (step as { config: { progress_key: string } }).config.progress_key,
         }),
       });
 
@@ -68,7 +68,7 @@ export default function CurrentStepAction({
           body: JSON.stringify({
             track,
             chapterId,
-            progressKey: (step as { progress_key: string }).progress_key,
+            progressKey: (step as { config: { progress_key: string } }).config.progress_key,
           }),
         });
 
@@ -95,32 +95,32 @@ export default function CurrentStepAction({
       case "mms":
         return (
           <>
-            <Detail label="To" value={step.to} />
-            <Detail label="Body" value={step.body} multiline />
-            {step.trigger_note && (
-              <Detail label="Trigger" value={step.trigger_note} />
+            <Detail label="To" value={step.config.to} />
+            <Detail label="Body" value={step.config.body} multiline />
+            {step.config._trigger_note && (
+              <Detail label="Trigger" value={step.config._trigger_note} />
             )}
           </>
         );
       case "email":
         return (
           <>
-            <Detail label="To" value={step.to} />
-            <Detail label="Subject" value={step.subject} />
-            {step.trigger_note && (
-              <Detail label="Trigger" value={step.trigger_note} />
+            <Detail label="To" value={step.config.to} />
+            <Detail label="Subject" value={step.config.subject} />
+            {step.config._trigger_note && (
+              <Detail label="Trigger" value={step.config._trigger_note} />
             )}
           </>
         );
       case "letter":
         return (
           <>
-            <Detail label="To" value={step.to} />
-            {step.trigger_note && (
-              <Detail label="Trigger" value={step.trigger_note} />
+            <Detail label="To" value={step.config.to} />
+            {step.config._trigger_note && (
+              <Detail label="Trigger" value={step.config._trigger_note} />
             )}
-            {step.content_notes && (
-              <Detail label="Notes" value={step.content_notes} />
+            {step.config._content_notes && (
+              <Detail label="Notes" value={step.config._content_notes} />
             )}
           </>
         );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import type { RewardRevealConfig } from "@/config/chapters";
+import type { RewardRevealConfig } from "@/config";
 
 interface RewardRevealProps {
   config: RewardRevealConfig;

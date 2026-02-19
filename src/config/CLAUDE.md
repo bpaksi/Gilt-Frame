@@ -12,18 +12,47 @@ Layer 2: Tracks (in gameConfig.tracks)
   live: player → Christine, companion1 → Bob, companion2 → Sister
 
 Layer 3: Chapters & Steps (in gameConfig.chapters)
-  Use abstract recipients only: "player" or "companion".
+  Use abstract recipients only: "player" or CompanionSlot ("companion1", "companion2", etc.)
   Never reference real names or PII.
 ```
 
 ## Recipient Resolution Chain
 
 ```
-Step with to:"player"    → track.player                      → Contact
-Step with to:"companion" → chapter.companion ("companion1")  → track.companion1 → Contact
-companion_message        → chapter.companion                 → track[slot]       → Contact
-Ad-hoc (FreeformCompose) → "player"|"companion1"|"companion2"→ track[slot]       → Contact
+Step with to:"player"      → track.player      → Contact
+Step with to:"companion1"  → track.companion1   → Contact
+Step with to:"companion2"  → track.companion2   → Contact
+companion_message.to       → track[slot]        → Contact
+Ad-hoc (FreeformCompose)   → track[slot]        → Contact
 ```
+
+Recipients are resolved directly from the track — no chapter-level indirection.
+
+## Config Pattern
+
+All step types (messaging and website) use a `config: { ... }` wrapper for type-specific properties. Step-level properties (`order`, `type`, `name`) sit outside config.
+
+```typescript
+// Messaging step
+{ order: 1, type: "sms", name: "...", config: { to, trigger, body, progress_key, ... } }
+
+// Website step
+{ order: 2, type: "website", name: "...", component: "MultipleChoice", advance: "correct_answers", config: { questions, hints } }
+
+// Email step — uses template reference instead of inline body
+{ order: 0, type: "email", name: "...", config: { to, trigger, subject, template: "ch2-mid-gap", progress_key, ... } }
+```
+
+## Email Templates
+
+Email content lives in `src/config/email/` as paired `.html` + `.txt` files. The `template` field in `EmailStepConfig` references the filename (without extension).
+
+Loaded at runtime by `src/lib/messaging/email-templates.ts`.
+
+### How to Add a New Email Template
+
+1. Create `src/config/email/<template-name>.html` and `src/config/email/<template-name>.txt`
+2. Reference as `template: "<template-name>"` in the email step config
 
 ## File Purposes
 
@@ -32,7 +61,9 @@ Ad-hoc (FreeformCompose) → "player"|"companion1"|"companion2"→ track[slot]  
 | `types.ts` | All type definitions, component↔config pairing | No |
 | `contacts.ts` | Real Contact objects with PII | **Yes** |
 | `contacts.example.ts` | Empty template for recreating contacts.ts | No |
-| `chapters.ts` | gameConfig data + getOrderedSteps + type re-exports | No |
+| `config.ts` | gameConfig data + getOrderedSteps helper | No |
+| `index.ts` | Barrel — re-exports types + data | No |
+| `email/*.html`, `email/*.txt` | Email templates (HTML + plaintext) | No |
 | `lore/*.md` | Lore entries (Scrolls of Knowledge) as Markdown with YAML frontmatter | No |
 
 ## Lore Content (`lore/`)
@@ -56,13 +87,23 @@ Loaded at runtime by `src/lib/lore.ts` which exports `getAllLore()` and `getUnlo
 
 1. Add the slot name to `CompanionSlot` union in `types.ts`
 2. Add the field to the `Track` type in `types.ts`
-3. Assign Contact objects in both tracks in `chapters.ts`
-4. Reference as `companion: "companionN"` in the chapter
+3. Assign Contact objects in both tracks in `config.ts`
+4. Reference as `to: "companionN"` in step configs
+
+## Documentation-Only Properties
+
+Properties prefixed with `_` are documentation/instructional content, not game logic:
+- `_description` — Track description
+- `_trigger_note` — Explains when a messaging step fires
+- `_content_notes` — Letter content notes
+- `_signature` — Letter/email signature attribution
+
+These may be displayed in the admin UI but are never used for game logic.
 
 ## Type Safety Guarantees
 
 - `component: "X", config: { ... }` — TypeScript enforces the config matches the component
-- `to: "bob"` — compile error (must be `"player"` or `"companion"`)
-- `companion: "companion4"` — compile error (not in CompanionSlot)
+- `to: "bob"` — compile error (must be `"player"` or a `CompanionSlot`)
+- `companion_message: { to: "companion4" }` — compile error (not in CompanionSlot)
 - `side_effect: "unknown"` — compile error (not in SideEffect)
 - Missing `contacts.ts` — build fails (import error)

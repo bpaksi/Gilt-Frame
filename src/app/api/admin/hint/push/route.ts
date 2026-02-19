@@ -5,7 +5,7 @@ import {
   gameConfig,
   getOrderedSteps,
   type HintItem,
-} from "@/config/chapters";
+} from "@/config";
 
 export async function POST(request: NextRequest) {
   if (!(await verifyAdminSession())) {

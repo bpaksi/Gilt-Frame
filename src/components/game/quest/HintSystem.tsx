@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { revealHint } from "@/lib/actions/quest";
-import type { HintItem } from "@/config/chapters";
+import type { HintItem } from "@/config";
 
 interface HintSystemProps {
   hints: HintItem[];

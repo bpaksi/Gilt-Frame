@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback } from "react";
 import type { MomentRow } from "@/lib/actions/moments";
-import { gameConfig } from "@/config/chapters";
+import { gameConfig } from "@/config";
 
 interface MomentCardProps {
   moment: MomentRow;

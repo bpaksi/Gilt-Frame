@@ -4,7 +4,7 @@ import {
   gameConfig,
   getOrderedSteps,
   type Step,
-} from "@/config/chapters";
+} from "@/config";
 import StepRow, { type StepState } from "./StepRow";
 import type { MessageProgressRow } from "@/lib/admin/actions";
 
@@ -16,9 +16,9 @@ function getStepState(
 ): StepState {
   const isOffline = step.type !== "website";
 
-  if (isOffline && "progress_key" in step) {
+  if (isOffline) {
     const progress = messageProgress.find(
-      (mp) => mp.progress_key === step.progress_key
+      (mp) => mp.progress_key === step.config.progress_key
     );
     if (progress?.status === "delivered") {
       return "delivered";

@@ -1,7 +1,7 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { gameConfig, getOrderedSteps } from "@/config/chapters";
+import { gameConfig, getOrderedSteps } from "@/config";
 import { getCurrentStepIndex } from "@/lib/actions/quest";
 
 export type PlayerState = {

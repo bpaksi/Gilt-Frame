@@ -1,10 +1,9 @@
 // ─── Contact & Track Types ──────────────────────────────────────────────────
 
 export type Contact = { name: string; phone: string; email: string };
-export type OrderContact = { sms_number: string; email: string };
 
 export type CompanionSlot = "companion1" | "companion2" | "companion3";
-export type Recipient = "player" | "companion";
+export type Recipient = "player" | CompanionSlot;
 export type AdHocRecipient = "player" | CompanionSlot;
 
 export type SideEffect = "activate_quest";
@@ -14,7 +13,7 @@ export type Track = {
   companion1: Contact | null;
   companion2: Contact | null;
   companion3: Contact | null;
-  description: string;
+  _description: string;
 };
 
 // ─── Triggers & Advance ─────────────────────────────────────────────────────
@@ -98,6 +97,7 @@ export type WaitingStateConfig = {
 /** Passphrase input puzzle — player enters hidden acrostic from letter. */
 export type PassphrasePuzzleConfig = {
   placeholder?: string;
+  passphrase: string;
 };
 
 // ─── Component ↔ Config Pairing ─────────────────────────────────────────────
@@ -122,8 +122,54 @@ export type ComponentConfig = ComponentConfigMap[ComponentName];
 // ─── Companion Message ──────────────────────────────────────────────────────
 
 export type CompanionMessage = {
+  to: CompanionSlot;
   channel: "sms" | "mms";
   body: string;
+};
+
+// ─── Messaging Step Config Types ────────────────────────────────────────────
+
+export type LetterStepConfig = {
+  to: Recipient;
+  trigger: Trigger;
+  _trigger_note?: string;
+  body: string;
+  _signature?: string;
+  _content_notes?: string;
+  companion_message?: CompanionMessage;
+  progress_key: string;
+};
+
+export type EmailStepConfig = {
+  to: Recipient;
+  trigger: Trigger;
+  _trigger_note?: string;
+  subject: string;
+  template: string;
+  companion_message?: CompanionMessage;
+  side_effect?: SideEffect;
+  progress_key: string;
+};
+
+export type SmsStepConfig = {
+  to: Recipient;
+  trigger: Trigger;
+  _trigger_note?: string;
+  body: string;
+  companion_message?: CompanionMessage;
+  side_effect?: SideEffect;
+  progress_key: string;
+};
+
+export type MmsStepConfig = {
+  to: Recipient;
+  trigger: Trigger;
+  _trigger_note?: string;
+  body: string;
+  image?: string;
+  companion_message?: CompanionMessage;
+  side_effect?: SideEffect;
+  progress_key: string;
 };
 
 // ─── Step Types ─────────────────────────────────────────────────────────────
@@ -132,56 +178,28 @@ export type LetterStep = {
   order: number;
   type: "letter";
   name: string;
-  to: Recipient;
-  trigger: Trigger;
-  trigger_note?: string;
-  body: string;
-  signature?: string;
-  content_notes?: string;
-  companion_message?: CompanionMessage;
-  progress_key: string;
+  config: LetterStepConfig;
 };
 
 export type EmailStep = {
   order: number;
   type: "email";
   name: string;
-  to: Recipient;
-  trigger: Trigger;
-  trigger_note?: string;
-  subject: string;
-  body: string[];
-  signature?: string;
-  companion_message?: CompanionMessage;
-  side_effect?: SideEffect;
-  progress_key: string;
+  config: EmailStepConfig;
 };
 
 export type SmsStep = {
   order: number;
   type: "sms";
   name: string;
-  to: Recipient;
-  trigger: Trigger;
-  trigger_note?: string;
-  body: string;
-  companion_message?: CompanionMessage;
-  side_effect?: SideEffect;
-  progress_key: string;
+  config: SmsStepConfig;
 };
 
 export type MmsStep = {
   order: number;
   type: "mms";
   name: string;
-  to: Recipient;
-  trigger: Trigger;
-  trigger_note?: string;
-  body: string;
-  image?: string;
-  companion_message?: CompanionMessage;
-  side_effect?: SideEffect;
-  progress_key: string;
+  config: MmsStepConfig;
 };
 
 /** Type-safe pairing: each component variant only accepts its matching config. */
@@ -204,13 +222,10 @@ export type Chapter = {
   name: string;
   location: string | null;
   window: string;
-  companion: CompanionSlot | null;
-  passphrase?: string;
   steps: Record<string, Step>;
 };
 
 export type GameConfig = {
-  order: OrderContact;
   tracks: { test: Track; live: Track };
   chapters: Record<string, Chapter>;
 };

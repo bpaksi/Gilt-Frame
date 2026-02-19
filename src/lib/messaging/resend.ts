@@ -6,7 +6,8 @@ type ResendResult = { success: boolean; id?: string; error?: string };
 export async function sendEmail(
   to: string,
   subject: string,
-  body: string
+  text: string,
+  html?: string
 ): Promise<ResendResult> {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -18,7 +19,8 @@ export async function sendEmail(
       from: `The Order <${FROM_EMAIL}>`,
       to: [to],
       subject,
-      text: body,
+      text,
+      ...(html && { html }),
     }),
   });
 

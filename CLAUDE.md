@@ -50,7 +50,7 @@ The Order of the Gilt Frame is an immersive, location-based interactive narrativ
   - **`api/`** — REST endpoints: auth, oracle, admin CRUD, OG image generation
   - **`e/[token]/`** — One-time enrollment link handler
 - **`src/components/`** — React components: `game/` (player UI, quests, puzzles), `admin/` (dashboard panels), `ui/` (shared)
-- **`src/config/`** — `types.ts` (type definitions), `contacts.ts` (PII, gitignored), `chapters.ts` (gameConfig data + helpers), `lore/` (Markdown lore entries)
+- **`src/config/`** — `types.ts` (type definitions), `contacts.ts` (PII, gitignored), `config.ts` (gameConfig data + helpers), `index.ts` (barrel), `email/` (HTML + text email templates), `lore/` (Markdown lore entries)
 - **`src/lib/`** — Shared logic: `supabase/` (client, types), `admin/` (auth, actions, logging), `actions/` (quest, moments), `messaging/` (Twilio, Resend), `hooks/` (geolocation, orientation), geo utils, rate limiting, oracle prompt
 - **`supabase/`** — Migrations (5 files), `seed.sql`, `config.toml`
 - **`docs/`** — Design documents: `BUILD_PROMPT.md`, `INDEX.md`, `MOBILE_DESIGN.md`
@@ -127,7 +127,7 @@ RLS enabled on all tables. App uses `service_role` to bypass. Public read on `mo
 | Design index | `docs/INDEX.md` |
 | Mobile design spec | `docs/MOBILE_DESIGN.md` |
 | Website design doc | `docs/Order_of_the_Gilt_Frame_Website_Design.docx` |
-| Game chapter config | `src/config/chapters.ts`, `src/config/types.ts` |
+| Game chapter config | `src/config/config.ts`, `src/config/types.ts` |
 | DB types (auto-generated) | `src/lib/supabase/types.ts` |
 | Supabase config | `supabase/config.toml` |
 | Seed data | `supabase/seed.sql` |
@@ -146,7 +146,7 @@ RLS enabled on all tables. App uses `service_role` to bypass. Public read on `mo
 ```
 topic | location
 ------|--------
-game config, chapters, steps, data | src/config/chapters.ts
+game config, chapters, steps, data | src/config/config.ts
 config types, abstractions | src/config/types.ts
 contacts (PII, gitignored) | src/config/contacts.ts
 lore entries (Scrolls of Knowledge) | src/config/lore/*.md
@@ -157,6 +157,8 @@ quest state, advance logic | src/lib/actions/quest.ts
 moments, journey data | src/lib/actions/moments.ts
 supabase client, admin client | src/lib/supabase/admin.ts
 DB types (auto-gen) | src/lib/supabase/types.ts
+email templates (HTML + text) | src/config/email/
+email template loader | src/lib/messaging/email-templates.ts
 messaging (SMS/MMS/email) | src/lib/messaging/
 oracle system prompt | src/lib/oracle-prompt.ts
 geolocation, bearing, distance | src/lib/geo.ts

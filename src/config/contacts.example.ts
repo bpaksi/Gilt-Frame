@@ -1,7 +1,10 @@
 // Copy this file to contacts.ts and fill in real values.
 // contacts.ts is gitignored — it contains PII. The build WILL fail without it.
 
-import type { Contact, OrderContact } from "./types";
+// Copy this file to contacts.ts and fill in real values.
+// contacts.ts is gitignored — it contains PII. The build WILL fail without it.
+
+import type { Contact } from "./types";
 
 export const christine: Contact = {
   name: "",
@@ -18,10 +21,5 @@ export const bob: Contact = {
 export const sister: Contact = {
   name: "",
   phone: "",
-  email: "",
-};
-
-export const order: OrderContact = {
-  sms_number: "",
   email: "",
 };

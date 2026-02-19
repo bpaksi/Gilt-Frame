@@ -1,4 +1,4 @@
-import type { Chapter } from "@/config/chapters";
+import type { Chapter } from "@/config";
 import type { LoreEntry } from "@/lib/lore";
 
 export function buildOracleSystemPrompt(

@@ -6,10 +6,11 @@ import {
   type MmsStep,
   type EmailStep,
   type LetterStep,
-} from "@/config/chapters";
-import type { Contact, AdHocRecipient, Chapter, Track } from "@/config/types";
+} from "@/config";
+import type { Contact, AdHocRecipient, Track, Recipient } from "@/config";
 import { sendSms, sendMms } from "./twilio";
 import { sendEmail } from "./resend";
+import { loadEmailTemplate } from "./email-templates";
 
 type SendResult = {
   success: boolean;
@@ -20,14 +21,10 @@ type SendResult = {
 
 function resolveRecipient(
   trackObj: Track,
-  to: string,
-  chapter?: Chapter
+  to: Recipient
 ): Contact | null {
   if (to === "player") return trackObj.player;
-  if (to === "companion" && chapter?.companion) {
-    return trackObj[chapter.companion];
-  }
-  return null;
+  return trackObj[to];
 }
 
 function getMediaUrl(image?: string): string | null {
@@ -47,7 +44,7 @@ export async function sendStep(
   const trackObj = gameConfig.tracks[track];
   const orderedSteps = getOrderedSteps(chapter);
   const stepIdx = orderedSteps.findIndex(
-    (s) => "progress_key" in s && s.progress_key === progressKey
+    (s) => s.type !== "website" && s.config.progress_key === progressKey
   );
   if (stepIdx < 0) return { success: false, error: "Step not found." };
 
@@ -59,36 +56,36 @@ export async function sendStep(
   let error: string | undefined;
 
   // Send main message
-  const recipient = resolveRecipient(trackObj, step.to, chapter);
+  const recipient = resolveRecipient(trackObj, step.config.to);
   if (!recipient) {
-    return { success: false, error: `Could not resolve recipient "${step.to}".` };
+    return { success: false, error: `Could not resolve recipient "${step.config.to}".` };
   }
 
   if (step.type === "sms") {
-    const result = await sendSms(recipient.phone, step.body);
+    const result = await sendSms(recipient.phone, step.config.body);
     if (!result.success) {
       messageStatus = "failed";
       error = result.error;
     }
   } else if (step.type === "mms") {
-    const mediaUrl = getMediaUrl(step.image);
+    const mediaUrl = getMediaUrl(step.config.image);
     if (mediaUrl) {
-      const result = await sendMms(recipient.phone, step.body, mediaUrl);
+      const result = await sendMms(recipient.phone, step.config.body, mediaUrl);
       if (!result.success) {
         messageStatus = "failed";
         error = result.error;
       }
     } else {
       // Fallback to SMS if no image
-      const result = await sendSms(recipient.phone, step.body);
+      const result = await sendSms(recipient.phone, step.config.body);
       if (!result.success) {
         messageStatus = "failed";
         error = result.error;
       }
     }
   } else if (step.type === "email") {
-    const body = step.body.join("\n");
-    const result = await sendEmail(recipient.email, step.subject, body);
+    const { html, text } = await loadEmailTemplate(step.config.template);
+    const result = await sendEmail(recipient.email, step.config.subject, text, html);
     if (!result.success) {
       messageStatus = "failed";
       error = result.error;
@@ -99,9 +96,9 @@ export async function sendStep(
   }
 
   // Send companion message if defined
-  if (step.companion_message) {
-    const comp = step.companion_message;
-    const compRecipient = resolveRecipient(trackObj, "companion", chapter);
+  if (step.config.companion_message) {
+    const comp = step.config.companion_message;
+    const compRecipient = resolveRecipient(trackObj, comp.to);
 
     if (compRecipient) {
       if (comp.channel === "sms") {

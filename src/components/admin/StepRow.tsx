@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { adminFetch } from "@/lib/admin/fetch";
-import type { Step } from "@/config/chapters";
+import type { Step } from "@/config";
 
 export type StepState = "delivered" | "sent" | "ready" | "active" | "locked" | "scheduled";
 
@@ -27,9 +27,9 @@ export default function StepRow({
   const [error, setError] = useState("");
 
   const isOffline = step.type !== "website";
-  const hasProgressKey = "progress_key" in step;
+  const hasProgressKey = isOffline;
   const hasCompanion =
-    "companion_message" in step && step.companion_message !== null;
+    isOffline && "companion_message" in step.config && step.config.companion_message != null;
 
   const effectiveSent = currentState === "sent" || currentState === "delivered" || stepState === "sent" || stepState === "delivered";
   const effectiveDelivered = currentState === "delivered" || stepState === "delivered";
@@ -75,7 +75,7 @@ export default function StepRow({
         body: JSON.stringify({
           track,
           chapterId,
-          progressKey: (step as { progress_key: string }).progress_key,
+          progressKey: (step as { config: { progress_key: string } }).config.progress_key,
         }),
       });
 
@@ -104,7 +104,7 @@ export default function StepRow({
         body: JSON.stringify({
           track,
           chapterId,
-          progressKey: (step as { progress_key: string }).progress_key,
+          progressKey: (step as { config: { progress_key: string } }).config.progress_key,
         }),
       });
 

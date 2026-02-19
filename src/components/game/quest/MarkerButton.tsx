@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import MarkerSVG from "../MarkerSVG";
-import type { MarkerButtonConfig } from "@/config/chapters";
+import type { MarkerButtonConfig } from "@/config";
 
 interface MarkerButtonProps {
   config: MarkerButtonConfig;

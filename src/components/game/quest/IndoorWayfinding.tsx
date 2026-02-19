@@ -2,7 +2,7 @@
 
 import MarkerSVG from "../MarkerSVG";
 import HintSystem from "./HintSystem";
-import type { WayfindingCompassConfig, HintItem } from "@/config/chapters";
+import type { WayfindingCompassConfig, HintItem } from "@/config";
 
 interface IndoorWayfindingProps {
   config: WayfindingCompassConfig;

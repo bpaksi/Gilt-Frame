@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import type { ComponentName } from "@/config/chapters";
+import type { ComponentName } from "@/config";
 import { lazy } from "react";
 
 const WayfindingCompass = lazy(() => import("./WayfindingCompass"));

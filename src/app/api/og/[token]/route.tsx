@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getMomentByShareToken } from "@/lib/actions/moments";
-import { gameConfig } from "@/config/chapters";
+import { gameConfig } from "@/config";
 
 export const runtime = "edge";
 

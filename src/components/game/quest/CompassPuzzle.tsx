@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
 import CompassPermission from "./CompassPermission";
-import type { CompassPuzzleConfig } from "@/config/chapters";
+import type { CompassPuzzleConfig } from "@/config";
 
 interface CompassPuzzleProps {
   config: CompassPuzzleConfig;

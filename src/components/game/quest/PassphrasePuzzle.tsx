@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import GiltFrame from "../GiltFrame";
-import type { PassphrasePuzzleConfig } from "@/config/chapters";
+import type { PassphrasePuzzleConfig } from "@/config";
 
 interface PassphrasePuzzleProps {
   config: PassphrasePuzzleConfig;

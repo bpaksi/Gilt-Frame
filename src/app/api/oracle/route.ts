@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { gameConfig } from "@/config/chapters";
+import { gameConfig } from "@/config";
 import { getUnlockedLore } from "@/lib/lore";
 import { buildOracleSystemPrompt } from "@/lib/oracle-prompt";
 

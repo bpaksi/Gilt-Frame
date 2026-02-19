@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getAdminTrack } from "@/lib/admin/track";
 import { getPlayerState } from "@/lib/admin/actions";
-import { gameConfig } from "@/config/chapters";
+import { gameConfig } from "@/config";
 import ResetChapter from "@/components/admin/ResetChapter";
 import SignOutButton from "./SignOutButton";
 

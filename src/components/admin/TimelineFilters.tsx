@@ -1,6 +1,6 @@
 "use client";
 
-import { gameConfig } from "@/config/chapters";
+import { gameConfig } from "@/config";
 
 export default function TimelineFilters({
   selectedChapter,

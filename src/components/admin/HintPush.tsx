@@ -6,7 +6,7 @@ import {
   gameConfig,
   getOrderedSteps,
   type HintItem,
-} from "@/config/chapters";
+} from "@/config";
 
 export default function HintPush({
   track,

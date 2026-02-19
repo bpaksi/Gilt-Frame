@@ -9,7 +9,7 @@ import {
   type ComponentConfig,
   type AdvanceCondition,
   type HintItem,
-} from "@/config/chapters";
+} from "@/config";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type QuestState = {

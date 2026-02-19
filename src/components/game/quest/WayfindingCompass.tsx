@@ -7,7 +7,7 @@ import { haversineDistance, bearingTo, thematicDistanceText } from "@/lib/geo";
 import HintSystem from "./HintSystem";
 import CompassPermission from "./CompassPermission";
 import IndoorWayfinding from "./IndoorWayfinding";
-import type { WayfindingCompassConfig, HintItem } from "@/config/chapters";
+import type { WayfindingCompassConfig, HintItem } from "@/config";
 
 interface WayfindingCompassProps {
   config: WayfindingCompassConfig;

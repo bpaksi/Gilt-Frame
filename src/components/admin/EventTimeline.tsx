@@ -7,7 +7,7 @@ import type {
   MessageProgressRow,
   CompletedStepCount,
 } from "@/lib/admin/actions";
-import { gameConfig, getOrderedSteps } from "@/config/chapters";
+import { gameConfig, getOrderedSteps } from "@/config";
 import TimelineFilters from "./TimelineFilters";
 import StepList from "./StepList";
 

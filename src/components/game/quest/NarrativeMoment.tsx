@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import TextReveal from "./TextReveal";
-import type { NarrativeMomentConfig } from "@/config/chapters";
+import type { NarrativeMomentConfig } from "@/config";
 
 interface NarrativeMomentProps {
   config: NarrativeMomentConfig;

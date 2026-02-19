@@ -1,6 +1,6 @@
 "use client";
 
-import { gameConfig, getOrderedSteps } from "@/config/chapters";
+import { gameConfig, getOrderedSteps } from "@/config";
 
 export default function ChapterEditor() {
   const chapters = Object.entries(gameConfig.chapters);
@@ -29,20 +29,6 @@ export default function ChapterEditor() {
                   {id} {chapter.location && `\u2022 ${chapter.location}`} {chapter.window && `\u2022 ${chapter.window}`}
                 </div>
               </div>
-              {chapter.companion && (
-                <span
-                  style={{
-                    fontSize: "10px",
-                    background: "#e8eef5",
-                    color: "#336699",
-                    padding: "2px 8px",
-                    borderRadius: "4px",
-                    fontWeight: 600,
-                  }}
-                >
-                  auto: {chapter.companion}
-                </span>
-              )}
             </div>
 
             {steps.length > 0 ? (
