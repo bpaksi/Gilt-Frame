@@ -20,7 +20,7 @@ export default function TextReveal({
     <div style={{ display: "flex", flexDirection: "column", gap: "16px", ...style }}>
       {lines.map((line, i) => (
         <p
-          key={i}
+          key={`${i}-${line}`}
           style={{
             opacity: 0,
             animation: `fade-in 0.8s ease forwards`,

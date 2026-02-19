@@ -36,9 +36,9 @@ export default function LandingPage({
       }}
     >
       {/* Ambient particles */}
-      {[0, 1, 2, 3, 4].map((i) => (
+      {[0, 1, 2, 3, 4].map((particleId) => (
         <div
-          key={i}
+          key={particleId}
           style={{
             position: "absolute",
             width: "2px",
@@ -48,10 +48,10 @@ export default function LandingPage({
             filter: "blur(0.5px)",
             opacity: animationDone ? 0.3 : 0,
             animation: animationDone
-              ? `drift ${5 + i}s ease-in-out ${i * 0.8}s infinite`
+              ? `drift ${5 + particleId}s ease-in-out ${particleId * 0.8}s infinite`
               : "none",
-            top: `${20 + i * 15}%`,
-            left: `${10 + i * 20}%`,
+            top: `${20 + particleId * 15}%`,
+            left: `${10 + particleId * 20}%`,
           }}
         />
       ))}
@@ -81,7 +81,7 @@ export default function LandingPage({
               letterSpacing: "2px",
               padding: "12px 32px",
               cursor: "pointer",
-              transition: "all 0.3s ease",
+              transition: "border-color 0.3s ease, color 0.3s ease",
               minHeight: "44px",
             }}
           >

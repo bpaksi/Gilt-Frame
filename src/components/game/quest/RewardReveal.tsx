@@ -107,7 +107,7 @@ export default function RewardReveal({ config, onAdvance, chapterName }: RewardR
       {/* Primary text lines */}
       {primaryLines.map((line, i) => (
         <p
-          key={i}
+          key={`${i}-${line}`}
           style={{
             opacity: showLines[i] ? 1 : 0,
             transform: showLines[i] ? "translateY(0)" : "translateY(12px)",

@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export type TrackInfo = {
+type TrackInfo = {
   track: "test" | "live";
   deviceToken: string;
 };

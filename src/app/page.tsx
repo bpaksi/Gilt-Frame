@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import LandingPage from "../components/game/LandingPage";
+
+export const metadata: Metadata = {
+  title: "The Order of the Gilt Frame",
+};
 
 export default async function Home() {
   const cookieStore = await cookies();

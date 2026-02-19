@@ -13,8 +13,15 @@ interface QuestStateMachineProps {
 
 export default function QuestStateMachine({ initialState }: QuestStateMachineProps) {
   const [state, setState] = useState(initialState);
+  const [prevInitialState, setPrevInitialState] = useState(initialState);
   const router = useRouter();
   const pollRef = useRef<ReturnType<typeof setInterval>>(undefined);
+
+  // Sync with server on initial state changes (render-time reset)
+  if (initialState !== prevInitialState) {
+    setPrevInitialState(initialState);
+    setState(initialState);
+  }
 
   const handleAdvance = useCallback(async () => {
     if (!state.chapterId || state.flowIndex === undefined) return;
@@ -37,11 +44,6 @@ export default function QuestStateMachine({ initialState }: QuestStateMachinePro
 
     return () => clearInterval(pollRef.current);
   }, [state.advance, state.chapterId, state.flowIndex, router]);
-
-  // Sync with server on initial state changes
-  useEffect(() => {
-    setState(initialState);
-  }, [initialState]);
 
   if (state.status !== "active" || !state.component) {
     return null;

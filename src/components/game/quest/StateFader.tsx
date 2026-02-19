@@ -13,9 +13,13 @@ export default function StateFader({ stateKey, children }: StateFaderProps) {
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
-    if (stateKey === displayed.key) return;
+    if (stateKey === displayed.key) {
+      // Children changed but key is same — update in place
+      setDisplayed({ key: stateKey, children });
+      return;
+    }
 
-    // Fade out current
+    // Key changed — fade out, then swap
     setPhase("out");
     timeoutRef.current = setTimeout(() => {
       setDisplayed({ key: stateKey, children });
@@ -23,13 +27,6 @@ export default function StateFader({ stateKey, children }: StateFaderProps) {
     }, 150);
 
     return () => clearTimeout(timeoutRef.current);
-  }, [stateKey, children, displayed.key]);
-
-  // Update children if key hasn't changed (re-render with same step)
-  useEffect(() => {
-    if (stateKey === displayed.key) {
-      setDisplayed({ key: stateKey, children });
-    }
   }, [stateKey, children, displayed.key]);
 
   return (

@@ -1,6 +1,11 @@
+import type { Metadata } from "next";
 import { resolveTrack } from "@/lib/track";
 import { createAdminClient } from "@/lib/supabase/admin";
 import OracleView from "@/components/game/OracleView";
+
+export const metadata: Metadata = {
+  title: "The Oracle | The Order of the Gilt Frame",
+};
 
 export default async function OraclePage() {
   const trackInfo = await resolveTrack();

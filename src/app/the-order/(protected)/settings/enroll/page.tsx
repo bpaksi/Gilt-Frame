@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import EnrollmentClient from "./EnrollmentClient";
 
@@ -11,7 +12,7 @@ export default async function EnrollmentPage() {
   return (
     <div style={{ padding: "40px 24px", maxWidth: "720px" }}>
       <div style={{ display: "flex", alignItems: "baseline", gap: "16px", marginBottom: "32px" }}>
-        <a
+        <Link
           href="/the-order/settings"
           style={{
             fontFamily: "Georgia, 'Times New Roman', serif",
@@ -22,7 +23,7 @@ export default async function EnrollmentPage() {
           }}
         >
           ← Settings
-        </a>
+        </Link>
         <h1
           style={{
             fontFamily: "Georgia, 'Times New Roman', serif",

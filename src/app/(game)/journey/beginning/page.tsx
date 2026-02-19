@@ -1,16 +1,10 @@
-"use client";
+import type { Metadata } from "next";
+import BeginningClient from "./BeginningClient";
 
-import { useRouter } from "next/navigation";
-import LandingPage from "../../../../components/game/LandingPage";
+export const metadata: Metadata = {
+  title: "The Beginning | The Order of the Gilt Frame",
+};
 
 export default function BeginningPage() {
-  const router = useRouter();
-
-  return (
-    <LandingPage
-      hasDeviceToken={false}
-      isReplay={true}
-      onReplayEnd={() => router.push("/journey")}
-    />
-  );
+  return <BeginningClient />;
 }

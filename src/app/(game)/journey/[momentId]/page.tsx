@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { resolveTrack } from "@/lib/track";
 import { getMomentById } from "@/lib/actions/moments";
 import MomentDetail from "@/components/game/MomentDetail";
+
+export const metadata: Metadata = {
+  title: "Moment | The Order of the Gilt Frame",
+};
 
 export default async function MomentDetailPage({
   params,

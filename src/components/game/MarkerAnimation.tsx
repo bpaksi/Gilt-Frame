@@ -275,7 +275,7 @@ export default function MarkerAnimation({ onComplete, delayMs = 800 }: MarkerAni
           />
           {([6, 5, 4, 3.5, 3] as const).map((r, i) => (
             <circle
-              key={i}
+              key={r}
               ref={(el) => { trailRefs.current[i] = el; }}
               cx="0" cy="0" r={r}
               fill="rgba(255, 248, 220, 0.5)"
@@ -309,7 +309,7 @@ export default function MarkerAnimation({ onComplete, delayMs = 800 }: MarkerAni
             { cx: 100, cy: 84  },
           ] as const).map((pos, i) => (
             <circle
-              key={i}
+              key={`${pos.cx}-${pos.cy}`}
               ref={(el) => { dotRefs.current[i] = el; }}
               cx={pos.cx} cy={pos.cy} r="3"
               fill="#C9A84C"

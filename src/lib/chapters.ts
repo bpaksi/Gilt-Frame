@@ -1,4 +1,4 @@
-export { chaptersConfig, getOrderedFlow } from "@/config/chapters";
+export { chaptersConfig } from "@/config/chapters";
 export type {
   ChaptersConfig,
   Chapter,

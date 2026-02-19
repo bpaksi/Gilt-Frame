@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { revealHint } from "@/lib/actions/quest";
 import type { HintItem } from "@/config/chapters";
 
@@ -11,11 +11,13 @@ interface HintSystemProps {
   initialRevealedTiers?: number[];
 }
 
+const EMPTY_TIERS: number[] = [];
+
 export default function HintSystem({
   hints,
   chapterId,
   flowIndex,
-  initialRevealedTiers = [],
+  initialRevealedTiers = EMPTY_TIERS,
 }: HintSystemProps) {
   const [revealedTiers, setRevealedTiers] = useState<number[]>(initialRevealedTiers);
   const [loading, setLoading] = useState(false);
@@ -24,7 +26,7 @@ export default function HintSystem({
   const nextHint = sortedHints.find((h) => !revealedTiers.includes(h.tier));
   const allRevealed = !nextHint;
 
-  const handleReveal = useCallback(async () => {
+  const handleReveal = async () => {
     if (!nextHint || loading) return;
     setLoading(true);
     const result = await revealHint(chapterId, flowIndex, nextHint.tier);
@@ -32,7 +34,7 @@ export default function HintSystem({
       setRevealedTiers((prev) => [...prev, nextHint.tier]);
     }
     setLoading(false);
-  }, [nextHint, loading, chapterId, flowIndex]);
+  };
 
   if (hints.length === 0) return null;
 

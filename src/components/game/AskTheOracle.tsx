@@ -19,6 +19,7 @@ export default function AskTheOracle({ initialConversations }: AskTheOracleProps
   const [currentResponse, setCurrentResponse] = useState("");
   const [delayWait, setDelayWait] = useState<number | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const handleSubmitRef = useRef<(skipDelay?: boolean) => void>(undefined);
 
   const handleSubmit = useCallback(
     async (skipDelay = false) => {
@@ -60,7 +61,7 @@ export default function AskTheOracle({ initialConversations }: AskTheOracleProps
           // Wait then retry
           setTimeout(() => {
             setDelayWait(null);
-            handleSubmit(true);
+            handleSubmitRef.current?.(true);
           }, data.waitSeconds * 1000);
           return;
         }
@@ -132,6 +133,8 @@ export default function AskTheOracle({ initialConversations }: AskTheOracleProps
     [question, streaming]
   );
 
+  handleSubmitRef.current = handleSubmit;
+
   return (
     <div
       style={{
@@ -155,7 +158,7 @@ export default function AskTheOracle({ initialConversations }: AskTheOracleProps
 
       {/* Conversation history */}
       {conversations.map((conv, i) => (
-        <div key={i} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div key={`${i}-${conv.question}`} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           <p
             style={{
               color: "rgba(200, 165, 75, 0.5)",

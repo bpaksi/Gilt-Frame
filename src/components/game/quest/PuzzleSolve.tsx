@@ -1,50 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  easeInOut, easeOut, easeIn, clamp01, lerp, prog, pointOnBorder,
+  TIMELINE, FRAME_X, FRAME_Y, FRAME_W, FRAME_H,
+  CENTER_X, CENTER_Y, TRAIL_COUNT, TRAIL_LAG, TRAIL_RADII, TRAIL_OPACITIES,
+  SAND_DOTS,
+} from "./puzzleSolveAnimation";
 
 interface PuzzleSolveProps {
   onAdvance: () => void;
-}
-
-function easeInOut(t: number) { return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; }
-function easeOut(t: number) { return 1 - Math.pow(1 - t, 3); }
-function easeIn(t: number) { return t * t; }
-function clamp01(t: number) { return Math.max(0, Math.min(1, t)); }
-function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
-function prog(elapsed: number, phase: { start: number; end: number }) {
-  return clamp01((elapsed - phase.start) / (phase.end - phase.start));
-}
-
-const TIMELINE = {
-  gather:     { start: 0,     end: 2000 },
-  flash:      { start: 1800,  end: 3000 },
-  corner:     { start: 3000,  end: 4000 },
-  loop:       { start: 4000,  end: 7500 },
-  returnC:    { start: 7500,  end: 8500 },
-  fade:       { start: 8500,  end: 9800 },
-  hourglass:  { start: 9200,  end: 10500 },
-  pulse:      { start: 10500, end: 99999 },
-  unlock:     { start: 11000, end: 99999 },
-};
-
-const FRAME_X = 10;
-const FRAME_Y = 10;
-const FRAME_W = 180;
-const FRAME_H = 240;
-const PERIMETER = 2 * (FRAME_W + FRAME_H); // 840
-const CENTER_X = 100;
-const CENTER_Y = 130;
-const TRAIL_COUNT = 4;
-const TRAIL_LAG = 0.018;
-const TRAIL_RADII = [6, 5, 4, 3];
-const TRAIL_OPACITIES = [0.35, 0.25, 0.15, 0.08];
-
-function pointOnBorder(frac: number): { x: number; y: number } {
-  const dist = (frac % 1) * PERIMETER;
-  if (dist < FRAME_W) return { x: FRAME_X + dist, y: FRAME_Y };
-  if (dist < FRAME_W + FRAME_H) return { x: FRAME_X + FRAME_W, y: FRAME_Y + (dist - FRAME_W) };
-  if (dist < 2 * FRAME_W + FRAME_H) return { x: FRAME_X + FRAME_W - (dist - FRAME_W - FRAME_H), y: FRAME_Y + FRAME_H };
-  return { x: FRAME_X, y: FRAME_Y + FRAME_H - (dist - 2 * FRAME_W - FRAME_H) };
 }
 
 export default function PuzzleSolve({ onAdvance }: PuzzleSolveProps) {
@@ -321,7 +286,7 @@ export default function PuzzleSolve({ onAdvance }: PuzzleSolveProps) {
           {/* Trail orbs */}
           {TRAIL_RADII.map((r, i) => (
             <circle
-              key={i}
+              key={r}
               ref={(el) => { trailRefs.current[i] = el; }}
               cx="0" cy="0" r={r}
               fill="rgba(255, 248, 220, 0.5)"
@@ -354,14 +319,9 @@ export default function PuzzleSolve({ onAdvance }: PuzzleSolveProps) {
           />
 
           {/* Sand dots */}
-          {[
-            { cx: 91, cy: 172 },
-            { cx: 109, cy: 172 },
-            { cx: 100, cy: 158 },
-            { cx: 100, cy: 84 },
-          ].map((pos, i) => (
+          {SAND_DOTS.map((pos, i) => (
             <circle
-              key={i}
+              key={`${pos.cx}-${pos.cy}`}
               ref={(el) => { dotRefs.current[i] = el; }}
               cx={pos.cx} cy={pos.cy} r="3"
               fill="#C9A84C"

@@ -135,7 +135,7 @@ export default async function SharedMomentPage({
       {/* Narrative lines */}
       {lines.map((line, i) => (
         <p
-          key={i}
+          key={`${i}-${line}`}
           style={{
             color: "rgba(200, 165, 75, 0.8)",
             fontFamily: "Georgia, 'Times New Roman', serif",

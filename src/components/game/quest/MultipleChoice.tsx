@@ -168,7 +168,7 @@ export default function MultipleChoice({
 
           return (
             <button
-              key={i}
+              key={option}
               onClick={() => handleSelect(i)}
               disabled={locked || transitioning}
               style={{
@@ -181,7 +181,7 @@ export default function MultipleChoice({
                 padding: "14px 20px",
                 textAlign: "left",
                 cursor: locked || transitioning ? "default" : "pointer",
-                transition: "all 0.3s ease",
+                transition: "background 0.3s ease, border-color 0.3s ease, color 0.3s ease, opacity 0.3s ease",
                 opacity: isWrongOption ? 0.5 : 1,
                 minHeight: "44px",
                 WebkitTapHighlightColor: "transparent",
