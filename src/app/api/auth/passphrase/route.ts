@@ -2,11 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { chaptersConfig } from "@/lib/chapters";
+import { createRateLimiter, getClientIp } from "@/lib/rate-limit";
 
 const prologue = chaptersConfig.chapters["prologue"];
 const PASSPHRASE = prologue?.passphrase;
 
+const limiter = createRateLimiter(10, 15 * 60 * 1000);
+
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+
+  if (!limiter.check(ip)) {
+    return NextResponse.json(
+      { error: "The wards are sealed. Return later." },
+      { status: 429 }
+    );
+  }
+
   // Verify device_token cookie is enrolled and not revoked
   const cookieStore = await cookies();
   const deviceTokenCookie = cookieStore.get("device_token");
@@ -50,6 +62,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (passphrase.trim().toUpperCase() !== PASSPHRASE.toUpperCase()) {
+    limiter.record(ip);
     return NextResponse.json(
       { error: "You have not been summoned." },
       { status: 401 }

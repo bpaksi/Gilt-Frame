@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "The Order of the Gilt Frame",
   description: "An immersive location-based experience.",
+  robots: { index: false, follow: false },
   openGraph: {
     title: "The Order of the Gilt Frame",
     description: "An immersive location-based experience.",
