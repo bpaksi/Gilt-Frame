@@ -35,18 +35,18 @@ export default function StepRow({
   const effectiveDelivered = currentState === "delivered" || stepState === "delivered";
 
   const stateIcon = effectiveDelivered
-    ? "\u2713"
+    ? "✓"
     : currentState === "sent" || (stepState === "sent" && currentState !== "delivered")
-      ? "\u25D1"
+      ? "◑"
       : stepState === "ready"
-        ? "\u25CF"
+        ? "●"
         : stepState === "active"
-          ? "\u25C9"
+          ? "◉"
           : stepState === "scheduled"
-            ? "\u23F1"
+            ? "⏱"
             : effectiveSent
-              ? "\u2713"
-              : "\u25CB";
+              ? "✓"
+              : "○";
 
   const isCompleted = effectiveSent;
   const isCurrent = !isCompleted && (stepState === "ready" || stepState === "active");

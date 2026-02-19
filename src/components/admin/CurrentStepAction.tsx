@@ -189,14 +189,14 @@ export default function CurrentStepAction({
       {renderDetails()}
 
       {alreadyDelivered ? (
-        <StatusBadge text="Delivered" color="#2e7d32" icon="\u2713" />
+        <StatusBadge text="Delivered" color="#2e7d32" icon="✓" />
       ) : alreadySent ? (
-        <StatusBadge text="Sent" color="#c0a060" icon="\u25D1" />
+        <StatusBadge text="Sent" color="#c0a060" icon="◑" />
       ) : done ? (
         <StatusBadge
           text={isLetter ? "Marked received" : "Sent successfully"}
           color="#2e7d32"
-          icon="\u2713"
+          icon="✓"
         />
       ) : (
         <div style={{ marginTop: "12px" }}>

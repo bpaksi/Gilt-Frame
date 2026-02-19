@@ -123,7 +123,6 @@ export async function advanceQuest(
   if (!chapter) return { status: "waiting" };
 
   const orderedSteps = getOrderedSteps(chapter);
-  const nextIndex = stepIndex + 1;
 
   // Mark the current step as completed
   const currentStep = orderedSteps[stepIndex];
