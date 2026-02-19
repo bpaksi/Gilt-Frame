@@ -43,12 +43,13 @@ export async function sendStep(
 
   const trackObj = gameConfig.tracks[track];
   const orderedSteps = getOrderedSteps(chapter);
-  const stepIdx = orderedSteps.findIndex(
+  const matchedStep = orderedSteps.find(
     (s) => s.type !== "website" && s.config.progress_key === progressKey
   );
-  if (stepIdx < 0) return { success: false, error: "Step not found." };
+  if (!matchedStep) return { success: false, error: "Step not found." };
 
-  const step = orderedSteps[stepIdx] as SmsStep | MmsStep | EmailStep | LetterStep;
+  const stepId = matchedStep.id;
+  const step = matchedStep as SmsStep | MmsStep | EmailStep | LetterStep;
 
   const supabase = createAdminClient();
   let messageStatus = "sent";
@@ -165,9 +166,9 @@ export async function sendStep(
     {
       track,
       chapter_id: chapterId,
-      step_index: stepIdx,
+      step_id: stepId,
     },
-    { onConflict: "track,chapter_id,step_index" }
+    { onConflict: "track,chapter_id,step_id" }
   );
 
   return {

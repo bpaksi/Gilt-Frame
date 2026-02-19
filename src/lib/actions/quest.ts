@@ -72,7 +72,7 @@ export async function getQuestState(): Promise<QuestState> {
     .select("hint_tier")
     .eq("track", trackInfo.track)
     .eq("chapter_id", progress.chapter_id)
-    .eq("step_index", stepIndex);
+    .eq("step_id", currentStep.id);
 
   const revealedHintTiers = (hintViews ?? []).map((h) => h.hint_tier);
 
@@ -126,22 +126,21 @@ export async function advanceQuest(
   const nextIndex = stepIndex + 1;
 
   // Mark the current step as completed
+  const currentStep = orderedSteps[stepIndex];
   await supabase.from("completed_steps").insert({
     track: trackInfo.track,
     chapter_id: chapterId,
-    step_index: stepIndex,
+    step_id: currentStep.id,
   });
 
   // Record event for timeline
-  const currentStep = orderedSteps[stepIndex];
   await supabase.from("activity_log").insert({
     track: trackInfo.track,
     source: "player",
     event_type: "quest_advanced",
     details: {
       chapter_id: chapterId,
-      from_index: stepIndex,
-      to_index: nextIndex,
+      step_id: currentStep.id,
       step_name: currentStep?.name ?? null,
     },
   });
@@ -159,11 +158,17 @@ export async function recordAnswer(
   const trackInfo = await resolveTrack();
   if (!trackInfo) return;
 
+  const chapter = gameConfig.chapters[chapterId];
+  if (!chapter) return;
+  const orderedSteps = getOrderedSteps(chapter);
+  const step = orderedSteps[stepIndex];
+  if (!step) return;
+
   const supabase = createAdminClient();
   await supabase.from("quest_answers").insert({
     track: trackInfo.track,
     chapter_id: chapterId,
-    step_index: stepIndex,
+    step_id: step.id,
     question_index: questionIndex,
     selected_option: selectedOption,
     correct,
@@ -176,7 +181,7 @@ export async function recordAnswer(
     event_type: "answer_submitted",
     details: {
       chapter_id: chapterId,
-      step_index: stepIndex,
+      step_id: step.id,
       question_index: questionIndex,
       correct,
     },
@@ -207,7 +212,7 @@ export async function revealHint(
   await supabase.from("hint_views").insert({
     track: trackInfo.track,
     chapter_id: chapterId,
-    step_index: stepIndex,
+    step_id: step.id,
     hint_tier: hintTier,
   });
 
@@ -218,7 +223,7 @@ export async function revealHint(
     event_type: "hint_requested",
     details: {
       chapter_id: chapterId,
-      step_index: stepIndex,
+      step_id: step.id,
       hint_tier: hintTier,
     },
   });

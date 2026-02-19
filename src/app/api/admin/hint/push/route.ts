@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
   await supabase.from("hint_views").insert({
     track,
     chapter_id: chapterId,
-    step_index: stepIndex,
+    step_id: step.id,
     hint_tier: hintTier,
   });
 
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     event_type: "hint_pushed",
     details: {
       chapter_id: chapterId,
-      step_index: stepIndex,
+      step_id: step.id,
       hint_tier: hintTier,
       admin_pushed: true,
     },

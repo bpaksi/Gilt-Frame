@@ -90,21 +90,21 @@ export type Database = {
           chapter_id: string
           completed_at: string
           id: string
-          step_index: number
+          step_id: string
           track: string
         }
         Insert: {
           chapter_id: string
           completed_at?: string
           id?: string
-          step_index: number
+          step_id: string
           track: string
         }
         Update: {
           chapter_id?: string
           completed_at?: string
           id?: string
-          step_index?: number
+          step_id?: string
           track?: string
         }
         Relationships: []
@@ -150,7 +150,7 @@ export type Database = {
           chapter_id: string
           hint_tier: number
           id: string
-          step_index: number
+          step_id: string
           track: string
           viewed_at: string
         }
@@ -158,7 +158,7 @@ export type Database = {
           chapter_id: string
           hint_tier: number
           id?: string
-          step_index: number
+          step_id: string
           track: string
           viewed_at?: string
         }
@@ -166,7 +166,7 @@ export type Database = {
           chapter_id?: string
           hint_tier?: number
           id?: string
-          step_index?: number
+          step_id?: string
           track?: string
           viewed_at?: string
         }
@@ -291,7 +291,7 @@ export type Database = {
           id: string
           question_index: number
           selected_option: string
-          step_index: number
+          step_id: string
           track: string
         }
         Insert: {
@@ -301,7 +301,7 @@ export type Database = {
           id?: string
           question_index: number
           selected_option: string
-          step_index: number
+          step_id: string
           track: string
         }
         Update: {
@@ -311,7 +311,7 @@ export type Database = {
           id?: string
           question_index?: number
           selected_option?: string
-          step_index?: number
+          step_id?: string
           track?: string
         }
         Relationships: []

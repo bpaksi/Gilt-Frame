@@ -4,6 +4,8 @@
  * Checks:
  * 1. Every messaging step's `to` recipient resolves to a non-null Contact in both tracks
  * 2. Companion messages specify a slot that resolves in both tracks
+ * 3. All step IDs are globally unique across all chapters
+ * 4. Step `order` values are unique within each chapter
  *
  * Run: pnpm validate:config
  */
@@ -12,8 +14,36 @@ import { gameConfig, getOrderedSteps } from "../src/config";
 
 let errors = 0;
 
+// Track all step IDs globally for uniqueness check
+const globalStepIds = new Map<string, string>(); // stepId → chapterId
+
 for (const [chapterId, chapter] of Object.entries(gameConfig.chapters)) {
   const steps = getOrderedSteps(chapter);
+
+  // Check step order uniqueness within chapter
+  const orderValues = new Map<number, string>(); // order → stepId
+  for (const step of steps) {
+    const existing = orderValues.get(step.order);
+    if (existing) {
+      console.error(
+        `[ERROR] ${chapterId}: steps "${existing}" and "${step.id}" share order ${step.order}`
+      );
+      errors++;
+    }
+    orderValues.set(step.order, step.id);
+  }
+
+  // Check global step ID uniqueness
+  for (const step of steps) {
+    const existing = globalStepIds.get(step.id);
+    if (existing) {
+      console.error(
+        `[ERROR] step ID "${step.id}" is used in both "${existing}" and "${chapterId}"`
+      );
+      errors++;
+    }
+    globalStepIds.set(step.id, chapterId);
+  }
 
   for (const step of steps) {
     if (step.type === "website") continue;

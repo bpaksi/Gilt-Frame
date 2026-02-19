@@ -47,7 +47,7 @@ export default async function AdminCurrentPage() {
           .select("hint_tier")
           .eq("track", track)
           .eq("chapter_id", chapterId)
-          .eq("step_index", stepIndex);
+          .eq("step_id", currentStep.id);
         revealedTiers = (hintViews ?? []).map((h) => h.hint_tier);
       }
     }
@@ -71,6 +71,7 @@ export default async function AdminCurrentPage() {
 
       {currentStep && (
         <CurrentStepAction
+          key={`${chapterId}-${stepIndex}`}
           step={currentStep}
           track={track}
           chapterId={chapterId}
