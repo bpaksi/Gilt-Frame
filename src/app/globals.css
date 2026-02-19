@@ -96,3 +96,17 @@ body {
 .shake {
   animation: shake 0.4s ease;
 }
+
+a,
+button,
+[role="button"],
+[type="button"],
+[type="submit"],
+[type="reset"],
+select,
+summary,
+label[for],
+[onclick],
+[tabindex]:not([tabindex="-1"]) {
+  cursor: pointer;
+}
