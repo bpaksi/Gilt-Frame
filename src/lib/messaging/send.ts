@@ -29,6 +29,7 @@ function resolveRecipient(
 
 function getMediaUrl(image?: string): string | null {
   if (!image) return null;
+  if (image.startsWith("http://") || image.startsWith("https://")) return image;
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   return `${baseUrl}/${image}`;
 }
@@ -59,8 +60,16 @@ export async function sendStep(
   // Send main message
   const recipient = resolveRecipient(trackObj, step.config.to);
   if (!recipient) {
+    console.error("[sendStep] Could not resolve recipient:", step.config.to);
     return { success: false, error: `Could not resolve recipient "${step.config.to}".` };
   }
+
+  console.log("[sendStep] Sending", {
+    type: step.type,
+    to: recipient.phone || recipient.email,
+    slot: step.config.to,
+    progressKey,
+  });
 
   if (step.type === "sms") {
     const result = await sendSms(recipient.phone, step.config.body);
@@ -70,6 +79,7 @@ export async function sendStep(
     }
   } else if (step.type === "mms") {
     const mediaUrl = getMediaUrl(step.config.image);
+    console.log("[sendStep] MMS mediaUrl:", mediaUrl);
     if (mediaUrl) {
       const result = await sendMms(recipient.phone, step.config.body, mediaUrl);
       if (!result.success) {
@@ -77,7 +87,7 @@ export async function sendStep(
         error = result.error;
       }
     } else {
-      // Fallback to SMS if no image
+      console.log("[sendStep] No mediaUrl, falling back to SMS");
       const result = await sendSms(recipient.phone, step.config.body);
       if (!result.success) {
         messageStatus = "failed";
@@ -132,6 +142,9 @@ export async function sendStep(
   );
 
   // Log activity
+  const compRecipient = step.config.companion_message
+    ? resolveRecipient(trackObj, step.config.companion_message.to)
+    : null;
   await supabase.from("activity_log").insert({
     track,
     source: "admin",
@@ -142,6 +155,14 @@ export async function sendStep(
       step_name: step.name,
       step_type: step.type,
       status: messageStatus,
+      to: recipient.phone ?? recipient.email,
+      to_slot: step.config.to,
+      ...(compRecipient && {
+        companion_to: compRecipient.phone ?? compRecipient.email,
+        companion_slot: step.config.companion_message!.to,
+        companion_status: companionStatus,
+      }),
+      ...(error && { error }),
     },
   });
 

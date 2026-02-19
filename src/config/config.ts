@@ -56,7 +56,7 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Send shortly after letter should arrive. Or 3-4 days after the letter if she's stuck. MMS with Marker image attached.",
             body: "The sign has arrived. giltframe.org",
-            image: "assets/prologue-sms-marker.png",
+            image: "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
             progress_key: "prologue.magic_link_sent",
           },
         },
