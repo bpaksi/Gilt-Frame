@@ -21,6 +21,7 @@ export type {
   PuzzleSolveConfig,
   RewardRevealConfig,
   WaitingStateConfig,
+  PassphrasePuzzleConfig,
   HintItem,
   QuestionItem,
 } from "@/config/chapters";

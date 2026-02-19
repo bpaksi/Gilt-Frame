@@ -45,6 +45,8 @@ function eventIcon(type: string): string {
       return "\uD83D\uDD13";
     case "moment_created":
       return "\uD83D\uDCF8";
+    case "passphrase_entered":
+      return "\uD83D\uDD11";
     default:
       return "\u25CF";
   }
@@ -58,6 +60,7 @@ const EVENT_DISPLAY_NAMES: Record<string, string> = {
   moment_created: "snapshot created",
   hint_requested: "alert requested",
   hint_pushed: "alert pushed",
+  passphrase_entered: "passphrase entered",
 };
 
 function eventDisplayName(eventType: string): string {

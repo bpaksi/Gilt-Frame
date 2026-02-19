@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
   const supabase = createAdminClient();
   const { data: enrollment } = await supabase
     .from("device_enrollments")
-    .select("id")
+    .select("id, track")
     .eq("device_token", deviceTokenCookie.value)
     .eq("revoked", false)
     .single();
@@ -69,6 +69,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const track = enrollment.track as "test" | "live";
+
   // Update last_seen
   supabase
     .from("device_enrollments")
@@ -76,14 +78,28 @@ export async function POST(request: NextRequest) {
     .eq("device_token", deviceTokenCookie.value)
     .then(() => {});
 
-  const response = NextResponse.json({ success: true });
-  response.cookies.set("session", crypto.randomUUID(), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 30, // 30 days
-    path: "/",
-  });
+  // Record passphrase_entered event
+  supabase
+    .from("player_events")
+    .insert({
+      track,
+      event_type: "passphrase_entered",
+      details: { chapter_id: "prologue", step_name: "The Passphrase" },
+    })
+    .then(() => {});
 
-  return response;
+  // Record moment for journey page
+  supabase
+    .from("moments")
+    .insert({
+      track,
+      chapter_id: "prologue",
+      moment_type: "passphrase",
+      title: "The Words Spoken",
+      body: "The acrostic revealed its truth. The Order heard.",
+      share_token: crypto.randomUUID(),
+    })
+    .then(() => {});
+
+  return NextResponse.json({ success: true });
 }

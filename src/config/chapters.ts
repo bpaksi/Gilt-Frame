@@ -19,7 +19,8 @@ export type AdvanceCondition =
   | "correct_answers"
   | "compass_alignment"
   | "animation_complete"
-  | "admin_trigger";
+  | "admin_trigger"
+  | "passphrase";
 
 export type ComponentName =
   | "WayfindingCompass"
@@ -29,7 +30,8 @@ export type ComponentName =
   | "CompassPuzzle"
   | "PuzzleSolve"
   | "RewardReveal"
-  | "WaitingState";
+  | "WaitingState"
+  | "PassphrasePuzzle";
 
 // ─── Component Config Types ───────────────────────────────────────────────────
 
@@ -87,6 +89,11 @@ export type WaitingStateConfig = {
   show_vault_teaser?: boolean;
 };
 
+/** Passphrase input puzzle — player enters hidden acrostic from letter. */
+export type PassphrasePuzzleConfig = {
+  placeholder?: string;
+};
+
 export type ComponentConfig =
   | WayfindingCompassConfig
   | MarkerButtonConfig
@@ -95,7 +102,8 @@ export type ComponentConfig =
   | CompassPuzzleConfig
   | PuzzleSolveConfig
   | RewardRevealConfig
-  | WaitingStateConfig;
+  | WaitingStateConfig
+  | PassphrasePuzzleConfig;
 
 // ─── Flow Step Types ──────────────────────────────────────────────────────────
 
@@ -277,9 +285,8 @@ export const chaptersConfig: ChaptersConfig = {
 
   chapters: {
     // ── Prologue ──────────────────────────────────────────────────────────────
-    // The Prologue's website interaction (passphrase gate) is handled by the
-    // landing page, not the QuestStateMachine. The flow covers only offline
-    // communications. The passphrase entry is implicit between flow steps 1 and 2.
+    // Letter → MMS → Passphrase (website) → Acceptance MMS.
+    // The passphrase is a proper website step rendered by QuestStateMachine.
     prologue: {
       name: "The Summons",
       location: null,
@@ -317,9 +324,20 @@ export const chaptersConfig: ChaptersConfig = {
           companion_message: null,
           progress_key: "prologue.magic_link_sent",
         },
+        prologue_passphrase: {
+          id: "prologue_passphrase",
+          order: 2,
+          type: "website",
+          name: "The Passphrase",
+          component: "PassphrasePuzzle",
+          advance: "passphrase",
+          config: {
+            placeholder: "Speak the words.",
+          },
+        },
         prologue_acceptance: {
           id: "prologue_acceptance",
-          order: 2,
+          order: 3,
           type: "mms",
           name: "Acceptance Confirmed",
           to: "sparrow",

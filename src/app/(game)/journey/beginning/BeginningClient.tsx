@@ -8,7 +8,6 @@ export default function BeginningClient() {
 
   return (
     <LandingPage
-      hasDeviceToken={false}
       isReplay={true}
       onReplayEnd={() => router.push("/journey")}
     />

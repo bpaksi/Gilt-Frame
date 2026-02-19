@@ -10,14 +10,7 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const cookieStore = await cookies();
-  const session = cookieStore.get("session");
-
-  if (session?.value) {
-    redirect("/current");
-  }
-
   const deviceTokenCookie = cookieStore.get("device_token");
-  let hasDeviceToken = false;
 
   if (deviceTokenCookie?.value) {
     const supabase = createAdminClient();
@@ -28,17 +21,17 @@ export default async function Home() {
       .eq("revoked", false)
       .single();
 
-    hasDeviceToken = !!enrollment;
-
-    if (hasDeviceToken) {
+    if (enrollment) {
       // Fire-and-forget last_seen update
       supabase
         .from("device_enrollments")
         .update({ last_seen: new Date().toISOString() })
         .eq("device_token", deviceTokenCookie.value)
         .then(() => {});
+
+      redirect("/current");
     }
   }
 
-  return <LandingPage hasDeviceToken={hasDeviceToken} />;
+  return <LandingPage />;
 }

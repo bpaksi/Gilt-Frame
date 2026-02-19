@@ -8,9 +8,9 @@ export default async function GameLayout({
   children: React.ReactNode;
 }) {
   const cookieStore = await cookies();
-  const session = cookieStore.get("session");
+  const deviceToken = cookieStore.get("device_token");
 
-  if (!session?.value) {
+  if (!deviceToken?.value) {
     redirect("/");
   }
 

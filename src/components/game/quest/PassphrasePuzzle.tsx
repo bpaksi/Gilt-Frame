@@ -1,25 +1,31 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import GiltFrame from "../GiltFrame";
+import type { PassphrasePuzzleConfig } from "@/config/chapters";
 
-interface PassphraseFormProps {
-  visible: boolean;
-  hasDeviceToken: boolean;
+interface PassphrasePuzzleProps {
+  config: PassphrasePuzzleConfig;
+  onAdvance: () => void;
 }
 
-export default function PassphraseForm({ visible, hasDeviceToken }: PassphraseFormProps) {
-  const [status, setStatus] = useState<"idle" | "submitting" | "error" | "success">("idle");
+export default function PassphrasePuzzle({
+  config,
+  onAdvance,
+}: PassphrasePuzzleProps) {
+  const [status, setStatus] = useState<
+    "idle" | "submitting" | "error" | "success"
+  >("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [shaking, setShaking] = useState(false);
+  const [inputReady, setInputReady] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
 
   useEffect(() => {
-    if (visible && hasDeviceToken && inputRef.current) {
+    if (inputReady) {
       setTimeout(() => inputRef.current?.focus(), 100);
     }
-  }, [visible, hasDeviceToken]);
+  }, [inputReady]);
 
   async function handleSubmit(passphrase: string) {
     if (!passphrase.trim() || status === "submitting") return;
@@ -35,7 +41,7 @@ export default function PassphraseForm({ visible, hasDeviceToken }: PassphraseFo
 
     if (res.ok) {
       setStatus("success");
-      setTimeout(() => router.push("/current"), 800);
+      setTimeout(() => onAdvance(), 800);
     } else {
       const data = await res.json();
       setStatus("error");
@@ -53,46 +59,24 @@ export default function PassphraseForm({ visible, hasDeviceToken }: PassphraseFo
     }
   }
 
-  const containerStyle: React.CSSProperties = {
-    marginTop: "60px",
-    textAlign: "center",
-    opacity: visible ? 1 : 0,
-    transition: "opacity 2s ease",
-    pointerEvents: visible ? "auto" : "none",
-  };
-
-  if (!hasDeviceToken) {
-    return (
-      <div style={containerStyle}>
-        <p
-          style={{
-            color: "rgba(200, 165, 75, 0.35)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: "16px",
-            fontStyle: "italic",
-            letterSpacing: "1px",
-          }}
-        >
-          You are not the one.
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div style={containerStyle}>
+    <GiltFrame onAnimationComplete={() => setInputReady(true)}>
       <input
         ref={inputRef}
         type="text"
         autoComplete="off"
         spellCheck={false}
-        placeholder="Speak the words."
+        placeholder={config.placeholder ?? "Speak the words."}
         disabled={status === "submitting" || status === "success"}
         className={shaking ? "shake" : ""}
         style={{
           background: "transparent",
           border: "none",
-          borderBottom: `1px solid ${status === "error" ? "rgba(200, 165, 75, 0.5)" : "rgba(200, 165, 75, 0.3)"}`,
+          borderBottom: `1px solid ${
+            status === "error"
+              ? "rgba(200, 165, 75, 0.5)"
+              : "rgba(200, 165, 75, 0.3)"
+          }`,
           color: "#C8A54B",
           fontFamily: "Georgia, 'Times New Roman', serif",
           fontSize: "18px",
@@ -128,6 +112,6 @@ export default function PassphraseForm({ visible, hasDeviceToken }: PassphraseFo
       >
         {errorMsg}
       </div>
-    </div>
+    </GiltFrame>
   );
 }
