@@ -44,14 +44,13 @@ export default function TrackToggle({
     border: "none",
     background: isActive
       ? side === "live"
-        ? "#dc2626"
-        : "#2563eb"
+        ? "#c62828"
+        : "#336699"
       : "transparent",
-    color: isActive ? "#fff" : "#6b7280",
+    color: isActive ? "#fff" : "#666666",
     borderRadius: side === "test" ? "6px 0 0 6px" : "0 6px 6px 0",
     transition: "all 0.15s ease",
-    fontFamily:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    fontFamily: "Arial, Helvetica, sans-serif",
   });
 
   return (
@@ -61,9 +60,9 @@ export default function TrackToggle({
         width: "160px",
         height: "32px",
         borderRadius: "6px",
-        border: "1px solid #e5e7eb",
+        border: "1px solid #d0d0d0",
         overflow: "hidden",
-        background: "#f9fafb",
+        background: "#e8e8e8",
       }}
     >
       <button

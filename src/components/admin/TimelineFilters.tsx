@@ -15,6 +15,16 @@ const EVENT_TYPES = [
   "moment_created",
 ] as const;
 
+const EVENT_TYPE_DISPLAY: Record<string, string> = {
+  quest_advanced: "step advanced",
+  quest_completed: "task completed",
+  oracle_question: "ai question",
+  chapter_activated: "workflow activated",
+  moment_created: "snapshot created",
+  hint_requested: "alert requested",
+  hint_pushed: "alert pushed",
+};
+
 export default function TimelineFilters({
   selectedChapter,
   selectedTypes,
@@ -40,7 +50,7 @@ export default function TimelineFilters({
     <div
       style={{
         background: "#fff",
-        border: "1px solid #e5e7eb",
+        border: "1px solid #d0d0d0",
         borderRadius: "8px",
         padding: "12px 16px",
         marginBottom: "16px",
@@ -60,15 +70,15 @@ export default function TimelineFilters({
           style={{
             height: "32px",
             padding: "0 8px",
-            border: "1px solid #e5e7eb",
+            border: "1px solid #d0d0d0",
             borderRadius: "4px",
             fontSize: "12px",
             fontFamily: "inherit",
             background: "#fff",
-            color: "#1a1a1a",
+            color: "#333333",
           }}
         >
-          <option value="">All Chapters</option>
+          <option value="">All Workflows</option>
           {chapters.map(([id, ch]) => (
             <option key={id} value={id}>
               {ch.name}
@@ -92,17 +102,17 @@ export default function TimelineFilters({
                 style={{
                   height: "24px",
                   padding: "0 8px",
-                  border: "1px solid #e5e7eb",
+                  border: "1px solid #d0d0d0",
                   borderRadius: "12px",
                   fontSize: "10px",
                   fontFamily: "inherit",
-                  background: active ? "#eff6ff" : "#fff",
-                  color: active ? "#2563eb" : "#9ca3af",
+                  background: active ? "#e8eef5" : "#fff",
+                  color: active ? "#336699" : "#999999",
                   cursor: "pointer",
                   fontWeight: active ? 600 : 400,
                 }}
               >
-                {type.replace("_", " ")}
+                {EVENT_TYPE_DISPLAY[type] ?? type.replace("_", " ")}
               </button>
             );
           })}

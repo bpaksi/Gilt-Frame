@@ -61,12 +61,12 @@ export default function FreeformCompose({
     width: "100%",
     height: "36px",
     padding: "0 10px",
-    border: "1px solid #e5e7eb",
+    border: "1px solid #d0d0d0",
     borderRadius: "4px",
     fontSize: "13px",
     fontFamily: "inherit",
     background: "#fff",
-    color: "#1a1a1a",
+    color: "#333333",
     outline: "none",
     boxSizing: "border-box",
   };
@@ -75,7 +75,7 @@ export default function FreeformCompose({
     <div
       style={{
         background: "#fff",
-        border: "1px solid #e5e7eb",
+        border: "1px solid #d0d0d0",
         borderRadius: "8px",
         padding: "12px 16px",
         marginBottom: "16px",
@@ -87,7 +87,7 @@ export default function FreeformCompose({
           fontWeight: 600,
           letterSpacing: "1.5px",
           textTransform: "uppercase",
-          color: "#6b7280",
+          color: "#666666",
           marginBottom: "10px",
         }}
       >
@@ -108,7 +108,7 @@ export default function FreeformCompose({
             display: "flex",
             height: "32px",
             borderRadius: "4px",
-            border: "1px solid #e5e7eb",
+            border: "1px solid #d0d0d0",
             overflow: "hidden",
           }}
         >
@@ -119,8 +119,8 @@ export default function FreeformCompose({
               style={{
                 padding: "0 12px",
                 border: "none",
-                background: channel === ch ? "#2563eb" : "#fff",
-                color: channel === ch ? "#fff" : "#6b7280",
+                background: channel === ch ? "#336699" : "#fff",
+                color: channel === ch ? "#fff" : "#666666",
                 fontSize: "11px",
                 fontWeight: 600,
                 letterSpacing: "0.5px",
@@ -196,7 +196,7 @@ export default function FreeformCompose({
             height: "32px",
             padding: "0 16px",
             background:
-              !body.trim() || sending ? "#93b5f5" : "#2563eb",
+              !body.trim() || sending ? "#5a8ab5" : "#336699",
             color: "#fff",
             border: "none",
             borderRadius: "4px",
@@ -209,10 +209,10 @@ export default function FreeformCompose({
           {sending ? "Sending..." : "SEND"}
         </button>
         {result && (
-          <span style={{ fontSize: "12px", color: "#16a34a" }}>{result}</span>
+          <span style={{ fontSize: "12px", color: "#2e7d32" }}>{result}</span>
         )}
         {error && (
-          <span style={{ fontSize: "12px", color: "#dc2626" }}>{error}</span>
+          <span style={{ fontSize: "12px", color: "#c62828" }}>{error}</span>
         )}
       </div>
     </div>

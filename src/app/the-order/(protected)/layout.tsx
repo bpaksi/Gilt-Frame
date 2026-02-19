@@ -24,10 +24,9 @@ export default async function ProtectedAdminLayout({
     <div
       style={{
         minHeight: "100dvh",
-        background: "#f8f9fa",
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        color: "#1a1a1a",
+        background: "#f0f0f0",
+        fontFamily: "Arial, Helvetica, sans-serif",
+        color: "#333333",
       }}
     >
       <AdminHeader />

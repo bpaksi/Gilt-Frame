@@ -45,7 +45,7 @@ export default function OracleReview() {
 
   if (loading) {
     return (
-      <div style={{ fontSize: "13px", color: "#9ca3af", padding: "20px 0" }}>
+      <div style={{ fontSize: "13px", color: "#999999", padding: "20px 0" }}>
         Loading...
       </div>
     );
@@ -58,7 +58,7 @@ export default function OracleReview() {
           display: "flex",
           gap: "16px",
           fontSize: "12px",
-          color: "#6b7280",
+          color: "#666666",
           marginBottom: "16px",
         }}
       >
@@ -74,7 +74,7 @@ export default function OracleReview() {
           key={c.id}
           style={{
             background: c.flagged ? "#fef2f2" : "#fff",
-            border: `1px solid ${c.flagged ? "#fecaca" : "#e5e7eb"}`,
+            border: `1px solid ${c.flagged ? "#e0b0b0" : "#d0d0d0"}`,
             borderRadius: "8px",
             padding: "12px 16px",
             marginBottom: "8px",
@@ -108,7 +108,7 @@ export default function OracleReview() {
           <div
             style={{
               fontSize: "12px",
-              color: "#374151",
+              color: "#333333",
               lineHeight: 1.5,
               marginBottom: "6px",
             }}
@@ -116,7 +116,7 @@ export default function OracleReview() {
             A: {c.response.slice(0, 200)}
             {c.response.length > 200 ? "..." : ""}
           </div>
-          <div style={{ fontSize: "10px", color: "#9ca3af" }}>
+          <div style={{ fontSize: "10px", color: "#999999" }}>
             {new Date(c.created_at).toLocaleString()}
             {c.tokens_used && ` \u2022 ${c.tokens_used} tokens`}
             {c.gemini_model && ` \u2022 ${c.gemini_model}`}
@@ -125,8 +125,8 @@ export default function OracleReview() {
       ))}
 
       {conversations.length === 0 && (
-        <div style={{ fontSize: "13px", color: "#9ca3af" }}>
-          No oracle conversations yet.
+        <div style={{ fontSize: "13px", color: "#999999" }}>
+          No AI conversations yet.
         </div>
       )}
     </div>

@@ -15,9 +15,9 @@ export default async function EnrollmentPage() {
         <Link
           href="/the-order/settings"
           style={{
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontFamily: "Arial, Helvetica, sans-serif",
             fontSize: "14px",
-            color: "#888",
+            color: "#999999",
             textDecoration: "none",
             letterSpacing: "1px",
           }}
@@ -26,7 +26,7 @@ export default async function EnrollmentPage() {
         </Link>
         <h1
           style={{
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontFamily: "Arial, Helvetica, sans-serif",
             fontSize: "20px",
             fontWeight: 400,
             letterSpacing: "2px",

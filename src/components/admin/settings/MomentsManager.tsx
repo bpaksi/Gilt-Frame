@@ -45,7 +45,7 @@ export default function MomentsManager() {
 
   if (loading) {
     return (
-      <div style={{ fontSize: "13px", color: "#9ca3af", padding: "20px 0" }}>
+      <div style={{ fontSize: "13px", color: "#999999", padding: "20px 0" }}>
         Loading...
       </div>
     );
@@ -59,7 +59,7 @@ export default function MomentsManager() {
             key={m.id}
             style={{
               background: "#fff",
-              border: "1px solid #e5e7eb",
+              border: "1px solid #d0d0d0",
               borderRadius: "8px",
               padding: "12px 16px",
               marginBottom: "8px",
@@ -77,7 +77,7 @@ export default function MomentsManager() {
                   {m.moment_type}
                 </span>
                 {m.chapter_id && (
-                  <span style={{ fontSize: "11px", color: "#9ca3af", marginLeft: "8px" }}>
+                  <span style={{ fontSize: "11px", color: "#999999", marginLeft: "8px" }}>
                     {m.chapter_id}
                   </span>
                 )}
@@ -88,8 +88,8 @@ export default function MomentsManager() {
                   height: "24px",
                   padding: "0 10px",
                   background: "#fff",
-                  color: "#2563eb",
-                  border: "1px solid #2563eb",
+                  color: "#336699",
+                  border: "1px solid #336699",
                   borderRadius: "4px",
                   fontSize: "10px",
                   fontWeight: 600,
@@ -104,7 +104,7 @@ export default function MomentsManager() {
               <div
                 style={{
                   fontSize: "12px",
-                  color: "#374151",
+                  color: "#333333",
                   marginTop: "6px",
                   lineHeight: 1.4,
                 }}
@@ -112,7 +112,7 @@ export default function MomentsManager() {
                 {m.narrative_text}
               </div>
             )}
-            <div style={{ fontSize: "10px", color: "#9ca3af", marginTop: "4px" }}>
+            <div style={{ fontSize: "10px", color: "#999999", marginTop: "4px" }}>
               {new Date(m.created_at).toLocaleDateString()}
             </div>
           </div>
@@ -121,16 +121,16 @@ export default function MomentsManager() {
         <div
           style={{
             background: "#fff",
-            border: "1px solid #e5e7eb",
+            border: "1px solid #d0d0d0",
             borderRadius: "8px",
             padding: "20px 16px",
             textAlign: "center",
             fontSize: "13px",
-            color: "#9ca3af",
+            color: "#999999",
           }}
         >
-          No moments captured yet. Moments are created as the player completes
-          quests.
+          No snapshots captured yet. Snapshots are created as the user completes
+          tasks.
         </div>
       )}
     </div>

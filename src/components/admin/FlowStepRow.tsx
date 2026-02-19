@@ -36,12 +36,12 @@ export default function FlowStepRow({
           : "\u25CB";
 
   const stateColor = sent
-    ? "#16a34a"
+    ? "#2e7d32"
     : stepState === "ready"
-      ? "#2563eb"
+      ? "#336699"
       : stepState === "active"
-        ? "#f59e0b"
-        : "#d1d5db";
+        ? "#e68a00"
+        : "#d0d0d0";
 
   async function handleSend() {
     if (!hasProgressKey || sending || sent) return;
@@ -79,7 +79,7 @@ export default function FlowStepRow({
         alignItems: "center",
         gap: "10px",
         padding: "10px 0",
-        borderBottom: "1px solid #f3f4f6",
+        borderBottom: "1px solid #e8e8e8",
         opacity: stepState === "locked" ? 0.5 : 1,
       }}
     >
@@ -110,7 +110,7 @@ export default function FlowStepRow({
           <span
             style={{
               fontSize: "10px",
-              color: "#9ca3af",
+              color: "#999999",
               textTransform: "uppercase",
               letterSpacing: "0.5px",
             }}
@@ -121,19 +121,19 @@ export default function FlowStepRow({
             <span
               style={{
                 fontSize: "9px",
-                background: "#eff6ff",
-                color: "#2563eb",
+                background: "#e8eef5",
+                color: "#336699",
                 padding: "1px 5px",
                 borderRadius: "3px",
                 fontWeight: 600,
               }}
             >
-              +companion
+              +auto
             </span>
           )}
         </div>
         {error && (
-          <div style={{ fontSize: "11px", color: "#dc2626", marginTop: "2px" }}>
+          <div style={{ fontSize: "11px", color: "#c62828", marginTop: "2px" }}>
             {error}
           </div>
         )}
@@ -146,7 +146,7 @@ export default function FlowStepRow({
           style={{
             height: "28px",
             padding: "0 12px",
-            background: sending ? "#93b5f5" : "#2563eb",
+            background: sending ? "#5a8ab5" : "#336699",
             color: "#fff",
             border: "none",
             borderRadius: "4px",

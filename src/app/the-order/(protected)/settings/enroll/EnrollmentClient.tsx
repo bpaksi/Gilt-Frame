@@ -67,21 +67,21 @@ export default function EnrollmentClient({
   const inputStyle: React.CSSProperties = {
     height: "40px",
     padding: "0 12px",
-    border: "1px solid #ddd",
+    border: "1px solid #d0d0d0",
     fontSize: "14px",
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    fontFamily: "Arial, Helvetica, sans-serif",
     background: "#fff",
-    color: "#1a1a1a",
+    color: "#333333",
     outline: "none",
   };
 
   const btnStyle = (disabled?: boolean): React.CSSProperties => ({
     height: "40px",
     padding: "0 20px",
-    background: disabled ? "#93b5f5" : "#2563eb",
-    color: "#fafafa",
+    background: disabled ? "#5a8ab5" : "#336699",
+    color: "#ffffff",
     border: "none",
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    fontFamily: "Arial, Helvetica, sans-serif",
     fontSize: "13px",
     letterSpacing: "1px",
     cursor: disabled ? "not-allowed" : "pointer",
@@ -97,7 +97,7 @@ export default function EnrollmentClient({
           gap: "24px",
           marginBottom: "32px",
           fontSize: "14px",
-          color: "#555",
+          color: "#666666",
         }}
       >
         <span>Live: {active("live").length}/5 enrolled</span>
@@ -127,12 +127,12 @@ export default function EnrollmentClient({
           disabled={generating}
           style={btnStyle(generating)}
         >
-          {generating ? "Generating…" : "Generate Link"}
+          {generating ? "Generating\u2026" : "Generate Link"}
         </button>
       </div>
 
       {error && (
-        <p style={{ color: "#c0392b", fontSize: "14px", marginBottom: "16px" }}>
+        <p style={{ color: "#c62828", fontSize: "14px", marginBottom: "16px" }}>
           {error}
         </p>
       )}
@@ -187,10 +187,10 @@ export default function EnrollmentClient({
                     style={{
                       textAlign: "left",
                       padding: "8px 12px",
-                      borderBottom: "1px solid #ddd",
+                      borderBottom: "1px solid #d0d0d0",
                       fontWeight: 400,
                       letterSpacing: "1px",
-                      color: "#888",
+                      color: "#999999",
                       fontSize: "11px",
                       textTransform: "uppercase",
                     }}
@@ -207,7 +207,7 @@ export default function EnrollmentClient({
                 key={e.id}
                 style={{
                   opacity: e.revoked ? 0.4 : 1,
-                  borderBottom: "1px solid #eee",
+                  borderBottom: "1px solid #e8e8e8",
                 }}
               >
                 <td style={{ padding: "10px 12px" }}>{e.track}</td>
@@ -221,12 +221,12 @@ export default function EnrollmentClient({
                 <td style={{ padding: "10px 12px" }}>
                   {e.enrolled_at
                     ? new Date(e.enrolled_at).toLocaleDateString()
-                    : "—"}
+                    : "\u2014"}
                 </td>
                 <td style={{ padding: "10px 12px" }}>
                   {e.last_seen
                     ? new Date(e.last_seen).toLocaleDateString()
-                    : "—"}
+                    : "\u2014"}
                 </td>
                 <td
                   style={{
@@ -235,11 +235,11 @@ export default function EnrollmentClient({
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
-                    color: "#666",
+                    color: "#666666",
                   }}
                   title={e.user_agent ?? ""}
                 >
-                  {e.user_agent ? e.user_agent.slice(0, 40) + "…" : "—"}
+                  {e.user_agent ? e.user_agent.slice(0, 40) + "\u2026" : "\u2014"}
                 </td>
                 <td style={{ padding: "10px 12px" }}>
                   {!e.revoked && (
@@ -247,12 +247,12 @@ export default function EnrollmentClient({
                       onClick={() => revokeEnrollment(e.id)}
                       style={{
                         background: "none",
-                        border: "1px solid #ddd",
-                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        border: "1px solid #d0d0d0",
+                        fontFamily: "Arial, Helvetica, sans-serif",
                         fontSize: "12px",
                         cursor: "pointer",
                         padding: "4px 10px",
-                        color: "#c0392b",
+                        color: "#c62828",
                       }}
                     >
                       Revoke
@@ -266,7 +266,7 @@ export default function EnrollmentClient({
       )}
 
       {enrollments.length === 0 && (
-        <p style={{ color: "#888", fontSize: "14px" }}>
+        <p style={{ color: "#999999", fontSize: "14px" }}>
           No enrollments yet. Generate a link above.
         </p>
       )}

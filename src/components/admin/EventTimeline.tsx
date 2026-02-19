@@ -44,6 +44,20 @@ function eventIcon(type: string): string {
   }
 }
 
+const EVENT_DISPLAY_NAMES: Record<string, string> = {
+  quest_advanced: "step advanced",
+  quest_completed: "task completed",
+  oracle_question: "ai question",
+  chapter_activated: "workflow activated",
+  moment_created: "snapshot created",
+  hint_requested: "alert requested",
+  hint_pushed: "alert pushed",
+};
+
+function eventDisplayName(eventType: string): string {
+  return EVENT_DISPLAY_NAMES[eventType] ?? eventType.replace(/_/g, " ");
+}
+
 export default function EventTimeline({
   events,
 }: {
@@ -75,13 +89,13 @@ export default function EventTimeline({
       <div
         style={{
           background: "#fff",
-          border: "1px solid #e5e7eb",
+          border: "1px solid #d0d0d0",
           borderRadius: "8px",
           padding: "12px 16px",
         }}
       >
         {filtered.length === 0 ? (
-          <div style={{ fontSize: "13px", color: "#9ca3af", padding: "20px 0", textAlign: "center" }}>
+          <div style={{ fontSize: "13px", color: "#999999", padding: "20px 0", textAlign: "center" }}>
             No events yet.
           </div>
         ) : (
@@ -94,7 +108,7 @@ export default function EventTimeline({
                   display: "flex",
                   gap: "10px",
                   padding: "8px 0",
-                  borderBottom: "1px solid #f3f4f6",
+                  borderBottom: "1px solid #e8e8e8",
                   alignItems: "flex-start",
                 }}
               >
@@ -103,15 +117,15 @@ export default function EventTimeline({
                 </span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: "13px", fontWeight: 500 }}>
-                    {event.event_type.replace(/_/g, " ")}
+                    {eventDisplayName(event.event_type)}
                   </div>
                   {typeof details?.step_name === "string" && (
-                    <div style={{ fontSize: "11px", color: "#6b7280" }}>
+                    <div style={{ fontSize: "11px", color: "#666666" }}>
                       {details.step_name}
                     </div>
                   )}
                   {typeof details?.chapter_id === "string" && (
-                    <div style={{ fontSize: "10px", color: "#9ca3af" }}>
+                    <div style={{ fontSize: "10px", color: "#999999" }}>
                       {details.chapter_id}
                     </div>
                   )}
@@ -119,7 +133,7 @@ export default function EventTimeline({
                 <span
                   style={{
                     fontSize: "11px",
-                    color: "#9ca3af",
+                    color: "#999999",
                     whiteSpace: "nowrap",
                     flexShrink: 0,
                   }}

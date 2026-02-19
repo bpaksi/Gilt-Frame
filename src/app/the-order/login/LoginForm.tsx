@@ -42,7 +42,7 @@ export default function LoginForm() {
     <div
       style={{
         minHeight: "100dvh",
-        background: "#fafafa",
+        background: "#f0f0f0",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -52,18 +52,17 @@ export default function LoginForm() {
       <div style={{ width: "100%", maxWidth: "360px" }}>
         <h1
           style={{
-            fontFamily:
-              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            fontFamily: "Arial, Helvetica, sans-serif",
             fontSize: "20px",
             fontWeight: 600,
             letterSpacing: "2px",
             textTransform: "uppercase",
-            color: "#1a1a1a",
+            color: "#333333",
             marginBottom: "40px",
             textAlign: "center",
           }}
         >
-          The Order
+          Admin
         </h1>
         <form
           onSubmit={handleSubmit}
@@ -78,13 +77,12 @@ export default function LoginForm() {
             style={{
               height: "48px",
               padding: "0 16px",
-              border: "1px solid #ddd",
+              border: "1px solid #d0d0d0",
               fontSize: "16px",
-              fontFamily:
-                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+              fontFamily: "Arial, Helvetica, sans-serif",
               outline: "none",
               background: "#fff",
-              color: "#1a1a1a",
+              color: "#333333",
             }}
           />
           <div style={{ position: "relative" }}>
@@ -98,13 +96,12 @@ export default function LoginForm() {
                 width: "100%",
                 height: "48px",
                 padding: "0 44px 0 16px",
-                border: "1px solid #ddd",
+                border: "1px solid #d0d0d0",
                 fontSize: "16px",
-                fontFamily:
-                  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                fontFamily: "Arial, Helvetica, sans-serif",
                 outline: "none",
                 background: "#fff",
-                color: "#1a1a1a",
+                color: "#333333",
                 boxSizing: "border-box",
               }}
             />
@@ -121,10 +118,9 @@ export default function LoginForm() {
                 border: "none",
                 padding: 0,
                 cursor: "pointer",
-                color: "#888",
+                color: "#999999",
                 fontSize: "14px",
-                fontFamily:
-                  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                fontFamily: "Arial, Helvetica, sans-serif",
               }}
             >
               {showPassword ? "Hide" : "Show"}
@@ -133,7 +129,7 @@ export default function LoginForm() {
           {error && (
             <p
               style={{
-                color: "#c0392b",
+                color: "#c62828",
                 fontSize: "14px",
                 margin: 0,
                 textAlign: "center",
@@ -147,11 +143,10 @@ export default function LoginForm() {
             disabled={loading}
             style={{
               height: "48px",
-              background: loading ? "#93b5f5" : "#2563eb",
-              color: "#fafafa",
+              background: loading ? "#5a8ab5" : "#336699",
+              color: "#ffffff",
               border: "none",
-              fontFamily:
-                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+              fontFamily: "Arial, Helvetica, sans-serif",
               fontSize: "14px",
               letterSpacing: "2px",
               textTransform: "uppercase",
@@ -159,7 +154,7 @@ export default function LoginForm() {
               marginTop: "8px",
             }}
           >
-            {loading ? "Entering…" : "Enter"}
+            {loading ? "Signing in\u2026" : "Sign In"}
           </button>
         </form>
       </div>

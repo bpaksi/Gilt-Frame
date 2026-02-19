@@ -3,10 +3,10 @@ import SignOutButton from "./SignOutButton";
 
 const LINKS = [
   { href: "/the-order/settings/enroll", label: "Device Enrollment" },
-  { href: "/the-order/settings/chapters", label: "Chapters & Quests" },
-  { href: "/the-order/settings/oracle", label: "Oracle Review" },
-  { href: "/the-order/settings/moments", label: "Moments" },
-  { href: "/the-order/settings/summons", label: "Summons" },
+  { href: "/the-order/settings/chapters", label: "Workflows" },
+  { href: "/the-order/settings/oracle", label: "AI Chat Review" },
+  { href: "/the-order/settings/moments", label: "Snapshots" },
+  { href: "/the-order/settings/summons", label: "Activation" },
 ] as const;
 
 export default function AdminSettingsPage() {
@@ -18,7 +18,7 @@ export default function AdminSettingsPage() {
           fontWeight: 600,
           letterSpacing: "1.5px",
           textTransform: "uppercase",
-          color: "#6b7280",
+          color: "#666666",
           marginBottom: "16px",
         }}
       >
@@ -33,9 +33,9 @@ export default function AdminSettingsPage() {
               display: "block",
               padding: "14px 16px",
               background: "#fff",
-              border: "1px solid #e5e7eb",
+              border: "1px solid #d0d0d0",
               borderRadius: "8px",
-              color: "#1a1a1a",
+              color: "#333333",
               textDecoration: "none",
               fontSize: "14px",
               fontWeight: 500,
@@ -48,7 +48,7 @@ export default function AdminSettingsPage() {
       <hr
         style={{
           border: "none",
-          borderTop: "1px solid #e5e7eb",
+          borderTop: "1px solid #d0d0d0",
           margin: "24px 0 16px",
         }}
       />

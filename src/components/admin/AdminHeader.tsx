@@ -5,8 +5,8 @@ export default function AdminHeader() {
     <header
       style={{
         height: "52px",
-        background: "#fff",
-        borderBottom: "1px solid #e5e7eb",
+        background: "#336699",
+        borderBottom: "1px solid #2a5580",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -22,12 +22,11 @@ export default function AdminHeader() {
           fontWeight: 600,
           letterSpacing: "2px",
           textTransform: "uppercase",
-          color: "#1a1a1a",
-          fontFamily:
-            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          color: "#ffffff",
+          fontFamily: "Arial, Helvetica, sans-serif",
         }}
       >
-        Game Master
+        Dashboard
       </span>
       <Link
         href="/the-order/settings"
@@ -37,7 +36,7 @@ export default function AdminHeader() {
           justifyContent: "center",
           width: "36px",
           height: "36px",
-          color: "#6b7280",
+          color: "#ffffff",
           textDecoration: "none",
         }}
       >

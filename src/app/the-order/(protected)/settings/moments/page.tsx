@@ -9,11 +9,11 @@ export default function MomentsSettingsPage() {
           fontWeight: 600,
           letterSpacing: "1.5px",
           textTransform: "uppercase",
-          color: "#6b7280",
+          color: "#666666",
           marginBottom: "12px",
         }}
       >
-        Moments
+        Snapshots
       </div>
       <MomentsManager />
     </div>

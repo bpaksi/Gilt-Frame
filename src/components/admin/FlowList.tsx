@@ -67,7 +67,7 @@ export default function FlowList({
     <div
       style={{
         background: "#fff",
-        border: "1px solid #e5e7eb",
+        border: "1px solid #d0d0d0",
         borderRadius: "8px",
         padding: "12px 16px",
         marginBottom: "16px",
@@ -79,11 +79,11 @@ export default function FlowList({
           fontWeight: 600,
           letterSpacing: "1.5px",
           textTransform: "uppercase",
-          color: "#6b7280",
+          color: "#666666",
           marginBottom: "8px",
         }}
       >
-        Flow — {chapter.name}
+        Pipeline — {chapter.name}
       </div>
       {orderedFlow.map((step, index) => (
         <FlowStepRow

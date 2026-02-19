@@ -49,7 +49,7 @@ export default function ResetChapter({
     <div
       style={{
         background: "#fff",
-        border: "1px solid #fecaca",
+        border: "1px solid #e0b0b0",
         borderRadius: "8px",
         padding: "12px 16px",
         marginBottom: "16px",
@@ -62,8 +62,8 @@ export default function ResetChapter({
             height: "32px",
             padding: "0 16px",
             background: "#fff",
-            color: "#dc2626",
-            border: "1px solid #dc2626",
+            color: "#c62828",
+            border: "1px solid #c62828",
             borderRadius: "4px",
             fontSize: "12px",
             fontWeight: 600,
@@ -71,13 +71,13 @@ export default function ResetChapter({
             fontFamily: "inherit",
           }}
         >
-          Reset Chapter
+          Reset Workflow
         </button>
       ) : (
         <div>
-          <div style={{ fontSize: "13px", color: "#dc2626", marginBottom: "8px" }}>
+          <div style={{ fontSize: "13px", color: "#c62828", marginBottom: "8px" }}>
             Reset all progress for &quot;{chapterName}&quot; on test track? This
-            wipes message progress, quest state, answers, and hints.
+            wipes message progress, task state, answers, and notifications.
           </div>
           <div style={{ display: "flex", gap: "8px" }}>
             <button
@@ -86,7 +86,7 @@ export default function ResetChapter({
               style={{
                 height: "32px",
                 padding: "0 16px",
-                background: resetting ? "#fca5a5" : "#dc2626",
+                background: resetting ? "#e08080" : "#c62828",
                 color: "#fff",
                 border: "none",
                 borderRadius: "4px",
@@ -104,8 +104,8 @@ export default function ResetChapter({
                 height: "32px",
                 padding: "0 16px",
                 background: "#fff",
-                color: "#6b7280",
-                border: "1px solid #e5e7eb",
+                color: "#666666",
+                border: "1px solid #d0d0d0",
                 borderRadius: "4px",
                 fontSize: "12px",
                 cursor: "pointer",
@@ -116,7 +116,7 @@ export default function ResetChapter({
             </button>
           </div>
           {error && (
-            <div style={{ fontSize: "12px", color: "#dc2626", marginTop: "6px" }}>
+            <div style={{ fontSize: "12px", color: "#c62828", marginTop: "6px" }}>
               {error}
             </div>
           )}

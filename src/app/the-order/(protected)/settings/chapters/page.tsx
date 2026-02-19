@@ -9,11 +9,11 @@ export default function ChaptersSettingsPage() {
           fontWeight: 600,
           letterSpacing: "1.5px",
           textTransform: "uppercase",
-          color: "#6b7280",
+          color: "#666666",
           marginBottom: "12px",
         }}
       >
-        Chapters & Quests
+        Workflows
       </div>
       <ChapterEditor />
     </div>

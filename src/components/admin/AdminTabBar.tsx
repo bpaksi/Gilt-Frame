@@ -59,8 +59,8 @@ export default function AdminTabBar() {
         right: 0,
         height: "calc(60px + env(safe-area-inset-bottom))",
         paddingBottom: "env(safe-area-inset-bottom)",
-        background: "#fff",
-        borderTop: "1px solid #e5e7eb",
+        background: "#e8e8e8",
+        borderTop: "1px solid #d0d0d0",
         display: "flex",
         alignItems: "stretch",
         zIndex: 50,
@@ -69,7 +69,7 @@ export default function AdminTabBar() {
       {TABS.map((tab) => {
         const isActive =
           pathname === tab.href || pathname.startsWith(tab.href + "/");
-        const color = isActive ? "#2563eb" : "#9ca3af";
+        const color = isActive ? "#336699" : "#666666";
 
         return (
           <Link
@@ -103,8 +103,7 @@ export default function AdminTabBar() {
                 fontSize: "10px",
                 textTransform: "uppercase",
                 letterSpacing: "2px",
-                fontFamily:
-                  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                fontFamily: "Arial, Helvetica, sans-serif",
                 color,
                 lineHeight: 1,
                 fontWeight: isActive ? 600 : 400,

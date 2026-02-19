@@ -32,11 +32,11 @@ export default async function SummonsSettingsPage() {
           fontWeight: 600,
           letterSpacing: "1.5px",
           textTransform: "uppercase",
-          color: "#6b7280",
+          color: "#666666",
           marginBottom: "12px",
         }}
       >
-        Summons
+        Activation
       </div>
       <SummonsManager track={track} chapterStatuses={chapterStatuses} />
     </div>

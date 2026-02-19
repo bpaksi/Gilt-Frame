@@ -5,9 +5,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     <div
       style={{
         minHeight: "100dvh",
-        background: "#fafafa",
-        color: "#1a1a1a",
-        fontFamily: "Georgia, 'Times New Roman', serif",
+        background: "#f0f0f0",
+        color: "#333333",
+        fontFamily: "Arial, Helvetica, sans-serif",
       }}
     >
       {children}

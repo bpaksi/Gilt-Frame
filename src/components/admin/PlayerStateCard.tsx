@@ -13,13 +13,13 @@ function timeAgo(dateStr: string | null): string {
 }
 
 export default function PlayerStateCard({ state }: { state: PlayerState }) {
-  const trackColor = state.track === "live" ? "#dc2626" : "#2563eb";
+  const trackColor = state.track === "live" ? "#c62828" : "#336699";
 
   return (
     <div
       style={{
         background: "#fff",
-        border: "1px solid #e5e7eb",
+        border: "1px solid #d0d0d0",
         borderRadius: "8px",
         padding: "16px",
         marginBottom: "16px",
@@ -55,10 +55,10 @@ export default function PlayerStateCard({ state }: { state: PlayerState }) {
             textTransform: "uppercase",
             color:
               state.status === "active"
-                ? "#16a34a"
+                ? "#2e7d32"
                 : state.status === "idle"
-                  ? "#9ca3af"
-                  : "#6b7280",
+                  ? "#999999"
+                  : "#666666",
           }}
         >
           {state.status}
@@ -73,7 +73,7 @@ export default function PlayerStateCard({ state }: { state: PlayerState }) {
             {state.chapterName}
           </div>
           {state.location && (
-            <div style={{ fontSize: "13px", color: "#6b7280", marginBottom: "8px" }}>
+            <div style={{ fontSize: "13px", color: "#666666", marginBottom: "8px" }}>
               {state.location}
             </div>
           )}
@@ -82,22 +82,22 @@ export default function PlayerStateCard({ state }: { state: PlayerState }) {
               display: "flex",
               gap: "16px",
               fontSize: "12px",
-              color: "#6b7280",
+              color: "#666666",
               flexWrap: "wrap",
             }}
           >
             <span>
-              Step: <strong style={{ color: "#1a1a1a" }}>{state.stepName ?? `#${state.flowIndex}`}</strong>
+              Step: <strong style={{ color: "#333333" }}>{state.stepName ?? `#${state.flowIndex}`}</strong>
             </span>
             <span>
-              Last: <strong style={{ color: "#1a1a1a" }}>{timeAgo(state.lastActivity)}</strong>
+              Last: <strong style={{ color: "#333333" }}>{timeAgo(state.lastActivity)}</strong>
             </span>
           </div>
           {state.lastActionSummary && (
             <div
               style={{
                 fontSize: "11px",
-                color: "#9ca3af",
+                color: "#999999",
                 marginTop: "6px",
               }}
             >
@@ -106,8 +106,8 @@ export default function PlayerStateCard({ state }: { state: PlayerState }) {
           )}
         </>
       ) : (
-        <div style={{ fontSize: "14px", color: "#9ca3af" }}>
-          No active chapter. Activate one from Settings.
+        <div style={{ fontSize: "14px", color: "#999999" }}>
+          No active workflow. Activate one from Settings.
         </div>
       )}
     </div>

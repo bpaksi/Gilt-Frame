@@ -70,7 +70,7 @@ export default function HintPush({
     <div
       style={{
         background: "#fff",
-        border: "1px solid #e5e7eb",
+        border: "1px solid #d0d0d0",
         borderRadius: "8px",
         padding: "12px 16px",
         marginBottom: "16px",
@@ -82,16 +82,16 @@ export default function HintPush({
           fontWeight: 600,
           letterSpacing: "1.5px",
           textTransform: "uppercase",
-          color: "#6b7280",
+          color: "#666666",
           marginBottom: "8px",
         }}
       >
-        Hints — {revealedTiers.length}/{config.hints.length} revealed
+        Alerts — {revealedTiers.length}/{config.hints.length} revealed
       </div>
 
       {nextTier ? (
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ flex: 1, fontSize: "13px", color: "#374151" }}>
+          <div style={{ flex: 1, fontSize: "13px", color: "#333333" }}>
             Next: Tier {nextTier.tier}
           </div>
           <button
@@ -100,7 +100,7 @@ export default function HintPush({
             style={{
               height: "28px",
               padding: "0 12px",
-              background: pushing ? "#fbbf24" : "#f59e0b",
+              background: pushing ? "#f0a830" : "#e68a00",
               color: "#fff",
               border: "none",
               borderRadius: "4px",
@@ -109,12 +109,12 @@ export default function HintPush({
               cursor: pushing ? "not-allowed" : "pointer",
             }}
           >
-            {pushing ? "..." : "PUSH HINT"}
+            {pushing ? "..." : "PUSH ALERT"}
           </button>
         </div>
       ) : (
-        <div style={{ fontSize: "13px", color: "#9ca3af" }}>
-          All hints revealed.
+        <div style={{ fontSize: "13px", color: "#999999" }}>
+          All alerts revealed.
         </div>
       )}
 
@@ -122,7 +122,7 @@ export default function HintPush({
         <div
           style={{
             fontSize: "12px",
-            color: "#16a34a",
+            color: "#2e7d32",
             marginTop: "6px",
           }}
         >
@@ -134,7 +134,7 @@ export default function HintPush({
         <div
           style={{
             fontSize: "12px",
-            color: "#dc2626",
+            color: "#c62828",
             marginTop: "6px",
           }}
         >

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import LoginForm from "./LoginForm";
 
 export const metadata: Metadata = {
-  title: "Login | The Order of the Gilt Frame",
+  title: "Login | Admin",
 };
 
 export default async function AdminLoginPage({

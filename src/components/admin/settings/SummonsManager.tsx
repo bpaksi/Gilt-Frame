@@ -57,7 +57,7 @@ export default function SummonsManager({
             key={id}
             style={{
               background: "#fff",
-              border: "1px solid #e5e7eb",
+              border: "1px solid #d0d0d0",
               borderRadius: "8px",
               padding: "12px 16px",
               marginBottom: "8px",
@@ -70,13 +70,13 @@ export default function SummonsManager({
               <div style={{ fontSize: "14px", fontWeight: 500 }}>
                 {chapter.name}
               </div>
-              <div style={{ fontSize: "11px", color: "#6b7280" }}>
+              <div style={{ fontSize: "11px", color: "#666666" }}>
                 {id}
                 {chapter.window && ` \u2022 ${chapter.window}`}
                 {isActive && (
                   <span
                     style={{
-                      color: "#16a34a",
+                      color: "#2e7d32",
                       fontWeight: 600,
                       marginLeft: "8px",
                     }}
@@ -94,7 +94,7 @@ export default function SummonsManager({
                 style={{
                   height: "28px",
                   padding: "0 12px",
-                  background: activating === id ? "#93b5f5" : "#2563eb",
+                  background: activating === id ? "#5a8ab5" : "#336699",
                   color: "#fff",
                   border: "none",
                   borderRadius: "4px",
@@ -109,8 +109,8 @@ export default function SummonsManager({
             )}
 
             {!hasFlow && (
-              <span style={{ fontSize: "11px", color: "#9ca3af" }}>
-                No flow
+              <span style={{ fontSize: "11px", color: "#999999" }}>
+                No steps
               </span>
             )}
           </div>
@@ -118,7 +118,7 @@ export default function SummonsManager({
       })}
 
       {error && (
-        <div style={{ fontSize: "12px", color: "#dc2626", marginTop: "8px" }}>
+        <div style={{ fontSize: "12px", color: "#c62828", marginTop: "8px" }}>
           {error}
         </div>
       )}
