@@ -3,7 +3,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { resolveTrack } from "@/lib/track";
 import {
-  chaptersConfig,
+  gameConfig,
   getOrderedSteps,
   type ComponentName,
   type ComponentConfig,
@@ -51,7 +51,7 @@ export async function getQuestState(): Promise<QuestState> {
 
   if (!progress) return { status: "waiting" };
 
-  const chapter = chaptersConfig.chapters[progress.chapter_id];
+  const chapter = gameConfig.chapters[progress.chapter_id];
   if (!chapter) return { status: "waiting" };
 
   const orderedSteps = getOrderedSteps(chapter);
@@ -119,7 +119,7 @@ export async function advanceQuest(
     return getQuestState();
   }
 
-  const chapter = chaptersConfig.chapters[chapterId];
+  const chapter = gameConfig.chapters[chapterId];
   if (!chapter) return { status: "waiting" };
 
   const orderedSteps = getOrderedSteps(chapter);
@@ -190,7 +190,7 @@ export async function revealHint(
   if (!trackInfo) return null;
 
   // Get hint text from config
-  const chapter = chaptersConfig.chapters[chapterId];
+  const chapter = gameConfig.chapters[chapterId];
   if (!chapter) return null;
 
   const orderedSteps = getOrderedSteps(chapter);

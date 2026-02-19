@@ -9,7 +9,7 @@ interface MultipleChoiceProps {
   config: MultipleChoiceConfig;
   onAdvance: () => void;
   chapterId?: string;
-  flowIndex?: number;
+  stepIndex?: number;
   revealedHintTiers?: number[];
 }
 
@@ -19,7 +19,7 @@ export default function MultipleChoice({
   config,
   onAdvance,
   chapterId,
-  flowIndex,
+  stepIndex,
   revealedHintTiers,
 }: MultipleChoiceProps) {
   const { questions, hints } = config;
@@ -42,10 +42,10 @@ export default function MultipleChoice({
       setIsCorrect(correct);
 
       // Record answer
-      if (chapterId !== undefined && flowIndex !== undefined) {
+      if (chapterId !== undefined && stepIndex !== undefined) {
         recordAnswer(
           chapterId,
-          flowIndex,
+          stepIndex,
           currentQ,
           question.options[optionIdx],
           correct
@@ -89,7 +89,7 @@ export default function MultipleChoice({
         }, 800);
       }
     },
-    [locked, transitioning, question, currentQ, questions.length, onAdvance, chapterId, flowIndex]
+    [locked, transitioning, question, currentQ, questions.length, onAdvance, chapterId, stepIndex]
   );
 
   return (
@@ -194,11 +194,11 @@ export default function MultipleChoice({
       </div>
 
       {/* Hint system */}
-      {hints && hints.length > 0 && chapterId && flowIndex !== undefined && (
+      {hints && hints.length > 0 && chapterId && stepIndex !== undefined && (
         <HintSystem
           hints={hints as HintItem[]}
           chapterId={chapterId}
-          flowIndex={flowIndex}
+          stepIndex={stepIndex}
           initialRevealedTiers={revealedHintTiers}
         />
       )}

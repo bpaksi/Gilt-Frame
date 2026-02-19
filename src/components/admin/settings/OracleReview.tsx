@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { adminFetch } from "@/lib/admin/fetch";
 
 type Conversation = {
   id: string;
@@ -17,7 +18,7 @@ export default function OracleReview() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/admin/oracle")
+    adminFetch("/api/admin/oracle")
       .then((r) => r.json())
       .then((data) => {
         setConversations(data.conversations ?? []);
@@ -26,7 +27,7 @@ export default function OracleReview() {
   }, []);
 
   async function toggleFlag(id: string, currentFlagged: boolean) {
-    await fetch("/api/admin/oracle", {
+    await adminFetch("/api/admin/oracle", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, flagged: !currentFlagged }),

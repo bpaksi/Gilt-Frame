@@ -7,7 +7,7 @@ import type {
   MessageProgressRow,
   CompletedStepCount,
 } from "@/lib/admin/actions";
-import { chaptersConfig, getOrderedSteps } from "@/config/chapters";
+import { gameConfig, getOrderedSteps } from "@/config/chapters";
 import TimelineFilters from "./TimelineFilters";
 import StepList from "./StepList";
 
@@ -98,7 +98,7 @@ export default function EventTimeline({
     const cp = chapterProgress.find((c) => c.chapter_id === chapterFilter);
     if (!cp) return 0;
     if (cp.completed_at !== null) {
-      const chapter = chaptersConfig.chapters[chapterFilter];
+      const chapter = gameConfig.chapters[chapterFilter];
       return chapter ? getOrderedSteps(chapter).length : 0;
     }
     const stepCount = completedStepCounts.find(

@@ -40,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# PII contacts (copy contacts.example.ts → contacts.ts and fill in)
+src/config/contacts.ts

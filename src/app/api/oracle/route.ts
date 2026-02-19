@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { chaptersConfig } from "@/config/chapters";
+import { gameConfig } from "@/config/chapters";
 import { buildOracleSystemPrompt } from "@/lib/oracle-prompt";
 
 export async function POST(request: Request) {
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
 
   const systemPrompt = buildOracleSystemPrompt(
     completedChapters,
-    chaptersConfig.chapters,
+    gameConfig.chapters,
     unlockedLore
   );
 

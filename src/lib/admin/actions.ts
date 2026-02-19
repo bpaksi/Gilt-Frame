@@ -1,7 +1,7 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { chaptersConfig, getOrderedSteps } from "@/config/chapters";
+import { gameConfig, getOrderedSteps } from "@/config/chapters";
 import { getCurrentStepIndex } from "@/lib/actions/quest";
 
 export type PlayerState = {
@@ -42,7 +42,7 @@ export async function getPlayerState(
     };
   }
 
-  const chapter = chaptersConfig.chapters[progress.chapter_id];
+  const chapter = gameConfig.chapters[progress.chapter_id];
   const orderedSteps = chapter ? getOrderedSteps(chapter) : [];
   const stepIndex = await getCurrentStepIndex(
     supabase,
@@ -259,7 +259,7 @@ export async function activateChapter(
   track: "test" | "live",
   chapterId: string
 ): Promise<{ success: boolean; error?: string }> {
-  const chapter = chaptersConfig.chapters[chapterId];
+  const chapter = gameConfig.chapters[chapterId];
   if (!chapter) {
     return { success: false, error: "Chapter not found." };
   }

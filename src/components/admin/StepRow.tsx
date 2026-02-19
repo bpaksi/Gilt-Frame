@@ -1,18 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import type { FlowStep } from "@/config/chapters";
+import { adminFetch } from "@/lib/admin/fetch";
+import type { Step } from "@/config/chapters";
 
 export type StepState = "delivered" | "sent" | "ready" | "active" | "locked" | "scheduled";
 
-export default function FlowStepRow({
+export default function StepRow({
   step,
   stepState,
   track,
   chapterId,
   readOnly,
 }: {
-  step: FlowStep;
+  step: Step;
   stepState: StepState;
   track: "test" | "live";
   chapterId: string;
@@ -68,7 +69,7 @@ export default function FlowStepRow({
     setError("");
 
     try {
-      const res = await fetch("/api/admin/send", {
+      const res = await adminFetch("/api/admin/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -97,7 +98,7 @@ export default function FlowStepRow({
     setError("");
 
     try {
-      const res = await fetch("/api/admin/mark-done", {
+      const res = await adminFetch("/api/admin/mark-done", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

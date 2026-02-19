@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { FlowStep } from "@/config/chapters";
+import { adminFetch } from "@/lib/admin/fetch";
+import type { Step } from "@/config/chapters";
 import type { MessageProgressRow } from "@/lib/admin/actions";
 import HintPush from "./HintPush";
 
 type Props = {
-  step: FlowStep;
+  step: Step;
   track: "test" | "live";
   chapterId: string;
-  flowIndex: number;
+  stepIndex: number;
   messageProgress: MessageProgressRow | null;
   revealedTiers: number[];
 };
@@ -19,7 +20,7 @@ export default function CurrentStepAction({
   step,
   track,
   chapterId,
-  flowIndex,
+  stepIndex,
   messageProgress,
   revealedTiers,
 }: Props) {
@@ -43,7 +44,7 @@ export default function CurrentStepAction({
 
     try {
       // Send the message
-      const sendRes = await fetch("/api/admin/send", {
+      const sendRes = await adminFetch("/api/admin/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -61,7 +62,7 @@ export default function CurrentStepAction({
 
       // For letters, also mark as done (received = delivered)
       if (isLetter) {
-        const doneRes = await fetch("/api/admin/mark-done", {
+        const doneRes = await adminFetch("/api/admin/mark-done", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -169,7 +170,7 @@ export default function CurrentStepAction({
           <HintPush
             track={track}
             chapterId={chapterId}
-            flowIndex={flowIndex}
+            stepIndex={stepIndex}
             revealedTiers={revealedTiers}
           />
         </div>

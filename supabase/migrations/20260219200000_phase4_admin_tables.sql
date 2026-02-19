@@ -1,7 +1,7 @@
 -- Phase 4: Admin Panel tables
 -- message_progress, admin_activity_log, player_events
 
--- Tracks delivery status for each offline flow step
+-- Tracks delivery status for each offline step
 create table message_progress (
   id uuid primary key default gen_random_uuid(),
   track text not null check (track in ('test', 'live')),

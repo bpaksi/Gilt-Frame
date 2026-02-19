@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { adminFetch } from "@/lib/admin/fetch";
 
 type Moment = {
   id: string;
@@ -17,13 +18,13 @@ export default function MomentsManager() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/admin/enroll") // We'll fetch moments from admin client directly
+    adminFetch("/api/admin/enroll") // We'll fetch moments from admin client directly
       .then(() => setLoading(false));
 
     // Fetch moments via inline approach since we don't have a dedicated API yet
     const fetchMoments = async () => {
       try {
-        const res = await fetch("/api/admin/state?track=test");
+        const res = await adminFetch("/api/admin/state?track=test");
         if (res.ok) {
           // Moments don't have a dedicated API yet, show empty state
           setLoading(false);

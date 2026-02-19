@@ -24,11 +24,11 @@ export default function QuestStateMachine({ initialState }: QuestStateMachinePro
   }
 
   const handleAdvance = useCallback(async () => {
-    if (!state.chapterId || state.flowIndex === undefined) return;
-    const next = await advanceQuest(state.chapterId, state.flowIndex);
+    if (!state.chapterId || state.stepIndex === undefined) return;
+    const next = await advanceQuest(state.chapterId, state.stepIndex);
     setState(next);
     router.refresh();
-  }, [state.chapterId, state.flowIndex, router]);
+  }, [state.chapterId, state.stepIndex, router]);
 
   // Poll for admin-triggered advances
   useEffect(() => {
@@ -37,13 +37,13 @@ export default function QuestStateMachine({ initialState }: QuestStateMachinePro
     pollRef.current = setInterval(async () => {
       if (!state.chapterId) return;
       const result = await pollChapterProgress(state.chapterId);
-      if (result && result.flowIndex !== state.flowIndex) {
+      if (result && result.stepIndex !== state.stepIndex) {
         router.refresh();
       }
     }, 30_000);
 
     return () => clearInterval(pollRef.current);
-  }, [state.advance, state.chapterId, state.flowIndex, router]);
+  }, [state.advance, state.chapterId, state.stepIndex, router]);
 
   if (state.status !== "active" || !state.component) {
     return null;
@@ -53,7 +53,7 @@ export default function QuestStateMachine({ initialState }: QuestStateMachinePro
   if (!Component) return null;
 
   return (
-    <StateFader stateKey={`${state.chapterId}-${state.flowIndex}`}>
+    <StateFader stateKey={`${state.chapterId}-${state.stepIndex}`}>
       <Suspense
         fallback={
           <div
@@ -72,7 +72,7 @@ export default function QuestStateMachine({ initialState }: QuestStateMachinePro
           onAdvance={handleAdvance}
           chapterId={state.chapterId}
           chapterName={state.chapterName}
-          flowIndex={state.flowIndex}
+          stepIndex={state.stepIndex}
           revealedHintTiers={state.revealedHintTiers}
         />
       </Suspense>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { adminFetch } from "@/lib/admin/fetch";
 
 const SIGNATURES: { label: string; value: string }[] = [
   { label: "The Registrar", value: "\n\n\u2014 The Registrar" },
@@ -15,7 +16,7 @@ export default function FreeformCompose({
   track: "test" | "live";
 }) {
   const [channel, setChannel] = useState<"sms" | "email">("sms");
-  const [to, setTo] = useState("sparrow");
+  const [to, setTo] = useState("player");
   const [body, setBody] = useState("");
   const [subject, setSubject] = useState("");
   const [signature, setSignature] = useState(SIGNATURES[0].value);
@@ -30,7 +31,7 @@ export default function FreeformCompose({
     setResult(null);
 
     try {
-      const res = await fetch("/api/admin/compose", {
+      const res = await adminFetch("/api/admin/compose", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -140,9 +141,9 @@ export default function FreeformCompose({
           onChange={(e) => setTo(e.target.value)}
           style={{ ...inputStyle, width: "auto", flex: 1, minWidth: "100px" }}
         >
-          <option value="sparrow">Sparrow</option>
-          <option value="bob">Bob</option>
-          <option value="sister">Sister</option>
+          <option value="player">Player</option>
+          <option value="companion1">Companion 1</option>
+          <option value="companion2">Companion 2</option>
         </select>
 
         {/* Signature */}

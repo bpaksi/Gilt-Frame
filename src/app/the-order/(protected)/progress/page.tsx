@@ -5,7 +5,7 @@ import {
   getAllMessageProgress,
   getCompletedStepCounts,
 } from "@/lib/admin/actions";
-import { chaptersConfig } from "@/config/chapters";
+import { gameConfig } from "@/config/chapters";
 import EventTimeline from "@/components/admin/EventTimeline";
 
 export default async function AdminProgressPage() {
@@ -24,7 +24,7 @@ export default async function AdminProgressPage() {
       .map((cp) => cp.chapter_id)
   );
 
-  const chapterIds = Object.keys(chaptersConfig.chapters);
+  const chapterIds = Object.keys(gameConfig.chapters);
   const firstIncomplete = chapterIds.find((id) => !completedIds.has(id)) ?? chapterIds[0];
 
   return (

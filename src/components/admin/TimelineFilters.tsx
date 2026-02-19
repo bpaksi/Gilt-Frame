@@ -1,6 +1,6 @@
 "use client";
 
-import { chaptersConfig } from "@/config/chapters";
+import { gameConfig } from "@/config/chapters";
 
 export default function TimelineFilters({
   selectedChapter,
@@ -9,7 +9,7 @@ export default function TimelineFilters({
   selectedChapter: string;
   onChapterChange: (chapterId: string) => void;
 }) {
-  const chapters = Object.entries(chaptersConfig.chapters);
+  const chapters = Object.entries(gameConfig.chapters);
 
   return (
     <div

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback } from "react";
 import type { MomentRow } from "@/lib/actions/moments";
-import { chaptersConfig } from "@/config/chapters";
+import { gameConfig } from "@/config/chapters";
 
 interface MomentCardProps {
   moment: MomentRow;
@@ -11,7 +11,7 @@ interface MomentCardProps {
 
 export default function MomentCard({ moment }: MomentCardProps) {
   const chapter = moment.chapter_id
-    ? chaptersConfig.chapters[moment.chapter_id]
+    ? gameConfig.chapters[moment.chapter_id]
     : null;
 
   const date = new Date(moment.created_at).toLocaleDateString("en-US", {

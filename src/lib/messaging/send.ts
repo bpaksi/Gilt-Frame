@@ -1,14 +1,14 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logAdminAction } from "@/lib/admin/log";
 import {
-  chaptersConfig,
+  gameConfig,
   getOrderedSteps,
-  type Step,
   type SmsStep,
   type MmsStep,
   type EmailStep,
   type LetterStep,
 } from "@/config/chapters";
+import type { Contact, AdHocRecipient, Chapter, Track } from "@/config/types";
 import { sendSms, sendMms } from "./twilio";
 import { sendEmail } from "./resend";
 
@@ -20,40 +20,15 @@ type SendResult = {
 };
 
 function resolveRecipient(
-  track: "test" | "live",
-  to: string
-): { phone: string; email: string } {
-  const contacts = chaptersConfig.contacts;
-
-  if (track === "test") {
-    if (to === "sparrow") {
-      return {
-        phone: contacts.test_overrides.sparrow_phone,
-        email: contacts.test_overrides.sparrow_email,
-      };
-    }
-    // Companion — all go to test override
-    return {
-      phone: contacts.test_overrides.companion_phone,
-      email: contacts.test_overrides.companion_email,
-    };
+  trackObj: Track,
+  to: string,
+  chapter?: Chapter
+): Contact | null {
+  if (to === "player") return trackObj.player;
+  if (to === "companion" && chapter?.companion) {
+    return trackObj[chapter.companion];
   }
-
-  // Live track
-  if (to === "sparrow") {
-    return {
-      phone: contacts.sparrow.phone,
-      email: contacts.sparrow.email,
-    };
-  }
-
-  // Resolve companion by name
-  const companion = contacts.companions[to];
-  if (companion) {
-    return { phone: companion.phone, email: companion.email };
-  }
-
-  return { phone: "", email: "" };
+  return null;
 }
 
 function getMediaUrl(image?: string): string | null {
@@ -67,15 +42,17 @@ export async function sendStep(
   chapterId: string,
   progressKey: string
 ): Promise<SendResult> {
-  const chapter = chaptersConfig.chapters[chapterId];
+  const chapter = gameConfig.chapters[chapterId];
   if (!chapter) return { success: false, error: "Chapter not found." };
 
+  const trackObj = gameConfig.tracks[track];
   const orderedSteps = getOrderedSteps(chapter);
-  const step = orderedSteps.find(
+  const stepIdx = orderedSteps.findIndex(
     (s) => "progress_key" in s && s.progress_key === progressKey
-  ) as (SmsStep | MmsStep | EmailStep | LetterStep) | undefined;
+  );
+  if (stepIdx < 0) return { success: false, error: "Step not found." };
 
-  if (!step) return { success: false, error: "Step not found." };
+  const step = orderedSteps[stepIdx] as SmsStep | MmsStep | EmailStep | LetterStep;
 
   const supabase = createAdminClient();
   let messageStatus = "sent";
@@ -83,7 +60,10 @@ export async function sendStep(
   let error: string | undefined;
 
   // Send main message
-  const recipient = resolveRecipient(track, step.to);
+  const recipient = resolveRecipient(trackObj, step.to, chapter);
+  if (!recipient) {
+    return { success: false, error: `Could not resolve recipient "${step.to}".` };
+  }
 
   if (step.type === "sms") {
     const result = await sendSms(recipient.phone, step.body);
@@ -122,14 +102,18 @@ export async function sendStep(
   // Send companion message if defined
   if (step.companion_message) {
     const comp = step.companion_message;
-    const compRecipient = resolveRecipient(track, comp.to);
+    const compRecipient = resolveRecipient(trackObj, "companion", chapter);
 
-    if (comp.channel === "sms") {
-      const result = await sendSms(compRecipient.phone, comp.body);
-      companionStatus = result.success ? "sent" : "failed";
-    } else if (comp.channel === "mms") {
-      const result = await sendSms(compRecipient.phone, comp.body);
-      companionStatus = result.success ? "sent" : "failed";
+    if (compRecipient) {
+      if (comp.channel === "sms") {
+        const result = await sendSms(compRecipient.phone, comp.body);
+        companionStatus = result.success ? "sent" : "failed";
+      } else if (comp.channel === "mms") {
+        const result = await sendSms(compRecipient.phone, comp.body);
+        companionStatus = result.success ? "sent" : "failed";
+      }
+    } else {
+      companionStatus = "failed";
     }
   } else {
     companionStatus = "none";
@@ -172,33 +156,30 @@ export async function sendStep(
   });
 
   // Mark this step as completed if not already
-  const idx = orderedSteps.indexOf(step as Step);
-  if (idx >= 0) {
-    // Ensure chapter_progress row exists
-    const { data: progress } = await supabase
-      .from("chapter_progress")
-      .select("id")
-      .eq("track", track)
-      .eq("chapter_id", chapterId)
-      .single();
+  // Ensure chapter_progress row exists
+  const { data: progress } = await supabase
+    .from("chapter_progress")
+    .select("id")
+    .eq("track", track)
+    .eq("chapter_id", chapterId)
+    .single();
 
-    if (!progress) {
-      await supabase.from("chapter_progress").insert({
-        track,
-        chapter_id: chapterId,
-      });
-    }
-
-    // Insert completed step (ignore conflict if already completed)
-    await supabase.from("completed_steps").upsert(
-      {
-        track,
-        chapter_id: chapterId,
-        step_index: idx,
-      },
-      { onConflict: "track,chapter_id,step_index" }
-    );
+  if (!progress) {
+    await supabase.from("chapter_progress").insert({
+      track,
+      chapter_id: chapterId,
+    });
   }
+
+  // Insert completed step (ignore conflict if already completed)
+  await supabase.from("completed_steps").upsert(
+    {
+      track,
+      chapter_id: chapterId,
+      step_index: stepIdx,
+    },
+    { onConflict: "track,chapter_id,step_index" }
+  );
 
   return {
     success: messageStatus === "sent",
@@ -211,22 +192,28 @@ export async function sendStep(
 export async function sendAdHocMessage(
   track: "test" | "live",
   channel: "sms" | "email",
-  to: string,
+  to: AdHocRecipient,
   body: string,
   subject?: string
 ): Promise<SendResult> {
-  const recipient = resolveRecipient(track, to);
+  const trackObj = gameConfig.tracks[track];
+  const contact: Contact | null =
+    to === "player" ? trackObj.player : trackObj[to];
+
+  if (!contact) {
+    return { success: false, error: `No contact for "${to}" on ${track} track.` };
+  }
 
   let success = false;
   let error: string | undefined;
 
   if (channel === "sms") {
-    const result = await sendSms(recipient.phone || to, body);
+    const result = await sendSms(contact.phone, body);
     success = result.success;
     error = result.error;
   } else {
     const result = await sendEmail(
-      recipient.email || to,
+      contact.email,
       subject ?? "Message from The Order",
       body
     );

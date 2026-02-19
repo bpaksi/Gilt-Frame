@@ -1,10 +1,11 @@
 import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminTabBar from "@/components/admin/AdminTabBar";
 import TrackToggle from "@/components/admin/TrackToggle";
 import { getAdminTrack } from "@/lib/admin/track";
+import { verifyAdminSession } from "@/lib/admin/auth";
 
 export default async function ProtectedAdminLayout({
   children,
@@ -12,10 +13,14 @@ export default async function ProtectedAdminLayout({
   children: ReactNode;
 }) {
   const cookieStore = await cookies();
-  const adminSession = cookieStore.get("admin_session");
+  const hasSessionCookie = !!cookieStore.get("admin_session")?.value;
 
-  if (!adminSession?.value) {
-    notFound();
+  if (!hasSessionCookie) {
+    notFound(); // No cookie → hide admin existence
+  }
+
+  if (!(await verifyAdminSession())) {
+    redirect("/the-order"); // Cookie exists but expired → back to login
   }
 
   const track = await getAdminTrack();

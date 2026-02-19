@@ -1,32 +1,33 @@
 "use client";
 
 import { useState } from "react";
+import { adminFetch } from "@/lib/admin/fetch";
 import {
-  chaptersConfig,
-  getOrderedFlow,
+  gameConfig,
+  getOrderedSteps,
   type HintItem,
 } from "@/config/chapters";
 
 export default function HintPush({
   track,
   chapterId,
-  flowIndex,
+  stepIndex,
   revealedTiers,
 }: {
   track: "test" | "live";
   chapterId: string;
-  flowIndex: number;
+  stepIndex: number;
   revealedTiers: number[];
 }) {
   const [pushing, setPushing] = useState(false);
   const [lastPushed, setLastPushed] = useState<string | null>(null);
   const [error, setError] = useState("");
 
-  const chapter = chaptersConfig.chapters[chapterId];
+  const chapter = gameConfig.chapters[chapterId];
   if (!chapter) return null;
 
-  const orderedFlow = getOrderedFlow(chapter);
-  const step = orderedFlow[flowIndex];
+  const orderedSteps = getOrderedSteps(chapter);
+  const step = orderedSteps[stepIndex];
   if (!step || step.type !== "website") return null;
 
   const config = step.config as { hints?: HintItem[] };
@@ -42,13 +43,13 @@ export default function HintPush({
     setError("");
 
     try {
-      const res = await fetch("/api/admin/hint/push", {
+      const res = await adminFetch("/api/admin/hint/push", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           track,
           chapterId,
-          flowIndex,
+          stepIndex,
           hintTier: nextTier.tier,
         }),
       });

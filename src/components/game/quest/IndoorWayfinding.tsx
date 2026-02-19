@@ -8,7 +8,7 @@ interface IndoorWayfindingProps {
   config: WayfindingCompassConfig;
   onAdvance: () => void;
   chapterId?: string;
-  flowIndex?: number;
+  stepIndex?: number;
   revealedHintTiers?: number[];
 }
 
@@ -16,7 +16,7 @@ export default function IndoorWayfinding({
   config,
   onAdvance,
   chapterId,
-  flowIndex,
+  stepIndex,
   revealedHintTiers,
 }: IndoorWayfindingProps) {
   return (
@@ -69,11 +69,11 @@ export default function IndoorWayfinding({
         I have arrived
       </button>
 
-      {config.hints && chapterId && flowIndex !== undefined && (
+      {config.hints && chapterId && stepIndex !== undefined && (
         <HintSystem
           hints={config.hints as HintItem[]}
           chapterId={chapterId}
-          flowIndex={flowIndex}
+          stepIndex={stepIndex}
           initialRevealedTiers={revealedHintTiers}
         />
       )}

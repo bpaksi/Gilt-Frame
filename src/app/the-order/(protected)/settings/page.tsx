@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getAdminTrack } from "@/lib/admin/track";
 import { getPlayerState } from "@/lib/admin/actions";
-import { chaptersConfig } from "@/config/chapters";
+import { gameConfig } from "@/config/chapters";
 import ResetChapter from "@/components/admin/ResetChapter";
 import SignOutButton from "./SignOutButton";
 
@@ -17,9 +17,9 @@ export default async function AdminSettingsPage() {
   const track = await getAdminTrack();
   const state = await getPlayerState(track);
 
-  const firstChapterId = Object.keys(chaptersConfig.chapters)[0];
+  const firstChapterId = Object.keys(gameConfig.chapters)[0];
   const chapterId = state.chapterId ?? firstChapterId;
-  const chapter = chaptersConfig.chapters[chapterId];
+  const chapter = gameConfig.chapters[chapterId];
   const chapterName = state.chapterName ?? chapter?.name ?? chapterId;
   return (
     <div style={{ padding: "16px", maxWidth: "600px" }}>

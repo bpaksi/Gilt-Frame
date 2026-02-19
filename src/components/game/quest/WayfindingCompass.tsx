@@ -13,7 +13,7 @@ interface WayfindingCompassProps {
   config: WayfindingCompassConfig;
   onAdvance: () => void;
   chapterId?: string;
-  flowIndex?: number;
+  stepIndex?: number;
   revealedHintTiers?: number[];
 }
 
@@ -25,7 +25,7 @@ export default function WayfindingCompass({
   config,
   onAdvance,
   chapterId,
-  flowIndex,
+  stepIndex,
   revealedHintTiers,
 }: WayfindingCompassProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -226,7 +226,7 @@ export default function WayfindingCompass({
         config={config}
         onAdvance={onAdvance}
         chapterId={chapterId}
-        flowIndex={flowIndex}
+        stepIndex={stepIndex}
         revealedHintTiers={revealedHintTiers}
       />
     );
@@ -302,11 +302,11 @@ export default function WayfindingCompass({
         </button>
       )}
 
-      {config.hints && chapterId && flowIndex !== undefined && (
+      {config.hints && chapterId && stepIndex !== undefined && (
         <HintSystem
           hints={config.hints as HintItem[]}
           chapterId={chapterId}
-          flowIndex={flowIndex}
+          stepIndex={stepIndex}
           initialRevealedTiers={revealedHintTiers}
         />
       )}

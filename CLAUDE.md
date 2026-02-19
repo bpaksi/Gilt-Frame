@@ -28,7 +28,7 @@ The Order of the Gilt Frame is an immersive, location-based interactive narrativ
 - **ID generation**: `crypto.randomUUID()` in app code; `gen_random_uuid()` in PostgreSQL.
 - **Session cookies**: `device_token` (90-day, identifies enrolled device), `session` (30-day, post-passphrase), `admin_session` (7-day, Supabase auth token).
 - **Rate limiting**: IP-based via `getClientIp()` — passphrase: 10/15min, admin login: 5/15min.
-- **No explicit FK constraints** in DB — app code enforces referential integrity via `chaptersConfig` lookups. JSONB `details` columns used for flexible data.
+- **No explicit FK constraints** in DB — app code enforces referential integrity via `gameConfig` lookups. JSONB `details` columns used for flexible data.
 
 ## Naming Conventions
 
@@ -50,7 +50,7 @@ The Order of the Gilt Frame is an immersive, location-based interactive narrativ
   - **`api/`** — REST endpoints: auth, oracle, admin CRUD, OG image generation
   - **`e/[token]/`** — One-time enrollment link handler
 - **`src/components/`** — React components: `game/` (player UI, quests, puzzles), `admin/` (dashboard panels), `ui/` (shared)
-- **`src/config/`** — `chapters.ts`: entire game structure (~816 lines), types, chapter config, helper functions
+- **`src/config/`** — `types.ts` (type definitions), `contacts.ts` (PII, gitignored), `chapters.ts` (gameConfig data + helpers)
 - **`src/lib/`** — Shared logic: `supabase/` (client, types), `admin/` (auth, actions, logging), `actions/` (quest, moments), `messaging/` (Twilio, Resend), `hooks/` (geolocation, orientation), geo utils, rate limiting, oracle prompt
 - **`supabase/`** — Migrations (4 files), `seed.sql`, `config.toml`
 - **`docs/`** — Design documents: `BUILD_PROMPT.md`, `INDEX.md`, `MOBILE_DESIGN.md`
@@ -75,7 +75,8 @@ pnpm db:types               # Regenerate TS types from Supabase
 # Code quality
 pnpm lint                   # ESLint
 pnpm typecheck              # tsc --noEmit
-pnpm precommit              # db:types → lint → typecheck → build
+pnpm validate:config        # Validate config cross-references
+pnpm precommit              # db:types → lint → typecheck → validate:config → build
 
 # Production
 pnpm build                  # Next.js production build
@@ -127,7 +128,7 @@ RLS enabled on all tables. App uses `service_role` to bypass. Public read on `mo
 | Design index | `docs/INDEX.md` |
 | Mobile design spec | `docs/MOBILE_DESIGN.md` |
 | Website design doc | `docs/Order_of_the_Gilt_Frame_Website_Design.docx` |
-| Game chapter config | `src/config/chapters.ts` |
+| Game chapter config | `src/config/chapters.ts`, `src/config/types.ts` |
 | DB types (auto-generated) | `src/lib/supabase/types.ts` |
 | Supabase config | `supabase/config.toml` |
 | Seed data | `supabase/seed.sql` |
@@ -146,7 +147,11 @@ RLS enabled on all tables. App uses `service_role` to bypass. Public read on `mo
 ```
 topic | location
 ------|--------
-game config, chapters, steps, types | src/config/chapters.ts
+game config, chapters, steps, data | src/config/chapters.ts
+config types, abstractions | src/config/types.ts
+contacts (PII, gitignored) | src/config/contacts.ts
+config architecture docs | src/config/CLAUDE.md
+config validation | scripts/validate-config.ts
 quest state, advance logic | src/lib/actions/quest.ts
 moments, journey data | src/lib/actions/moments.ts
 supabase client, admin client | src/lib/supabase/admin.ts

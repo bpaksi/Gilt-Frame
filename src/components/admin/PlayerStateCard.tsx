@@ -87,7 +87,7 @@ export default function PlayerStateCard({ state }: { state: PlayerState }) {
             }}
           >
             <span>
-              Step: <strong style={{ color: "#333333" }}>{state.stepName ?? `#${state.flowIndex}`}</strong>
+              Step: <strong style={{ color: "#333333" }}>{state.stepName ?? `#${state.stepIndex}`}</strong>
             </span>
             <span>
               Last: <strong style={{ color: "#333333" }}>{timeAgo(state.lastActivity)}</strong>

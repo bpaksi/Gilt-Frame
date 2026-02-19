@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { adminFetch } from "@/lib/admin/fetch";
 
 export default function TrackToggle({
   initialTrack,
@@ -16,7 +17,7 @@ export default function TrackToggle({
     if (newTrack === track || switching) return;
     setSwitching(true);
 
-    await fetch("/api/admin/track", {
+    await adminFetch("/api/admin/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ track: newTrack }),

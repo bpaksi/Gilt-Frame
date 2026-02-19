@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminSession } from "@/lib/admin/auth";
-import { sendFlowStep } from "@/lib/messaging/send";
+import { sendStep } from "@/lib/messaging/send";
 
 export async function POST(request: NextRequest) {
   if (!(await verifyAdminSession())) {
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const result = await sendFlowStep(track, chapterId, progressKey);
+  const result = await sendStep(track, chapterId, progressKey);
 
   if (!result.success) {
     return NextResponse.json({ error: result.error }, { status: 500 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { adminFetch } from "@/lib/admin/fetch";
 import type { Tables } from "@/lib/supabase/types";
 
 type Enrollment = Tables<"device_enrollments">;
@@ -27,7 +28,7 @@ export default function EnrollmentClient({
     setNewUrl(null);
 
     try {
-      const res = await fetch("/api/admin/enroll", {
+      const res = await adminFetch("/api/admin/enroll", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ track }),
@@ -50,7 +51,7 @@ export default function EnrollmentClient({
   }
 
   async function revokeEnrollment(id: string) {
-    const res = await fetch(`/api/admin/enroll/${id}`, { method: "DELETE" });
+    const res = await adminFetch(`/api/admin/enroll/${id}`, { method: "DELETE" });
     if (res.ok) {
       setEnrollments((prev) =>
         prev.map((e) => (e.id === id ? { ...e, revoked: true } : e))

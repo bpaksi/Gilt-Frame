@@ -3,8 +3,8 @@ import { verifyAdminSession } from "@/lib/admin/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logAdminAction } from "@/lib/admin/log";
 import {
-  chaptersConfig,
-  getOrderedFlow,
+  gameConfig,
+  getOrderedSteps,
   type HintItem,
 } from "@/config/chapters";
 
@@ -13,26 +13,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  const { track, chapterId, flowIndex, hintTier, overrideContent } =
+  const { track, chapterId, stepIndex, hintTier, overrideContent } =
     await request.json();
 
-  if (!track || !chapterId || flowIndex === undefined || !hintTier) {
+  if (!track || !chapterId || stepIndex === undefined || !hintTier) {
     return NextResponse.json(
-      { error: "track, chapterId, flowIndex, and hintTier are required." },
+      { error: "track, chapterId, stepIndex, and hintTier are required." },
       { status: 400 }
     );
   }
 
-  const chapter = chaptersConfig.chapters[chapterId];
+  const chapter = gameConfig.chapters[chapterId];
   if (!chapter) {
     return NextResponse.json({ error: "Chapter not found." }, { status: 404 });
   }
 
-  const orderedFlow = getOrderedFlow(chapter);
-  const step = orderedFlow[flowIndex];
+  const orderedSteps = getOrderedSteps(chapter);
+  const step = orderedSteps[stepIndex];
   if (!step || step.type !== "website") {
     return NextResponse.json(
-      { error: "Invalid flow index or not a website step." },
+      { error: "Invalid step index or not a website step." },
       { status: 400 }
     );
   }
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
   await supabase.from("hint_views").insert({
     track,
     chapter_id: chapterId,
-    flow_index: flowIndex,
+    step_index: stepIndex,
     hint_tier: hintTier,
   });
 
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     event_type: "hint_pushed",
     details: {
       chapter_id: chapterId,
-      flow_index: flowIndex,
+      step_index: stepIndex,
       hint_tier: hintTier,
       admin_pushed: true,
     },
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
   await logAdminAction("push_hint", {
     track,
     chapterId,
-    flowIndex,
+    stepIndex,
     hintTier,
   });
 

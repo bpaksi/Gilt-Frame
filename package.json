@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "precommit": "pnpm db:types && pnpm lint && pnpm typecheck && pnpm build",
+    "validate:config": "tsx scripts/validate-config.ts",
+    "precommit": "pnpm db:types && pnpm lint && pnpm typecheck && pnpm validate:config && pnpm build",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
@@ -25,7 +26,6 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
-    "supabase": "latest",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -33,11 +33,14 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "supabase": "latest",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "esbuild",
       "sharp",
       "supabase",
       "unrs-resolver"

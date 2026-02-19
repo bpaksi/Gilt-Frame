@@ -7,7 +7,7 @@ import type { HintItem } from "@/config/chapters";
 interface HintSystemProps {
   hints: HintItem[];
   chapterId: string;
-  flowIndex: number;
+  stepIndex: number;
   initialRevealedTiers?: number[];
 }
 
@@ -16,7 +16,7 @@ const EMPTY_TIERS: number[] = [];
 export default function HintSystem({
   hints,
   chapterId,
-  flowIndex,
+  stepIndex,
   initialRevealedTiers = EMPTY_TIERS,
 }: HintSystemProps) {
   const [revealedTiers, setRevealedTiers] = useState<number[]>(initialRevealedTiers);
@@ -29,7 +29,7 @@ export default function HintSystem({
   const handleReveal = async () => {
     if (!nextHint || loading) return;
     setLoading(true);
-    const result = await revealHint(chapterId, flowIndex, nextHint.tier);
+    const result = await revealHint(chapterId, stepIndex, nextHint.tier);
     if (result) {
       setRevealedTiers((prev) => [...prev, nextHint.tier]);
     }

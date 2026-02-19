@@ -5,7 +5,7 @@ import {
   getChapterMessageProgress,
 } from "@/lib/admin/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { chaptersConfig, getOrderedFlow } from "@/config/chapters";
+import { gameConfig, getOrderedSteps } from "@/config/chapters";
 import PlayerStateCard from "@/components/admin/PlayerStateCard";
 import CurrentStepAction from "@/components/admin/CurrentStepAction";
 
@@ -14,9 +14,9 @@ export default async function AdminCurrentPage() {
   const state = await getPlayerState(track);
 
   // Default to first chapter + step 0 when no progress exists
-  const firstChapterId = Object.keys(chaptersConfig.chapters)[0];
+  const firstChapterId = Object.keys(gameConfig.chapters)[0];
   const chapterId = state.chapterId ?? firstChapterId;
-  const flowIndex = state.chapterId ? state.flowIndex : 0;
+  const stepIndex = state.chapterId ? state.stepIndex : 0;
 
   const messageProgress = chapterId
     ? await getChapterMessageProgress(track, chapterId)
@@ -28,10 +28,10 @@ export default async function AdminCurrentPage() {
   let revealedTiers: number[] = [];
 
   if (chapterId) {
-    const chapter = chaptersConfig.chapters[chapterId];
+    const chapter = gameConfig.chapters[chapterId];
     if (chapter) {
-      const orderedFlow = getOrderedFlow(chapter);
-      currentStep = orderedFlow[flowIndex] ?? null;
+      const orderedSteps = getOrderedSteps(chapter);
+      currentStep = orderedSteps[stepIndex] ?? null;
 
       if (currentStep && "progress_key" in currentStep) {
         currentStepProgress =
@@ -47,14 +47,14 @@ export default async function AdminCurrentPage() {
           .select("hint_tier")
           .eq("track", track)
           .eq("chapter_id", chapterId)
-          .eq("flow_index", flowIndex);
+          .eq("step_index", stepIndex);
         revealedTiers = (hintViews ?? []).map((h) => h.hint_tier);
       }
     }
   }
 
   // Enrich state with defaults so PlayerStateCard always shows chapter info
-  const chapter = chaptersConfig.chapters[chapterId];
+  const chapter = gameConfig.chapters[chapterId];
   const enrichedState = state.chapterId
     ? state
     : {
@@ -74,7 +74,7 @@ export default async function AdminCurrentPage() {
           step={currentStep}
           track={track}
           chapterId={chapterId}
-          flowIndex={flowIndex}
+          stepIndex={stepIndex}
           messageProgress={currentStepProgress}
           revealedTiers={revealedTiers}
         />

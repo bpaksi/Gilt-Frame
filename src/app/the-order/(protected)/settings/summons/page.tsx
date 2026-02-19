@@ -1,6 +1,6 @@
 import { getAdminTrack } from "@/lib/admin/track";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { chaptersConfig } from "@/config/chapters";
+import { gameConfig } from "@/config/chapters";
 import SummonsManager from "@/components/admin/settings/SummonsManager";
 
 export default async function SummonsSettingsPage() {
@@ -16,7 +16,7 @@ export default async function SummonsSettingsPage() {
     (progressRows ?? []).map((r) => r.chapter_id)
   );
 
-  const chapterStatuses = Object.entries(chaptersConfig.chapters).map(
+  const chapterStatuses = Object.entries(gameConfig.chapters).map(
     ([id, chapter]) => ({
       chapterId: id,
       name: chapter.name,

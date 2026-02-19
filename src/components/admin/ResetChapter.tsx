@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { adminFetch } from "@/lib/admin/fetch";
 
 export default function ResetChapter({
   track,
@@ -25,7 +26,7 @@ export default function ResetChapter({
     setError("");
 
     try {
-      const res = await fetch("/api/admin/chapter/reset", {
+      const res = await adminFetch("/api/admin/chapter/reset", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ track, chapterId }),

@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import TextReveal from "./quest/TextReveal";
 import MarkerSVG from "./MarkerSVG";
 import type { MomentRow } from "@/lib/actions/moments";
-import { chaptersConfig } from "@/config/chapters";
+import { gameConfig } from "@/config/chapters";
 
 interface MomentDetailProps {
   moment: MomentRow;
@@ -12,7 +12,7 @@ interface MomentDetailProps {
 
 export default function MomentDetail({ moment }: MomentDetailProps) {
   const chapter = moment.chapter_id
-    ? chaptersConfig.chapters[moment.chapter_id]
+    ? gameConfig.chapters[moment.chapter_id]
     : null;
 
   const date = new Date(moment.created_at).toLocaleDateString("en-US", {

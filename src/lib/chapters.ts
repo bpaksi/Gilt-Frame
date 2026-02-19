@@ -1,8 +1,9 @@
-export { chaptersConfig } from "@/config/chapters";
+export { gameConfig, getOrderedSteps } from "@/config/chapters";
+export type { StepWithId } from "@/config/chapters";
 export type {
-  ChaptersConfig,
+  GameConfig,
   Chapter,
-  FlowStep,
+  Step,
   LetterStep,
   EmailStep,
   SmsStep,
@@ -13,6 +14,7 @@ export type {
   AdvanceCondition,
   ComponentName,
   ComponentConfig,
+  ComponentConfigMap,
   WayfindingCompassConfig,
   MarkerButtonConfig,
   MultipleChoiceConfig,
@@ -24,4 +26,11 @@ export type {
   PassphrasePuzzleConfig,
   HintItem,
   QuestionItem,
-} from "@/config/chapters";
+  Contact,
+  OrderContact,
+  CompanionSlot,
+  Recipient,
+  AdHocRecipient,
+  SideEffect,
+  Track,
+} from "@/config/types";

@@ -1,14 +1,14 @@
 "use client";
 
-import { chaptersConfig, getOrderedFlow } from "@/config/chapters";
+import { gameConfig, getOrderedSteps } from "@/config/chapters";
 
 export default function ChapterEditor() {
-  const chapters = Object.entries(chaptersConfig.chapters);
+  const chapters = Object.entries(gameConfig.chapters);
 
   return (
     <div>
       {chapters.map(([id, chapter]) => {
-        const flow = getOrderedFlow(chapter);
+        const steps = getOrderedSteps(chapter);
         return (
           <div
             key={id}
@@ -45,9 +45,9 @@ export default function ChapterEditor() {
               )}
             </div>
 
-            {flow.length > 0 ? (
+            {steps.length > 0 ? (
               <div style={{ fontSize: "12px", color: "#333333" }}>
-                {flow.map((step, i) => (
+                {steps.map((step, i) => (
                   <div
                     key={step.id}
                     style={{

@@ -1,6 +1,6 @@
 "use client";
 
-import MarkerSVG from "./MarkerSVG";
+import GiltFrame from "./GiltFrame";
 import type { WaitingStateConfig } from "@/config/chapters";
 
 interface WaitingStateProps {
@@ -12,20 +12,7 @@ export default function WaitingState({ config }: WaitingStateProps) {
   const message = config?.message || "The Order will contact you\nwhen ready.";
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100%",
-        gap: "32px",
-        padding: "40px 24px",
-      }}
-    >
-      <div style={{ animation: "pulse-soft 2s ease-in-out infinite" }}>
-        <MarkerSVG size={64} variant="gold" />
-      </div>
+    <GiltFrame>
       <p
         style={{
           color: "rgba(200, 165, 75, 0.5)",
@@ -41,6 +28,6 @@ export default function WaitingState({ config }: WaitingStateProps) {
       >
         {message}
       </p>
-    </div>
+    </GiltFrame>
   );
 }

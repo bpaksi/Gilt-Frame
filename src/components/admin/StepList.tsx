@@ -1,17 +1,17 @@
 "use client";
 
 import {
-  chaptersConfig,
-  getOrderedFlow,
-  type FlowStep,
+  gameConfig,
+  getOrderedSteps,
+  type Step,
 } from "@/config/chapters";
-import FlowStepRow, { type StepState } from "./FlowStepRow";
+import StepRow, { type StepState } from "./StepRow";
 import type { MessageProgressRow } from "@/lib/admin/actions";
 
 function getStepState(
-  step: FlowStep,
+  step: Step,
   index: number,
-  currentFlowIndex: number,
+  currentStepIndex: number,
   messageProgress: MessageProgressRow[]
 ): StepState {
   const isOffline = step.type !== "website";
@@ -31,31 +31,31 @@ function getStepState(
     }
   }
 
-  if (index < currentFlowIndex) return "sent";
-  if (index === currentFlowIndex) {
+  if (index < currentStepIndex) return "sent";
+  if (index === currentStepIndex) {
     return isOffline ? "ready" : "active";
   }
 
   return "locked";
 }
 
-export default function FlowList({
+export default function StepList({
   chapterId,
-  currentFlowIndex,
+  currentStepIndex,
   messageProgress,
   track,
   readOnly,
 }: {
   chapterId: string;
-  currentFlowIndex: number;
+  currentStepIndex: number;
   messageProgress: MessageProgressRow[];
   track: "test" | "live";
   readOnly?: boolean;
 }) {
-  const chapter = chaptersConfig.chapters[chapterId];
+  const chapter = gameConfig.chapters[chapterId];
   if (!chapter) return null;
 
-  const orderedFlow = getOrderedFlow(chapter);
+  const orderedSteps = getOrderedSteps(chapter);
 
   return (
     <div
@@ -79,14 +79,14 @@ export default function FlowList({
       >
         Pipeline — {chapter.name}
       </div>
-      {orderedFlow.map((step, index) => (
-        <FlowStepRow
+      {orderedSteps.map((step, index) => (
+        <StepRow
           key={step.id}
           step={step}
           stepState={getStepState(
             step,
             index,
-            currentFlowIndex,
+            currentStepIndex,
             messageProgress
           )}
           track={track}

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getMomentByShareToken } from "@/lib/actions/moments";
-import { chaptersConfig } from "@/config/chapters";
+import { gameConfig } from "@/config/chapters";
 import MarkerSVG from "@/components/game/MarkerSVG";
 
 export async function generateMetadata({
@@ -16,7 +16,7 @@ export async function generateMetadata({
   }
 
   const chapterName = moment.chapter_id
-    ? chaptersConfig.chapters[moment.chapter_id]?.name ?? ""
+    ? gameConfig.chapters[moment.chapter_id]?.name ?? ""
     : "";
 
   const description = moment.narrative_text
@@ -79,7 +79,7 @@ export default async function SharedMomentPage({
   }
 
   const chapter = moment.chapter_id
-    ? chaptersConfig.chapters[moment.chapter_id]
+    ? gameConfig.chapters[moment.chapter_id]
     : null;
 
   const date = new Date(moment.created_at).toLocaleDateString("en-US", {

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { chaptersConfig } from "@/lib/chapters";
+import { gameConfig } from "@/lib/chapters";
 import { createRateLimiter, getClientIp } from "@/lib/rate-limit";
 
-const prologue = chaptersConfig.chapters["prologue"];
+const prologue = gameConfig.chapters["prologue"];
 const PASSPHRASE = prologue?.passphrase;
 
 const limiter = createRateLimiter(10, 15 * 60 * 1000);

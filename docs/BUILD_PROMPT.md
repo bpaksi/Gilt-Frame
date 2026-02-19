@@ -316,9 +316,9 @@ npx supabase migration new create_core_tables
 
 | Table                  | Key Fields                                                                                                                          | Purpose                                                                                                                                                   |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `chapter_progress`     | id, **track** (test/live), chapter_id, current_flow_index (integer), status (locked/active/complete), started_at, completed_at      | Player's position in the unified `flow[]` array. The `current_flow_index` indexes into the chapter's flow in `chapters.jsonc`. One row per track+chapter. |
-| `quest_answers`        | id, **track**, chapter_id, flow_index, question_index, selected_option, correct, answered_at                                        | Individual answers for MultipleChoice steps. One row per question answered.                                                                               |
-| `hint_views`           | id, **track**, chapter_id, flow_index, hint_tier, viewed_at                                                                         | Tracks which hints the player has viewed. One row per hint revealed.                                                                                      |
+| `chapter_progress`     | id, **track** (test/live), chapter_id, step_index (integer), status (locked/active/complete), started_at, completed_at      | Player's position in the unified `steps[]` array. The `step_index` indexes into the chapter's steps in `chapters.jsonc`. One row per track+chapter. |
+| `quest_answers`        | id, **track**, chapter_id, step_index, question_index, selected_option, correct, answered_at                                        | Individual answers for MultipleChoice steps. One row per question answered.                                                                               |
+| `hint_views`           | id, **track**, chapter_id, step_index, hint_tier, viewed_at                                                                         | Tracks which hints the player has viewed. One row per hint revealed.                                                                                      |
 | `moments`              | id, quest_id, chapter_id, narrative_text, moment_type, share_token (unique), assets (JSONB — array of {url, alt, type}), created_at | Journey entries + shareable snapshots                                                                                                                     |
 | `oracle_conversations` | id, question, response, gemini_model, tokens_used, flagged, created_at                                                              | Oracle Q&A history                                                                                                                                        |
 | `lore_entries`         | id, title, content, unlock_chapter_id, order, created_at                                                                            | Scrolls of Knowledge (curated FAQ)                                                                                                                        |
@@ -376,9 +376,9 @@ Create `supabase/seed.sql` with:
 
 ---
 
-## Universal Chapter Flow (The Ritual)
+## Universal Chapter Steps (The Ritual)
 
-**Every chapter follows the same 9-step ritual.** This is the core architectural principle of the website. By making the flow identical across chapters, we build one set of reusable components that load different content per chapter. The Prologue is Chapter 0.
+**Every chapter follows the same 9-step ritual.** This is the core architectural principle of the website. By making the step sequence identical across chapters, we build one set of reusable components that load different content per chapter. The Prologue is Chapter 0.
 
 ### The 9 Steps
 
@@ -398,9 +398,9 @@ Create `supabase/seed.sql` with:
 
 **Steps 1–4 are offline (admin-triggered).** The website doesn't need to know about them — they're tracked in `message_progress` for the admin panel, but the player-facing `/current` tab doesn't render them. The admin panel's chapter message list (from `chapters.jsonc`) handles sending these.
 
-**Steps 5–9 are the website quest flow.** These are the states that the `/current` tab renders. Every chapter's quest is a state machine that progresses through some subset of these 5 components. The state machine is driven by the `flow_states` array in the quest configuration.
+**Steps 5–9 are the website quest steps.** These are the states that the `/current` tab renders. Every chapter's quest is a state machine that progresses through some subset of these 5 components. The state machine is driven by the `step_states` array in the quest configuration.
 
-**Not every chapter uses every step identically.** Step 5 (wayfinding) might be a full GPS compass outdoors or a simple "find Gallery 273" text indoors. Step 7 (puzzle) might be a compass bearing, a painting identification, or something else entirely. But the flow shape is always the same: locate → confirm → solve → unlock → wait.
+**Not every chapter uses every step identically.** Step 5 (wayfinding) might be a full GPS compass outdoors or a simple "find Gallery 273" text indoors. Step 7 (puzzle) might be a compass bearing, a painting identification, or something else entirely. But the step shape is always the same: locate → confirm → solve → unlock → wait.
 
 **The website components are reusable.** Build them once, configure them per chapter:
 
@@ -463,36 +463,36 @@ Create `supabase/seed.sql` with:
 
 | What                                                                                  | Where                       | Why                                                                     |
 | ------------------------------------------------------------------------------------- | --------------------------- | ----------------------------------------------------------------------- |
-| **Unified flow** — ALL steps (letter, email, SMS, website components) with typed args | `src/config/chapters.jsonc` | Version-controlled, easy to author, no database needed for content      |
-| Component props (questions, coordinates, reward text, hints, narratives)              | `src/config/chapters.jsonc` | Nested inside each website flow step's `config` object                  |
-| Message content (subject, body, companion messages, trigger notes)                    | `src/config/chapters.jsonc` | Nested inside each offline flow step                                    |
-| Flow type schemas and component prop schemas                                          | `src/config/chapters.jsonc` | `flow_types` and `component_props` sections — the self-documenting spec |
-| Player's current flow index (which step they're on)                                   | Supabase `chapter_progress` | Must persist across sessions and devices                                |
+| **Unified steps** — ALL steps (letter, email, SMS, website components) with typed args | `src/config/chapters.jsonc` | Version-controlled, easy to author, no database needed for content      |
+| Component props (questions, coordinates, reward text, hints, narratives)              | `src/config/chapters.jsonc` | Nested inside each website step's `config` object                  |
+| Message content (subject, body, companion messages, trigger notes)                    | `src/config/chapters.jsonc` | Nested inside each offline step                                    |
+| Flow type schemas and component prop schemas                                          | `src/config/chapters.jsonc` | `step_types` and `component_props` sections — the self-documenting spec |
+| Player's current step index (which step they're on)                                   | Supabase `chapter_progress` | Must persist across sessions and devices                                |
 | Chapter status (locked/active/complete)                                               | Supabase `chapter_progress` | Admin can unlock chapters dynamically                                   |
 | Which answers the player gave                                                         | Supabase `quest_answers`    | Tracking engagement                                                     |
 | Which hints the player viewed                                                         | Supabase `hint_views`       | Tracking engagement                                                     |
 | Message delivery status (sent/pending/failed)                                         | Supabase `message_progress` | Admin panel tracks delivery                                             |
 | Oracle conversations, moments, vault items                                            | Supabase                    | Dynamic, user-generated data                                            |
 
-### The Unified Flow (One State Machine, Two Consumers)
+### The Unified Steps (One State Machine, Two Consumers)
 
-**Each chapter has a single `flow[]` array** that covers ALL steps in chronological order — offline (letter, email, SMS/MMS) AND website (quest components). The `current_flow_index` in Supabase indexes into this array and drives **both** the player app and the admin panel.
+**Each chapter has a single `steps[]` array** that covers ALL steps in chronological order — offline (letter, email, SMS/MMS) AND website (quest components). The `step_index` in Supabase indexes into this array and drives **both** the player app and the admin panel.
 
 **How it works:**
 
-1. **Storage:** `chapter_progress` table stores `{ track, chapter_id, current_flow_index, status }`.
-2. **Offline steps:** When the admin sends a message, `current_flow_index` advances to the next step. Admin sees a SEND button.
-3. **Website steps:** When the player completes a quest component, `QuestStateMachine` advances `current_flow_index`. Admin sees "Player active on [step name]" read-only.
-4. **Player app:** The `/current` tab checks `current_flow_index`. Offline step → atmospheric waiting ("The Order will summon you"). Website step → render the component.
-5. **Admin panel:** Renders the FULL flow as a sequential list. Steps before index = ✓ sent. Current step = SEND button (offline) or player status (website). Steps after = ○ locked.
+1. **Storage:** `chapter_progress` table stores `{ track, chapter_id, step_index, status }`.
+2. **Offline steps:** When the admin sends a message, `step_index` advances to the next step. Admin sees a SEND button.
+3. **Website steps:** When the player completes a quest component, `QuestStateMachine` advances `step_index`. Admin sees "Player active on [step name]" read-only.
+4. **Player app:** The `/current` tab checks `step_index`. Offline step → atmospheric waiting ("The Order will summon you"). Website step → render the component.
+5. **Admin panel:** Renders the FULL step sequence as a sequential list. Steps before index = ✓ sent. Current step = SEND button (offline) or player status (website). Steps after = ○ locked.
 6. **Auto-triggers:** Steps with `trigger: "auto:*"` fire automatically when their condition is met.
 7. **Chapter lifecycle:** Starts when admin sets `status='active'`. Completes when all steps are done.
 
 **Adding a chapter = editing `chapters.jsonc` + deploying.** No database migration. The JSON IS the chapter authoring format. Supabase is purely a state tracker.
 
-### Flow Step Types
+### Step Types
 
-Each flow entry has a `type` field that determines its shape. See `chapters.jsonc → flow_types` for the full schema with (R)equired and (O)ptional field annotations.
+Each step entry has a `type` field that determines its shape. See `chapters.jsonc → step_types` for the full schema with (R)equired and (O)ptional field annotations.
 
 | Type      | Channel        | Admin Action              | Fields                                         |
 | --------- | -------------- | ------------------------- | ---------------------------------------------- |
@@ -504,10 +504,10 @@ Each flow entry has a `type` field that determines its shape. See `chapters.json
 
 **Common offline fields:** `id`(R), `to`(R), `trigger`(R), `progress_key`(R), `trigger_note`(O), `companion_message`(O), `side_effect`(O)
 
-### Unified Flow Config Example (Chapter 1)
+### Unified Steps Config Example (Chapter 1)
 
 ```jsonc
-"flow": [
+"steps": [
   // Offline: The Summons (steps 3+4 combined — SMS-only chapter)
   {
     "id": "ch1_initiation",
@@ -543,7 +543,7 @@ Each flow entry has a `type` field that determines its shape. See `chapters.json
 ]
 ```
 
-**The engine maps flow index to component automatically.** When `current_flow_index` points to a website step, `QuestStateMachine` renders the component named in `step.component` and passes `step.config` as props. No switch statements, no chapter IDs in component code.
+**The engine maps step index to component automatically.** When `step_index` points to a website step, `QuestStateMachine` renders the component named in `step.component` and passes `step.config` as props. No switch statements, no chapter IDs in component code.
 
 ---
 
@@ -637,14 +637,14 @@ See `MOBILE_DESIGN.md` for full UX specs, wireframes, and design notes.
 
 ### 3.1 Tab 1: Current (`/current`) — The Quest Engine
 
-**The Current tab is a config-driven state machine.** It reads the active quest's `flow_states` array from Supabase and renders the matching component for the current state. No chapter-specific code. Adding a new chapter means adding a quest row with the right config — the engine handles everything else.
+**The Current tab is a config-driven state machine.** It reads the active quest's `step_states` array from Supabase and renders the matching component for the current state. No chapter-specific code. Adding a new chapter means adding a quest row with the right config — the engine handles everything else.
 
 #### 3.1.0 QuestStateMachine (The Engine)
 
 The top-level component at `src/components/game/QuestStateMachine.js`. This is the heart of the game:
 
 ```
-QuestStateMachine              ← reads unified flow[], filters website steps, manages current index
+QuestStateMachine              ← reads unified steps[], filters website steps, manages current index
   └─ StateFader                ← 300ms cross-fade between all state transitions
       ├─ WayfindingCompass     ← Step 5: GPS outdoor OR text indoor
       │   └─ HintSystem        ← progressive hints (indoor wayfinding)
@@ -661,23 +661,23 @@ QuestStateMachine              ← reads unified flow[], filters website steps, 
       └─ WaitingState          ← Step 9: between chapters / offline step fallback
 ```
 
-**How it works (unified flow):**
+**How it works (unified steps):**
 
-1. On mount, `QuestStateMachine` imports the chapter config from `chapters.jsonc` and finds the active chapter's `flow[]` array.
-2. It fetches `current_flow_index` from Supabase `chapter_progress` (the only DB call needed).
-3. It looks up the step at `flow[current_flow_index]`:
+1. On mount, `QuestStateMachine` imports the chapter config from `chapters.jsonc` and finds the active chapter's `steps[]` array.
+2. It fetches `step_index` from Supabase `chapter_progress` (the only DB call needed).
+3. It looks up the step at `steps[step_index]`:
    - If `step.type === "website"` → render the component named in `step.component`, passing `step.config` as props.
    - If `step.type` is an offline type (letter/email/sms/mms) → render `WaitingState` with atmospheric "The Order will summon you" message. The player doesn't know about offline steps.
 4. Each website component receives its `config` object as props. Props marked (R) in `component_props` are required; props marked (O) are optional and the component handles null gracefully (hide that feature, don't crash).
-5. When a component's advance condition is met (geofence, correct answer, button tap, compass alignment, animation complete), it calls `onAdvance()` → increments `current_flow_index` → persists to Supabase → `StateFader` cross-fades to the next component.
+5. When a component's advance condition is met (geofence, correct answer, button tap, compass alignment, animation complete), it calls `onAdvance()` → increments `step_index` → persists to Supabase → `StateFader` cross-fades to the next component.
 6. If the next step is also a website step, it renders immediately. If it's an offline step, it renders WaitingState until the admin advances the index by sending that message.
-7. The quest is complete when `current_flow_index` reaches the last website step (WaitingState).
+7. The quest is complete when `step_index` reaches the last website step (WaitingState).
 
-**No chapter-specific logic lives in QuestStateMachine or any component.** The flow is entirely determined by the JSON config. This means:
+**No chapter-specific logic lives in QuestStateMachine or any component.** The step sequence is entirely determined by the JSON config. This means:
 
-- New chapters = add a flow array to `chapters.jsonc` + deploy
-- Reordering steps = change the `flow[]` array order
-- Skipping a step (e.g., no compass puzzle for Ch2) = omit it from `flow[]`
+- New chapters = add a steps array to `chapters.jsonc` + deploy
+- Reordering steps = change the `steps[]` array order
+- Skipping a step (e.g., no compass puzzle for Ch2) = omit it from `steps[]`
 - Adding a narrative beat = insert a `{ type: "website", component: "NarrativeMoment" }` entry
 - Adding offline messages = insert letter/email/sms/mms entries between website steps
 - No database migrations for new content, ever
@@ -696,11 +696,11 @@ QuestStateMachine              ← reads unified flow[], filters website steps, 
 - `HintSystem` — "Request a Hint" button + progressive reveal. Used by `MultipleChoice` and `WayfindingCompass` (indoor mode). Only renders if `hints` prop is non-null.
 - `MarkerSVG` — the V3 Marker hourglass. Used everywhere. Props: `size`, `variant` (gold/dark/white).
 
-Each quest defines its `flow_states` array, and the engine renders the matching component for the current state. The state advances when conditions are met (geofence trigger, correct answer, compass alignment, button tap, etc.).
+Each quest defines its `step_states` array, and the engine renders the matching component for the current state. The state advances when conditions are met (geofence trigger, correct answer, compass alignment, button tap, etc.).
 
 The components map directly to the Universal Flow steps:
 
-| Flow Step       | Component                                             | Configured By                                                 | Advance Condition                                         |
+| Step       | Component                                             | Configured By                                                 | Advance Condition                                         |
 | --------------- | ----------------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------- |
 | 5. Wayfinding   | `WayfindingCompass`                                   | GPS coords + geofence radius, OR `wayfinding_text` for indoor | Geofence trigger (outdoor) or "I'm here" tap (indoor)     |
 | 6. Confirmation | `MultipleChoice`                                      | `questions` JSONB array                                       | All questions answered correctly                          |
@@ -714,7 +714,7 @@ The components map directly to the Universal Flow steps:
 | State                  | Display                                                                                               |
 | ---------------------- | ----------------------------------------------------------------------------------------------------- |
 | **Clue/Hint Received** | A new message from the Order, styled as a letter. Overlays the current state.                         |
-| **New Summons**        | Chapter unlock with dramatic animation (seal breaking). Resets the flow to step 5 of the new chapter. |
+| **New Summons**        | Chapter unlock with dramatic animation (seal breaking). Resets to step 5 of the new chapter. |
 
 **Answers are primarily multiple choice.** The only text-entry puzzle is the landing page passphrase. All in-game quests present 2–5 selectable options with a submit button.
 
@@ -724,7 +724,7 @@ Each quest has sequential question unlocking, gold lock-in on correct answers, a
 
 ### 3.1.1 Component Library
 
-Build these as reusable components in `src/components/game/`. Each component receives its `config` object from the flow step in `chapters.jsonc`. No chapter-specific logic should live inside the components — they are pure, data-driven renderers. **(R) = required prop, (O) = optional/nullable. Components must handle null optional props gracefully — hide that feature, don't crash.**
+Build these as reusable components in `src/components/game/`. Each component receives its `config` object from the step in `chapters.jsonc`. No chapter-specific logic should live inside the components — they are pure, data-driven renderers. **(R) = required prop, (O) = optional/nullable. Components must handle null optional props gracefully — hide that feature, don't crash.**
 
 | Component           | Required Props                                                      | Optional Props                                                                                      | Reference                             |
 | ------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------- |
@@ -855,9 +855,9 @@ The admin has the same simplicity as the game — two bottom tabs and a gear ico
 
 One scrollable page. Everything Bob needs in the field.
 
-**Player state card** (top): Active chapter, current flow step name, time since last activity, last action summary.
+**Player state card** (top): Active chapter, current step name, time since last activity, last action summary.
 
-**Unified flow list** (primary UI): Reads `src/config/chapters.jsonc` and shows the active chapter's **entire `flow[]` array** as a sequential list — offline steps AND website steps in one timeline:
+**Unified step list** (primary UI): Reads `src/config/chapters.jsonc` and shows the active chapter's **entire `steps[]` array** as a sequential list — offline steps AND website steps in one timeline:
 
 ```
 Chapter 1 — The Compass and the Sundial
@@ -875,7 +875,7 @@ Kellogg Manor, Michigan
   ○  Post-Solve (MMS)          [locked — auto on quest complete]
 ```
 
-**Button states** (driven by `current_flow_index` in `chapter_progress`):
+**Button states** (driven by `step_index` in `chapter_progress`):
 
 - `✓ sent/complete` — Delivered (offline) or completed (website). Timestamp. Greyed out.
 - `● ready` — Enabled. Blue "SEND" button. Only for offline steps at the current index.
@@ -913,19 +913,19 @@ Gear icon in top-right. For everything that isn't day-to-day game operation:
 
 ### 4.10 Communications Config (`src/config/chapters.jsonc`)
 
-All chapter content — messages, quest components, and their configurations — lives in a single JSONC config file. The admin dashboard reads this config to render the unified flow timeline and provide send buttons. Supabase only tracks state (flow index, delivery status, answers).
+All chapter content — messages, quest components, and their configurations — lives in a single JSONC config file. The admin dashboard reads this config to render the unified steps timeline and provide send buttons. Supabase only tracks state (step index, delivery status, answers).
 
 **Config structure (v2.0):**
 
 - `contacts` — Christine ("sparrow"), companions (Bob, sister), Order addresses, test overrides
 - `voice` — The Order's singular voice rules
 - `channels` — Role, tone, and rules for each channel (mail, email, SMS)
-- `flow_types` — Schema documentation for each flow step type with (R)equired/(O)ptional field annotations
+- `step_types` — Schema documentation for each step type with (R)equired/(O)ptional field annotations
 - `component_props` — Schema documentation for each website component's props with (R)/(O) annotations
-- `chapters[]` — Ordered array. Each chapter has a unified `flow[]` with:
+- `chapters[]` — Ordered array. Each chapter has a unified `steps[]` with:
   - Offline steps (letter/email/sms/mms): `id`, `type`, `to`, `trigger`, `body`, `progress_key`, and channel-specific fields
   - Website steps: `type: "website"`, `component`, `advance`, `config` (props for the React component)
-- `state_engine` — Documents how `current_flow_index` drives both player app and admin panel
+- `state_engine` — Documents how `step_index` drives both player app and admin panel
 - `tracks` — Test/live dual track system
 
 **Key benefit:** One array defines the entire chapter — both what the admin sends AND what the player interacts with. The admin panel and the quest engine read the same config. Adding a chapter = editing this file + deploying. No database migration needed.
@@ -933,20 +933,20 @@ All chapter content — messages, quest components, and their configurations —
 ### 4.11 Database Additions (Admin)
 
 ```sql
--- Core: Tracks player position in the unified flow[] array, per track + chapter
+-- Core: Tracks player position in the unified steps[] array, per track + chapter
 -- This is the CENTRAL state table — drives both player app and admin panel
 create table chapter_progress (
   id uuid primary key default gen_random_uuid(),
   track text not null check (track in ('test', 'live')),
   chapter_id text not null,
-  current_flow_index integer default 0,
+  step_index integer default 0,
   status text default 'locked' check (status in ('locked', 'active', 'complete')),
   started_at timestamptz,
   completed_at timestamptz,
   unique(track, chapter_id)
 );
 
--- Tracks delivery status for each offline flow step (letter/email/sms/mms)
+-- Tracks delivery status for each offline step (letter/email/sms/mms)
 create table message_progress (
   id uuid primary key default gen_random_uuid(),
   track text not null check (track in ('test', 'live')),
@@ -967,7 +967,7 @@ create table quest_answers (
   id uuid primary key default gen_random_uuid(),
   track text not null,
   chapter_id text not null,
-  flow_index integer not null,
+  step_index integer not null,
   question_index integer not null,
   selected_option integer not null,
   correct boolean not null,
@@ -979,7 +979,7 @@ create table hint_views (
   id uuid primary key default gen_random_uuid(),
   track text not null,
   chapter_id text not null,
-  flow_index integer not null,
+  step_index integer not null,
   hint_tier integer not null,
   viewed_at timestamptz default now()
 );
@@ -1101,5 +1101,5 @@ create table player_events (
 7. **Secrets in the code.** View-source Easter eggs, hidden URL paths, and metadata clues are part of the game. Build the site knowing a curious player will inspect everything.
 8. **The real world is the game board.** Location-based quests use GPS and the device compass to make physical places part of the story. The phone becomes a magical instrument, not just a screen. Wayfinding should feel like following an ancient compass, not using Google Maps.
 9. **POCs are the spec.** The `poc/` prototypes are tested, working implementations. When building quest components, match the behavior and feel of the POCs exactly. They contain hard-won UX decisions.
-10. **Chapters are config, not code.** Each chapter's unified `flow[]` array defines ALL steps — offline messages (letter, email, SMS) AND website quest components — in one place. The `QuestStateMachine` renders the right component at each website step. The admin panel reads the same flow to show send buttons for offline steps. Adding a new chapter means adding a new `flow[]` array — not writing new components, page routes, or database migrations. If you're writing chapter-specific `if` statements, you're doing it wrong.
+10. **Chapters are config, not code.** Each chapter's unified `steps[]` array defines ALL steps — offline messages (letter, email, SMS) AND website quest components — in one place. The `QuestStateMachine` renders the right component at each website step. The admin panel reads the same flow to show send buttons for offline steps. Adding a new chapter means adding a new `steps[]` array — not writing new components, page routes, or database migrations. If you're writing chapter-specific `if` statements, you're doing it wrong.
 11. **Components are maximally reusable.** Every game component accepts a `config` prop with required (R) and optional (O) fields. Required fields are what makes the component meaningful (e.g., `questions[]` for `MultipleChoice`). Optional fields add features that not every chapter needs (e.g., `hints`, `geofence_radius`, `action_label`). When an optional prop is null, the component hides that feature gracefully — it never crashes. See `chapters.jsonc → component_props` for the canonical prop schemas.

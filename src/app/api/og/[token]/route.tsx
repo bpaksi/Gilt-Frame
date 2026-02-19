@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getMomentByShareToken } from "@/lib/actions/moments";
-import { chaptersConfig } from "@/config/chapters";
+import { gameConfig } from "@/config/chapters";
 
 export const runtime = "edge";
 
@@ -12,7 +12,7 @@ export async function GET(
   const moment = await getMomentByShareToken(token);
 
   const chapterName = moment?.chapter_id
-    ? chaptersConfig.chapters[moment.chapter_id]?.name ?? ""
+    ? gameConfig.chapters[moment.chapter_id]?.name ?? ""
     : "";
 
   const text = moment?.narrative_text ?? "A moment from the Order of the Gilt Frame.";

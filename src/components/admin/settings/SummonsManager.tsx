@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { chaptersConfig } from "@/config/chapters";
+import { adminFetch } from "@/lib/admin/fetch";
+import { gameConfig } from "@/config/chapters";
 
 type ChapterStatus = {
   chapterId: string;
@@ -19,14 +20,14 @@ export default function SummonsManager({
   const [activating, setActivating] = useState<string | null>(null);
   const [error, setError] = useState("");
 
-  const chapters = Object.entries(chaptersConfig.chapters);
+  const chapters = Object.entries(gameConfig.chapters);
 
   async function handleActivate(chapterId: string) {
     setActivating(chapterId);
     setError("");
 
     try {
-      const res = await fetch("/api/admin/chapter/activate", {
+      const res = await adminFetch("/api/admin/chapter/activate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ track, chapterId }),
@@ -50,7 +51,7 @@ export default function SummonsManager({
       {chapters.map(([id, chapter]) => {
         const status = chapterStatuses.find((s) => s.chapterId === id);
         const isActive = status?.hasProgress;
-        const hasFlow = Object.keys(chapter.flow).length > 0;
+        const hasSteps = Object.keys(chapter.steps).length > 0;
 
         return (
           <div
@@ -87,7 +88,7 @@ export default function SummonsManager({
               </div>
             </div>
 
-            {hasFlow && !isActive && (
+            {hasSteps && !isActive && (
               <button
                 onClick={() => handleActivate(id)}
                 disabled={activating === id}
@@ -108,7 +109,7 @@ export default function SummonsManager({
               </button>
             )}
 
-            {!hasFlow && (
+            {!hasSteps && (
               <span style={{ fontSize: "11px", color: "#999999" }}>
                 No steps
               </span>
