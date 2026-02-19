@@ -12,15 +12,22 @@ export default function StateFader({ stateKey, children }: StateFaderProps) {
   const [phase, setPhase] = useState<"in" | "out">("in");
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
+  // Sync children in-place when key hasn't changed (React "adjust state on render" pattern)
+  if (stateKey === displayed.key && children !== displayed.children) {
+    setDisplayed({ key: stateKey, children });
+  }
+
+  // Key changed — start fade out immediately during render
+  if (stateKey !== displayed.key && phase !== "out") {
+    setPhase("out");
+  }
+
   useEffect(() => {
     if (stateKey === displayed.key) {
-      // Children changed but key is same — update in place
-      setDisplayed({ key: stateKey, children });
       return;
     }
 
-    // Key changed — fade out, then swap
-    setPhase("out");
+    // After fade-out completes, swap content and fade in
     timeoutRef.current = setTimeout(() => {
       setDisplayed({ key: stateKey, children });
       setPhase("in");

@@ -16,26 +16,27 @@ export default function NarrativeMoment({ config, onAdvance }: NarrativeMomentPr
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
+    const timers = timersRef.current;
     const lastLineDelay = (lines.length - 1) * 500 + 800; // 500ms between lines per POC + 800ms fade
 
     if (instruction) {
       const t1 = setTimeout(() => setShowInstruction(true), lastLineDelay + 2000);
-      timersRef.current.push(t1);
+      timers.push(t1);
 
       if (action_label) {
         const t2 = setTimeout(() => setShowAction(true), lastLineDelay + 4000);
-        timersRef.current.push(t2);
+        timers.push(t2);
       }
     } else if (action_label) {
       const t2 = setTimeout(() => setShowAction(true), lastLineDelay + 4500);
-      timersRef.current.push(t2);
+      timers.push(t2);
     } else {
       // Auto-advance 3s after last line
       const t3 = setTimeout(onAdvance, lastLineDelay + 3000);
-      timersRef.current.push(t3);
+      timers.push(t3);
     }
 
-    return () => timersRef.current.forEach(clearTimeout);
+    return () => timers.forEach(clearTimeout);
   }, [lines.length, instruction, action_label, onAdvance]);
 
   const handleAction = () => {

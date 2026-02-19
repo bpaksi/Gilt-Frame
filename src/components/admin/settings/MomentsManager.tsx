@@ -12,7 +12,7 @@ type Moment = {
 };
 
 export default function MomentsManager() {
-  const [moments, setMoments] = useState<Moment[]>([]);
+  const [moments] = useState<Moment[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 

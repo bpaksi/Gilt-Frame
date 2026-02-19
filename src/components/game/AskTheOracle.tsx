@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import MarkerSVG from "./MarkerSVG";
 
 type Conversation = {
@@ -133,7 +133,9 @@ export default function AskTheOracle({ initialConversations }: AskTheOracleProps
     [question, streaming]
   );
 
-  handleSubmitRef.current = handleSubmit;
+  useEffect(() => {
+    handleSubmitRef.current = handleSubmit;
+  }, [handleSubmit]);
 
   return (
     <div

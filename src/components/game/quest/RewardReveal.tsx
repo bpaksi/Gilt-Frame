@@ -22,13 +22,14 @@ export default function RewardReveal({ config, onAdvance, chapterName }: RewardR
     .filter((l) => l.trim().length > 0);
 
   useEffect(() => {
-    timersRef.current.push(setTimeout(() => setShowTitle(true), 600));
+    const timers = timersRef.current;
+    timers.push(setTimeout(() => setShowTitle(true), 600));
 
     // Stagger primary lines at 1800, 3200, 5000ms
     const lineDelays = [1800, 3200, 5000];
     primaryLines.forEach((_, i) => {
       const delay = lineDelays[i] ?? lineDelays[lineDelays.length - 1] + (i - 2) * 1800;
-      timersRef.current.push(
+      timers.push(
         setTimeout(() => {
           setShowLines((prev) => {
             const next = [...prev];
@@ -42,13 +43,13 @@ export default function RewardReveal({ config, onAdvance, chapterName }: RewardR
     const lastLineDelay = lineDelays[Math.min(primaryLines.length - 1, lineDelays.length - 1)] ?? 5000;
 
     if (config.secondary) {
-      timersRef.current.push(setTimeout(() => setShowSecondary(true), lastLineDelay + 1500));
-      timersRef.current.push(setTimeout(() => setShowContinue(true), lastLineDelay + 3000));
+      timers.push(setTimeout(() => setShowSecondary(true), lastLineDelay + 1500));
+      timers.push(setTimeout(() => setShowContinue(true), lastLineDelay + 3000));
     } else {
-      timersRef.current.push(setTimeout(() => setShowContinue(true), lastLineDelay + 2000));
+      timers.push(setTimeout(() => setShowContinue(true), lastLineDelay + 2000));
     }
 
-    return () => timersRef.current.forEach(clearTimeout);
+    return () => timers.forEach(clearTimeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
