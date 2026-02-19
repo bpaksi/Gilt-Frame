@@ -36,22 +36,22 @@ export type Database = {
     Tables: {
       admin_activity_log: {
         Row: {
-          id: string
           action_type: string
+          created_at: string | null
           details: Json | null
-          created_at: string
+          id: string
         }
         Insert: {
-          id?: string
           action_type: string
+          created_at?: string | null
           details?: Json | null
-          created_at?: string
+          id?: string
         }
         Update: {
-          id?: string
           action_type?: string
+          created_at?: string | null
           details?: Json | null
-          created_at?: string
+          id?: string
         }
         Relationships: []
       }
@@ -201,43 +201,43 @@ export type Database = {
       }
       message_progress: {
         Row: {
+          companion_sent_at: string | null
+          companion_status: string | null
+          created_at: string | null
+          delivered_at: string | null
+          error: string | null
           id: string
-          track: string
           progress_key: string
-          status: string
           scheduled_at: string | null
           sent_at: string | null
-          delivered_at: string | null
-          companion_status: string
-          companion_sent_at: string | null
-          error: string | null
-          created_at: string
+          status: string | null
+          track: string
         }
         Insert: {
+          companion_sent_at?: string | null
+          companion_status?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          error?: string | null
           id?: string
-          track: string
           progress_key: string
-          status?: string
           scheduled_at?: string | null
           sent_at?: string | null
-          delivered_at?: string | null
-          companion_status?: string
-          companion_sent_at?: string | null
-          error?: string | null
-          created_at?: string
+          status?: string | null
+          track: string
         }
         Update: {
+          companion_sent_at?: string | null
+          companion_status?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          error?: string | null
           id?: string
-          track?: string
           progress_key?: string
-          status?: string
           scheduled_at?: string | null
           sent_at?: string | null
-          delivered_at?: string | null
-          companion_status?: string
-          companion_sent_at?: string | null
-          error?: string | null
-          created_at?: string
+          status?: string | null
+          track?: string
         }
         Relationships: []
       }
@@ -251,6 +251,7 @@ export type Database = {
           narrative_text: string | null
           quest_id: string | null
           share_token: string
+          track: string
         }
         Insert: {
           assets?: Json
@@ -261,6 +262,7 @@ export type Database = {
           narrative_text?: string | null
           quest_id?: string | null
           share_token?: string
+          track?: string
         }
         Update: {
           assets?: Json
@@ -271,6 +273,7 @@ export type Database = {
           narrative_text?: string | null
           quest_id?: string | null
           share_token?: string
+          track?: string
         }
         Relationships: []
       }
@@ -283,6 +286,7 @@ export type Database = {
           question: string
           response: string
           tokens_used: number | null
+          track: string
         }
         Insert: {
           created_at?: string
@@ -292,6 +296,7 @@ export type Database = {
           question: string
           response: string
           tokens_used?: number | null
+          track?: string
         }
         Update: {
           created_at?: string
@@ -301,30 +306,31 @@ export type Database = {
           question?: string
           response?: string
           tokens_used?: number | null
+          track?: string
         }
         Relationships: []
       }
       player_events: {
         Row: {
+          created_at: string | null
+          details: Json | null
+          event_type: string
           id: string
           track: string
-          event_type: string
-          details: Json | null
-          created_at: string
         }
         Insert: {
+          created_at?: string | null
+          details?: Json | null
+          event_type: string
           id?: string
           track: string
-          event_type: string
-          details?: Json | null
-          created_at?: string
         }
         Update: {
+          created_at?: string | null
+          details?: Json | null
+          event_type?: string
           id?: string
           track?: string
-          event_type?: string
-          details?: Json | null
-          created_at?: string
         }
         Relationships: []
       }
@@ -396,6 +402,7 @@ export type Database = {
           image_url: string | null
           name: string
           quest_id: string | null
+          track: string
         }
         Insert: {
           collected_at?: string | null
@@ -404,6 +411,7 @@ export type Database = {
           image_url?: string | null
           name: string
           quest_id?: string | null
+          track?: string
         }
         Update: {
           collected_at?: string | null
@@ -412,6 +420,7 @@ export type Database = {
           image_url?: string | null
           name?: string
           quest_id?: string | null
+          track?: string
         }
         Relationships: []
       }
