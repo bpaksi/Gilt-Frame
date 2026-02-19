@@ -1,4 +1,8 @@
 import Link from "next/link";
+import { getAdminTrack } from "@/lib/admin/track";
+import { getPlayerState } from "@/lib/admin/actions";
+import { chaptersConfig } from "@/config/chapters";
+import ResetChapter from "@/components/admin/ResetChapter";
 import SignOutButton from "./SignOutButton";
 
 const LINKS = [
@@ -9,7 +13,14 @@ const LINKS = [
   { href: "/the-order/settings/summons", label: "Activation" },
 ] as const;
 
-export default function AdminSettingsPage() {
+export default async function AdminSettingsPage() {
+  const track = await getAdminTrack();
+  const state = await getPlayerState(track);
+
+  const firstChapterId = Object.keys(chaptersConfig.chapters)[0];
+  const chapterId = state.chapterId ?? firstChapterId;
+  const chapter = chaptersConfig.chapters[chapterId];
+  const chapterName = state.chapterName ?? chapter?.name ?? chapterId;
   return (
     <div style={{ padding: "16px", maxWidth: "600px" }}>
       <div
@@ -51,6 +62,11 @@ export default function AdminSettingsPage() {
           borderTop: "1px solid #d0d0d0",
           margin: "24px 0 16px",
         }}
+      />
+      <ResetChapter
+        track={track}
+        chapterId={chapterId}
+        chapterName={chapterName}
       />
       <SignOutButton />
     </div>
