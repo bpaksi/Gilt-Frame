@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SignOutButton from "./SignOutButton";
 
 const LINKS = [
   { href: "/the-order/settings/enroll", label: "Device Enrollment" },
@@ -44,6 +45,14 @@ export default function AdminSettingsPage() {
           </Link>
         ))}
       </nav>
+      <hr
+        style={{
+          border: "none",
+          borderTop: "1px solid #e5e7eb",
+          margin: "24px 0 16px",
+        }}
+      />
+      <SignOutButton />
     </div>
   );
 }

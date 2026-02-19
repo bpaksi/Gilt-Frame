@@ -8,6 +8,7 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -86,24 +87,49 @@ export default function LoginForm() {
               color: "#1a1a1a",
             }}
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{
-              height: "48px",
-              padding: "0 16px",
-              border: "1px solid #ddd",
-              fontSize: "16px",
-              fontFamily:
-                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-              outline: "none",
-              background: "#fff",
-              color: "#1a1a1a",
-            }}
-          />
+          <div style={{ position: "relative" }}>
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{
+                width: "100%",
+                height: "48px",
+                padding: "0 44px 0 16px",
+                border: "1px solid #ddd",
+                fontSize: "16px",
+                fontFamily:
+                  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                outline: "none",
+                background: "#fff",
+                color: "#1a1a1a",
+                boxSizing: "border-box",
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              style={{
+                position: "absolute",
+                right: "12px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                background: "none",
+                border: "none",
+                padding: 0,
+                cursor: "pointer",
+                color: "#888",
+                fontSize: "14px",
+                fontFamily:
+                  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+              }}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
           {error && (
             <p
               style={{
