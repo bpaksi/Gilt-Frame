@@ -34,9 +34,9 @@ export const gameConfig: GameConfig = {
           order: 0,
           type: "letter",
           name: "The Summons Letter",
+          trigger: "manual",
           config: {
             to: "player",
-            trigger: "manual",
             _trigger_note:
               "Mail the letter from a non-local post office. No return address.",
             body: "Sealed letter with hidden acrostic passphrase. Includes website URL.",
@@ -50,13 +50,14 @@ export const gameConfig: GameConfig = {
           order: 1,
           type: "mms",
           name: "The Marker Arrives",
+          trigger: "manual",
           config: {
             to: "player",
-            trigger: "manual",
             _trigger_note:
               "Send shortly after letter should arrive. Or 3-4 days after the letter if she's stuck. MMS with Marker image attached.",
             body: "The sign has arrived. giltframe.org",
-            image: "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
+            image:
+              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
             progress_key: "prologue.magic_link_sent",
           },
         },
@@ -71,13 +72,25 @@ export const gameConfig: GameConfig = {
             passphrase: "SEE TRULY",
           },
         },
-        prologue_acceptance: {
+        prologue_reward: {
           order: 3,
+          type: "website",
+          name: "The Reward",
+          component: "RewardReveal",
+          advance: "tap",
+          config: {
+            primary:
+              "You have spoken the words. The Sight stirs within you, Sparrow. What was lost is now reborn.",
+            secondary: "The Order has heard you.",
+          },
+        },
+        prologue_acceptance: {
+          order: 4,
           type: "mms",
           name: "Acceptance Confirmed",
+          trigger: "auto",
           config: {
             to: "player",
-            trigger: "auto:passphrase_entered",
             _trigger_note:
               "Auto-send day after she enters the site and completes the passphrase. MMS with Marker image.",
             body: "The Order has noted your acceptance. Prepare yourself. The first trial is near.",
@@ -102,9 +115,9 @@ export const gameConfig: GameConfig = {
           order: 0,
           type: "mms",
           name: "The Summons",
+          trigger: "manual",
           config: {
             to: "player",
-            trigger: "manual",
             _trigger_note:
               "Send morning of March 3 while at/near Kellogg Manor for anniversary. Single MMS with coordinates.",
             body: "The Order has placed a Marker at 42.406256, -85.402025. Your first trial begins now. giltframe.org",
@@ -225,9 +238,9 @@ export const gameConfig: GameConfig = {
           order: 9,
           type: "mms",
           name: "Post-Solve Confirmation",
+          trigger: "auto",
           config: {
             to: "player",
-            trigger: "auto:quest_complete",
             _trigger_note:
               "Auto-fires when player reaches the WaitingState. Or manual from admin.",
             body: "The Order sees clearly. Your first fragment has been placed in the vault.",
@@ -251,9 +264,9 @@ export const gameConfig: GameConfig = {
           order: 0,
           type: "email",
           name: "Mid-Gap: A Bearing Worth Remembering",
+          trigger: "manual",
           config: {
             to: "player",
-            trigger: "manual",
             _trigger_note:
               "Send ~March 10-14, roughly midway between Ch1 completion and Ch2 activation. Purpose: maintain engagement during the 3-week gap.",
             subject: "A Bearing Worth Remembering",
@@ -265,9 +278,9 @@ export const gameConfig: GameConfig = {
           order: 1,
           type: "letter",
           name: "The Pre-Trip Letter",
+          trigger: "manual",
           config: {
             to: "player",
-            trigger: "manual",
             _trigger_note:
               "Mail 4-5 days before Chicago trip. Arrives 1-2 days before departure.",
             body: "Sealed letter referencing 'a patron whose vision shaped the Order in the age of the great Fair.' Hints at portrait in Chicago. Does NOT name Palmer, Zorn, or gallery number.",
@@ -281,9 +294,9 @@ export const gameConfig: GameConfig = {
           order: 2,
           type: "mms",
           name: "The Summons",
+          trigger: "manual",
           config: {
             to: "player",
-            trigger: "scheduled",
             _trigger_note: "Day before or morning of museum visit.",
             body: "The lions are waiting, Sparrow.",
             image: "assets/prologue-sms-marker.png",
@@ -299,9 +312,9 @@ export const gameConfig: GameConfig = {
           order: 3,
           type: "mms",
           name: "The Arrival",
+          trigger: "manual",
           config: {
             to: "player",
-            trigger: "manual:location",
             _trigger_note:
               "Send when Find My shows her at or near the AIC. The big moment. Also triggers quest on Current tab.",
             body: "You are close. Ascend to the second floor. Gallery 273. She is waiting. giltframe.org",
@@ -315,9 +328,9 @@ export const gameConfig: GameConfig = {
           order: 4,
           type: "email",
           name: "The Briefing",
+          trigger: "manual",
           config: {
             to: "player",
-            trigger: "manual",
             _trigger_note:
               "Send immediately after ch2_museum_proximity. SMS is the alert, email is the full briefing. These two fire back-to-back.",
             subject: "The Gallery of Whispers \u2014 Your Second Trial",
@@ -415,9 +428,9 @@ export const gameConfig: GameConfig = {
           order: 10,
           type: "mms",
           name: "Post-Solve Confirmation",
+          trigger: "auto",
           config: {
             to: "player",
-            trigger: "auto:quest_complete",
             _trigger_note: "Auto-send when player reaches WaitingState.",
             body: "You see what others have not. Your Chronicle has been updated. The Council is watching with growing interest.",
             image: "assets/prologue-sms-marker.png",
@@ -434,9 +447,9 @@ export const gameConfig: GameConfig = {
           order: 11,
           type: "email",
           name: "The Debrief",
+          trigger: "manual",
           config: {
             to: "player",
-            trigger: "scheduled",
             _trigger_note:
               "1-2 days after Chicago trip. Lore + teaser for next chapter.",
             subject: "The Gallery of Whispers \u2014 The Order is Pleased",
@@ -448,9 +461,9 @@ export const gameConfig: GameConfig = {
           order: 12,
           type: "sms",
           name: "Companion Release",
+          trigger: "auto",
           config: {
             to: "companion2",
-            trigger: "auto:quest_complete",
             _trigger_note:
               "Send after quest is fully complete. Final companion message for Ch2.",
             body: "She has proven worthy. The Order releases you from your watch \u2014 until the next summons.",

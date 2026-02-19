@@ -5,11 +5,13 @@ import { resolveTrack } from "@/lib/track";
 import {
   gameConfig,
   getOrderedSteps,
+  type StepWithId,
   type ComponentName,
   type ComponentConfig,
   type AdvanceCondition,
   type HintItem,
 } from "@/config";
+import { sendStep } from "@/lib/messaging/send";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type QuestState = {
@@ -89,6 +91,47 @@ export async function getQuestState(): Promise<QuestState> {
   };
 }
 
+/**
+ * Starting from fromIndex + 1, send consecutive auto-triggered messaging steps.
+ * Stops at the first manual step or website step. If all chapter steps are
+ * completed after the loop, marks the chapter as complete.
+ */
+export async function autoAdvanceMessagingSteps(
+  track: "test" | "live",
+  chapterId: string,
+  fromIndex: number
+): Promise<void> {
+  const chapter = gameConfig.chapters[chapterId];
+  if (!chapter) return;
+
+  const orderedSteps = getOrderedSteps(chapter);
+  const supabase = createAdminClient();
+
+  for (let i = fromIndex + 1; i < orderedSteps.length; i++) {
+    const step = orderedSteps[i];
+    if (step.type === "website") break;
+    if (step.trigger !== "auto") break;
+
+    await sendStep(track, chapterId, step.config.progress_key);
+  }
+
+  // Check if all steps are now completed — if so, complete the chapter
+  const { count } = await supabase
+    .from("completed_steps")
+    .select("*", { count: "exact", head: true })
+    .eq("track", track)
+    .eq("chapter_id", chapterId);
+
+  if ((count ?? 0) >= orderedSteps.length) {
+    await supabase
+      .from("chapter_progress")
+      .update({ completed_at: new Date().toISOString() })
+      .eq("track", track)
+      .eq("chapter_id", chapterId)
+      .is("completed_at", null);
+  }
+}
+
 export async function advanceQuest(
   chapterId: string,
   stepIndex: number
@@ -143,6 +186,9 @@ export async function advanceQuest(
       step_name: currentStep?.name ?? null,
     },
   });
+
+  // Auto-advance any consecutive auto-triggered messaging steps
+  await autoAdvanceMessagingSteps(trackInfo.track, chapterId, stepIndex);
 
   return getQuestState();
 }

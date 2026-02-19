@@ -18,12 +18,7 @@ export type Track = {
 
 // ─── Triggers & Advance ─────────────────────────────────────────────────────
 
-export type Trigger =
-  | "manual"
-  | "manual:location"
-  | "scheduled"
-  | "auto:quest_complete"
-  | "auto:passphrase_entered";
+export type Trigger = "manual" | "auto";
 
 export type AdvanceCondition =
   | "geofence"
@@ -131,7 +126,6 @@ export type CompanionMessage = {
 
 export type LetterStepConfig = {
   to: Recipient;
-  trigger: Trigger;
   _trigger_note?: string;
   body: string;
   _signature?: string;
@@ -142,7 +136,6 @@ export type LetterStepConfig = {
 
 export type EmailStepConfig = {
   to: Recipient;
-  trigger: Trigger;
   _trigger_note?: string;
   subject: string;
   template: string;
@@ -153,7 +146,6 @@ export type EmailStepConfig = {
 
 export type SmsStepConfig = {
   to: Recipient;
-  trigger: Trigger;
   _trigger_note?: string;
   body: string;
   companion_message?: CompanionMessage;
@@ -163,7 +155,6 @@ export type SmsStepConfig = {
 
 export type MmsStepConfig = {
   to: Recipient;
-  trigger: Trigger;
   _trigger_note?: string;
   body: string;
   image?: string;
@@ -178,6 +169,7 @@ export type LetterStep = {
   order: number;
   type: "letter";
   name: string;
+  trigger: Trigger;
   config: LetterStepConfig;
 };
 
@@ -185,6 +177,7 @@ export type EmailStep = {
   order: number;
   type: "email";
   name: string;
+  trigger: Trigger;
   config: EmailStepConfig;
 };
 
@@ -192,6 +185,7 @@ export type SmsStep = {
   order: number;
   type: "sms";
   name: string;
+  trigger: Trigger;
   config: SmsStepConfig;
 };
 
@@ -199,6 +193,7 @@ export type MmsStep = {
   order: number;
   type: "mms";
   name: string;
+  trigger: Trigger;
   config: MmsStepConfig;
 };
 
