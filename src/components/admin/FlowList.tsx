@@ -20,7 +20,10 @@ function getStepState(
     const progress = messageProgress.find(
       (mp) => mp.progress_key === step.progress_key
     );
-    if (progress?.status === "sent" || progress?.status === "delivered") {
+    if (progress?.status === "delivered") {
+      return "delivered";
+    }
+    if (progress?.status === "sent") {
       return "sent";
     }
     if (progress?.status === "scheduled") {
@@ -33,17 +36,6 @@ function getStepState(
     return isOffline ? "ready" : "active";
   }
 
-  // For offline steps that are beyond current index but are the next sendable
-  if (isOffline && index === currentFlowIndex) return "ready";
-
-  // Check if this is the next offline step after current
-  if (isOffline && index > currentFlowIndex) {
-    // Allow sending the next immediate offline step
-    if (index === currentFlowIndex + 1) return "ready";
-    // Or if it's right after a website step
-    return "locked";
-  }
-
   return "locked";
 }
 
@@ -52,11 +44,13 @@ export default function FlowList({
   currentFlowIndex,
   messageProgress,
   track,
+  readOnly,
 }: {
   chapterId: string;
   currentFlowIndex: number;
   messageProgress: MessageProgressRow[];
   track: "test" | "live";
+  readOnly?: boolean;
 }) {
   const chapter = chaptersConfig.chapters[chapterId];
   if (!chapter) return null;
@@ -97,6 +91,7 @@ export default function FlowList({
           )}
           track={track}
           chapterId={chapterId}
+          readOnly={readOnly}
         />
       ))}
     </div>

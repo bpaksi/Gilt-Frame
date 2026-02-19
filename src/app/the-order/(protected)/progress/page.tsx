@@ -1,10 +1,28 @@
 import { getAdminTrack } from "@/lib/admin/track";
-import { getPlayerEvents } from "@/lib/admin/actions";
+import {
+  getPlayerEvents,
+  getAllChapterProgress,
+  getAllMessageProgress,
+} from "@/lib/admin/actions";
+import { chaptersConfig } from "@/config/chapters";
 import EventTimeline from "@/components/admin/EventTimeline";
 
 export default async function AdminProgressPage() {
   const track = await getAdminTrack();
-  const events = await getPlayerEvents(track);
+  const [events, chapterProgress, messageProgress] = await Promise.all([
+    getPlayerEvents(track),
+    getAllChapterProgress(track),
+    getAllMessageProgress(track),
+  ]);
+
+  const completedIds = new Set(
+    chapterProgress
+      .filter((cp) => cp.status === "complete")
+      .map((cp) => cp.chapter_id)
+  );
+
+  const chapterIds = Object.keys(chaptersConfig.chapters);
+  const firstIncomplete = chapterIds.find((id) => !completedIds.has(id)) ?? chapterIds[0];
 
   return (
     <div style={{ padding: "16px" }}>
@@ -20,7 +38,13 @@ export default async function AdminProgressPage() {
       >
         Activity Log
       </div>
-      <EventTimeline events={events} />
+      <EventTimeline
+        events={events}
+        initialChapter={firstIncomplete}
+        chapterProgress={chapterProgress}
+        messageProgress={messageProgress}
+        track={track}
+      />
     </div>
   );
 }

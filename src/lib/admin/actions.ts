@@ -83,6 +83,20 @@ export type MessageProgressRow = {
   created_at: string;
 };
 
+export async function getAllMessageProgress(
+  track: "test" | "live"
+): Promise<MessageProgressRow[]> {
+  const supabase = createAdminClient();
+
+  const { data } = await supabase
+    .from("message_progress")
+    .select("*")
+    .eq("track", track)
+    .order("created_at", { ascending: true });
+
+  return (data ?? []) as MessageProgressRow[];
+}
+
 export async function getChapterMessageProgress(
   track: "test" | "live",
   chapterId: string
@@ -130,6 +144,28 @@ export async function getPlayerEvents(
 
   const { data } = await query;
   return (data ?? []) as PlayerEvent[];
+}
+
+export type ChapterProgressRow = {
+  id: string;
+  track: string;
+  chapter_id: string;
+  status: string;
+  current_flow_index: number;
+  started_at: string;
+};
+
+export async function getAllChapterProgress(
+  track: "test" | "live"
+): Promise<ChapterProgressRow[]> {
+  const supabase = createAdminClient();
+
+  const { data } = await supabase
+    .from("chapter_progress")
+    .select("*")
+    .eq("track", track);
+
+  return (data ?? []) as ChapterProgressRow[];
 }
 
 export async function resetChapter(

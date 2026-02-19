@@ -1,8 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import type { PlayerEvent } from "@/lib/admin/actions";
+import { useMemo, useState } from "react";
+import type {
+  PlayerEvent,
+  ChapterProgressRow,
+  MessageProgressRow,
+} from "@/lib/admin/actions";
+import { chaptersConfig, getOrderedFlow } from "@/config/chapters";
 import TimelineFilters from "./TimelineFilters";
+import FlowList from "./FlowList";
 
 function formatTime(dateStr: string): string {
   const d = new Date(dateStr);
@@ -60,31 +66,61 @@ function eventDisplayName(eventType: string): string {
 
 export default function EventTimeline({
   events,
+  initialChapter,
+  chapterProgress,
+  messageProgress,
+  track,
 }: {
   events: PlayerEvent[];
+  initialChapter: string;
+  chapterProgress: ChapterProgressRow[];
+  messageProgress: MessageProgressRow[];
+  track: "test" | "live";
 }) {
-  const [chapterFilter, setChapterFilter] = useState("");
-  const [typeFilters, setTypeFilters] = useState<string[]>([]);
+  const [chapterFilter, setChapterFilter] = useState(initialChapter);
 
   const filtered = events.filter((e) => {
     if (chapterFilter) {
       const details = e.details as Record<string, unknown> | null;
       if (details?.chapter_id !== chapterFilter) return false;
     }
-    if (typeFilters.length > 0 && !typeFilters.includes(e.event_type)) {
-      return false;
-    }
     return true;
   });
+
+  const chapterFlowIndex = useMemo(() => {
+    if (!chapterFilter) return 0;
+    const cp = chapterProgress.find((c) => c.chapter_id === chapterFilter);
+    if (!cp) return 0;
+    if (cp.status === "complete") {
+      const chapter = chaptersConfig.chapters[chapterFilter];
+      return chapter ? getOrderedFlow(chapter).length : 0;
+    }
+    return cp.current_flow_index;
+  }, [chapterFilter, chapterProgress]);
+
+  const chapterMessages = useMemo(() => {
+    if (!chapterFilter) return [];
+    return messageProgress.filter((mp) =>
+      mp.progress_key.startsWith(`${chapterFilter}.`)
+    );
+  }, [chapterFilter, messageProgress]);
 
   return (
     <div>
       <TimelineFilters
         selectedChapter={chapterFilter}
-        selectedTypes={typeFilters}
         onChapterChange={setChapterFilter}
-        onTypesChange={setTypeFilters}
       />
+
+      {chapterFilter && (
+        <FlowList
+          chapterId={chapterFilter}
+          currentFlowIndex={chapterFlowIndex}
+          messageProgress={chapterMessages}
+          track={track}
+          readOnly
+        />
+      )}
 
       <div
         style={{
