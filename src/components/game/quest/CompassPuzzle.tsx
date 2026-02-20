@@ -39,7 +39,8 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
   const statusTextRef = useRef<HTMLDivElement>(null);
   const orientation = useDeviceOrientation();
   const [needsPermission, setNeedsPermission] = useState(true);
-  const [solved, setSolved] = useState(false);
+  const [phase, setPhase] = useState<"compass" | "locking" | "found">("compass");
+  const [countdown, setCountdown] = useState(5);
   const rafRef = useRef<number>(0);
 
   const maxCWRef = useRef(0);
@@ -61,7 +62,7 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
   }, [orientation]);
 
   useEffect(() => {
-    if (needsPermission || solved) return;
+    if (needsPermission || phase !== "compass") return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -98,8 +99,8 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
           const held = (performance.now() - holdStartRef.current) / 1000;
           holdProgress = clamp(held / holdSeconds, 0, 1);
           if (held >= holdSeconds) {
-            setSolved(true);
-            setTimeout(onAdvance, 300);
+            setCountdown(5);
+            setPhase("locking");
             return;
           }
         }
@@ -109,8 +110,8 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
 
       // Ramping shake during hold
       const now = performance.now() / 1000;
-      const shakeFreq = 10 + holdProgress * 40;
-      const shakeAmp = holdProgress * holdProgress * 3;
+      const shakeFreq = 8 + holdProgress * 16;
+      const shakeAmp = holdProgress * holdProgress * 1.5;
       const shakeX = Math.sin(now * shakeFreq * Math.PI * 2) * shakeAmp;
       const shakeY = Math.cos(now * shakeFreq * Math.PI * 2 * 0.7) * shakeAmp;
 
@@ -208,15 +209,37 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
     return () => cancelAnimationFrame(rafRef.current);
   }, [
     needsPermission,
-    solved,
+    phase,
     orientation.heading,
     target,
     tolerance,
     minRotation,
     holdSeconds,
-    onAdvance,
     isDesktop,
   ]);
+
+  // Locking phase: countdown 5→1, then transition to found
+  useEffect(() => {
+    if (phase !== "locking") return;
+    let current = 5;
+    const interval = setInterval(() => {
+      current -= 1;
+      if (current <= 0) {
+        clearInterval(interval);
+        setPhase("found");
+      } else {
+        setCountdown(current);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [phase]);
+
+  // Found phase: pause then advance
+  useEffect(() => {
+    if (phase !== "found") return;
+    const timer = setTimeout(onAdvance, 2100);
+    return () => clearTimeout(timer);
+  }, [phase, onAdvance]);
 
   // Desktop mouse tracking
   useEffect(() => {
@@ -236,8 +259,98 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
     return () => window.removeEventListener("mousemove", handleMouse);
   }, [isDesktop, needsPermission]);
 
-  if (solved) {
-    return <div style={{ minHeight: "100%", flex: 1 }} />;
+  if (phase === "locking") {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100%",
+          flex: 1,
+          gap: "32px",
+          padding: "40px 24px",
+          animation: "compassFadeIn 400ms ease-out both",
+        }}
+      >
+        <style>{`
+          @keyframes compassFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes countdownPulse {
+            0% { opacity: 0.3; transform: scale(0.85); }
+            20% { opacity: 1; transform: scale(1); }
+            80% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.6; transform: scale(0.97); }
+          }
+        `}</style>
+        <div
+          style={{
+            color: "rgba(201, 168, 76, 0.7)",
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontSize: "17px",
+            fontStyle: "italic",
+            textAlign: "center",
+            letterSpacing: "3px",
+            lineHeight: 1.8,
+          }}
+        >
+          The compass yields its secret…
+        </div>
+        <div
+          key={countdown}
+          style={{
+            color: "rgba(232, 204, 106, 0.9)",
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontSize: "64px",
+            fontStyle: "italic",
+            letterSpacing: "4px",
+            animation: "countdownPulse 1s ease-out both",
+          }}
+        >
+          {countdown}
+        </div>
+      </div>
+    );
+  }
+
+  if (phase === "found") {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100%",
+          flex: 1,
+          padding: "40px 24px",
+          animation: "compassFadeIn 600ms ease-out both",
+        }}
+      >
+        <style>{`
+          @keyframes compassFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+        `}</style>
+        <div
+          style={{
+            color: "rgba(232, 204, 106, 0.9)",
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontSize: "22px",
+            fontStyle: "italic",
+            textAlign: "center",
+            letterSpacing: "4px",
+            lineHeight: 1.8,
+          }}
+        >
+          The way is found
+        </div>
+      </div>
+    );
   }
 
   if (needsPermission) {
