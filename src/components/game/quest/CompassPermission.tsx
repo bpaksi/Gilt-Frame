@@ -4,19 +4,16 @@ import MarkerSVG from "../MarkerSVG";
 
 interface CompassPermissionProps {
   onPermission: () => void;
-  label: string;
-  showMarker?: boolean;
-  description?: string;
+  children: React.ReactNode;
 }
 
 export default function CompassPermission({
   onPermission,
-  label,
-  showMarker = false,
-  description,
+  children,
 }: CompassPermissionProps) {
   return (
-    <div
+    <button
+      onClick={onPermission}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -24,45 +21,31 @@ export default function CompassPermission({
         justifyContent: "center",
         minHeight: "100%",
         flex: 1,
-        gap: "32px",
+        width: "100%",
+        background: "none",
+        border: "none",
+        cursor: "pointer",
         padding: "40px 24px",
+        gap: "32px",
+        WebkitTapHighlightColor: "transparent",
       }}
     >
-      {showMarker && <MarkerSVG size={48} variant="gold" animated />}
+      <MarkerSVG size={120} variant="gold" animated />
 
-      {description && (
-        <p
-          style={{
-            color: "rgba(200, 165, 75, 0.6)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: "16px",
-            fontStyle: "italic",
-            textAlign: "center",
-            lineHeight: 1.8,
-          }}
-        >
-          {description}
-        </p>
-      )}
-
-      <button
-        onClick={onPermission}
+      <div
         style={{
-          background: "none",
-          border: "1px solid rgba(200, 165, 75, 0.3)",
-          color: "rgba(200, 165, 75, 0.8)",
+          color: "rgba(200, 165, 75, 0.7)",
           fontFamily: "Georgia, 'Times New Roman', serif",
           fontSize: "16px",
           fontStyle: "italic",
-          letterSpacing: "2px",
-          padding: "14px 32px",
-          cursor: "pointer",
-          minHeight: "44px",
-          WebkitTapHighlightColor: "transparent",
+          textAlign: "center",
+          letterSpacing: "3px",
+          lineHeight: 1.8,
+          animation: "pulse-soft 3s ease-in-out infinite",
         }}
       >
-        {label}
-      </button>
-    </div>
+        {children}
+      </div>
+    </button>
   );
 }

@@ -44,11 +44,7 @@ export async function getPlayerState(
 
   const chapter = gameConfig.chapters[progress.chapter_id];
   const orderedSteps = chapter ? getOrderedSteps(chapter) : [];
-  const stepIndex = await getCurrentStepIndex(
-    supabase,
-    track,
-    progress.chapter_id
-  );
+  const stepIndex = await getCurrentStepIndex(supabase, progress.id);
   const currentStep = orderedSteps[stepIndex];
 
   // Get last event for this track
@@ -77,16 +73,14 @@ export async function getPlayerState(
 
 export type MessageProgressRow = {
   id: string;
-  track: string;
-  progress_key: string;
-  status: string;
-  scheduled_at: string | null;
+  step_progress_id: string | null;
+  to: string;
+  status: string | null;
   sent_at: string | null;
   delivered_at: string | null;
-  companion_status: string;
-  companion_sent_at: string | null;
   error: string | null;
-  created_at: string;
+  created_at: string | null;
+  step_id?: string;
 };
 
 export async function getAllMessageProgress(
@@ -96,11 +90,31 @@ export async function getAllMessageProgress(
 
   const { data } = await supabase
     .from("message_progress")
-    .select("*")
-    .eq("track", track)
+    .select("*, step_progress:step_progress_id(step_id, chapter_progress:chapter_progress_id(track))")
     .order("created_at", { ascending: true });
 
-  return (data ?? []) as MessageProgressRow[];
+  if (!data) return [];
+
+  // Filter by track via the FK join and flatten
+  return data
+    .filter((row) => {
+      const sp = row.step_progress as unknown as { chapter_progress: { track: string } } | null;
+      return sp?.chapter_progress?.track === track;
+    })
+    .map((row) => {
+      const sp = row.step_progress as unknown as { step_id: string } | null;
+      return {
+        id: row.id,
+        step_progress_id: row.step_progress_id,
+        to: row.to,
+        status: row.status,
+        sent_at: row.sent_at,
+        delivered_at: row.delivered_at,
+        error: row.error,
+        created_at: row.created_at,
+        step_id: sp?.step_id,
+      };
+    });
 }
 
 export async function getChapterMessageProgress(
@@ -109,14 +123,45 @@ export async function getChapterMessageProgress(
 ): Promise<MessageProgressRow[]> {
   const supabase = createAdminClient();
 
+  // Get chapter_progress id for this track+chapter
+  const { data: cp } = await supabase
+    .from("chapter_progress")
+    .select("id")
+    .eq("track", track)
+    .eq("chapter_id", chapterId)
+    .single();
+
+  if (!cp) return [];
+
+  // Get all step_progress ids for this chapter
+  const { data: stepProgressRows } = await supabase
+    .from("step_progress")
+    .select("id, step_id")
+    .eq("chapter_progress_id", cp.id);
+
+  if (!stepProgressRows || stepProgressRows.length === 0) return [];
+
+  const spIds = stepProgressRows.map((sp) => sp.id);
+  const spIdToStepId = new Map(stepProgressRows.map((sp) => [sp.id, sp.step_id]));
+
+  // Get message_progress for those step_progress ids
   const { data } = await supabase
     .from("message_progress")
     .select("*")
-    .eq("track", track)
-    .like("progress_key", `${chapterId}.%`)
+    .in("step_progress_id", spIds)
     .order("created_at", { ascending: true });
 
-  return (data ?? []) as MessageProgressRow[];
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    step_progress_id: row.step_progress_id,
+    to: row.to,
+    status: row.status,
+    sent_at: row.sent_at,
+    delivered_at: row.delivered_at,
+    error: row.error,
+    created_at: row.created_at,
+    step_id: (row.step_progress_id && spIdToStepId.get(row.step_progress_id)) ?? undefined,
+  }));
 }
 
 export type PlayerEvent = {
@@ -184,18 +229,35 @@ export async function getCompletedStepCounts(
 ): Promise<CompletedStepCount[]> {
   const supabase = createAdminClient();
 
-  // Get all completed steps for this track, grouped by chapter
-  const { data } = await supabase
-    .from("completed_steps")
-    .select("chapter_id")
+  // Get chapter_progress ids for this track
+  const { data: chapters } = await supabase
+    .from("chapter_progress")
+    .select("id, chapter_id")
     .eq("track", track);
 
+  if (!chapters || chapters.length === 0) return [];
+
+  const cpIds = chapters.map((cp) => cp.id);
+
+  // Count step_progress rows per chapter_progress_id where completed_at IS NOT NULL
+  const { data } = await supabase
+    .from("step_progress")
+    .select("chapter_progress_id")
+    .in("chapter_progress_id", cpIds)
+    .not("completed_at", "is", null);
+
   if (!data || data.length === 0) return [];
+
+  // Map chapter_progress_id → chapter_id
+  const cpIdToChapterId = new Map(chapters.map((cp) => [cp.id, cp.chapter_id]));
 
   // Count by chapter_id
   const counts = new Map<string, number>();
   for (const row of data) {
-    counts.set(row.chapter_id, (counts.get(row.chapter_id) ?? 0) + 1);
+    const chapterId = cpIdToChapterId.get(row.chapter_progress_id);
+    if (chapterId) {
+      counts.set(chapterId, (counts.get(chapterId) ?? 0) + 1);
+    }
   }
 
   return Array.from(counts, ([chapter_id, count]) => ({ chapter_id, count }));
@@ -233,16 +295,17 @@ export async function completeChapter(
 
   const orderedSteps = getOrderedSteps(chapter);
   const stepIds = orderedSteps.map((s) => s.id);
-  const progressKeys = orderedSteps
-    .filter((s) => s.type !== "website")
-    .map((s) => s.config.progress_key);
+  // For each step, provide the recipient (messaging steps) or empty string (website steps)
+  const stepRecipients = orderedSteps.map((s) =>
+    s.type !== "website" ? s.config.to : ""
+  );
 
   const supabase = createAdminClient();
   const { error } = await supabase.rpc("complete_chapter", {
     p_track: track,
     p_chapter_id: chapterId,
     p_step_ids: stepIds,
-    p_progress_keys: progressKeys,
+    p_step_recipients: stepRecipients,
   });
 
   if (error) {
@@ -272,18 +335,18 @@ export async function activateChapter(
     .single();
 
   if (existing) {
-    // Reactivate: clear completed_at and remove completed steps
+    // Reactivate: clear completed_at; cascade-delete step_progress children
     await supabase
       .from("chapter_progress")
       .update({ completed_at: null })
       .eq("track", track)
       .eq("chapter_id", chapterId);
 
+    // Delete step_progress rows (hint_views, quest_answers, message_progress cascade)
     await supabase
-      .from("completed_steps")
+      .from("step_progress")
       .delete()
-      .eq("track", track)
-      .eq("chapter_id", chapterId);
+      .eq("chapter_progress_id", existing.id);
   } else {
     await supabase.from("chapter_progress").insert({
       track,

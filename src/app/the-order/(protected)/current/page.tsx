@@ -38,6 +38,7 @@ export default async function AdminCurrentPage() {
   // Resolve current step + its message_progress row
   let currentStep = null;
   let currentStepProgress = null;
+  let currentStepScheduledAt: string | null = null;
   let revealedTiers: number[] = [];
 
   if (chapterId) {
@@ -47,21 +48,57 @@ export default async function AdminCurrentPage() {
       currentStep = orderedSteps[stepIndex] ?? null;
 
       if (currentStep && currentStep.type !== "website") {
+        // Find message_progress by step_id (player's message)
         currentStepProgress =
           messageProgress.find(
-            (mp) => mp.progress_key === currentStep!.config.progress_key
+            (mp) => mp.step_id === currentStep!.id && mp.to === currentStep!.config.to
           ) ?? null;
+
+        // Check step_progress for scheduled_at
+        const supabase = createAdminClient();
+        const { data: cp } = await supabase
+          .from("chapter_progress")
+          .select("id")
+          .eq("track", track)
+          .eq("chapter_id", chapterId)
+          .single();
+
+        if (cp) {
+          const { data: sp } = await supabase
+            .from("step_progress")
+            .select("scheduled_at")
+            .eq("chapter_progress_id", cp.id)
+            .eq("step_id", currentStep.id)
+            .single();
+          currentStepScheduledAt = sp?.scheduled_at ?? null;
+        }
       }
 
       if (currentStep?.type === "website") {
         const supabase = createAdminClient();
-        const { data: hintViews } = await supabase
-          .from("hint_views")
-          .select("hint_tier")
+        const { data: cp } = await supabase
+          .from("chapter_progress")
+          .select("id")
           .eq("track", track)
           .eq("chapter_id", chapterId)
-          .eq("step_id", currentStep.id);
-        revealedTiers = (hintViews ?? []).map((h) => h.hint_tier);
+          .single();
+
+        if (cp) {
+          const { data: sp } = await supabase
+            .from("step_progress")
+            .select("id")
+            .eq("chapter_progress_id", cp.id)
+            .eq("step_id", currentStep.id)
+            .single();
+
+          if (sp) {
+            const { data: hintViews } = await supabase
+              .from("hint_views")
+              .select("hint_tier")
+              .eq("step_progress_id", sp.id);
+            revealedTiers = (hintViews ?? []).map((h) => h.hint_tier);
+          }
+        }
       }
     }
   }
@@ -104,6 +141,7 @@ export default async function AdminCurrentPage() {
           chapterId={chapterId}
           stepIndex={stepIndex}
           messageProgress={currentStepProgress}
+          scheduledAt={currentStepScheduledAt}
           revealedTiers={revealedTiers}
           location={chapter?.location ?? null}
         />

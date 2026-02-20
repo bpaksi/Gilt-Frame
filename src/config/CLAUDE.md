@@ -30,18 +30,23 @@ Recipients are resolved directly from the track — no chapter-level indirection
 
 ## Config Pattern
 
-All step types (messaging and website) use a `config: { ... }` wrapper for type-specific properties. Step-level properties (`order`, `type`, `name`) sit outside config.
+All step types (messaging and website) use a `config: { ... }` wrapper for type-specific properties. Step-level properties (`order`, `type`, `name`, `trigger`, `delay_hours`) sit outside config.
 
 ```typescript
 // Messaging step
-{ order: 1, type: "sms", name: "...", config: { to, trigger, body, progress_key, ... } }
+{ order: 1, type: "sms", name: "...", trigger: "manual", config: { to, body, ... } }
+
+// Messaging step with delay (scheduling)
+{ order: 4, type: "sms", name: "...", trigger: "auto", delay_hours: 3, config: { to, body, ... } }
 
 // Website step
 { order: 2, type: "website", name: "...", component: "MultipleChoice", advance: "correct_answers", config: { questions, hints } }
 
 // Email step — uses template reference instead of inline body
-{ order: 0, type: "email", name: "...", config: { to, trigger, subject, template: "ch2-mid-gap", progress_key, ... } }
+{ order: 0, type: "email", name: "...", trigger: "manual", config: { to, subject, template: "ch2-mid-gap", ... } }
 ```
+
+**Companion messages** are defined in the step config as `companion_message: { to, channel, body }`. At send time, each recipient (player + companion) gets its own `message_progress` row with a `to` field.
 
 ## Email Templates
 
@@ -105,5 +110,4 @@ These may be displayed in the admin UI but are never used for game logic.
 - `component: "X", config: { ... }` — TypeScript enforces the config matches the component
 - `to: "bob"` — compile error (must be `"player"` or a `CompanionSlot`)
 - `companion_message: { to: "companion4" }` — compile error (not in CompanionSlot)
-- `side_effect: "unknown"` — compile error (not in SideEffect)
 - Missing `contacts.ts` — build fails (import error)

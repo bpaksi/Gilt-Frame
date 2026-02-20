@@ -13,7 +13,6 @@ interface MultipleChoiceProps {
   revealedHintTiers?: number[];
 }
 
-const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 
 export default function MultipleChoice({
   config,
@@ -22,7 +21,7 @@ export default function MultipleChoice({
   stepIndex,
   revealedHintTiers,
 }: MultipleChoiceProps) {
-  const { questions, hints } = config;
+  const { questions } = config;
   const [currentQ, setCurrentQ] = useState(0);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -115,7 +114,7 @@ export default function MultipleChoice({
           textTransform: "uppercase",
         }}
       >
-        {ROMAN[currentQ]} of {ROMAN[questions.length - 1]}
+        {currentQ + 1} of {questions.length}
       </p>
 
       {/* Question text */}
@@ -193,10 +192,11 @@ export default function MultipleChoice({
         })}
       </div>
 
-      {/* Hint system */}
-      {hints && hints.length > 0 && chapterId && stepIndex !== undefined && (
+      {/* Per-question hints */}
+      {question.hints && question.hints.length > 0 && chapterId && stepIndex !== undefined && (
         <HintSystem
-          hints={hints as HintItem[]}
+          key={currentQ}
+          hints={question.hints as HintItem[]}
           chapterId={chapterId}
           stepIndex={stepIndex}
           initialRevealedTiers={revealedHintTiers}

@@ -35,6 +35,7 @@ export default function WayfindingCompass({
   const [distanceText, setDistanceText] = useState("");
   const [showArrived, setShowArrived] = useState(false);
   const rafRef = useRef<number>(0);
+  const advancedRef = useRef(false);
 
   // Desktop simulation: use mouse for heading
   const mouseRef = useRef<{ x: number; y: number }>({ x: CENTER, y: CENTER });
@@ -69,12 +70,16 @@ export default function WayfindingCompass({
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // Heading
-      let heading = orientation.heading ?? 0;
-      if (isDesktop) {
+      // Heading: prefer real orientation (device or DevTools Sensors), fall back to mouse on desktop
+      let heading: number;
+      if (orientation.heading !== null) {
+        heading = orientation.heading;
+      } else if (isDesktop) {
         const dx = mouseRef.current.x - CENTER;
         const dy = mouseRef.current.y - CENTER;
         heading = ((Math.atan2(dx, -dy) * 180) / Math.PI + 360) % 360;
+      } else {
+        heading = 0;
       }
 
       // Tick marks and cardinals
@@ -165,8 +170,9 @@ export default function WayfindingCompass({
         );
         setDistanceText(thematicDistanceText(dist));
 
-        // Check geofence
-        if (config.geofence_radius && dist < config.geofence_radius) {
+        // Check geofence — fire once only
+        if (config.geofence_radius && dist < config.geofence_radius && !advancedRef.current) {
+          advancedRef.current = true;
           onAdvance();
         }
 
@@ -235,11 +241,9 @@ export default function WayfindingCompass({
   // Permission prompt
   if (needsPermission) {
     return (
-      <CompassPermission
-        onPermission={handlePermission}
-        label="Enable Location"
-        showMarker
-      />
+      <CompassPermission onPermission={handlePermission}>
+        Enable Location
+      </CompassPermission>
     );
   }
 
@@ -257,6 +261,23 @@ export default function WayfindingCompass({
         padding: "20px",
       }}
     >
+      {config.wayfinding_text && (
+        <p
+          style={{
+            color: "rgba(200, 165, 75, 0.7)",
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontSize: "17px",
+            fontStyle: "italic",
+            textAlign: "center",
+            letterSpacing: "1.5px",
+            lineHeight: "1.6",
+            maxWidth: "280px",
+          }}
+        >
+          {config.wayfinding_text}
+        </p>
+      )}
+
       <canvas
         ref={canvasRef}
         width={SIZE}

@@ -6,8 +6,6 @@ export type CompanionSlot = "companion1" | "companion2" | "companion3";
 export type Recipient = "player" | CompanionSlot;
 export type AdHocRecipient = "player" | CompanionSlot;
 
-export type SideEffect = "activate_quest";
-
 export type Track = {
   player: Contact;
   companion1: Contact | null;
@@ -36,6 +34,7 @@ export type QuestionItem = {
   question: string;
   options: string[];
   correct: number;
+  hints?: HintItem[];
 };
 
 /** GPS outdoor compass OR text-based indoor directions. */
@@ -48,22 +47,17 @@ export type WayfindingCompassConfig = {
   hints?: HintItem[];
 };
 
-/** Tappable Marker SVG with pulsing text below. */
+/** Tappable Marker SVG with pulsing text below. Optional title lines + instruction above. */
 export type MarkerButtonConfig = {
   marker_text: string;
+  title_lines?: string[];
+  instruction?: string | null;
 };
 
 /** Sequential multiple-choice questions. */
 export type MultipleChoiceConfig = {
   questions: QuestionItem[];
   hints?: HintItem[];
-};
-
-/** Fade-in story text with optional instruction and action button. */
-export type NarrativeMomentConfig = {
-  lines: string[];
-  instruction?: string | null;
-  action_label?: string | null;
 };
 
 /** Device orientation puzzle — point phone at target bearing and hold steady. */
@@ -101,7 +95,6 @@ export type ComponentConfigMap = {
   WayfindingCompass: WayfindingCompassConfig;
   MarkerButton: MarkerButtonConfig;
   MultipleChoice: MultipleChoiceConfig;
-  NarrativeMoment: NarrativeMomentConfig;
   CompassPuzzle: CompassPuzzleConfig;
   PuzzleSolve: PuzzleSolveConfig;
   RewardReveal: RewardRevealConfig;
@@ -113,6 +106,18 @@ export type ComponentName = keyof ComponentConfigMap;
 
 /** Union of all component config types (backward compat). */
 export type ComponentConfig = ComponentConfigMap[ComponentName];
+
+/** Advance condition is intrinsic to the component — derive, don't configure. */
+export const COMPONENT_ADVANCE: Record<ComponentName, AdvanceCondition> = {
+  WayfindingCompass: "geofence",
+  MarkerButton: "tap",
+  MultipleChoice: "correct_answers",
+  CompassPuzzle: "compass_alignment",
+  PuzzleSolve: "animation_complete",
+  RewardReveal: "tap",
+  WaitingState: "admin_trigger",
+  PassphrasePuzzle: "passphrase",
+};
 
 // ─── Companion Message ──────────────────────────────────────────────────────
 
@@ -131,9 +136,6 @@ export type LetterStepConfig = {
   _signature?: string;
   _content_notes?: string;
   companion_message?: CompanionMessage;
-  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
-  delay_hours?: number;
-  progress_key: string;
 };
 
 export type EmailStepConfig = {
@@ -142,10 +144,6 @@ export type EmailStepConfig = {
   subject: string;
   template: string;
   companion_message?: CompanionMessage;
-  side_effect?: SideEffect;
-  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
-  delay_hours?: number;
-  progress_key: string;
 };
 
 export type SmsStepConfig = {
@@ -154,10 +152,6 @@ export type SmsStepConfig = {
   body: string;
   image?: string;
   companion_message?: CompanionMessage;
-  side_effect?: SideEffect;
-  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
-  delay_hours?: number;
-  progress_key: string;
 };
 
 // ─── Step Types ─────────────────────────────────────────────────────────────
@@ -167,6 +161,8 @@ export type LetterStep = {
   type: "letter";
   name: string;
   trigger: Trigger;
+  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
+  delay_hours?: number;
   config: LetterStepConfig;
 };
 
@@ -175,6 +171,8 @@ export type EmailStep = {
   type: "email";
   name: string;
   trigger: Trigger;
+  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
+  delay_hours?: number;
   config: EmailStepConfig;
 };
 
@@ -183,6 +181,8 @@ export type SmsStep = {
   type: "sms";
   name: string;
   trigger: Trigger;
+  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
+  delay_hours?: number;
   config: SmsStepConfig;
 };
 
@@ -193,7 +193,6 @@ export type WebsiteStep = {
     type: "website";
     name: string;
     component: K;
-    advance: AdvanceCondition;
     config: ComponentConfigMap[K];
   };
 }[ComponentName];

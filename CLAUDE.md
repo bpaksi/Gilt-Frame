@@ -28,7 +28,7 @@ The Order of the Gilt Frame is an immersive, location-based interactive narrativ
 - **ID generation**: `crypto.randomUUID()` in app code; `gen_random_uuid()` in PostgreSQL.
 - **Session cookies**: `device_token` (90-day, identifies enrolled device), `session` (30-day, post-passphrase), `admin_session` (7-day, Supabase auth token).
 - **Rate limiting**: IP-based via `getClientIp()` — passphrase: 10/15min, admin login: 5/15min.
-- **No explicit FK constraints** in DB — app code enforces referential integrity via `gameConfig` lookups. JSONB `details` columns used for flexible data.
+- **FK hierarchy**: `chapter_progress` → `step_progress` → `hint_views`, `quest_answers`, `message_progress`. All with `ON DELETE CASCADE`. JSONB `details` columns on `activity_log` for flexible data.
 
 ## Naming Conventions
 
@@ -86,10 +86,10 @@ pnpm start                  # Start production server
 ## Design & Domain Rules
 
 - **Track isolation is critical**: `test` track routes all messages to Bob's phone/email via `test_overrides`. `live` track is Christine's real game — never reset, never mock.
-- **Chapter progression**: no row = locked, row with `completed_at IS NULL` = active, `completed_at IS NOT NULL` = complete. Only one chapter active at a time. Advancement via quest completion or admin trigger. Step position is derived from `count(*)` of `completed_steps` rows for the chapter.
+- **Chapter progression**: no row = locked, row with `completed_at IS NULL` = active, `completed_at IS NOT NULL` = complete. Only one chapter active at a time. Advancement via quest completion or admin trigger. Step position is derived from `count(*)` of `step_progress` rows (where `completed_at IS NOT NULL`) for the chapter.
 - **Quest state machine**: advance conditions include `geofence`, `compass_alignment`, `correct_answers`, `tap`, `admin_trigger`, `animation_complete`.
 - **Hints are tiered**: tier reveals tracked in `hint_views`. Once revealed, cannot be un-revealed.
-- **Message delivery**: offline steps use `progress_key` (e.g., `"ch1.prologue_letter"`) tracked in `message_progress` with status `pending → sent → delivered/failed`.
+- **Message delivery**: offline steps are tracked via `message_progress` rows linked to `step_progress` via FK. Each recipient (player, companion) gets its own row with `to` field and status `pending → sent → delivered/failed`. Scheduling lives on `step_progress.scheduled_at`.
 - **Oracle (Gemini)**: daily conversation limits with progressive delay throttling. System prompt includes completed chapters + unlocked lore for context.
 - **Enrollment**: one-time tokens, max 5 active per track, revocable.
 - **DO NOT** expose `SUPABASE_SERVICE_ROLE_KEY` to the browser.
@@ -101,10 +101,9 @@ pnpm start                  # Start production server
 | Group | Tables | Purpose |
 |---|---|---|
 | Enrollment | `device_enrollments` | Maps enrollment tokens → devices, tracks user_agent, track |
-| Progression | `chapter_progress`, `completed_steps`, `quest_answers`, `hint_views` | Chapter activation/completion, step completion log, answer history, hint tier tracking |
+| Progression | `chapter_progress` → `step_progress` → `hint_views`, `quest_answers`, `message_progress` | FK hierarchy: chapter activation → step tracking → hints, answers, messages. All children cascade-delete. |
 | Content | `moments` | Journey snapshots (share_token) |
 | Oracle | `oracle_conversations` | Q&A history with Gemini, flagging, token usage |
-| Messaging | `message_progress` | Offline message delivery tracking |
 | Admin | `activity_log` | Unified audit trail + event timeline (source: player/admin/system) |
 
 RLS enabled on all tables. App uses `service_role` to bypass. Public read on `moments` (by share_token). Lore entries (Scrolls of Knowledge) are static Markdown files in `src/config/lore/`, loaded by `src/lib/lore.ts`.

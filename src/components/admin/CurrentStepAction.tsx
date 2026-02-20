@@ -3,16 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminFetch } from "@/lib/admin/fetch";
-import type { Step } from "@/config";
+import { COMPONENT_ADVANCE, type StepWithId } from "@/config";
 import type { MessageProgressRow } from "@/lib/admin/actions";
 import HintPush from "./HintPush";
 
 type Props = {
-  step: Step;
+  step: StepWithId;
   track: "test" | "live";
   chapterId: string;
   stepIndex: number;
   messageProgress: MessageProgressRow | null;
+  scheduledAt: string | null;
   revealedTiers: number[];
   location: string | null;
 };
@@ -23,6 +24,7 @@ export default function CurrentStepAction({
   chapterId,
   stepIndex,
   messageProgress,
+  scheduledAt,
   revealedTiers,
   location,
 }: Props) {
@@ -33,21 +35,17 @@ export default function CurrentStepAction({
   const [delayHours, setDelayHours] = useState<number | null>(null);
 
   const isLetter = step.type === "letter";
-  const hasProgressKey = step.type !== "website";
+  const isOffline = step.type !== "website";
   const supportsDelay = step.type === "sms" || step.type === "email";
 
   const alreadySent =
     messageProgress?.status === "sent" ||
     messageProgress?.status === "delivered";
   const alreadyDelivered = messageProgress?.status === "delivered";
-  const isScheduled = messageProgress?.status === "scheduled";
-
-  const progressKey = hasProgressKey
-    ? (step as { config: { progress_key: string } }).config.progress_key
-    : "";
+  const isScheduled = !!scheduledAt && !alreadySent;
 
   async function handleSend() {
-    if (!hasProgressKey || sending || done) return;
+    if (!isOffline || sending || done) return;
     setSending(true);
     setError("");
 
@@ -57,7 +55,7 @@ export default function CurrentStepAction({
         const res = await adminFetch("/api/admin/schedule", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ track, chapterId, progressKey, delayHours }),
+          body: JSON.stringify({ track, chapterId, stepId: step.id, delayHours }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -73,7 +71,7 @@ export default function CurrentStepAction({
       const sendRes = await adminFetch("/api/admin/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ track, chapterId, progressKey }),
+        body: JSON.stringify({ track, chapterId, stepId: step.id }),
       });
 
       const sendData = await sendRes.json();
@@ -84,10 +82,11 @@ export default function CurrentStepAction({
 
       // For letters, also mark as done (received = delivered)
       if (isLetter) {
+        const returnedMessageId = sendData.messageId ?? messageProgress?.id;
         const doneRes = await adminFetch("/api/admin/mark-done", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ track, chapterId, progressKey }),
+          body: JSON.stringify({ track, messageId: returnedMessageId }),
         });
 
         const doneData = await doneRes.json();
@@ -143,7 +142,7 @@ export default function CurrentStepAction({
         return (
           <>
             <Detail label="Component" value={step.component} />
-            <Detail label="Advance" value={step.advance} />
+            <Detail label="Advance" value={COMPONENT_ADVANCE[step.component]} />
           </>
         );
     }
@@ -208,6 +207,12 @@ export default function CurrentStepAction({
         <StatusBadge text="Delivered" color="#2e7d32" icon="\u2713" />
       ) : alreadySent ? (
         <StatusBadge text="Sent" color="#c0a060" icon="\u25D1" />
+      ) : done ? (
+        <StatusBadge
+          text={isLetter ? "Marked received" : "Sent successfully"}
+          color="#2e7d32"
+          icon="\u2713"
+        />
       ) : isScheduled ? (
         <div style={{ marginTop: "12px" }}>
           <div
@@ -225,8 +230,8 @@ export default function CurrentStepAction({
             <span style={{ fontSize: "14px" }}>{"\u23F1"}</span>
             <span style={{ fontSize: "13px", color: "#e65100", fontWeight: 500 }}>
               Scheduled for{" "}
-              {messageProgress?.scheduled_at
-                ? new Date(messageProgress.scheduled_at).toLocaleString([], {
+              {scheduledAt
+                ? new Date(scheduledAt).toLocaleString([], {
                     month: "short",
                     day: "numeric",
                     hour: "numeric",
@@ -256,12 +261,6 @@ export default function CurrentStepAction({
             {sending ? "Processing..." : "SEND NOW"}
           </button>
         </div>
-      ) : done ? (
-        <StatusBadge
-          text={isLetter ? "Marked received" : delayHours ? "Scheduled" : "Sent successfully"}
-          color={delayHours ? "#e68a00" : "#2e7d32"}
-          icon={delayHours ? "\u23F1" : "\u2713"}
-        />
       ) : (
         <div style={{ marginTop: "12px" }}>
           {supportsDelay && (

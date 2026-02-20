@@ -85,30 +85,6 @@ export type Database = {
         }
         Relationships: []
       }
-      completed_steps: {
-        Row: {
-          chapter_id: string
-          completed_at: string
-          id: string
-          step_id: string
-          track: string
-        }
-        Insert: {
-          chapter_id: string
-          completed_at?: string
-          id?: string
-          step_id: string
-          track: string
-        }
-        Update: {
-          chapter_id?: string
-          completed_at?: string
-          id?: string
-          step_id?: string
-          track?: string
-        }
-        Relationships: []
-      }
       device_enrollments: {
         Row: {
           created_at: string
@@ -147,72 +123,73 @@ export type Database = {
       }
       hint_views: {
         Row: {
-          chapter_id: string
           hint_tier: number
           id: string
-          step_id: string
-          track: string
+          step_progress_id: string
           viewed_at: string
         }
         Insert: {
-          chapter_id: string
           hint_tier: number
           id?: string
-          step_id: string
-          track: string
+          step_progress_id: string
           viewed_at?: string
         }
         Update: {
-          chapter_id?: string
           hint_tier?: number
           id?: string
-          step_id?: string
-          track?: string
+          step_progress_id?: string
           viewed_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "hint_views_step_progress_id_fkey"
+            columns: ["step_progress_id"]
+            isOneToOne: false
+            referencedRelation: "step_progress"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       message_progress: {
         Row: {
-          companion_sent_at: string | null
-          companion_status: string | null
           created_at: string | null
           delivered_at: string | null
           error: string | null
           id: string
-          progress_key: string
-          scheduled_at: string | null
           sent_at: string | null
           status: string | null
-          track: string
+          step_progress_id: string | null
+          to: string
         }
         Insert: {
-          companion_sent_at?: string | null
-          companion_status?: string | null
           created_at?: string | null
           delivered_at?: string | null
           error?: string | null
           id?: string
-          progress_key: string
-          scheduled_at?: string | null
           sent_at?: string | null
           status?: string | null
-          track: string
+          step_progress_id?: string | null
+          to: string
         }
         Update: {
-          companion_sent_at?: string | null
-          companion_status?: string | null
           created_at?: string | null
           delivered_at?: string | null
           error?: string | null
           id?: string
-          progress_key?: string
-          scheduled_at?: string | null
           sent_at?: string | null
           status?: string | null
-          track?: string
+          step_progress_id?: string | null
+          to?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "message_progress_step_progress_id_fkey"
+            columns: ["step_progress_id"]
+            isOneToOne: false
+            referencedRelation: "step_progress"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       moments: {
         Row: {
@@ -286,35 +263,72 @@ export type Database = {
       quest_answers: {
         Row: {
           answered_at: string
-          chapter_id: string
           correct: boolean
           id: string
           question_index: number
           selected_option: string
-          step_id: string
-          track: string
+          step_progress_id: string
         }
         Insert: {
           answered_at?: string
-          chapter_id: string
           correct: boolean
           id?: string
           question_index: number
           selected_option: string
-          step_id: string
-          track: string
+          step_progress_id: string
         }
         Update: {
           answered_at?: string
-          chapter_id?: string
           correct?: boolean
           id?: string
           question_index?: number
           selected_option?: string
-          step_id?: string
-          track?: string
+          step_progress_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "quest_answers_step_progress_id_fkey"
+            columns: ["step_progress_id"]
+            isOneToOne: false
+            referencedRelation: "step_progress"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      step_progress: {
+        Row: {
+          chapter_progress_id: string
+          completed_at: string | null
+          id: string
+          scheduled_at: string | null
+          started_at: string
+          step_id: string
+        }
+        Insert: {
+          chapter_progress_id: string
+          completed_at?: string | null
+          id?: string
+          scheduled_at?: string | null
+          started_at?: string
+          step_id: string
+        }
+        Update: {
+          chapter_progress_id?: string
+          completed_at?: string | null
+          id?: string
+          scheduled_at?: string | null
+          started_at?: string
+          step_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "step_progress_chapter_progress_id_fkey"
+            columns: ["chapter_progress_id"]
+            isOneToOne: false
+            referencedRelation: "chapter_progress"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -324,8 +338,8 @@ export type Database = {
       complete_chapter: {
         Args: {
           p_chapter_id: string
-          p_progress_keys: string[]
           p_step_ids: string[]
+          p_step_recipients: string[]
           p_track: string
         }
         Returns: undefined

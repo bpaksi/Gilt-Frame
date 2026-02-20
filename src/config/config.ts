@@ -43,7 +43,6 @@ export const gameConfig: GameConfig = {
             _signature: "— The Registrar",
             _content_notes:
               "Letter must contain the acrostic 'SEE TRULY' hidden in the first letters of key sentences. Include giltframe.org URL. Wax seal optional but encouraged.",
-            progress_key: "prologue.letter_mailed",
           },
         },
         prologue_magic_link: {
@@ -58,7 +57,6 @@ export const gameConfig: GameConfig = {
             body: "The sign has arrived. giltframe.org",
             image:
               "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
-            progress_key: "prologue.magic_link_sent",
           },
         },
         prologue_passphrase: {
@@ -66,7 +64,7 @@ export const gameConfig: GameConfig = {
           type: "website",
           name: "The Passphrase",
           component: "PassphrasePuzzle",
-          advance: "passphrase",
+
           config: {
             placeholder: "Speak the words.",
             passphrase: "SEE TRULY",
@@ -77,7 +75,6 @@ export const gameConfig: GameConfig = {
           type: "website",
           name: "The Reward",
           component: "RewardReveal",
-          advance: "tap",
           config: {
             primary:
               "You have spoken the words. The Sight stirs within you, Sparrow. What was lost is now reborn.",
@@ -89,14 +86,13 @@ export const gameConfig: GameConfig = {
           type: "sms",
           name: "Acceptance Confirmed",
           trigger: "auto",
+          delay_hours: 3,
           config: {
             to: "player",
             _trigger_note:
               "Auto-send 3 hours after she enters the site and completes the passphrase. SMS with Marker image.",
             body: "The Order has noted your acceptance. Prepare yourself. The first trial is near.",
             image: "assets/prologue-sms-marker.png",
-            delay_hours: 3,
-            progress_key: "prologue.acceptance_confirmed",
           },
         },
       },
@@ -122,40 +118,58 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Send morning of March 3 while at/near Kellogg Manor for anniversary. SMS with coordinates and Marker image.",
             body: "The Order has placed a Marker at 42.406256, -85.402025. Your first trial begins now. giltframe.org",
-            image: "assets/prologue-sms-marker.png",
-            side_effect: "activate_quest",
-            progress_key: "ch1.initiation_sent",
+            image:
+              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
+          },
+        },
+        ch1_arrived: {
+          order: 1,
+          type: "sms",
+          name: "The Arrival",
+          trigger: "manual",
+          config: {
+            to: "player",
+            _trigger_note:
+              "Admin monitors player location (Find My). Send when player arrives at Kellogg Manor parking lot.",
+            body: "The timekeeper awaits, Sparrow. Begin your trial. giltframe.org",
+            image:
+              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
           },
         },
         // GPS compass from PIN (42.406256, -85.402025) to sundial (42.405278, -85.402778). ~125m walk.
+        // geofence_radius: 9m ≈ 30ft. Auto-advances when player enters.
+        //
+        // DEV TESTING — simulate geofence without a phone:
+        //   Chrome DevTools → ⋮ menu → More tools → Sensors → Location → "Other..."
+        //   Enter target coords (42.405278, -85.402778) to trigger geofence.
+        //   Change coords gradually to simulate walking. Compass heading is
+        //   already mouse-simulated on desktop (move mouse around canvas).
         ch1_wayfinding: {
-          order: 1,
+          order: 2,
           type: "website",
           name: "The Wayfinding",
           component: "WayfindingCompass",
-          advance: "geofence",
           config: {
             target_lat: 42.405278,
             target_lng: -85.402778,
-            geofence_radius: 30,
+            geofence_radius: 9,
+            wayfinding_text: "Travel to the timekeeper, Sparrow.",
           },
         },
         ch1_arrival: {
-          order: 2,
+          order: 3,
           type: "website",
           name: "The Arrival",
           component: "MarkerButton",
-          advance: "tap",
           config: {
             marker_text: "The timekeeper stands before me",
           },
         },
         ch1_confirmation: {
-          order: 3,
+          order: 4,
           type: "website",
           name: "The Confirmation",
           component: "MultipleChoice",
-          advance: "correct_answers",
           config: {
             questions: [
               {
@@ -163,6 +177,16 @@ export const gameConfig: GameConfig = {
                   "Four guardians encircle the dial. What form do they take?",
                 options: ["Seraphim", "Warriors", "Maidens", "Beasts"],
                 correct: 2,
+                hints: [
+                  {
+                    tier: 1,
+                    hint: "Stand at the dial and look closely at the figures around its edge.",
+                  },
+                  {
+                    tier: 2,
+                    hint: "They are not warriors, nor angels. They are gentler than that.",
+                  },
+                ],
               },
               {
                 question: "What truth does the dial keep?",
@@ -173,33 +197,41 @@ export const gameConfig: GameConfig = {
                   "The sun also rises",
                 ],
                 correct: 1,
+                hints: [
+                  {
+                    tier: 3,
+                    hint: "The truth is written on the dial itself. Read what it says.",
+                  },
+                  {
+                    tier: 4,
+                    hint: "Look for the inscription. It speaks of a familiar proverb.",
+                  },
+                ],
               },
             ],
           },
         },
         ch1_sparrow_moment: {
-          order: 4,
+          order: 5,
           type: "website",
           name: "The Sparrow Moment",
-          component: "NarrativeMoment",
-          advance: "tap",
+          component: "MarkerButton",
           config: {
-            lines: [
+            marker_text: "Begin",
+            title_lines: [
               "This bird casts its shadow over time.",
               "So will you, Sparrow, cast yours.",
             ],
             instruction:
               "Lay your device upon the face of the dial. Turn slowly.",
-            action_label: "Begin",
           },
         },
         // compass_bearing: 255° W — confirmed from recon compass photo at sundial
         ch1_compass_puzzle: {
-          order: 5,
+          order: 6,
           type: "website",
           name: "The Compass Puzzle",
           component: "CompassPuzzle",
-          advance: "compass_alignment",
           config: {
             compass_target: 255,
             compass_tolerance: 15,
@@ -208,19 +240,17 @@ export const gameConfig: GameConfig = {
           },
         },
         ch1_seal: {
-          order: 6,
+          order: 7,
           type: "website",
           name: "The Seal",
           component: "PuzzleSolve",
-          advance: "animation_complete",
           config: {},
         },
         ch1_reward: {
-          order: 7,
+          order: 8,
           type: "website",
           name: "The Reward",
           component: "RewardReveal",
-          advance: "tap",
           config: {
             primary:
               "The needle has shown you the way. Take flight, young bird, destiny awaits.",
@@ -228,15 +258,14 @@ export const gameConfig: GameConfig = {
           },
         },
         ch1_wait: {
-          order: 8,
+          order: 9,
           type: "website",
           name: "The Wait",
           component: "WaitingState",
-          advance: "admin_trigger",
           config: {},
         },
         ch1_post_solve: {
-          order: 9,
+          order: 10,
           type: "sms",
           name: "Post-Solve Confirmation",
           trigger: "auto",
@@ -245,8 +274,8 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Auto-fires when player reaches the WaitingState. Or manual from admin.",
             body: "The Order sees clearly. Your first fragment has been placed in the vault.",
-            image: "assets/prologue-sms-marker.png",
-            progress_key: "ch1.post_solve_sent",
+            image:
+              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
           },
         },
       },
@@ -272,7 +301,6 @@ export const gameConfig: GameConfig = {
               "Send ~March 10-14, roughly midway between Ch1 completion and Ch2 activation. Purpose: maintain engagement during the 3-week gap.",
             subject: "A Bearing Worth Remembering",
             template: "ch2-mid-gap",
-            progress_key: "ch2.mid_gap_email_sent",
           },
         },
         ch2_pre_trip_letter: {
@@ -288,7 +316,6 @@ export const gameConfig: GameConfig = {
             _signature: "\u2014 The Registrar",
             _content_notes:
               "The pre-trip letter should: (1) Reference the World's Columbian Exposition of 1893 obliquely, calling it 'the great Fair' or 'the White City.' (2) Allude to a woman of influence who 'saw what others could not' and 'shaped the Order's collection in an age of transformation.' (3) Hint that her likeness endures 'within a palace of art beside the lake.' (4) NOT name Palmer, Zorn, the Art Institute, or Gallery 273. Christine must discover those through the puzzle. (5) Tone: reverent, archival, the Registrar at their most ceremonial.",
-            progress_key: "ch2.pre_trip_letter_mailed",
           },
         },
         ch2_tickler: {
@@ -300,13 +327,13 @@ export const gameConfig: GameConfig = {
             to: "player",
             _trigger_note: "Day before or morning of museum visit.",
             body: "The lions are waiting, Sparrow.",
-            image: "assets/prologue-sms-marker.png",
+            image:
+              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
             companion_message: {
               to: "companion2",
               channel: "sms",
               body: "You are not the one we seek. But you walk beside her. Do not interfere.",
             },
-            progress_key: "ch2.tickler_sent",
           },
         },
         ch2_museum_proximity: {
@@ -319,9 +346,8 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Send when Find My shows her at or near the AIC. The big moment. Also triggers quest on Current tab.",
             body: "You are close. Ascend to the second floor. Gallery 273. She is waiting. giltframe.org",
-            image: "assets/prologue-sms-marker.png",
-            side_effect: "activate_quest",
-            progress_key: "ch2.museum_proximity_sent",
+            image:
+              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
           },
         },
         // SMS is the alert, email is the full briefing. These two fire back-to-back.
@@ -336,7 +362,6 @@ export const gameConfig: GameConfig = {
               "Send immediately after ch2_museum_proximity. SMS is the alert, email is the full briefing. These two fire back-to-back.",
             subject: "The Gallery of Whispers \u2014 Your Second Trial",
             template: "ch2-briefing",
-            progress_key: "ch2.email_briefing_sent",
           },
         },
         // Indoor — no GPS. Text-based wayfinding with progressive hints.
@@ -345,7 +370,6 @@ export const gameConfig: GameConfig = {
           type: "website",
           name: "The Wayfinding",
           component: "WayfindingCompass",
-          advance: "tap",
           config: {
             wayfinding_text:
               "Gallery 273. Find the patron who shaped the Order.",
@@ -371,7 +395,6 @@ export const gameConfig: GameConfig = {
           type: "website",
           name: "The Confirmation",
           component: "MultipleChoice",
-          advance: "correct_answers",
           config: {
             questions: [
               {
@@ -402,7 +425,6 @@ export const gameConfig: GameConfig = {
           type: "website",
           name: "The Seal",
           component: "PuzzleSolve",
-          advance: "animation_complete",
           config: {},
         },
         ch2_reward: {
@@ -410,7 +432,6 @@ export const gameConfig: GameConfig = {
           type: "website",
           name: "The Reward",
           component: "RewardReveal",
-          advance: "tap",
           config: {
             primary:
               "Mrs. Palmer did not collect alone. Her closest advisor was a fellow member of the Order, a painter whose quiet work still guards a secret.",
@@ -422,7 +443,6 @@ export const gameConfig: GameConfig = {
           type: "website",
           name: "The Wait",
           component: "WaitingState",
-          advance: "admin_trigger",
           config: {},
         },
         ch2_post_solve: {
@@ -434,13 +454,13 @@ export const gameConfig: GameConfig = {
             to: "player",
             _trigger_note: "Auto-send when player reaches WaitingState.",
             body: "You see what others have not. Your Chronicle has been updated. The Council is watching with growing interest.",
-            image: "assets/prologue-sms-marker.png",
+            image:
+              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
             companion_message: {
               to: "companion2",
               channel: "sms",
               body: "The Order sees those who stand watch. You have our thanks.",
             },
-            progress_key: "ch2.post_solve_sent",
           },
         },
         // Teases Cassatt/Crystal Bridges without naming them.
@@ -455,7 +475,6 @@ export const gameConfig: GameConfig = {
               "1-2 days after Chicago trip. Lore + teaser for next chapter.",
             subject: "The Gallery of Whispers \u2014 The Order is Pleased",
             template: "ch2-debrief",
-            progress_key: "ch2.debrief_sent",
           },
         },
         ch2_sister_release: {
@@ -468,7 +487,6 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Send after quest is fully complete. Final companion message for Ch2.",
             body: "She has proven worthy. The Order releases you from your watch \u2014 until the next summons.",
-            progress_key: "ch2.sister_release_sent",
           },
         },
       },

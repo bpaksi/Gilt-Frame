@@ -47,11 +47,48 @@ export async function POST(request: NextRequest) {
 
   const supabase = createAdminClient();
 
-  // Record the hint view (same as player-side revealHint)
+  // Get chapter_progress id
+  const { data: cp } = await supabase
+    .from("chapter_progress")
+    .select("id")
+    .eq("track", track)
+    .eq("chapter_id", chapterId)
+    .single();
+
+  if (!cp) {
+    return NextResponse.json(
+      { error: "Chapter not active." },
+      { status: 404 }
+    );
+  }
+
+  // Get or create step_progress
+  let { data: sp } = await supabase
+    .from("step_progress")
+    .select("id")
+    .eq("chapter_progress_id", cp.id)
+    .eq("step_id", step.id)
+    .single();
+
+  if (!sp) {
+    const { data: created } = await supabase
+      .from("step_progress")
+      .insert({ chapter_progress_id: cp.id, step_id: step.id })
+      .select("id")
+      .single();
+    sp = created;
+  }
+
+  if (!sp) {
+    return NextResponse.json(
+      { error: "Could not create step progress." },
+      { status: 500 }
+    );
+  }
+
+  // Record the hint view via step_progress FK
   await supabase.from("hint_views").insert({
-    track,
-    chapter_id: chapterId,
-    step_id: step.id,
+    step_progress_id: sp.id,
     hint_tier: hintTier,
   });
 

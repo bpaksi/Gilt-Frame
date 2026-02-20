@@ -9,16 +9,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  const { track, chapterId, progressKey } = await request.json();
+  const { track, chapterId, stepId } = await request.json();
 
-  if (!track || !chapterId || !progressKey) {
+  if (!track || !chapterId || !stepId) {
     return NextResponse.json(
-      { error: "track, chapterId, and progressKey are required." },
+      { error: "track, chapterId, and stepId are required." },
       { status: 400 }
     );
   }
 
-  const result = await sendStep(track, chapterId, progressKey);
+  const result = await sendStep(track, chapterId, stepId);
 
   if (!result.success) {
     return NextResponse.json({ error: result.error }, { status: 500 });
@@ -28,9 +28,7 @@ export async function POST(request: NextRequest) {
   const chapter = gameConfig.chapters[chapterId];
   if (chapter) {
     const orderedSteps = getOrderedSteps(chapter);
-    const stepIndex = orderedSteps.findIndex(
-      (s) => s.type !== "website" && s.config.progress_key === progressKey
-    );
+    const stepIndex = orderedSteps.findIndex((s) => s.id === stepId);
     if (stepIndex >= 0) {
       await autoAdvanceMessagingSteps(track, chapterId, stepIndex);
     }

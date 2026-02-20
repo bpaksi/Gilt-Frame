@@ -1,11 +1,11 @@
 export { gameConfig, getOrderedSteps } from "./config";
 export type { StepWithId } from "./config";
+export { COMPONENT_ADVANCE } from "./types";
 export type {
   Contact,
   CompanionSlot,
   Recipient,
   AdHocRecipient,
-  SideEffect,
   Track,
   GameConfig,
   Chapter,
@@ -26,7 +26,6 @@ export type {
   WayfindingCompassConfig,
   MarkerButtonConfig,
   MultipleChoiceConfig,
-  NarrativeMomentConfig,
   CompassPuzzleConfig,
   PuzzleSolveConfig,
   RewardRevealConfig,

@@ -5,7 +5,7 @@ import { lazy } from "react";
 const WayfindingCompass = lazy(() => import("./WayfindingCompass"));
 const MarkerButton = lazy(() => import("./MarkerButton"));
 const MultipleChoice = lazy(() => import("./MultipleChoice"));
-const NarrativeMoment = lazy(() => import("./NarrativeMoment"));
+
 const CompassPuzzle = lazy(() => import("./CompassPuzzle"));
 const PuzzleSolve = lazy(() => import("./PuzzleSolve"));
 const RewardReveal = lazy(() => import("./RewardReveal"));
@@ -17,7 +17,7 @@ export const componentRegistry: Record<ComponentName, ComponentType<any>> = {
   WayfindingCompass,
   MarkerButton,
   MultipleChoice,
-  NarrativeMoment,
+
   CompassPuzzle,
   PuzzleSolve,
   RewardReveal,

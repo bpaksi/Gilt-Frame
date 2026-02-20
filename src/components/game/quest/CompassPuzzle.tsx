@@ -275,11 +275,10 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
   // Permission prompt
   if (needsPermission) {
     return (
-      <CompassPermission
-        onPermission={handlePermission}
-        label="Enable Compass"
-        description="The compass awaits your permission."
-      />
+      <CompassPermission onPermission={handlePermission}>
+        <div>The compass awaits your permission.</div>
+        <div style={{ marginTop: "8px" }}>Enable Compass</div>
+      </CompassPermission>
     );
   }
 

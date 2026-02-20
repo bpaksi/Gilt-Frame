@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendStep } from "@/lib/messaging/send";
-import { gameConfig, getOrderedSteps } from "@/config";
 
 export async function GET(request: Request) {
   // Verify cron secret to prevent unauthorized invocations
@@ -12,11 +11,12 @@ export async function GET(request: Request) {
 
   const supabase = createAdminClient();
 
-  // Find all scheduled messages that are due
+  // Find all scheduled steps that are due (scheduled_at <= now, not yet completed)
   const { data: due, error } = await supabase
-    .from("message_progress")
-    .select("*")
-    .eq("status", "scheduled")
+    .from("step_progress")
+    .select("id, step_id, scheduled_at, chapter_progress:chapter_progress_id(id, chapter_id, track)")
+    .not("scheduled_at", "is", null)
+    .is("completed_at", null)
     .lte("scheduled_at", new Date().toISOString());
 
   if (error) {
@@ -32,35 +32,22 @@ export async function GET(request: Request) {
   const errors: string[] = [];
 
   for (const row of due) {
-    // Find the chapter that owns this progress_key
-    const chapterId = findChapterByProgressKey(row.progress_key);
-    if (!chapterId) {
-      errors.push(`No chapter for progress_key "${row.progress_key}"`);
+    const cp = row.chapter_progress as unknown as { id: string; chapter_id: string; track: string } | null;
+    if (!cp) {
+      errors.push(`No chapter_progress for step_progress ${row.id}`);
       continue;
     }
 
-    const track = row.track as "test" | "live";
-    const result = await sendStep(track, chapterId, row.progress_key);
+    const track = cp.track as "test" | "live";
+    const result = await sendStep(track, cp.chapter_id, row.step_id);
 
     if (result.success) {
       sent++;
     } else {
-      errors.push(`${row.progress_key}: ${result.error}`);
+      errors.push(`${row.step_id}: ${result.error}`);
     }
   }
 
   console.log("[cron/send-scheduled]", { sent, errors });
   return NextResponse.json({ sent, errors: errors.length > 0 ? errors : undefined });
-}
-
-function findChapterByProgressKey(progressKey: string): string | null {
-  for (const [chapterId, chapter] of Object.entries(gameConfig.chapters)) {
-    const steps = getOrderedSteps(chapter);
-    for (const step of steps) {
-      if (step.type !== "website" && step.config.progress_key === progressKey) {
-        return chapterId;
-      }
-    }
-  }
-  return null;
 }

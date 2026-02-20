@@ -15,7 +15,7 @@ type SendResult = {
   success: boolean;
   error?: string;
   messageStatus?: string;
-  companionStatus?: string;
+  messageId?: string;
 };
 
 function resolveRecipient(
@@ -36,25 +36,61 @@ function getMediaUrl(image?: string): string | null {
 export async function sendStep(
   track: "test" | "live",
   chapterId: string,
-  progressKey: string
+  stepId: string
 ): Promise<SendResult> {
   const chapter = gameConfig.chapters[chapterId];
   if (!chapter) return { success: false, error: "Chapter not found." };
 
   const trackObj = gameConfig.tracks[track];
   const orderedSteps = getOrderedSteps(chapter);
-  const matchedStep = orderedSteps.find(
-    (s) => s.type !== "website" && s.config.progress_key === progressKey
-  );
-  if (!matchedStep) return { success: false, error: "Step not found." };
+  const matchedStep = orderedSteps.find((s) => s.id === stepId);
+  if (!matchedStep || matchedStep.type === "website") {
+    return { success: false, error: "Step not found." };
+  }
 
-  const stepId = matchedStep.id;
   const step = matchedStep as SmsStep | EmailStep | LetterStep;
 
   const supabase = createAdminClient();
   let messageStatus = "sent";
-  let companionStatus = "pending";
   let error: string | undefined;
+
+  // Ensure chapter_progress row exists
+  let { data: cp } = await supabase
+    .from("chapter_progress")
+    .select("id")
+    .eq("track", track)
+    .eq("chapter_id", chapterId)
+    .single();
+
+  if (!cp) {
+    const { data: created } = await supabase
+      .from("chapter_progress")
+      .insert({ track, chapter_id: chapterId })
+      .select("id")
+      .single();
+    cp = created;
+  }
+
+  if (!cp) return { success: false, error: "Could not create chapter progress." };
+
+  // Ensure step_progress row exists
+  let { data: sp } = await supabase
+    .from("step_progress")
+    .select("id")
+    .eq("chapter_progress_id", cp.id)
+    .eq("step_id", stepId)
+    .single();
+
+  if (!sp) {
+    const { data: created } = await supabase
+      .from("step_progress")
+      .insert({ chapter_progress_id: cp.id, step_id: stepId, completed_at: null })
+      .select("id")
+      .single();
+    sp = created;
+  }
+
+  if (!sp) return { success: false, error: "Could not create step progress." };
 
   // Send main message
   const recipient = resolveRecipient(trackObj, step.config.to);
@@ -67,7 +103,7 @@ export async function sendStep(
     type: step.type,
     to: recipient.phone || recipient.email,
     slot: step.config.to,
-    progressKey,
+    stepId,
   });
 
   if (step.type === "sms") {
@@ -93,7 +129,7 @@ export async function sendStep(
           event_type: "sms_email_fallback",
           details: {
             chapter_id: chapterId,
-            progress_key: progressKey,
+            step_id: stepId,
             step_name: step.name,
             sms_error: result.error,
           },
@@ -114,10 +150,20 @@ export async function sendStep(
     messageStatus = "sent";
   }
 
-  // Send companion message if defined
+  // Insert message_progress row for main recipient
+  const { data: mpRow } = await supabase.from("message_progress").insert({
+    step_progress_id: sp.id,
+    to: step.config.to,
+    status: messageStatus,
+    sent_at: messageStatus === "sent" ? new Date().toISOString() : null,
+    error: error ?? null,
+  }).select("id").single();
+
+  // Send companion message if defined — insert as separate message_progress row
   if (step.config.companion_message) {
     const comp = step.config.companion_message;
     const compRecipient = resolveRecipient(trackObj, comp.to);
+    let companionStatus = "pending";
 
     if (compRecipient) {
       const result = await sendSms(compRecipient.phone, comp.body);
@@ -125,24 +171,14 @@ export async function sendStep(
     } else {
       companionStatus = "failed";
     }
-  } else {
-    companionStatus = "none";
-  }
 
-  // Upsert message_progress
-  await supabase.from("message_progress").upsert(
-    {
-      track,
-      progress_key: progressKey,
-      status: messageStatus,
-      sent_at: messageStatus === "sent" ? new Date().toISOString() : null,
-      companion_status: companionStatus,
-      companion_sent_at:
-        companionStatus === "sent" ? new Date().toISOString() : null,
-      error: error ?? null,
-    },
-    { onConflict: "track,progress_key" }
-  );
+    await supabase.from("message_progress").insert({
+      step_progress_id: sp.id,
+      to: comp.to,
+      status: companionStatus,
+      sent_at: companionStatus === "sent" ? new Date().toISOString() : null,
+    });
+  }
 
   // Log activity
   const compRecipient = step.config.companion_message
@@ -154,7 +190,7 @@ export async function sendStep(
     event_type: "send_step",
     details: {
       chapter_id: chapterId,
-      progress_key: progressKey,
+      step_id: stepId,
       step_name: step.name,
       step_type: step.type,
       status: messageStatus,
@@ -163,80 +199,78 @@ export async function sendStep(
       ...(compRecipient && {
         companion_to: compRecipient.phone ?? compRecipient.email,
         companion_slot: step.config.companion_message!.to,
-        companion_status: companionStatus,
       }),
       ...(error && { error }),
     },
   });
 
-  // Mark this step as completed if not already
-  // Ensure chapter_progress row exists
-  const { data: progress } = await supabase
-    .from("chapter_progress")
-    .select("id")
-    .eq("track", track)
-    .eq("chapter_id", chapterId)
-    .single();
-
-  if (!progress) {
-    await supabase.from("chapter_progress").insert({
-      track,
-      chapter_id: chapterId,
-    });
-  }
-
-  // Insert completed step (ignore conflict if already completed)
-  await supabase.from("completed_steps").upsert(
-    {
-      track,
-      chapter_id: chapterId,
-      step_id: stepId,
-    },
-    { onConflict: "track,chapter_id,step_id" }
-  );
+  // Mark step_progress as completed
+  await supabase
+    .from("step_progress")
+    .update({ completed_at: new Date().toISOString() })
+    .eq("id", sp.id);
 
   return {
     success: messageStatus === "sent",
     error,
     messageStatus,
-    companionStatus,
+    messageId: mpRow?.id,
   };
 }
 
 export async function scheduleStep(
   track: "test" | "live",
   chapterId: string,
-  progressKey: string,
+  stepId: string,
   delayHours: number
 ): Promise<void> {
   const chapter = gameConfig.chapters[chapterId];
   if (!chapter) return;
 
   const orderedSteps = getOrderedSteps(chapter);
-  const matchedStep = orderedSteps.find(
-    (s) => s.type !== "website" && s.config.progress_key === progressKey
-  );
-  if (!matchedStep) return;
+  const matchedStep = orderedSteps.find((s) => s.id === stepId);
+  if (!matchedStep || matchedStep.type === "website") return;
 
   const scheduledAt = new Date(Date.now() + delayHours * 60 * 60 * 1000).toISOString();
   const supabase = createAdminClient();
 
   console.log("[scheduleStep] Scheduling", {
-    progressKey,
+    stepId,
     delayHours,
     scheduledAt,
   });
 
-  // Insert message_progress as scheduled — step is NOT completed until actually sent
-  await supabase.from("message_progress").upsert(
-    {
-      track,
-      progress_key: progressKey,
-      status: "scheduled",
-      scheduled_at: scheduledAt,
-    },
-    { onConflict: "track,progress_key" }
-  );
+  // Ensure chapter_progress row exists
+  let { data: cp } = await supabase
+    .from("chapter_progress")
+    .select("id")
+    .eq("track", track)
+    .eq("chapter_id", chapterId)
+    .single();
+
+  if (!cp) {
+    const { data: created } = await supabase
+      .from("chapter_progress")
+      .insert({ track, chapter_id: chapterId })
+      .select("id")
+      .single();
+    cp = created;
+  }
+
+  if (!cp) return;
+
+  // Create step_progress row with scheduled_at (not completed yet)
+  await supabase
+    .from("step_progress")
+    .upsert(
+      {
+        chapter_progress_id: cp.id,
+        step_id: stepId,
+        scheduled_at: scheduledAt,
+        completed_at: null,
+      },
+      { onConflict: "chapter_progress_id,step_id" }
+    );
 
   await supabase.from("activity_log").insert({
     track,
@@ -244,7 +278,7 @@ export async function scheduleStep(
     event_type: "step_scheduled",
     details: {
       chapter_id: chapterId,
-      progress_key: progressKey,
+      step_id: stepId,
       step_name: matchedStep.name,
       step_type: matchedStep.type,
       delay_hours: delayHours,

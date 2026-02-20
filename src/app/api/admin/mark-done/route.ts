@@ -8,11 +8,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  const { track, chapterId, progressKey } = await request.json();
+  const { track, messageId } = await request.json();
 
-  if (!track || !chapterId || !progressKey) {
+  if (!track || !messageId) {
     return NextResponse.json(
-      { error: "track, chapterId, and progressKey are required." },
+      { error: "track and messageId are required." },
       { status: 400 }
     );
   }
@@ -25,8 +25,7 @@ export async function POST(request: NextRequest) {
       status: "delivered",
       delivered_at: new Date().toISOString(),
     })
-    .eq("track", track)
-    .eq("progress_key", progressKey)
+    .eq("id", messageId)
     .eq("status", "sent")
     .select()
     .single();
@@ -39,8 +38,7 @@ export async function POST(request: NextRequest) {
   }
 
   await logAdminAction("mark_done", {
-    chapter_id: chapterId,
-    progress_key: progressKey,
+    message_id: messageId,
   }, track);
 
   return NextResponse.json({ success: true });

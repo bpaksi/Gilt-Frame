@@ -9,34 +9,35 @@ import StepRow, { type StepState } from "./StepRow";
 import type { MessageProgressRow } from "@/lib/admin/actions";
 
 function getStepState(
-  step: Step,
+  step: Step & { id: string },
   index: number,
   currentStepIndex: number,
   messageProgress: MessageProgressRow[]
-): StepState {
+): { state: StepState; messageId?: string } {
   const isOffline = step.type !== "website";
 
   if (isOffline) {
+    // Find the primary recipient's message_progress row by step_id
     const progress = messageProgress.find(
-      (mp) => mp.progress_key === step.config.progress_key
+      (mp) => mp.step_id === step.id && mp.to === step.config.to
     );
     if (progress?.status === "delivered") {
-      return "delivered";
+      return { state: "delivered", messageId: progress.id };
     }
     if (progress?.status === "sent") {
-      return "sent";
+      return { state: "sent", messageId: progress.id };
     }
     if (progress?.status === "scheduled") {
-      return "scheduled";
+      return { state: "scheduled" };
     }
   }
 
-  if (index < currentStepIndex) return "sent";
+  if (index < currentStepIndex) return { state: "sent" };
   if (index === currentStepIndex) {
-    return isOffline ? "ready" : "active";
+    return { state: isOffline ? "ready" : "active" };
   }
 
-  return "locked";
+  return { state: "locked" };
 }
 
 export default function StepList({
@@ -79,21 +80,25 @@ export default function StepList({
       >
         {chapter.name}
       </div>
-      {orderedSteps.map((step, index) => (
-        <StepRow
-          key={step.id}
-          step={step}
-          stepState={getStepState(
-            step,
-            index,
-            currentStepIndex,
-            messageProgress
-          )}
-          track={track}
-          chapterId={chapterId}
-          readOnly={readOnly}
-        />
-      ))}
+      {orderedSteps.map((step, index) => {
+        const { state, messageId } = getStepState(
+          step,
+          index,
+          currentStepIndex,
+          messageProgress
+        );
+        return (
+          <StepRow
+            key={step.id}
+            step={step}
+            stepState={state}
+            track={track}
+            chapterId={chapterId}
+            messageId={messageId}
+            readOnly={readOnly}
+          />
+        );
+      })}
     </div>
   );
 }

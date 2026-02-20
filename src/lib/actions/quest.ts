@@ -5,6 +5,7 @@ import { resolveTrack } from "@/lib/track";
 import {
   gameConfig,
   getOrderedSteps,
+  COMPONENT_ADVANCE,
   type ComponentName,
   type ComponentConfig,
   type AdvanceCondition,
@@ -27,15 +28,45 @@ export type QuestState = {
 
 export async function getCurrentStepIndex(
   supabase: SupabaseClient,
-  track: string,
-  chapterId: string,
+  chapterProgressId: string,
 ): Promise<number> {
   const { count } = await supabase
-    .from("completed_steps")
+    .from("step_progress")
     .select("*", { count: "exact", head: true })
-    .eq("track", track)
-    .eq("chapter_id", chapterId);
+    .eq("chapter_progress_id", chapterProgressId)
+    .not("completed_at", "is", null);
   return count ?? 0;
+}
+
+/**
+ * Get or create a step_progress row for the given step.
+ * Returns the step_progress id.
+ */
+async function ensureStepProgress(
+  supabase: SupabaseClient,
+  chapterProgressId: string,
+  stepId: string,
+): Promise<string> {
+  const { data: existing } = await supabase
+    .from("step_progress")
+    .select("id")
+    .eq("chapter_progress_id", chapterProgressId)
+    .eq("step_id", stepId)
+    .single();
+
+  if (existing) return existing.id;
+
+  const { data: created } = await supabase
+    .from("step_progress")
+    .insert({
+      chapter_progress_id: chapterProgressId,
+      step_id: stepId,
+      completed_at: null,
+    })
+    .select("id")
+    .single();
+
+  return created!.id;
 }
 
 export async function getQuestState(): Promise<QuestState> {
@@ -56,26 +87,29 @@ export async function getQuestState(): Promise<QuestState> {
   if (!chapter) return { status: "waiting" };
 
   const orderedSteps = getOrderedSteps(chapter);
-  const stepIndex = await getCurrentStepIndex(
-    supabase,
-    trackInfo.track,
-    progress.chapter_id,
-  );
+  const stepIndex = await getCurrentStepIndex(supabase, progress.id);
   const currentStep = orderedSteps[stepIndex];
 
   if (!currentStep || currentStep.type !== "website") {
     return { status: "waiting" };
   }
 
-  // Fetch revealed hint tiers for this step
-  const { data: hintViews } = await supabase
-    .from("hint_views")
-    .select("hint_tier")
-    .eq("track", trackInfo.track)
-    .eq("chapter_id", progress.chapter_id)
-    .eq("step_id", currentStep.id);
+  // Fetch revealed hint tiers for this step via step_progress FK
+  const { data: stepProgress } = await supabase
+    .from("step_progress")
+    .select("id")
+    .eq("chapter_progress_id", progress.id)
+    .eq("step_id", currentStep.id)
+    .single();
 
-  const revealedHintTiers = (hintViews ?? []).map((h) => h.hint_tier);
+  let revealedHintTiers: number[] = [];
+  if (stepProgress) {
+    const { data: hintViews } = await supabase
+      .from("hint_views")
+      .select("hint_tier")
+      .eq("step_progress_id", stepProgress.id);
+    revealedHintTiers = (hintViews ?? []).map((h) => h.hint_tier);
+  }
 
   return {
     status: "active",
@@ -83,7 +117,7 @@ export async function getQuestState(): Promise<QuestState> {
     chapterName: chapter.name,
     stepIndex,
     component: currentStep.component,
-    advance: currentStep.advance,
+    advance: COMPONENT_ADVANCE[currentStep.component],
     config: currentStep.config,
     track: trackInfo.track,
     revealedHintTiers,
@@ -111,25 +145,29 @@ export async function autoAdvanceMessagingSteps(
     if (step.type === "website") break;
     if (step.trigger !== "auto") break;
 
-    const delayHours = step.config.delay_hours;
+    const delayHours = step.delay_hours;
     if (delayHours && delayHours > 0) {
-      await scheduleStep(
-        track,
-        chapterId,
-        step.config.progress_key,
-        delayHours,
-      );
+      await scheduleStep(track, chapterId, step.id, delayHours);
     } else {
-      await sendStep(track, chapterId, step.config.progress_key);
+      await sendStep(track, chapterId, step.id);
     }
   }
 
   // Check if all steps are now completed — if so, complete the chapter
-  const { count } = await supabase
-    .from("completed_steps")
-    .select("*", { count: "exact", head: true })
+  const { data: cp } = await supabase
+    .from("chapter_progress")
+    .select("id")
     .eq("track", track)
-    .eq("chapter_id", chapterId);
+    .eq("chapter_id", chapterId)
+    .single();
+
+  if (!cp) return;
+
+  const { count } = await supabase
+    .from("step_progress")
+    .select("*", { count: "exact", head: true })
+    .eq("chapter_progress_id", cp.id)
+    .not("completed_at", "is", null);
 
   if ((count ?? 0) >= orderedSteps.length) {
     await supabase
@@ -161,12 +199,8 @@ export async function advanceQuest(
 
   if (!progress) return getQuestState();
 
-  // Verify current step matches via completed_steps count
-  const currentIndex = await getCurrentStepIndex(
-    supabase,
-    trackInfo.track,
-    chapterId,
-  );
+  // Verify current step matches via step_progress count
+  const currentIndex = await getCurrentStepIndex(supabase, progress.id);
   if (currentIndex !== stepIndex) {
     return getQuestState();
   }
@@ -175,14 +209,14 @@ export async function advanceQuest(
   if (!chapter) return { status: "waiting" };
 
   const orderedSteps = getOrderedSteps(chapter);
-
-  // Mark the current step as completed
   const currentStep = orderedSteps[stepIndex];
-  await supabase.from("completed_steps").insert({
-    track: trackInfo.track,
-    chapter_id: chapterId,
-    step_id: currentStep.id,
-  });
+
+  // Mark the current step as completed (upsert: set completed_at on existing row)
+  const spId = await ensureStepProgress(supabase, progress.id, currentStep.id);
+  await supabase
+    .from("step_progress")
+    .update({ completed_at: new Date().toISOString() })
+    .eq("id", spId);
 
   // Record event for timeline
   await supabase.from("activity_log").insert({
@@ -219,10 +253,21 @@ export async function recordAnswer(
   if (!step) return;
 
   const supabase = createAdminClient();
+
+  // Get chapter_progress id
+  const { data: cp } = await supabase
+    .from("chapter_progress")
+    .select("id")
+    .eq("track", trackInfo.track)
+    .eq("chapter_id", chapterId)
+    .single();
+
+  if (!cp) return;
+
+  const spId = await ensureStepProgress(supabase, cp.id, step.id);
+
   await supabase.from("quest_answers").insert({
-    track: trackInfo.track,
-    chapter_id: chapterId,
-    step_id: step.id,
+    step_progress_id: spId,
     question_index: questionIndex,
     selected_option: selectedOption,
     correct,
@@ -258,15 +303,36 @@ export async function revealHint(
   const step = orderedSteps[stepIndex];
   if (!step || step.type !== "website") return null;
 
-  const config = step.config as { hints?: HintItem[] };
-  const hintItem = config.hints?.find((h) => h.tier === hintTier);
+  const config = step.config as {
+    hints?: HintItem[];
+    questions?: { hints?: HintItem[] }[];
+  };
+  // Check step-level hints, then per-question hints
+  let hintItem = config.hints?.find((h) => h.tier === hintTier);
+  if (!hintItem && config.questions) {
+    for (const q of config.questions) {
+      hintItem = q.hints?.find((h) => h.tier === hintTier);
+      if (hintItem) break;
+    }
+  }
   if (!hintItem) return null;
 
   const supabase = createAdminClient();
+
+  // Get chapter_progress id
+  const { data: cp } = await supabase
+    .from("chapter_progress")
+    .select("id")
+    .eq("track", trackInfo.track)
+    .eq("chapter_id", chapterId)
+    .single();
+
+  if (!cp) return null;
+
+  const spId = await ensureStepProgress(supabase, cp.id, step.id);
+
   await supabase.from("hint_views").insert({
-    track: trackInfo.track,
-    chapter_id: chapterId,
-    step_id: step.id,
+    step_progress_id: spId,
     hint_tier: hintTier,
   });
 
@@ -304,10 +370,6 @@ export async function pollChapterProgress(
 
   if (!progress) return null;
 
-  const stepIndex = await getCurrentStepIndex(
-    supabase,
-    trackInfo.track,
-    chapterId,
-  );
+  const stepIndex = await getCurrentStepIndex(supabase, progress.id);
   return { stepIndex };
 }
