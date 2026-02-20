@@ -119,14 +119,13 @@ export const gameConfig: GameConfig = {
               "Send ~1 day before March 3. Sets the stage for Ch1 and introduces website instruments (Journey, Oracle). First email from the Order.",
             subject: "The Keeper\u2019s Legacy",
             template: "ch1-briefing",
-            progress_key: "ch1.briefing_sent",
           },
         },
         // Coordinates are the PIN location (~125m NNE of sundial), not the sundial itself.
         // The app's wayfinding compass guides her the remaining distance.
         ch1_initiation: {
           order: 1,
-          type: "mms",
+          type: "sms",
           name: "The Summons",
           trigger: "manual",
           config: {
@@ -136,12 +135,11 @@ export const gameConfig: GameConfig = {
             body: "A Marker has been placed. 42.406256, -85.402025. Your first trial begins now. giltframe.org",
             image:
               "https://giltframe.org/marker/marker-v3-gold-512.png",
-            progress_key: "ch1.initiation_sent",
           },
         },
         ch1_arrived: {
           order: 2,
-          type: "mms",
+          type: "sms",
           name: "The Arrival",
           trigger: "manual",
           config: {
@@ -151,7 +149,6 @@ export const gameConfig: GameConfig = {
             body: "The timekeeper awaits, Sparrow. Begin your trial. giltframe.org",
             image:
               "https://giltframe.org/marker/marker-v3-gold-512.png",
-            progress_key: "ch1.arrived_sent",
           },
         },
         // GPS compass from PIN (42.406256, -85.402025) to sundial (42.405278, -85.402778). ~125m walk.
