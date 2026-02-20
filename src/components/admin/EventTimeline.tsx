@@ -53,6 +53,8 @@ function eventIcon(type: string): string {
       return "\uD83D\uDD11";
     case "mark_done":
       return "\u2705";
+    case "complete_step":
+      return "\u23E9";
     case "reset_chapter":
       return "\uD83D\uDD04";
     default:
@@ -72,6 +74,7 @@ const EVENT_DISPLAY_NAMES: Record<string, string> = {
   send_step: "message sent",
   send_ad_hoc: "ad-hoc message sent",
   mark_done: "marked delivered",
+  complete_step: "step completed",
   activate_chapter: "chapter activated",
   reset_chapter: "chapter reset",
 };
@@ -128,10 +131,11 @@ export default function EventTimeline({
   }, [chapterFilter, chapterProgress, completedStepCounts]);
 
   const chapterMessages = useMemo(() => {
-    if (!chapterFilter) return [];
-    return messageProgress.filter((mp) =>
-      mp.progress_key.startsWith(`${chapterFilter}.`)
-    );
+    if (!chapterFilter) return messageProgress;
+    const chapter = gameConfig.chapters[chapterFilter];
+    if (!chapter) return [];
+    const stepIds = new Set(getOrderedSteps(chapter).map((s) => s.id));
+    return messageProgress.filter((mp) => mp.step_id && stepIds.has(mp.step_id));
   }, [chapterFilter, messageProgress]);
 
   return (
