@@ -9,6 +9,7 @@ const MultipleChoice = lazy(() => import("./MultipleChoice"));
 const CompassPuzzle = lazy(() => import("./CompassPuzzle"));
 const RewardReveal = lazy(() => import("./RewardReveal"));
 const PassphrasePuzzle = lazy(() => import("./PassphrasePuzzle"));
+const GuidedIdentification = lazy(() => import("./GuidedIdentification"));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const componentRegistry: Record<ComponentName, ComponentType<any>> = {
@@ -19,4 +20,5 @@ export const componentRegistry: Record<ComponentName, ComponentType<any>> = {
   CompassPuzzle,
   RewardReveal,
   PassphrasePuzzle,
+  GuidedIdentification,
 };

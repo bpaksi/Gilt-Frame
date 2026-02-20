@@ -29,6 +29,7 @@ export type {
   CompassPuzzleConfig,
   RewardRevealConfig,
   PassphrasePuzzleConfig,
+  GuidedIdentificationConfig,
   HintItem,
   QuestionItem,
 } from "./types";

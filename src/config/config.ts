@@ -337,52 +337,81 @@ export const gameConfig: GameConfig = {
             body: "You are close. Ascend to the second floor. Gallery 273. She is waiting. giltframe.org",
             image:
               "https://giltframe.org/marker/marker-v3-gold-512.png",
+            companion_message: {
+              to: "companion2",
+              channel: "sms",
+              body: "She is exposed now. The gallery has eyes that are not ours. Stay close. Do not leave her side.",
+            },
           },
         },
-        // SMS is the alert, email is the full briefing. These two fire back-to-back.
-        ch2_email_briefing: {
+        // ── PAINTING 1: Find & Identify the Zorn Portrait ─────────────────────
+        // GuidedIdentification: two-phase step that LOOPS until she confirms
+        // she is standing in front of the correct painting.
+        //
+        // Phase 1 (GUIDANCE): Shows text clue + progressive hints.
+        //   "Your second trial awaits. A patron of the Order presided over
+        //    the great Fair of 1893. A Swedish painter captured her likeness
+        //    in this very room."
+        //   She reads, looks around Gallery 273, then taps "I think I've found it."
+        //
+        // Phase 2 (IDENTIFICATION): Multiple choice — "What is the name of
+        //   the painting you stand before?" 1 correct + 3 random from the pool
+        //   of real paintings in Gallery 273.
+        //   Wrong → shake, auto-reveal next hint, re-randomize distractors,
+        //   loop back to Phase 1.
+        //   Correct → advance to observation questions.
+        //
+        // Painting pool: real works confirmed on display in Gallery 273.
+        ch2_find_portrait: {
           order: 4,
-          type: "email",
-          name: "The Briefing",
-          trigger: "manual",
-          config: {
-            to: "player",
-            _trigger_note:
-              "Send immediately after ch2_museum_proximity. SMS is the alert, email is the full briefing. These two fire back-to-back.",
-            subject: "The Gallery of Whispers \u2014 Your Second Trial",
-            template: "ch2-briefing",
-          },
-        },
-        // Indoor — no GPS. Text-based wayfinding with progressive hints.
-        ch2_wayfinding: {
-          order: 5,
           type: "website",
-          name: "The Wayfinding",
-          component: "WayfindingCompass",
+          name: "The Portrait",
+          component: "GuidedIdentification",
           config: {
-            wayfinding_text:
-              "Gallery 273. Find the patron who shaped the Order.",
+            guidance_text:
+              "Your second trial awaits.\nA patron of the Order presided over the great Fair of 1893.\nA Swedish painter captured her likeness in this very room.",
             hints: [
               {
                 tier: 1,
-                hint: "She lived in the age of the great Fair, 1893.",
+                hint: "She held the highest authority a woman could claim at the Fair.",
               },
-              { tier: 2, hint: "A Swedish painter captured her likeness." },
+              {
+                tier: 2,
+                hint: "Her name shaped Chicago society. Look for a portrait, not a scene.",
+              },
               {
                 tier: 3,
-                hint: "Her name shaped Chicago society. The Palmer name endures.",
+                hint: "The Palmer name endures. She stands tall, regal, commanding.",
               },
               {
                 tier: 4,
-                hint: "Anders Zorn painted Mrs. Potter Palmer. Find her portrait.",
+                hint: "Anders Zorn painted Mrs. Potter Palmer in 1893. Find her.",
               },
+            ],
+            question:
+              "What is the name of the painting you stand before?",
+            correct_answer: "Mrs. Potter Palmer — Anders Zorn",
+            painting_pool: [
+              "The Child's Bath — Mary Cassatt",
+              "On a Balcony — Mary Cassatt",
+              "The Artist in His Studio — James McNeill Whistler",
+              "Arrangement in Flesh Color and Brown — James McNeill Whistler",
+              "The Valley of Arconville — Theodore Robinson",
+              "In the Café — Fernand Lungren",
+              "The Song of the Lark — Jules Breton",
+              "Two Sisters (On the Terrace) — Pierre-Auguste Renoir",
             ],
           },
         },
-        ch2_confirmation: {
-          order: 6,
+        // ── PAINTING 1 continued: Observation & Appreciation ─────────────────
+        // Now that she's confirmed she found the Zorn portrait, test that she's
+        // actually looking at it. Q1 proves observation. Q2 ties back to the
+        // 255° bearing from Ch1 — she confirmed the bearing points to Chicago,
+        // and now she reads "Zorn / Chicago 1893" inscribed on the canvas.
+        ch2_zorn_questions: {
+          order: 5,
           type: "website",
-          name: "The Confirmation",
+          name: "The Patron's Trial",
           component: "MultipleChoice",
           config: {
             questions: [
@@ -395,33 +424,134 @@ export const gameConfig: GameConfig = {
                   "A bouquet of flowers",
                 ],
                 correct: 1,
+                // Palmer held the gavel she used to preside over the Board of
+                // Lady Managers at the 1893 World's Columbian Exposition.
               },
               {
-                question: "What adorns her head?",
-                options: [
-                  "A wide-brimmed hat",
-                  "A jeweled tiara",
-                  "A silk ribbon",
-                  "Nothing \u2014 her hair is unpinned",
-                ],
-                correct: 1,
+                question:
+                  "The artist inscribed this canvas at the lower left. What city appears in the inscription?",
+                options: ["Stockholm", "Paris", "Chicago", "New York"],
+                correct: 2,
+                // Inscription reads "Zorn / Chicago 1893". Callbacks to Ch1's
+                // 255° bearing pointing from Kellogg Manor toward Chicago.
               },
             ],
           },
         },
-        ch2_reward: {
+
+        // ── PAINTING 2: Find & Identify the Cassatt ────────────────────────
+        // Same GuidedIdentification mechanic as the Zorn step, but lighter.
+        // She already knows how the loop works. The guidance text IS the
+        // trail transition — "The patron's eye was guided by another."
+        //
+        // Painting pool is tighter: works she'd see in Gallery 273.
+        // Correct answer is The Child's Bath. If it's off display, swap
+        // correct_answer to "On a Balcony" and update observation Qs.
+        //
+        // BACKUP: If The Child's Bath is off display, swap to:
+        //   correct_answer: "On a Balcony — Mary Cassatt"
+        //   Q-alt1: "What is the woman reading?" → "A newspaper"
+        //   Q-alt2: "What does the setting reveal?" → "A private garden"
+        ch2_find_cassatt: {
+          order: 6,
+          type: "website",
+          name: "The Advisor's Trail",
+          component: "GuidedIdentification",
+          config: {
+            guidance_text:
+              "The patron's eye was guided by another.\nHer advisor's work endures in this very room.",
+            hints: [
+              {
+                tier: 1,
+                hint: "The advisor was a painter — an American woman living abroad.",
+              },
+              {
+                tier: 2,
+                hint: "Her work depicts quiet domestic scenes — mothers, children, daily ritual.",
+              },
+              {
+                tier: 3,
+                hint: "This painting was created in the same year as the portrait you just found. 1893.",
+              },
+              {
+                tier: 4,
+                hint: "Mary Cassatt painted The Child's Bath. Find it.",
+              },
+            ],
+            question:
+              "What is the name of the painting you stand before?",
+            correct_answer: "The Child's Bath — Mary Cassatt",
+            painting_pool: [
+              "On a Balcony — Mary Cassatt",
+              "Mrs. Potter Palmer — Anders Zorn",
+              "The Artist in His Studio — James McNeill Whistler",
+              "Arrangement in Flesh Color and Brown — James McNeill Whistler",
+              "The Valley of Arconville — Theodore Robinson",
+              "In the Café — Fernand Lungren",
+              "The Song of the Lark — Jules Breton",
+              "Two Sisters (On the Terrace) — Pierre-Auguste Renoir",
+            ],
+          },
+        },
+        // ── PAINTING 2 continued: Observation & Appreciation ─────────────
+        // Q3 is observational (the famous overhead perspective).
+        // Q4 rewards Christine's deep Cassatt knowledge (Japanese woodblock
+        // influence — she would know this from years of study).
+        ch2_cassatt_questions: {
           order: 7,
+          type: "website",
+          name: "The Advisor's Trial",
+          component: "MultipleChoice",
+          config: {
+            questions: [
+              {
+                question:
+                  "From what vantage does the artist compose this scene?",
+                options: [
+                  "From below, looking up",
+                  "At eye level, facing the figures",
+                  "From above, looking down",
+                  "From behind, over the woman's shoulder",
+                ],
+                correct: 2,
+                // The overhead/bird's-eye perspective is THE defining feature
+                // of The Child's Bath, inspired by Japanese ukiyo-e prints.
+              },
+              {
+                question:
+                  "What artistic tradition inspired this painting's flattened perspective and bold patterns?",
+                options: [
+                  "Italian Renaissance fresco",
+                  "Japanese woodblock prints",
+                  "Dutch Golden Age still life",
+                  "Spanish Baroque portraiture",
+                ],
+                correct: 1,
+                // Cassatt visited the 1890 ukiyo-e exhibition at the École des
+                // Beaux-Arts in Paris. The Child's Bath is a direct culmination
+                // of that influence. Christine would know this as a Cassatt fan.
+              },
+            ],
+          },
+        },
+
+        // ── REWARD ───────────────────────────────────────────────────────────
+        // Ties both paintings together. Names Palmer. Hints at Cassatt as "a
+        // fellow member of the Order" without naming her — the debrief email
+        // will reveal more. Threads to Crystal Bridges / Alice Walton / Degas.
+        ch2_reward: {
+          order: 8,
           type: "website",
           name: "The Reward",
           component: "RewardReveal",
           config: {
             primary:
-              "Mrs. Palmer did not collect alone. Her closest advisor was a fellow member of the Order, a painter whose quiet work still guards a secret.",
+              "Mrs. Palmer did not collect alone. Her closest advisor was a fellow member of the Order \u2014 a painter who saw what others could not. You stood before her vision today. 1893. Two frames. One purpose.",
             secondary: "Your second fragment has been placed in the vault.",
           },
         },
         ch2_post_solve: {
-          order: 8,
+          order: 9,
           type: "sms",
           name: "Post-Solve Confirmation",
           trigger: "auto",
@@ -438,22 +568,29 @@ export const gameConfig: GameConfig = {
             },
           },
         },
-        // Teases Cassatt/Crystal Bridges without naming them.
+        // Teases Cassatt → Degas → Crystal Bridges / Alice Walton / Fred
+        // Meijer Gardens. The debrief should: (1) Name Cassatt obliquely as
+        // "the painter who advised Palmer." (2) Reference the blindness pattern
+        // (Cassatt lost her sight like Kellogg). (3) Thread to "a sculptor who
+        // invited the painter into his circle" (Degas). (4) Tease "a museum
+        // built into the hills of a distant state, where art and nature
+        // converge" (Crystal Bridges, Arkansas). (5) Hint at Alice Walton as
+        // a modern patron who "saw what others could not."
         ch2_debrief_email: {
-          order: 9,
+          order: 10,
           type: "email",
           name: "The Debrief",
           trigger: "manual",
           config: {
             to: "player",
             _trigger_note:
-              "1-2 days after Chicago trip. Lore + teaser for next chapter.",
+              "1-2 days after Chicago trip. Lore + teaser for next chapter. Must thread Crystal Bridges (AR), Alice Walton, and optionally Degas/Meijer Gardens (MI).",
             subject: "The Gallery of Whispers \u2014 The Order is Pleased",
             template: "ch2-debrief",
           },
         },
         ch2_sister_release: {
-          order: 10,
+          order: 11,
           type: "sms",
           name: "Companion Release",
           trigger: "auto",

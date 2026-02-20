@@ -84,6 +84,36 @@ export type PassphrasePuzzleConfig = {
   passphrase: string;
 };
 
+/**
+ * Two-phase identification puzzle that loops until correct.
+ *
+ * Phase 1 — GUIDANCE: Displays guidance_text (the initial clue). A "?" button
+ * reveals progressive hints (tiered). Player reads, looks around, then taps
+ * "I think I've found it" to enter Phase 2.
+ *
+ * Phase 2 — IDENTIFICATION: Shows `question` with `num_distractors` randomly
+ * selected wrong answers from `painting_pool` plus the `correct_answer`,
+ * shuffled. If wrong → shake animation, auto-reveal next hint tier, return to
+ * Phase 1. If correct → advance.
+ *
+ * The 3 distractors are re-randomized on each wrong attempt so the player
+ * can't brute-force by elimination.
+ */
+export type GuidedIdentificationConfig = {
+  /** The initial text clue shown at the top of the guidance phase. */
+  guidance_text: string;
+  /** Progressive hints revealed on wrong attempts (and via "?" button). */
+  hints: HintItem[];
+  /** The identification question, e.g. "What is the name of the painting you stand before?" */
+  question: string;
+  /** The correct painting name exactly as it should appear in the option. */
+  correct_answer: string;
+  /** Pool of wrong-answer painting names. 3 are randomly drawn per attempt. */
+  painting_pool: string[];
+  /** Number of wrong options to show alongside the correct answer. Default 3. */
+  num_distractors?: number;
+};
+
 // ─── Component ↔ Config Pairing ─────────────────────────────────────────────
 
 export type ComponentConfigMap = {
@@ -93,6 +123,7 @@ export type ComponentConfigMap = {
   CompassPuzzle: CompassPuzzleConfig;
   RewardReveal: RewardRevealConfig;
   PassphrasePuzzle: PassphrasePuzzleConfig;
+  GuidedIdentification: GuidedIdentificationConfig;
 };
 
 export type ComponentName = keyof ComponentConfigMap;
@@ -108,6 +139,7 @@ export const COMPONENT_ADVANCE: Record<ComponentName, AdvanceCondition> = {
   CompassPuzzle: "compass_alignment",
   RewardReveal: "tap",
   PassphrasePuzzle: "passphrase",
+  GuidedIdentification: "correct_answers",
 };
 
 // ─── Companion Message ──────────────────────────────────────────────────────
