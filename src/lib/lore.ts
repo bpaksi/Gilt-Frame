@@ -47,7 +47,7 @@ export function getAllLore(): LoreEntry[] {
 
   const files = fs
     .readdirSync(LORE_DIR)
-    .filter((f) => f.endsWith(".md"))
+    .filter((f) => f.endsWith(".md") && f !== "CLAUDE.md")
     .sort();
 
   _cache = files.map((file) => {

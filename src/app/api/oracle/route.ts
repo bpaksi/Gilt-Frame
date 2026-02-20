@@ -32,15 +32,16 @@ export async function POST(request: Request) {
     return Response.json({ error: "No question provided" }, { status: 400 });
   }
 
-  // Count today's conversations
+  // Fetch today's conversations (for both count-based throttling and history)
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
 
-  const { count } = await supabase
+  const { data: todayConversations, count } = await supabase
     .from("oracle_conversations")
-    .select("*", { count: "exact", head: true })
+    .select("question, response", { count: "exact" })
     .eq("track", track)
-    .gte("created_at", today.toISOString());
+    .gte("created_at", today.toISOString())
+    .order("created_at", { ascending: true });
 
   const conversationCount = count ?? 0;
 
@@ -90,6 +91,30 @@ export async function POST(request: Request) {
     );
   }
 
+  // Build multi-turn contents from recent history (sliding window)
+  const MAX_HISTORY_TURNS = 6;
+  const MAX_HISTORY_CHARS = 3000;
+  const history = todayConversations ?? [];
+
+  // Take the most recent N exchanges, then trim by char budget
+  let recentHistory = history.slice(-MAX_HISTORY_TURNS);
+  let historyChars = recentHistory.reduce(
+    (sum, c) => sum + c.question.length + c.response.length,
+    0
+  );
+  while (recentHistory.length > 0 && historyChars > MAX_HISTORY_CHARS) {
+    const removed = recentHistory.shift()!;
+    historyChars -= removed.question.length + removed.response.length;
+  }
+
+  const contents = [
+    ...recentHistory.flatMap((c) => [
+      { role: "user" as const, parts: [{ text: c.question }] },
+      { role: "model" as const, parts: [{ text: c.response }] },
+    ]),
+    { role: "user" as const, parts: [{ text: question }] },
+  ];
+
   const geminiResponse = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse&key=${geminiKey}`,
     {
@@ -97,7 +122,7 @@ export async function POST(request: Request) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         system_instruction: { parts: [{ text: systemPrompt }] },
-        contents: [{ parts: [{ text: question }] }],
+        contents,
         generationConfig: {
           temperature: 0.7,
           maxOutputTokens: 300,
