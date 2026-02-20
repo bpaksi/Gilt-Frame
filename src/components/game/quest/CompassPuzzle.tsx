@@ -99,7 +99,7 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
           holdProgress = clamp(held / holdSeconds, 0, 1);
           if (held >= holdSeconds) {
             setSolved(true);
-            setTimeout(onAdvance, 600);
+            setTimeout(onAdvance, 300);
             return;
           }
         }
@@ -190,9 +190,9 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
           textEl.style.opacity = "0.8";
           textEl.style.color = "rgba(232, 204, 106, 0.8)";
           textEl.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
-        } else if (hasRotatedEnough && proximity > 0.45) {
+        } else if (hasRotatedEnough) {
           textEl.textContent = "closer...";
-          textEl.style.opacity = String(0.3 + (proximity - 0.45) * 0.9);
+          textEl.style.opacity = String(0.3 + proximity * 0.5);
           textEl.style.color = "rgba(201, 168, 76, 0.5)";
           textEl.style.transform = "none";
         } else {
@@ -236,34 +236,8 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
     return () => window.removeEventListener("mousemove", handleMouse);
   }, [isDesktop, needsPermission]);
 
-  // Solved — radial gold flash (no frame shape; next step handles its own presentation)
   if (solved) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "100%",
-          flex: 1,
-          opacity: 0,
-          animation: "fade-in 0.3s ease forwards",
-        }}
-      >
-        <div
-          style={{
-            width: "160px",
-            height: "160px",
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(232, 204, 106, 0.6) 0%, rgba(201, 168, 76, 0.15) 50%, transparent 75%)",
-            boxShadow: "0 0 80px 30px rgba(232, 204, 106, 0.35)",
-            opacity: 0,
-            animation: "fade-in 0.4s ease forwards 0.1s",
-          }}
-        />
-      </div>
-    );
+    return <div style={{ minHeight: "100%", flex: 1 }} />;
   }
 
   if (needsPermission) {

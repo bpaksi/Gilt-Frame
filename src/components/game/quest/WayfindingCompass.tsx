@@ -241,9 +241,21 @@ export default function WayfindingCompass({
   // Permission prompt
   if (needsPermission) {
     return (
-      <CompassPermission onPermission={handlePermission}>
-        Enable Location
-      </CompassPermission>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100%",
+          flex: 1,
+          padding: "40px 24px",
+        }}
+      >
+        <CompassPermission onPermission={handlePermission}>
+          Enable Location
+        </CompassPermission>
+      </div>
     );
   }
 

@@ -27,7 +27,6 @@ export type {
   MarkerButtonConfig,
   MultipleChoiceConfig,
   CompassPuzzleConfig,
-  PuzzleSolveConfig,
   RewardRevealConfig,
   WaitingStateConfig,
   PassphrasePuzzleConfig,

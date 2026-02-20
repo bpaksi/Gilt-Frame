@@ -7,7 +7,6 @@ const MarkerButton = lazy(() => import("./MarkerButton"));
 const MultipleChoice = lazy(() => import("./MultipleChoice"));
 
 const CompassPuzzle = lazy(() => import("./CompassPuzzle"));
-const PuzzleSolve = lazy(() => import("./PuzzleSolve"));
 const RewardReveal = lazy(() => import("./RewardReveal"));
 const WaitingStateQuest = lazy(() => import("../WaitingState"));
 const PassphrasePuzzle = lazy(() => import("./PassphrasePuzzle"));
@@ -19,7 +18,6 @@ export const componentRegistry: Record<ComponentName, ComponentType<any>> = {
   MultipleChoice,
 
   CompassPuzzle,
-  PuzzleSolve,
   RewardReveal,
   WaitingState: WaitingStateQuest,
   PassphrasePuzzle,

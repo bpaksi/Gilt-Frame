@@ -23,7 +23,6 @@ export type AdvanceCondition =
   | "tap"
   | "correct_answers"
   | "compass_alignment"
-  | "animation_complete"
   | "admin_trigger"
   | "passphrase";
 
@@ -68,9 +67,6 @@ export type CompassPuzzleConfig = {
   instruction?: string;
 };
 
-/** Celebration animation. No per-chapter config needed. */
-export type PuzzleSolveConfig = Record<string, never>;
-
 /** Completion text with Continue button. */
 export type RewardRevealConfig = {
   primary: string;
@@ -96,7 +92,6 @@ export type ComponentConfigMap = {
   MarkerButton: MarkerButtonConfig;
   MultipleChoice: MultipleChoiceConfig;
   CompassPuzzle: CompassPuzzleConfig;
-  PuzzleSolve: PuzzleSolveConfig;
   RewardReveal: RewardRevealConfig;
   WaitingState: WaitingStateConfig;
   PassphrasePuzzle: PassphrasePuzzleConfig;
@@ -113,7 +108,6 @@ export const COMPONENT_ADVANCE: Record<ComponentName, AdvanceCondition> = {
   MarkerButton: "tap",
   MultipleChoice: "correct_answers",
   CompassPuzzle: "compass_alignment",
-  PuzzleSolve: "animation_complete",
   RewardReveal: "tap",
   WaitingState: "admin_trigger",
   PassphrasePuzzle: "passphrase",

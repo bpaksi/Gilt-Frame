@@ -56,7 +56,7 @@ export const gameConfig: GameConfig = {
               "Send shortly after letter should arrive. Or 3-4 days after the letter if she's stuck. SMS with Marker image attached.",
             body: "The sign has arrived. giltframe.org",
             image:
-              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
+              "https://giltframe.org/marker/marker-v3-gold-512.png",
           },
         },
         prologue_passphrase: {
@@ -99,32 +99,49 @@ export const gameConfig: GameConfig = {
     },
 
     // ── Chapter 1 ─────────────────────────────────────────────────────────────
-    // SMS ONLY for Chapter 1. No email. Christine gets dozens of emails daily.
+    // Email briefing → SMS with PIN → SMS arrival → website quest.
     // The 255° compass bearing from this chapter points toward Chicago (Ch2).
     ch1: {
       name: "The Compass and the Sundial",
       location: "Kellogg Manor, Michigan",
       window: "Mar 3, 2026 (anniversary)",
       steps: {
+        // Narrative email introducing the Keeper lore and website instruments.
+        // Sent ~1 day before the SMS with coordinates.
+        ch1_briefing: {
+          order: 0,
+          type: "email",
+          name: "The Keeper's Legacy",
+          trigger: "manual",
+          config: {
+            to: "player",
+            _trigger_note:
+              "Send ~1 day before March 3. Sets the stage for Ch1 and introduces website instruments (Journey, Oracle). First email from the Order.",
+            subject: "The Keeper\u2019s Legacy",
+            template: "ch1-briefing",
+            progress_key: "ch1.briefing_sent",
+          },
+        },
         // Coordinates are the PIN location (~125m NNE of sundial), not the sundial itself.
         // The app's wayfinding compass guides her the remaining distance.
         ch1_initiation: {
-          order: 0,
-          type: "sms",
+          order: 1,
+          type: "mms",
           name: "The Summons",
           trigger: "manual",
           config: {
             to: "player",
             _trigger_note:
-              "Send morning of March 3 while at/near Kellogg Manor for anniversary. SMS with coordinates and Marker image.",
-            body: "The Order has placed a Marker at 42.406256, -85.402025. Your first trial begins now. giltframe.org",
+              "Send morning of March 3 while at/near Kellogg Manor for anniversary. MMS with coordinates and Marker image.",
+            body: "A Marker has been placed. 42.406256, -85.402025. Your first trial begins now. giltframe.org",
             image:
-              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
+              "https://giltframe.org/marker/marker-v3-gold-512.png",
+            progress_key: "ch1.initiation_sent",
           },
         },
         ch1_arrived: {
-          order: 1,
-          type: "sms",
+          order: 2,
+          type: "mms",
           name: "The Arrival",
           trigger: "manual",
           config: {
@@ -133,7 +150,8 @@ export const gameConfig: GameConfig = {
               "Admin monitors player location (Find My). Send when player arrives at Kellogg Manor parking lot.",
             body: "The timekeeper awaits, Sparrow. Begin your trial. giltframe.org",
             image:
-              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
+              "https://giltframe.org/marker/marker-v3-gold-512.png",
+            progress_key: "ch1.arrived_sent",
           },
         },
         // GPS compass from PIN (42.406256, -85.402025) to sundial (42.405278, -85.402778). ~125m walk.
@@ -145,7 +163,7 @@ export const gameConfig: GameConfig = {
         //   Change coords gradually to simulate walking. Compass heading is
         //   already mouse-simulated on desktop (move mouse around canvas).
         ch1_wayfinding: {
-          order: 2,
+          order: 3,
           type: "website",
           name: "The Wayfinding",
           component: "WayfindingCompass",
@@ -157,7 +175,7 @@ export const gameConfig: GameConfig = {
           },
         },
         ch1_arrival: {
-          order: 3,
+          order: 4,
           type: "website",
           name: "The Arrival",
           component: "MarkerButton",
@@ -166,7 +184,7 @@ export const gameConfig: GameConfig = {
           },
         },
         ch1_confirmation: {
-          order: 4,
+          order: 5,
           type: "website",
           name: "The Confirmation",
           component: "MultipleChoice",
@@ -200,7 +218,7 @@ export const gameConfig: GameConfig = {
           },
         },
         ch1_sparrow_moment: {
-          order: 5,
+          order: 6,
           type: "website",
           name: "The Sparrow Moment",
           component: "MarkerButton",
@@ -215,7 +233,7 @@ export const gameConfig: GameConfig = {
         },
         // compass_bearing: 255° W — confirmed from recon compass photo at sundial
         ch1_compass_puzzle: {
-          order: 6,
+          order: 7,
           type: "website",
           name: "The Compass Puzzle",
           component: "CompassPuzzle",
@@ -227,13 +245,6 @@ export const gameConfig: GameConfig = {
             instruction: "Find the way, fledgling.",
           },
         },
-        ch1_seal: {
-          order: 7,
-          type: "website",
-          name: "The Seal",
-          component: "PuzzleSolve",
-          config: {},
-        },
         ch1_reward: {
           order: 8,
           type: "website",
@@ -241,7 +252,7 @@ export const gameConfig: GameConfig = {
           component: "RewardReveal",
           config: {
             primary:
-              "The needle has shown you the way. Take flight, young bird, destiny awaits.",
+              "The needle has shown you the way. Take flight, Sparrow — destiny awaits.",
             secondary: "Your first fragment has been placed in the vault.",
           },
         },
@@ -263,7 +274,7 @@ export const gameConfig: GameConfig = {
               "Auto-fires when player reaches the WaitingState. Or manual from admin.",
             body: "The Order sees clearly. Your first fragment has been placed in the vault.",
             image:
-              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
+              "https://giltframe.org/marker/marker-v3-gold-512.png",
           },
         },
       },
@@ -316,7 +327,7 @@ export const gameConfig: GameConfig = {
             _trigger_note: "Day before or morning of museum visit.",
             body: "The lions are waiting, Sparrow.",
             image:
-              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
+              "https://giltframe.org/marker/marker-v3-gold-512.png",
             companion_message: {
               to: "companion2",
               channel: "sms",
@@ -335,7 +346,7 @@ export const gameConfig: GameConfig = {
               "Send when Find My shows her at or near the AIC. The big moment. Also triggers quest on Current tab.",
             body: "You are close. Ascend to the second floor. Gallery 273. She is waiting. giltframe.org",
             image:
-              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
+              "https://giltframe.org/marker/marker-v3-gold-512.png",
           },
         },
         // SMS is the alert, email is the full briefing. These two fire back-to-back.
@@ -408,15 +419,8 @@ export const gameConfig: GameConfig = {
             ],
           },
         },
-        ch2_seal: {
-          order: 7,
-          type: "website",
-          name: "The Seal",
-          component: "PuzzleSolve",
-          config: {},
-        },
         ch2_reward: {
-          order: 8,
+          order: 7,
           type: "website",
           name: "The Reward",
           component: "RewardReveal",
@@ -427,14 +431,14 @@ export const gameConfig: GameConfig = {
           },
         },
         ch2_wait: {
-          order: 9,
+          order: 8,
           type: "website",
           name: "The Wait",
           component: "WaitingState",
           config: {},
         },
         ch2_post_solve: {
-          order: 10,
+          order: 9,
           type: "sms",
           name: "Post-Solve Confirmation",
           trigger: "auto",
@@ -443,7 +447,7 @@ export const gameConfig: GameConfig = {
             _trigger_note: "Auto-send when player reaches WaitingState.",
             body: "You see what others have not. Your Chronicle has been updated. The Council is watching with growing interest.",
             image:
-              "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
+              "https://giltframe.org/marker/marker-v3-gold-512.png",
             companion_message: {
               to: "companion2",
               channel: "sms",
@@ -453,7 +457,7 @@ export const gameConfig: GameConfig = {
         },
         // Teases Cassatt/Crystal Bridges without naming them.
         ch2_debrief_email: {
-          order: 11,
+          order: 10,
           type: "email",
           name: "The Debrief",
           trigger: "manual",
@@ -466,7 +470,7 @@ export const gameConfig: GameConfig = {
           },
         },
         ch2_sister_release: {
-          order: 12,
+          order: 11,
           type: "sms",
           name: "Companion Release",
           trigger: "auto",
