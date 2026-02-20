@@ -86,7 +86,7 @@ export const gameConfig: GameConfig = {
           type: "sms",
           name: "Acceptance Confirmed",
           trigger: "auto",
-          delay_hours: 3,
+          delay_mornings: 1,
           config: {
             to: "player",
             _trigger_note:

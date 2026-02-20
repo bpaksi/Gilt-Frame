@@ -7,16 +7,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  const { track, chapterId, stepId, delayHours } = await request.json();
+  const { track, chapterId, stepId, delayMornings } = await request.json();
 
-  if (!track || !chapterId || !stepId || typeof delayHours !== "number") {
+  if (!track || !chapterId || !stepId || typeof delayMornings !== "number") {
     return NextResponse.json(
-      { error: "track, chapterId, stepId, and delayHours are required." },
+      { error: "track, chapterId, stepId, and delayMornings are required." },
       { status: 400 }
     );
   }
 
-  await scheduleStep(track, chapterId, stepId, delayHours);
+  await scheduleStep(track, chapterId, stepId, delayMornings);
 
-  return NextResponse.json({ success: true, delayHours });
+  return NextResponse.json({ success: true, delayMornings });
 }

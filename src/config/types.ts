@@ -152,8 +152,8 @@ export type LetterStep = {
   type: "letter";
   name: string;
   trigger: Trigger;
-  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
-  delay_hours?: number;
+  /** Mornings to delay. 1 = next 4:30am EST, 2 = morning after, etc. Omit or 0 = send immediately. */
+  delay_mornings?: number;
   config: LetterStepConfig;
 };
 
@@ -162,8 +162,8 @@ export type EmailStep = {
   type: "email";
   name: string;
   trigger: Trigger;
-  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
-  delay_hours?: number;
+  /** Mornings to delay. 1 = next 4:30am EST, 2 = morning after, etc. Omit or 0 = send immediately. */
+  delay_mornings?: number;
   config: EmailStepConfig;
 };
 
@@ -172,8 +172,8 @@ export type SmsStep = {
   type: "sms";
   name: string;
   trigger: Trigger;
-  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
-  delay_hours?: number;
+  /** Mornings to delay. 1 = next 4:30am EST, 2 = morning after, etc. Omit or 0 = send immediately. */
+  delay_mornings?: number;
   config: SmsStepConfig;
 };
 

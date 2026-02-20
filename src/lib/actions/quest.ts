@@ -145,9 +145,9 @@ export async function autoAdvanceMessagingSteps(
     if (step.type === "website") break;
     if (step.trigger !== "auto") break;
 
-    const delayHours = step.delay_hours;
-    if (delayHours && delayHours > 0) {
-      await scheduleStep(track, chapterId, step.id, delayHours);
+    const delayMornings = step.delay_mornings;
+    if (delayMornings && delayMornings > 0) {
+      await scheduleStep(track, chapterId, step.id, delayMornings);
     } else {
       await sendStep(track, chapterId, step.id);
     }

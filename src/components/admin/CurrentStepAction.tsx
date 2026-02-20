@@ -32,7 +32,7 @@ export default function CurrentStepAction({
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
-  const [delayHours, setDelayHours] = useState<number | null>(null);
+  const [delayMornings, setDelayMornings] = useState<number | null>(null);
 
   const isLetter = step.type === "letter";
   const isOffline = step.type !== "website";
@@ -51,11 +51,11 @@ export default function CurrentStepAction({
 
     try {
       // If a delay is selected, schedule instead of sending immediately
-      if (delayHours) {
+      if (delayMornings) {
         const res = await adminFetch("/api/admin/schedule", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ track, chapterId, stepId: step.id, delayHours }),
+          body: JSON.stringify({ track, chapterId, stepId: step.id, delayMornings }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -193,7 +193,7 @@ export default function CurrentStepAction({
   }
 
   // Offline steps
-  const actionLabel = isLetter ? "RECEIVED" : delayHours ? "SEND" : "SEND NOW";
+  const actionLabel = isLetter ? "RECEIVED" : delayMornings ? "SEND" : "SEND NOW";
   const actionColor = isLetter ? "#2e7d32" : "#336699";
   const actionColorDisabled = isLetter ? "#6d9b6f" : "#5a8ab5";
 
@@ -265,9 +265,9 @@ export default function CurrentStepAction({
         <div style={{ marginTop: "12px" }}>
           {supportsDelay && (
             <select
-              value={delayHours ?? ""}
+              value={delayMornings ?? ""}
               onChange={(e) =>
-                setDelayHours(e.target.value ? Number(e.target.value) : null)
+                setDelayMornings(e.target.value ? Number(e.target.value) : null)
               }
               style={{
                 width: "100%",
@@ -283,13 +283,11 @@ export default function CurrentStepAction({
               }}
             >
               <option value="">No delay</option>
-              <option value="1">Send in 1 hour</option>
-              <option value="2">Send in 2 hours</option>
-              <option value="4">Send in 4 hours</option>
-              <option value="8">Send in 8 hours</option>
-              <option value="12">Send in 12 hours</option>
-              <option value="24">Send in 24 hours</option>
-              <option value="48">Send in 48 hours</option>
+              <option value="1">Next morning (4:30am)</option>
+              <option value="2">2 mornings</option>
+              <option value="3">3 mornings</option>
+              <option value="4">4 mornings</option>
+              <option value="5">5 mornings</option>
             </select>
           )}
           <button

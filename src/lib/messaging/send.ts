@@ -218,11 +218,28 @@ export async function sendStep(
   };
 }
 
+/**
+ * Compute the Nth morning at 4:30am EST (09:30 UTC).
+ * delay_mornings=1 → next 4:30am EST that hasn't passed yet.
+ * delay_mornings=2 → the morning after that, etc.
+ */
+function computeMorning(delayMornings: number): Date {
+  const now = new Date();
+  // Today at 09:30 UTC = 4:30am EST
+  const today430 = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 9, 30, 0, 0)
+  );
+  // If today's 4:30am EST already passed, base starts tomorrow
+  const extraDay = now >= today430 ? 1 : 0;
+  const daysToAdd = extraDay + (delayMornings - 1);
+  return new Date(today430.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+}
+
 export async function scheduleStep(
   track: "test" | "live",
   chapterId: string,
   stepId: string,
-  delayHours: number
+  delayMornings: number
 ): Promise<void> {
   const chapter = gameConfig.chapters[chapterId];
   if (!chapter) return;
@@ -231,12 +248,12 @@ export async function scheduleStep(
   const matchedStep = orderedSteps.find((s) => s.id === stepId);
   if (!matchedStep || matchedStep.type === "website") return;
 
-  const scheduledAt = new Date(Date.now() + delayHours * 60 * 60 * 1000).toISOString();
+  const scheduledAt = computeMorning(delayMornings).toISOString();
   const supabase = createAdminClient();
 
   console.log("[scheduleStep] Scheduling", {
     stepId,
-    delayHours,
+    delayMornings,
     scheduledAt,
   });
 
@@ -281,7 +298,7 @@ export async function scheduleStep(
       step_id: stepId,
       step_name: matchedStep.name,
       step_type: matchedStep.type,
-      delay_hours: delayHours,
+      delay_mornings: delayMornings,
       scheduled_at: scheduledAt,
     },
   });
