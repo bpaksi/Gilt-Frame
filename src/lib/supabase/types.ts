@@ -321,7 +321,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      complete_chapter: {
+        Args: {
+          p_chapter_id: string
+          p_progress_keys: string[]
+          p_step_ids: string[]
+          p_track: string
+        }
+        Returns: undefined
+      }
+      reset_track: { Args: { p_track: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

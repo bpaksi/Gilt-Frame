@@ -5,7 +5,6 @@ import { resolveTrack } from "@/lib/track";
 import {
   gameConfig,
   getOrderedSteps,
-  type StepWithId,
   type ComponentName,
   type ComponentConfig,
   type AdvanceCondition,
@@ -29,7 +28,7 @@ export type QuestState = {
 export async function getCurrentStepIndex(
   supabase: SupabaseClient,
   track: string,
-  chapterId: string
+  chapterId: string,
 ): Promise<number> {
   const { count } = await supabase
     .from("completed_steps")
@@ -60,7 +59,7 @@ export async function getQuestState(): Promise<QuestState> {
   const stepIndex = await getCurrentStepIndex(
     supabase,
     trackInfo.track,
-    progress.chapter_id
+    progress.chapter_id,
   );
   const currentStep = orderedSteps[stepIndex];
 
@@ -99,7 +98,7 @@ export async function getQuestState(): Promise<QuestState> {
 export async function autoAdvanceMessagingSteps(
   track: "test" | "live",
   chapterId: string,
-  fromIndex: number
+  fromIndex: number,
 ): Promise<void> {
   const chapter = gameConfig.chapters[chapterId];
   if (!chapter) return;
@@ -114,7 +113,12 @@ export async function autoAdvanceMessagingSteps(
 
     const delayHours = step.config.delay_hours;
     if (delayHours && delayHours > 0) {
-      await scheduleStep(track, chapterId, step.config.progress_key, delayHours);
+      await scheduleStep(
+        track,
+        chapterId,
+        step.config.progress_key,
+        delayHours,
+      );
     } else {
       await sendStep(track, chapterId, step.config.progress_key);
     }
@@ -139,7 +143,7 @@ export async function autoAdvanceMessagingSteps(
 
 export async function advanceQuest(
   chapterId: string,
-  stepIndex: number
+  stepIndex: number,
 ): Promise<QuestState> {
   const trackInfo = await resolveTrack();
   if (!trackInfo) return { status: "waiting" };
@@ -161,7 +165,7 @@ export async function advanceQuest(
   const currentIndex = await getCurrentStepIndex(
     supabase,
     trackInfo.track,
-    chapterId
+    chapterId,
   );
   if (currentIndex !== stepIndex) {
     return getQuestState();
@@ -203,7 +207,7 @@ export async function recordAnswer(
   stepIndex: number,
   questionIndex: number,
   selectedOption: string,
-  correct: boolean
+  correct: boolean,
 ): Promise<void> {
   const trackInfo = await resolveTrack();
   if (!trackInfo) return;
@@ -241,7 +245,7 @@ export async function recordAnswer(
 export async function revealHint(
   chapterId: string,
   stepIndex: number,
-  hintTier: number
+  hintTier: number,
 ): Promise<{ hint: string } | null> {
   const trackInfo = await resolveTrack();
   if (!trackInfo) return null;
@@ -282,7 +286,7 @@ export async function revealHint(
 }
 
 export async function pollChapterProgress(
-  chapterId: string
+  chapterId: string,
 ): Promise<{ stepIndex: number } | null> {
   const trackInfo = await resolveTrack();
   if (!trackInfo) return null;
@@ -303,7 +307,7 @@ export async function pollChapterProgress(
   const stepIndex = await getCurrentStepIndex(
     supabase,
     trackInfo.track,
-    chapterId
+    chapterId,
   );
   return { stepIndex };
 }

@@ -201,57 +201,53 @@ export async function getCompletedStepCounts(
   return Array.from(counts, ([chapter_id, count]) => ({ chapter_id, count }));
 }
 
-export async function resetChapter(
-  track: "test" | "live",
-  chapterId: string
+export async function resetTrack(
+  track: "test" | "live"
 ): Promise<{ success: boolean; error?: string }> {
   if (track !== "test") {
     return { success: false, error: "Reset is only allowed on the test track." };
   }
 
   const supabase = createAdminClient();
+  const { error } = await supabase.rpc("reset_track", { p_track: track });
 
-  // Delete chapter progress
-  await supabase
-    .from("chapter_progress")
-    .delete()
-    .eq("track", "test")
-    .eq("chapter_id", chapterId);
+  if (error) {
+    return { success: false, error: error.message };
+  }
 
-  // Delete completed steps
-  await supabase
-    .from("completed_steps")
-    .delete()
-    .eq("track", "test")
-    .eq("chapter_id", chapterId);
+  return { success: true };
+}
 
-  // Delete message progress for this chapter
-  await supabase
-    .from("message_progress")
-    .delete()
-    .eq("track", "test")
-    .like("progress_key", `${chapterId}.%`);
+export async function completeChapter(
+  track: "test" | "live",
+  chapterId: string
+): Promise<{ success: boolean; error?: string }> {
+  if (track !== "test") {
+    return { success: false, error: "Complete chapter is only allowed on the test track." };
+  }
 
-  // Delete quest answers
-  await supabase
-    .from("quest_answers")
-    .delete()
-    .eq("track", "test")
-    .eq("chapter_id", chapterId);
+  const chapter = gameConfig.chapters[chapterId];
+  if (!chapter) {
+    return { success: false, error: "Chapter not found." };
+  }
 
-  // Delete hint views
-  await supabase
-    .from("hint_views")
-    .delete()
-    .eq("track", "test")
-    .eq("chapter_id", chapterId);
+  const orderedSteps = getOrderedSteps(chapter);
+  const stepIds = orderedSteps.map((s) => s.id);
+  const progressKeys = orderedSteps
+    .filter((s) => s.type !== "website")
+    .map((s) => s.config.progress_key);
 
-  // Delete activity log entries for this chapter
-  await supabase
-    .from("activity_log")
-    .delete()
-    .eq("track", "test")
-    .filter("details->>chapter_id", "eq", chapterId);
+  const supabase = createAdminClient();
+  const { error } = await supabase.rpc("complete_chapter", {
+    p_track: track,
+    p_chapter_id: chapterId,
+    p_step_ids: stepIds,
+    p_progress_keys: progressKeys,
+  });
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
 
   return { success: true };
 }

@@ -1,26 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminSession } from "@/lib/admin/auth";
-import { resetTrack } from "@/lib/admin/actions";
+import { completeChapter } from "@/lib/admin/actions";
+import { logAdminAction } from "@/lib/admin/log";
 
 export async function POST(request: NextRequest) {
   if (!(await verifyAdminSession())) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  const { track } = await request.json();
+  const { track, chapterId } = await request.json();
 
-  if (!track) {
+  if (!track || !chapterId) {
     return NextResponse.json(
-      { error: "track is required." },
+      { error: "track and chapterId are required." },
       { status: 400 }
     );
   }
 
-  const result = await resetTrack(track);
+  const result = await completeChapter(track, chapterId);
 
   if (!result.success) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
 
+  await logAdminAction("complete_chapter", { chapterId }, track);
   return NextResponse.json({ success: true });
 }

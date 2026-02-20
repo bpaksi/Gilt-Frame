@@ -3,6 +3,7 @@ import { getAdminTrack } from "@/lib/admin/track";
 import {
   getPlayerState,
   getChapterMessageProgress,
+  getAllChapterProgress,
 } from "@/lib/admin/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { gameConfig, getOrderedSteps } from "@/config";
@@ -13,10 +14,22 @@ export default async function AdminCurrentPage() {
   const track = await getAdminTrack();
   const state = await getPlayerState(track);
 
-  // Default to first chapter + step 0 when no progress exists
-  const firstChapterId = Object.keys(gameConfig.chapters)[0];
-  const chapterId = state.chapterId ?? firstChapterId;
-  const stepIndex = state.chapterId ? state.stepIndex : 0;
+  // When idle, find the first incomplete chapter (not the first chapter overall)
+  let chapterId: string;
+  let stepIndex: number;
+
+  if (state.chapterId) {
+    chapterId = state.chapterId;
+    stepIndex = state.stepIndex;
+  } else {
+    const chapterProgress = await getAllChapterProgress(track);
+    const completedIds = new Set(
+      chapterProgress.filter((cp) => !!cp.completed_at).map((cp) => cp.chapter_id)
+    );
+    const chapterIds = Object.keys(gameConfig.chapters);
+    chapterId = chapterIds.find((id) => !completedIds.has(id)) ?? chapterIds[0];
+    stepIndex = 0;
+  }
 
   const messageProgress = chapterId
     ? await getChapterMessageProgress(track, chapterId)
@@ -55,19 +68,33 @@ export default async function AdminCurrentPage() {
 
   // Enrich state with defaults so PlayerStateCard always shows chapter info
   const chapter = gameConfig.chapters[chapterId];
-  const enrichedState = state.chapterId
-    ? state
-    : {
-        ...state,
-        chapterId,
-        chapterName: chapter?.name ?? chapterId,
-        location: chapter?.location ?? null,
-        stepName: currentStep?.name ?? null,
-      };
+  let enrichedState = state;
+
+  if (!state.chapterId) {
+    // Fetch last activity even when idle
+    const supabase = createAdminClient();
+    const { data: lastEvent } = await supabase
+      .from("activity_log")
+      .select("created_at")
+      .eq("track", track)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    enrichedState = {
+      ...state,
+      chapterId,
+      chapterName: chapter?.name ?? chapterId,
+      location: chapter?.location ?? null,
+      stepName: currentStep?.name ?? null,
+      status: "pending",
+      lastActivity: lastEvent?.created_at ?? null,
+    };
+  }
 
   return (
     <div style={{ padding: "16px" }}>
-      <PlayerStateCard state={enrichedState} stepType={currentStep?.type} />
+      <PlayerStateCard state={enrichedState} />
 
       {currentStep && (
         <CurrentStepAction
@@ -78,6 +105,7 @@ export default async function AdminCurrentPage() {
           stepIndex={stepIndex}
           messageProgress={currentStepProgress}
           revealedTiers={revealedTiers}
+          location={chapter?.location ?? null}
         />
       )}
 

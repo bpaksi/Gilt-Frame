@@ -39,7 +39,7 @@ export default function TimelineFilters({
       >
         {chapters.map(([id, ch], index) => (
           <option key={id} value={id}>
-            {index} — {ch.name}{completedChapterIds?.has(id) ? " \u2713" : ""}
+            {index} — {ch.name}{completedChapterIds?.has(id) ? " (done)" : ""}
           </option>
         ))}
       </select>

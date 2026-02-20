@@ -218,7 +218,6 @@ export async function scheduleStep(
   );
   if (!matchedStep) return;
 
-  const stepId = matchedStep.id;
   const scheduledAt = new Date(Date.now() + delayHours * 60 * 60 * 1000).toISOString();
   const supabase = createAdminClient();
 
@@ -228,7 +227,7 @@ export async function scheduleStep(
     scheduledAt,
   });
 
-  // Insert message_progress as scheduled
+  // Insert message_progress as scheduled — step is NOT completed until actually sent
   await supabase.from("message_progress").upsert(
     {
       track,
@@ -239,33 +238,9 @@ export async function scheduleStep(
     { onConflict: "track,progress_key" }
   );
 
-  // Mark step as completed so the pipeline continues
-  const { data: progress } = await supabase
-    .from("chapter_progress")
-    .select("id")
-    .eq("track", track)
-    .eq("chapter_id", chapterId)
-    .single();
-
-  if (!progress) {
-    await supabase.from("chapter_progress").insert({
-      track,
-      chapter_id: chapterId,
-    });
-  }
-
-  await supabase.from("completed_steps").upsert(
-    {
-      track,
-      chapter_id: chapterId,
-      step_id: stepId,
-    },
-    { onConflict: "track,chapter_id,step_id" }
-  );
-
   await supabase.from("activity_log").insert({
     track,
-    source: "system",
+    source: "admin",
     event_type: "step_scheduled",
     details: {
       chapter_id: chapterId,
