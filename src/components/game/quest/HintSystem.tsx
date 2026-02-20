@@ -43,8 +43,8 @@ export default function HintSystem({
       style={{
         display: "flex",
         flexDirection: "column",
+        alignItems: "center",
         gap: "12px",
-        marginTop: "24px",
         width: "100%",
         maxWidth: "320px",
       }}
@@ -60,7 +60,7 @@ export default function HintSystem({
               fontFamily: "Georgia, 'Times New Roman', serif",
               fontSize: "14px",
               fontStyle: "italic",
-              paddingLeft: "16px",
+              textAlign: "center",
               lineHeight: 1.6,
               opacity: 0,
               animation: "fade-in 0.6s ease forwards",
@@ -84,11 +84,11 @@ export default function HintSystem({
             fontStyle: "italic",
             cursor: loading ? "wait" : "pointer",
             padding: "8px 0",
-            textAlign: "left",
-            paddingLeft: "16px",
+            textAlign: "center",
             minHeight: "44px",
             display: "flex",
             alignItems: "center",
+            justifyContent: "center",
             WebkitTapHighlightColor: "transparent",
           }}
         >

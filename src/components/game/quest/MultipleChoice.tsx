@@ -104,19 +104,6 @@ export default function MultipleChoice({
         padding: "40px 24px",
       }}
     >
-      {/* Question counter */}
-      <p
-        style={{
-          color: "rgba(200, 165, 75, 0.4)",
-          fontFamily: "Georgia, 'Times New Roman', serif",
-          fontSize: "13px",
-          letterSpacing: "2px",
-          textTransform: "uppercase",
-        }}
-      >
-        {currentQ + 1} of {questions.length}
-      </p>
-
       {/* Question text */}
       <p
         style={{
@@ -192,15 +179,35 @@ export default function MultipleChoice({
         })}
       </div>
 
-      {/* Per-question hints */}
+      {/* Scrollwork divider + per-question hints */}
       {question.hints && question.hints.length > 0 && chapterId && stepIndex !== undefined && (
-        <HintSystem
-          key={currentQ}
-          hints={question.hints as HintItem[]}
-          chapterId={chapterId}
-          stepIndex={stepIndex}
-          initialRevealedTiers={revealedHintTiers}
-        />
+        <>
+          <svg
+            width="120"
+            height="10"
+            viewBox="0 0 120 10"
+            fill="none"
+            style={{
+              opacity: optionsVisible ? 0.3 : 0,
+              transition: "opacity 0.4s ease",
+              margin: "-12px 0",
+            }}
+          >
+            <path
+              d="M0 5 Q15 1 30 5 Q45 9 60 5 Q75 1 90 5 Q105 9 120 5"
+              stroke="rgba(200, 165, 75, 1)"
+              strokeWidth="1"
+              fill="none"
+            />
+          </svg>
+          <HintSystem
+            key={currentQ}
+            hints={question.hints as HintItem[]}
+            chapterId={chapterId}
+            stepIndex={stepIndex}
+            initialRevealedTiers={revealedHintTiers}
+          />
+        </>
       )}
     </div>
   );
