@@ -92,7 +92,6 @@ export default function CurrentStepAction({
   function renderDetails() {
     switch (step.type) {
       case "sms":
-      case "mms":
         return (
           <>
             <Detail label="To" value={step.config.to} />

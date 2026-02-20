@@ -16,8 +16,6 @@ export type {
   EmailStepConfig,
   SmsStep,
   SmsStepConfig,
-  MmsStep,
-  MmsStepConfig,
   WebsiteStep,
   CompanionMessage,
   Trigger,

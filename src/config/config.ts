@@ -23,7 +23,7 @@ export const gameConfig: GameConfig = {
 
   chapters: {
     // ── Prologue ──────────────────────────────────────────────────────────────
-    // Letter → MMS → Passphrase (website) → Acceptance MMS.
+    // Letter → SMS → Passphrase (website) → Acceptance SMS.
     // The passphrase is a proper website step rendered by QuestStateMachine.
     prologue: {
       name: "The Summons",
@@ -48,13 +48,13 @@ export const gameConfig: GameConfig = {
         },
         prologue_magic_link: {
           order: 1,
-          type: "mms",
+          type: "sms",
           name: "The Marker Arrives",
           trigger: "manual",
           config: {
             to: "player",
             _trigger_note:
-              "Send shortly after letter should arrive. Or 3-4 days after the letter if she's stuck. MMS with Marker image attached.",
+              "Send shortly after letter should arrive. Or 3-4 days after the letter if she's stuck. SMS with Marker image attached.",
             body: "The sign has arrived. giltframe.org",
             image:
               "https://raw.githubusercontent.com/bpaksi/Gilt-Frame/main/public/marker/marker-v3-gold-512.png",
@@ -86,13 +86,13 @@ export const gameConfig: GameConfig = {
         },
         prologue_acceptance: {
           order: 4,
-          type: "mms",
+          type: "sms",
           name: "Acceptance Confirmed",
           trigger: "auto",
           config: {
             to: "player",
             _trigger_note:
-              "Auto-send 3 hours after she enters the site and completes the passphrase. MMS with Marker image.",
+              "Auto-send 3 hours after she enters the site and completes the passphrase. SMS with Marker image.",
             body: "The Order has noted your acceptance. Prepare yourself. The first trial is near.",
             image: "assets/prologue-sms-marker.png",
             delay_hours: 3,
@@ -114,13 +114,13 @@ export const gameConfig: GameConfig = {
         // The app's wayfinding compass guides her the remaining distance.
         ch1_initiation: {
           order: 0,
-          type: "mms",
+          type: "sms",
           name: "The Summons",
           trigger: "manual",
           config: {
             to: "player",
             _trigger_note:
-              "Send morning of March 3 while at/near Kellogg Manor for anniversary. Single MMS with coordinates.",
+              "Send morning of March 3 while at/near Kellogg Manor for anniversary. SMS with coordinates and Marker image.",
             body: "The Order has placed a Marker at 42.406256, -85.402025. Your first trial begins now. giltframe.org",
             image: "assets/prologue-sms-marker.png",
             side_effect: "activate_quest",
@@ -237,7 +237,7 @@ export const gameConfig: GameConfig = {
         },
         ch1_post_solve: {
           order: 9,
-          type: "mms",
+          type: "sms",
           name: "Post-Solve Confirmation",
           trigger: "auto",
           config: {
@@ -293,7 +293,7 @@ export const gameConfig: GameConfig = {
         },
         ch2_tickler: {
           order: 2,
-          type: "mms",
+          type: "sms",
           name: "The Summons",
           trigger: "manual",
           config: {
@@ -311,7 +311,7 @@ export const gameConfig: GameConfig = {
         },
         ch2_museum_proximity: {
           order: 3,
-          type: "mms",
+          type: "sms",
           name: "The Arrival",
           trigger: "manual",
           config: {
@@ -427,7 +427,7 @@ export const gameConfig: GameConfig = {
         },
         ch2_post_solve: {
           order: 10,
-          type: "mms",
+          type: "sms",
           name: "Post-Solve Confirmation",
           trigger: "auto",
           config: {

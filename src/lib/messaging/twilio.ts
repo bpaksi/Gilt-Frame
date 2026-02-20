@@ -30,10 +30,10 @@ function parseResult(res: Response, data: Record<string, unknown>): TwilioResult
   return { success: true, sid: data.sid as string };
 }
 
-export async function sendSms(to: string, body: string): Promise<TwilioResult> {
+export async function sendSms(to: string, body: string, mediaUrl?: string): Promise<TwilioResult> {
   const e164To = toE164(to);
   if (DRY_RUN) {
-    console.log("[DRY RUN] SMS", { to: e164To, from: TWILIO_FROM_NUMBER, body });
+    console.log("[DRY RUN] SMS", { to: e164To, from: TWILIO_FROM_NUMBER, body, ...(mediaUrl && { mediaUrl }) });
     return { success: true, sid: "dry-run" };
   }
   const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
@@ -44,39 +44,7 @@ export async function sendSms(to: string, body: string): Promise<TwilioResult> {
     From: TWILIO_FROM_NUMBER,
     Body: body,
   });
-
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${auth}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: params.toString(),
-  });
-
-  const data = await res.json();
-  return parseResult(res, data);
-}
-
-export async function sendMms(
-  to: string,
-  body: string,
-  mediaUrl: string
-): Promise<TwilioResult> {
-  const e164To = toE164(to);
-  if (DRY_RUN) {
-    console.log("[DRY RUN] MMS", { to: e164To, from: TWILIO_FROM_NUMBER, body, mediaUrl });
-    return { success: true, sid: "dry-run" };
-  }
-  const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
-  const auth = Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString("base64");
-
-  const params = new URLSearchParams({
-    To: e164To,
-    From: TWILIO_FROM_NUMBER,
-    Body: body,
-    MediaUrl: mediaUrl,
-  });
+  if (mediaUrl) params.set("MediaUrl", mediaUrl);
 
   const res = await fetch(url, {
     method: "POST",

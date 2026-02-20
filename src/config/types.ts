@@ -118,7 +118,7 @@ export type ComponentConfig = ComponentConfigMap[ComponentName];
 
 export type CompanionMessage = {
   to: CompanionSlot;
-  channel: "sms" | "mms";
+  channel: "sms";
   body: string;
 };
 
@@ -149,17 +149,6 @@ export type EmailStepConfig = {
 };
 
 export type SmsStepConfig = {
-  to: Recipient;
-  _trigger_note?: string;
-  body: string;
-  companion_message?: CompanionMessage;
-  side_effect?: SideEffect;
-  /** Hours to delay sending after trigger. Omit or 0 = send immediately. */
-  delay_hours?: number;
-  progress_key: string;
-};
-
-export type MmsStepConfig = {
   to: Recipient;
   _trigger_note?: string;
   body: string;
@@ -197,14 +186,6 @@ export type SmsStep = {
   config: SmsStepConfig;
 };
 
-export type MmsStep = {
-  order: number;
-  type: "mms";
-  name: string;
-  trigger: Trigger;
-  config: MmsStepConfig;
-};
-
 /** Type-safe pairing: each component variant only accepts its matching config. */
 export type WebsiteStep = {
   [K in ComponentName]: {
@@ -217,7 +198,7 @@ export type WebsiteStep = {
   };
 }[ComponentName];
 
-export type Step = LetterStep | EmailStep | SmsStep | MmsStep | WebsiteStep;
+export type Step = LetterStep | EmailStep | SmsStep | WebsiteStep;
 
 // ─── Chapter and Top-Level Config ───────────────────────────────────────────
 

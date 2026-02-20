@@ -3,12 +3,11 @@ import {
   gameConfig,
   getOrderedSteps,
   type SmsStep,
-  type MmsStep,
   type EmailStep,
   type LetterStep,
 } from "@/config";
 import type { Contact, AdHocRecipient, Track, Recipient } from "@/config";
-import { sendSms, sendMms } from "./twilio";
+import { sendSms } from "./twilio";
 import { sendEmail } from "./resend";
 import { loadEmailTemplate } from "./email-templates";
 
@@ -50,7 +49,7 @@ export async function sendStep(
   if (!matchedStep) return { success: false, error: "Step not found." };
 
   const stepId = matchedStep.id;
-  const step = matchedStep as SmsStep | MmsStep | EmailStep | LetterStep;
+  const step = matchedStep as SmsStep | EmailStep | LetterStep;
 
   const supabase = createAdminClient();
   let messageStatus = "sent";
@@ -72,26 +71,35 @@ export async function sendStep(
   });
 
   if (step.type === "sms") {
-    const result = await sendSms(recipient.phone, step.config.body);
+    const mediaUrl = getMediaUrl(step.config.image) ?? undefined;
+    const result = await sendSms(recipient.phone, step.config.body, mediaUrl);
     if (!result.success) {
       messageStatus = "failed";
       error = result.error;
-    }
-  } else if (step.type === "mms") {
-    const mediaUrl = getMediaUrl(step.config.image);
-    console.log("[sendStep] MMS mediaUrl:", mediaUrl);
-    if (mediaUrl) {
-      const result = await sendMms(recipient.phone, step.config.body, mediaUrl);
-      if (!result.success) {
-        messageStatus = "failed";
-        error = result.error;
-      }
-    } else {
-      console.log("[sendStep] No mediaUrl, falling back to SMS");
-      const result = await sendSms(recipient.phone, step.config.body);
-      if (!result.success) {
-        messageStatus = "failed";
-        error = result.error;
+
+      // Fallback: retry via email
+      console.log("[sendStep] SMS failed, attempting email fallback", { error });
+      const emailResult = await sendEmail(
+        recipient.email,
+        "Message from The Order",
+        step.config.body
+      );
+      if (emailResult.success) {
+        messageStatus = "sent";
+        error = undefined;
+        await supabase.from("activity_log").insert({
+          track,
+          source: "system",
+          event_type: "sms_email_fallback",
+          details: {
+            chapter_id: chapterId,
+            progress_key: progressKey,
+            step_name: step.name,
+            sms_error: result.error,
+          },
+        });
+      } else {
+        error = `SMS: ${result.error}; Email fallback: ${emailResult.error}`;
       }
     }
   } else if (step.type === "email") {
@@ -112,13 +120,8 @@ export async function sendStep(
     const compRecipient = resolveRecipient(trackObj, comp.to);
 
     if (compRecipient) {
-      if (comp.channel === "sms") {
-        const result = await sendSms(compRecipient.phone, comp.body);
-        companionStatus = result.success ? "sent" : "failed";
-      } else if (comp.channel === "mms") {
-        const result = await sendSms(compRecipient.phone, comp.body);
-        companionStatus = result.success ? "sent" : "failed";
-      }
+      const result = await sendSms(compRecipient.phone, comp.body);
+      companionStatus = result.success ? "sent" : "failed";
     } else {
       companionStatus = "failed";
     }
