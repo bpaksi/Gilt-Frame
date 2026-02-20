@@ -305,14 +305,22 @@ export async function revealHint(
 
   const config = step.config as {
     hints?: HintItem[];
-    questions?: { hints?: HintItem[] }[];
+    questions?: { hints?: string[] }[];
   };
-  // Check step-level hints, then per-question hints
+  // Check step-level hints first (HintItem[])
   let hintItem = config.hints?.find((h) => h.tier === hintTier);
+  // Then check per-question hints (string[] with derived tiers)
   if (!hintItem && config.questions) {
+    let tierOffset = 0;
     for (const q of config.questions) {
-      hintItem = q.hints?.find((h) => h.tier === hintTier);
-      if (hintItem) break;
+      if (q.hints) {
+        const localIndex = hintTier - tierOffset - 1;
+        if (localIndex >= 0 && localIndex < q.hints.length) {
+          hintItem = { tier: hintTier, hint: q.hints[localIndex] };
+          break;
+        }
+        tierOffset += q.hints.length;
+      }
     }
   }
   if (!hintItem) return null;

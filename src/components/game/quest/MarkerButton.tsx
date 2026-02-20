@@ -10,11 +10,10 @@ interface MarkerButtonProps {
 }
 
 export default function MarkerButton({ config, onAdvance }: MarkerButtonProps) {
-  const { title_lines, instruction } = config;
+  const { title_lines } = config;
   const [markerVisible, setMarkerVisible] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
   const [tapReady, setTapReady] = useState(false);
-  const [showInstruction, setShowInstruction] = useState(false);
   const [lineVisibility, setLineVisibility] = useState<boolean[]>([]);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
@@ -24,7 +23,7 @@ export default function MarkerButton({ config, onAdvance }: MarkerButtonProps) {
     const timers = timersRef.current;
 
     if (hasTitle) {
-      // Stagger title lines first, then show instruction, then marker
+      // Stagger title lines first, then show marker
       title_lines.forEach((_, i) => {
         const t = setTimeout(() => {
           setLineVisibility((prev) => {
@@ -37,31 +36,11 @@ export default function MarkerButton({ config, onAdvance }: MarkerButtonProps) {
       });
 
       const lastLineDelay = (title_lines.length - 1) * 500 + 400 + 800;
-
-      if (instruction) {
-        const t1 = setTimeout(
-          () => setShowInstruction(true),
-          lastLineDelay + 1500,
-        );
-        timers.push(t1);
-        const markerDelay = lastLineDelay + 3000;
-        const t2 = setTimeout(() => setMarkerVisible(true), markerDelay);
-        const t3 = setTimeout(
-          () => setTextVisible(true),
-          markerDelay + 1200,
-        );
-        const t4 = setTimeout(() => setTapReady(true), markerDelay + 1600);
-        timers.push(t2, t3, t4);
-      } else {
-        const markerDelay = lastLineDelay + 1500;
-        const t2 = setTimeout(() => setMarkerVisible(true), markerDelay);
-        const t3 = setTimeout(
-          () => setTextVisible(true),
-          markerDelay + 1200,
-        );
-        const t4 = setTimeout(() => setTapReady(true), markerDelay + 1600);
-        timers.push(t2, t3, t4);
-      }
+      const markerDelay = lastLineDelay + 1500;
+      const t2 = setTimeout(() => setMarkerVisible(true), markerDelay);
+      const t3 = setTimeout(() => setTextVisible(true), markerDelay + 1200);
+      const t4 = setTimeout(() => setTapReady(true), markerDelay + 1600);
+      timers.push(t2, t3, t4);
     } else {
       // No title — original timing
       const t1 = setTimeout(() => setMarkerVisible(true), 1200);
@@ -71,7 +50,7 @@ export default function MarkerButton({ config, onAdvance }: MarkerButtonProps) {
     }
 
     return () => timers.forEach(clearTimeout);
-  }, [hasTitle, title_lines, instruction]);
+  }, [hasTitle, title_lines]);
 
   const handleTap = () => {
     if (!tapReady) return;
@@ -135,25 +114,6 @@ export default function MarkerButton({ config, onAdvance }: MarkerButtonProps) {
         </div>
       )}
 
-      {instruction && (
-        <p
-          style={{
-            opacity: showInstruction ? 1 : 0,
-            transition: "opacity 0.8s ease",
-            color: "rgba(200, 165, 75, 0.6)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: "15px",
-            fontStyle: "italic",
-            textAlign: "center",
-            lineHeight: 1.8,
-            maxWidth: "300px",
-            margin: 0,
-          }}
-        >
-          {instruction}
-        </p>
-      )}
-
       <button
         onClick={handleTap}
         disabled={!tapReady}
@@ -185,10 +145,8 @@ export default function MarkerButton({ config, onAdvance }: MarkerButtonProps) {
 
         <p
           style={{
-            opacity: 0,
-            animation: textVisible
-              ? "pulse-soft 3s ease-in-out infinite"
-              : undefined,
+            opacity: textVisible ? 1 : 0,
+            transition: "opacity 0.8s ease",
             color: "rgba(200, 165, 75, 0.7)",
             fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: "16px",
@@ -197,10 +155,9 @@ export default function MarkerButton({ config, onAdvance }: MarkerButtonProps) {
             letterSpacing: "1px",
             lineHeight: 1.8,
             maxWidth: "280px",
-            ...(textVisible && { opacity: undefined }),
           }}
         >
-          {config.marker_text}
+          {config.instruction}
         </p>
       </button>
     </div>

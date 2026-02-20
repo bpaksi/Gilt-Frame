@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import HintSystem from "./HintSystem";
 import { recordAnswer } from "@/lib/actions/quest";
-import type { MultipleChoiceConfig, HintItem } from "@/config";
+import type { MultipleChoiceConfig } from "@/config";
 
 interface MultipleChoiceProps {
   config: MultipleChoiceConfig;
@@ -31,6 +31,16 @@ export default function MultipleChoice({
   const shakeRef = useRef<HTMLDivElement>(null);
 
   const question = questions[currentQ];
+
+  // Derive HintItems with globally unique tiers from per-question string[]
+  const currentHints = useMemo(() => {
+    if (!question.hints?.length) return null;
+    // Tier offset: sum of hint counts from all preceding questions
+    const offset = questions
+      .slice(0, currentQ)
+      .reduce((sum, q) => sum + (q.hints?.length ?? 0), 0);
+    return question.hints.map((hint, i) => ({ tier: offset + i + 1, hint }));
+  }, [questions, currentQ, question.hints]);
 
   const handleSelect = useCallback(
     async (optionIdx: number) => {
@@ -180,7 +190,7 @@ export default function MultipleChoice({
       </div>
 
       {/* Scrollwork divider + per-question hints */}
-      {question.hints && question.hints.length > 0 && chapterId && stepIndex !== undefined && (
+      {currentHints && chapterId && stepIndex !== undefined && (
         <>
           <svg
             width="120"
@@ -202,7 +212,7 @@ export default function MultipleChoice({
           </svg>
           <HintSystem
             key={currentQ}
-            hints={question.hints as HintItem[]}
+            hints={currentHints}
             chapterId={chapterId}
             stepIndex={stepIndex}
             initialRevealedTiers={revealedHintTiers}

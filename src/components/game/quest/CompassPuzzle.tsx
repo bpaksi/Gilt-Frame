@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
 import CompassPermission from "./CompassPermission";
+import MarkerSVG from "../MarkerSVG";
 import type { CompassPuzzleConfig } from "@/config";
 
 interface CompassPuzzleProps {
@@ -24,20 +25,30 @@ function angularDistance(a: number, b: number): number {
   return d;
 }
 
+/** Signed angular distance from target to heading: positive = CW, negative = CCW. Range -180..+180 */
+function signedAngularDistance(heading: number, target: number): number {
+  let d = heading - target;
+  if (d > 180) d -= 360;
+  if (d < -180) d += 360;
+  return d;
+}
+
 export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const markerRef = useRef<HTMLDivElement>(null);
+  const statusTextRef = useRef<HTMLDivElement>(null);
   const orientation = useDeviceOrientation();
   const [needsPermission, setNeedsPermission] = useState(true);
   const [solved, setSolved] = useState(false);
   const rafRef = useRef<number>(0);
 
-  const totalRotationRef = useRef(0);
-  const prevHeadingRef = useRef<number | null>(null);
+  const maxCWRef = useRef(0);
+  const maxCCWRef = useRef(0);
   const holdStartRef = useRef<number | null>(null);
 
   const target = config.compass_target;
-  const tolerance = config.compass_tolerance ?? 15;
-  const minRotation = config.min_rotation ?? 90;
+  const tolerance = config.compass_tolerance ?? 8;
+  const minRotation = config.min_rotation ?? 45;
   const holdSeconds = config.hold_seconds ?? 1.5;
 
   // Desktop simulation
@@ -67,36 +78,41 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
         heading = ((Math.atan2(dx, -dy) * 180) / Math.PI + 360) % 360;
       }
 
-      // Track total rotation
-      if (prevHeadingRef.current !== null) {
-        let delta = heading - prevHeadingRef.current;
-        if (delta > 180) delta -= 360;
-        if (delta < -180) delta += 360;
-        totalRotationRef.current += Math.abs(delta);
-      }
-      prevHeadingRef.current = heading;
+      // Track bidirectional sweep from target
+      const signedDist = signedAngularDistance(heading, target);
+      maxCWRef.current = Math.max(maxCWRef.current, signedDist);
+      maxCCWRef.current = Math.min(maxCCWRef.current, signedDist);
 
       const angDist = angularDistance(heading, target);
       const proximity = clamp(1 - angDist / 90, 0, 1);
       const isOnTarget = angDist <= tolerance;
-      const hasRotatedEnough = totalRotationRef.current >= minRotation;
+      const hasRotatedEnough =
+        maxCWRef.current >= minRotation && maxCCWRef.current <= -minRotation;
 
       // Check hold timer for solve
+      let holdProgress = 0;
       if (isOnTarget && hasRotatedEnough) {
         if (holdStartRef.current === null) {
           holdStartRef.current = performance.now();
         } else {
           const held = (performance.now() - holdStartRef.current) / 1000;
+          holdProgress = clamp(held / holdSeconds, 0, 1);
           if (held >= holdSeconds) {
             setSolved(true);
-            // Flash effect then advance
-            setTimeout(onAdvance, 1200);
+            setTimeout(onAdvance, 600);
             return;
           }
         }
       } else {
         holdStartRef.current = null;
       }
+
+      // Ramping shake during hold
+      const now = performance.now() / 1000;
+      const shakeFreq = 10 + holdProgress * 40;
+      const shakeAmp = holdProgress * holdProgress * 3;
+      const shakeX = Math.sin(now * shakeFreq * Math.PI * 2) * shakeAmp;
+      const shakeY = Math.cos(now * shakeFreq * Math.PI * 2 * 0.7) * shakeAmp;
 
       // Compass ring
       ctx.beginPath();
@@ -151,62 +167,38 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
       ctx.fillStyle = "rgba(201, 168, 76, 0.55)";
       ctx.fill();
 
-      // Center Marker with proximity-based intensity
-      const markerW = 90;
-      const markerH = 118;
-      const markerX = CENTER - markerW / 2;
-      const markerY = CENTER - markerH / 2;
-
-      const opacity = 0.12 + proximity * 0.88;
-      const glowColor = isOnTarget
-        ? "rgba(232, 204, 106, 1)"
-        : "rgba(201, 168, 76, 1)";
-      const strokeW = 1 + proximity * 2;
-
-      // Glow
-      if (proximity > 0.3) {
-        ctx.shadowColor = glowColor;
-        ctx.shadowBlur = 15 + proximity * 50;
+      // Drive DOM marker from draw loop
+      const markerEl = markerRef.current;
+      const textEl = statusTextRef.current;
+      if (markerEl) {
+        const opacity = 0.1 + proximity * 0.9;
+        const glowBlur = proximity > 0.3
+          ? 15 + proximity * 50 + holdProgress * 30
+          : 0;
+        const glowColor = isOnTarget
+          ? `rgba(232, 204, 106, ${0.4 + holdProgress * 0.4})`
+          : `rgba(201, 168, 76, ${proximity * 0.3})`;
+        markerEl.style.opacity = String(opacity);
+        markerEl.style.filter = glowBlur > 0
+          ? `drop-shadow(0 0 ${glowBlur}px ${glowColor})`
+          : "none";
+        markerEl.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
       }
-
-      ctx.globalAlpha = opacity;
-      ctx.strokeStyle = glowColor;
-      ctx.lineWidth = strokeW;
-      ctx.strokeRect(markerX, markerY, markerW, markerH);
-
-      // Hourglass curves inside marker
-      ctx.beginPath();
-      ctx.moveTo(markerX + 22, markerY + 25);
-      ctx.bezierCurveTo(
-        markerX + 22, markerY + 59,
-        markerX + 68, markerY + 50,
-        markerX + 68, markerY + 85
-      );
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(markerX + 68, markerY + 25);
-      ctx.bezierCurveTo(
-        markerX + 68, markerY + 59,
-        markerX + 22, markerY + 50,
-        markerX + 22, markerY + 85
-      );
-      ctx.stroke();
-
-      ctx.globalAlpha = 1;
-      ctx.shadowColor = "transparent";
-      ctx.shadowBlur = 0;
-
-      // Proximity text
-      if (isOnTarget) {
-        ctx.font = "italic 16px Georgia, serif";
-        ctx.fillStyle = "rgba(232, 204, 106, 0.8)";
-        ctx.textAlign = "center";
-        ctx.fillText("hold...", CENTER, CENTER + markerH / 2 + 36);
-      } else if (proximity > 0.45) {
-        ctx.font = "italic 15px Georgia, serif";
-        ctx.fillStyle = "rgba(201, 168, 76, 0.5)";
-        ctx.textAlign = "center";
-        ctx.fillText("closer...", CENTER, CENTER + markerH / 2 + 36);
+      if (textEl) {
+        if (isOnTarget && hasRotatedEnough) {
+          textEl.textContent = "hold...";
+          textEl.style.opacity = "0.8";
+          textEl.style.color = "rgba(232, 204, 106, 0.8)";
+          textEl.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
+        } else if (hasRotatedEnough && proximity > 0.45) {
+          textEl.textContent = "closer...";
+          textEl.style.opacity = String(0.3 + (proximity - 0.45) * 0.9);
+          textEl.style.color = "rgba(201, 168, 76, 0.5)";
+          textEl.style.transform = "none";
+        } else {
+          textEl.textContent = "";
+          textEl.style.opacity = "0";
+        }
       }
 
       rafRef.current = requestAnimationFrame(draw);
@@ -244,7 +236,7 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
     return () => window.removeEventListener("mousemove", handleMouse);
   }, [isDesktop, needsPermission]);
 
-  // Solved flash animation
+  // Solved — radial gold flash (no frame shape; next step handles its own presentation)
   if (solved) {
     return (
       <div
@@ -260,25 +252,51 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
       >
         <div
           style={{
-            width: "90px",
-            height: "118px",
-            border: "2px solid rgba(232, 204, 106, 0.8)",
-            boxShadow: "0 0 60px rgba(232, 204, 106, 0.6)",
+            width: "160px",
+            height: "160px",
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle, rgba(232, 204, 106, 0.6) 0%, rgba(201, 168, 76, 0.15) 50%, transparent 75%)",
+            boxShadow: "0 0 80px 30px rgba(232, 204, 106, 0.35)",
             opacity: 0,
-            animation: "fade-in 0.5s ease forwards 0.2s",
+            animation: "fade-in 0.4s ease forwards 0.1s",
           }}
         />
       </div>
     );
   }
 
-  // Permission prompt
   if (needsPermission) {
     return (
-      <CompassPermission onPermission={handlePermission}>
-        <div>The compass awaits your permission.</div>
-        <div style={{ marginTop: "8px" }}>Enable Compass</div>
-      </CompassPermission>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100%",
+          flex: 1,
+          gap: "32px",
+          padding: "40px 24px",
+        }}
+      >
+        <div
+          style={{
+            color: "rgba(200, 165, 75, 0.7)",
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontSize: "16px",
+            fontStyle: "italic",
+            textAlign: "center",
+            letterSpacing: "3px",
+            lineHeight: 1.8,
+          }}
+        >
+          The compass awaits your permission.
+        </div>
+        <CompassPermission onPermission={handlePermission}>
+          Enable Compass
+        </CompassPermission>
+      </div>
     );
   }
 
@@ -292,13 +310,47 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
         minHeight: "100%",
         flex: 1,
         padding: "20px",
+        gap: "24px",
       }}
     >
+      {config.instruction && (
+        <div
+          style={{
+            color: "rgba(200, 165, 75, 0.55)",
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontSize: "17px",
+            fontStyle: "italic",
+            textAlign: "center",
+            letterSpacing: "2px",
+          }}
+        >
+          {config.instruction}
+        </div>
+      )}
       <canvas
         ref={canvasRef}
         width={SIZE}
         height={SIZE}
         style={{ width: "min(85vw, 420px)", height: "min(85vw, 420px)" }}
+      />
+      <div
+        ref={markerRef}
+        style={{ opacity: 0.1, willChange: "opacity, filter, transform" }}
+      >
+        <MarkerSVG size={56} variant="gold" />
+      </div>
+      <div
+        ref={statusTextRef}
+        style={{
+          fontFamily: "Georgia, 'Times New Roman', serif",
+          fontSize: "15px",
+          fontStyle: "italic",
+          textAlign: "center",
+          letterSpacing: "2px",
+          opacity: 0,
+          minHeight: "1.5em",
+          willChange: "opacity, color, transform",
+        }}
       />
     </div>
   );

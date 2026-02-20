@@ -18,14 +18,10 @@ export default function CompassPermission({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100%",
-        flex: 1,
-        width: "100%",
         background: "none",
         border: "none",
         cursor: "pointer",
-        padding: "40px 24px",
+        padding: 0,
         gap: "32px",
         WebkitTapHighlightColor: "transparent",
       }}
@@ -41,7 +37,6 @@ export default function CompassPermission({
           textAlign: "center",
           letterSpacing: "3px",
           lineHeight: 1.8,
-          animation: "pulse-soft 3s ease-in-out infinite",
         }}
       >
         {children}

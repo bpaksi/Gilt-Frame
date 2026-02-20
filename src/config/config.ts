@@ -162,7 +162,7 @@ export const gameConfig: GameConfig = {
           name: "The Arrival",
           component: "MarkerButton",
           config: {
-            marker_text: "The timekeeper stands before me",
+            instruction: "The timekeeper stands before me",
           },
         },
         ch1_confirmation: {
@@ -178,14 +178,8 @@ export const gameConfig: GameConfig = {
                 options: ["Seraphim", "Warriors", "Maidens", "Beasts"],
                 correct: 2,
                 hints: [
-                  {
-                    tier: 1,
-                    hint: "Stand at the dial and look closely at the figures around its edge.",
-                  },
-                  {
-                    tier: 2,
-                    hint: "They are not warriors, nor angels. They are gentler than that.",
-                  },
+                  "Stand at the dial and look closely at the figures around its edge.",
+                  "They are not warriors, nor angels. They are gentler than that.",
                 ],
               },
               {
@@ -198,14 +192,8 @@ export const gameConfig: GameConfig = {
                 ],
                 correct: 1,
                 hints: [
-                  {
-                    tier: 3,
-                    hint: "The truth is written on the dial itself. Read what it says.",
-                  },
-                  {
-                    tier: 4,
-                    hint: "Look for the inscription. It speaks of a familiar proverb.",
-                  },
+                  "The truth is written on the dial itself. Read what it says.",
+                  "Look for the inscription. It speaks of a familiar proverb.",
                 ],
               },
             ],
@@ -217,7 +205,6 @@ export const gameConfig: GameConfig = {
           name: "The Sparrow Moment",
           component: "MarkerButton",
           config: {
-            marker_text: "Begin",
             title_lines: [
               "This bird casts its shadow over time.",
               "So will you, Sparrow, cast yours.",
@@ -234,9 +221,10 @@ export const gameConfig: GameConfig = {
           component: "CompassPuzzle",
           config: {
             compass_target: 255,
-            compass_tolerance: 15,
-            min_rotation: 90,
+            compass_tolerance: 8,
+            min_rotation: 45,
             hold_seconds: 1.5,
+            instruction: "Find the way, fledgling.",
           },
         },
         ch1_seal: {

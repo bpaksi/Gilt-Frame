@@ -34,7 +34,7 @@ export type QuestionItem = {
   question: string;
   options: string[];
   correct: number;
-  hints?: HintItem[];
+  hints?: string[];
 };
 
 /** GPS outdoor compass OR text-based indoor directions. */
@@ -47,11 +47,10 @@ export type WayfindingCompassConfig = {
   hints?: HintItem[];
 };
 
-/** Tappable Marker SVG with pulsing text below. Optional title lines + instruction above. */
+/** Tappable Marker SVG with pulsing text below. Optional title lines above. */
 export type MarkerButtonConfig = {
-  marker_text: string;
   title_lines?: string[];
-  instruction?: string | null;
+  instruction: string;
 };
 
 /** Sequential multiple-choice questions. */
@@ -66,6 +65,7 @@ export type CompassPuzzleConfig = {
   compass_tolerance?: number;
   min_rotation?: number;
   hold_seconds?: number;
+  instruction?: string;
 };
 
 /** Celebration animation. No per-chapter config needed. */
