@@ -1,16 +1,8 @@
 "use client";
 
 import GiltFrame from "./GiltFrame";
-import type { WaitingStateConfig } from "@/config";
 
-interface WaitingStateProps {
-  config?: WaitingStateConfig;
-  onAdvance?: () => void;
-}
-
-export default function WaitingState({ config }: WaitingStateProps) {
-  const message = config?.message || "The Order will contact you\nwhen ready.";
-
+export default function WaitingState() {
   return (
     <GiltFrame>
       <p
@@ -26,7 +18,7 @@ export default function WaitingState({ config }: WaitingStateProps) {
           whiteSpace: "pre-line",
         }}
       >
-        {message}
+        {"The Order will contact you\nwhen ready."}
       </p>
     </GiltFrame>
   );

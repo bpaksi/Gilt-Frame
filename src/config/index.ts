@@ -28,7 +28,6 @@ export type {
   MultipleChoiceConfig,
   CompassPuzzleConfig,
   RewardRevealConfig,
-  WaitingStateConfig,
   PassphrasePuzzleConfig,
   HintItem,
   QuestionItem,

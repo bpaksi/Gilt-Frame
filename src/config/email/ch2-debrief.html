@@ -1,31 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#0a0a0a;font-family:Georgia,'Times New Roman',serif;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;">
-<tr><td align="center" style="padding:48px 24px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;border:1px solid rgba(200,165,75,0.15);">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="supported-color-schemes" content="dark">
+<title>The Order is Pleased</title>
+<style>
+  [data-ogsc] .bg-lock, .bg-lock {
+    background-color: #0a0a0a !important;
+    background-image: linear-gradient(#0a0a0a, #0a0a0a) !important;
+  }
+  [data-ogsc] .text-gold, .text-gold {
+    color: rgba(200,165,75,0.85) !important;
+  }
+  @keyframes marker-glow {
+    0%, 100% { opacity: 0.85; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.03); }
+  }
+  @keyframes divider-shimmer {
+    0% { opacity: 0.12; }
+    50% { opacity: 0.28; }
+    100% { opacity: 0.12; }
+  }
+  @media (prefers-color-scheme: light) {
+    .bg-lock { background-color: #0a0a0a !important; }
+    .text-gold { color: rgba(200,165,75,0.85) !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background:#0a0a0a;background-image:linear-gradient(#0a0a0a,#0a0a0a);font-family:Georgia,'Times New Roman',serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
 
-<!-- Wax seal header -->
-<tr><td align="center" style="padding:40px 0 24px;">
-  <div style="width:48px;height:48px;border-radius:50%;background:radial-gradient(circle,#8b1a1a 0%,#5c0e0e 100%);display:inline-block;"></div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-lock" style="background:#0a0a0a;background-image:linear-gradient(#0a0a0a,#0a0a0a);">
+<tr><td align="center" style="padding:32px 16px 48px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;border:1px solid rgba(200,165,75,0.12);border-radius:2px;">
+
+<!-- Marker hero -->
+<tr><td align="center" style="padding:56px 40px 8px;background:radial-gradient(ellipse at center, rgba(200,165,75,0.06) 0%, transparent 70%);">
+  <img src="https://giltframe.org/marker/marker-v3-gold-512.png" alt="The Marker" width="80" height="104" style="display:block;border:0;outline:none;animation:marker-glow 4s ease-in-out infinite;">
+</td></tr>
+
+<!-- Chapter title -->
+<tr><td align="center" style="padding:20px 40px 32px;">
+  <p style="margin:0;color:rgba(200,165,75,0.35);font-size:11px;text-transform:uppercase;letter-spacing:4px;">The Order is Pleased</p>
+</td></tr>
+
+<!-- Divider -->
+<tr><td align="center" style="padding:0 60px;">
+  <div style="height:1px;background:linear-gradient(to right, transparent, rgba(200,165,75,0.25), transparent);animation:divider-shimmer 6s ease-in-out infinite;"></div>
 </td></tr>
 
 <!-- Body -->
-<tr><td style="padding:0 40px 40px;color:rgba(200,165,75,0.85);font-size:16px;line-height:1.8;letter-spacing:0.3px;">
-  <p style="margin:0 0 20px;">Sparrow,</p>
-  <p style="margin:0 0 20px;">You found her. The Order is pleased.</p>
-  <p style="margin:0 0 20px;">Mrs. Potter Palmer was no mere socialite. When the World&#8217;s Columbian Exposition came to Chicago in 1893, she was appointed President of the Board of Lady Managers, the highest position a woman held at the Fair. She used that authority to champion artists the establishment had overlooked, purchasing works that would later anchor the collections of the very institution you walked through today.</p>
-  <p style="margin:0 0 20px;">Among those she championed was a woman painter living abroad, one whose quiet domestic scenes concealed a radical eye. Palmer acquired her work when few collectors would. That painter&#8217;s legacy now resides in a place you may one day visit, a museum built into the hills of a distant state, where art and nature converge.</p>
-  <p style="margin:0 0 20px;">But that is a story for another time.</p>
-  <p style="margin:0 0 20px;">Your second fragment has been placed in the vault. The Council has taken notice.</p>
+<tr><td class="text-gold" style="padding:32px 40px 0;color:rgba(200,165,75,0.85);font-size:16px;line-height:1.8;letter-spacing:0.3px;">
+  <p style="margin:0 0 24px;color:rgba(200,165,75,0.65);font-size:15px;letter-spacing:1.5px;">Sparrow,</p>
+  <p style="margin:0 0 22px;">You found her. The Order is pleased.</p>
+  <p style="margin:0 0 22px;">Mrs. Potter Palmer was no mere socialite. When the World&#8217;s Columbian Exposition came to Chicago in 1893, she was appointed President of the Board of Lady Managers, the highest position a woman held at the Fair. She used that authority to champion artists the establishment had overlooked, purchasing works that would later anchor the collections of the very institution you walked through today.</p>
+  <p style="margin:0 0 22px;">Among those she championed was a woman painter living abroad, one whose quiet domestic scenes concealed a radical eye. Palmer acquired her work when few collectors would. That painter&#8217;s legacy now resides in a place you may one day visit, a museum built into the hills of a distant state, where art and nature converge.</p>
+  <p style="margin:0 0 22px;">But that is a story for another time.</p>
+  <p style="margin:0 0 22px;">Your second fragment has been placed in the vault. The Council has taken notice.</p>
 </td></tr>
 
 <!-- Signature -->
-<tr><td style="padding:0 40px 40px;">
-  <div style="border-top:1px solid rgba(200,165,75,0.15);padding-top:20px;color:rgba(200,165,75,0.5);font-style:italic;font-size:14px;letter-spacing:0.5px;">
-    &#8212; The Archivist
+<tr><td style="padding:32px 40px 20px;">
+  <div style="border-top:1px solid rgba(200,165,75,0.12);padding-top:20px;">
+    <p style="margin:0;color:rgba(200,165,75,0.4);font-style:italic;font-size:14px;letter-spacing:0.5px;">&#8212; The Archivist</p>
   </div>
+</td></tr>
+
+<!-- Wax seal -->
+<tr><td align="center" style="padding:16px 0 40px;">
+  <img src="https://giltframe.org/marker/seal-v1-256.png" alt="Seal of the Order" width="48" height="48" style="display:block;border:0;outline:none;opacity:0.7;">
 </td></tr>
 
 </table>

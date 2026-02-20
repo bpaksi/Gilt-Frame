@@ -1,11 +1,11 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { componentRegistry } from "./registry";
 import StateFader from "./StateFader";
 import type { QuestState } from "@/lib/actions/quest";
-import { advanceQuest, pollChapterProgress } from "@/lib/actions/quest";
+import { advanceQuest } from "@/lib/actions/quest";
 
 interface QuestStateMachineProps {
   initialState: QuestState;
@@ -15,7 +15,6 @@ export default function QuestStateMachine({ initialState }: QuestStateMachinePro
   const [state, setState] = useState(initialState);
   const [prevInitialState, setPrevInitialState] = useState(initialState);
   const router = useRouter();
-  const pollRef = useRef<ReturnType<typeof setInterval>>(undefined);
 
   // Sync with server on initial state changes (render-time reset)
   if (initialState !== prevInitialState) {
@@ -30,20 +29,6 @@ export default function QuestStateMachine({ initialState }: QuestStateMachinePro
     router.refresh();
   }, [state.chapterId, state.stepIndex, router]);
 
-  // Poll for admin-triggered advances
-  useEffect(() => {
-    if (state.advance !== "admin_trigger" || !state.chapterId) return;
-
-    pollRef.current = setInterval(async () => {
-      if (!state.chapterId) return;
-      const result = await pollChapterProgress(state.chapterId);
-      if (result && result.stepIndex !== state.stepIndex) {
-        router.refresh();
-      }
-    }, 30_000);
-
-    return () => clearInterval(pollRef.current);
-  }, [state.advance, state.chapterId, state.stepIndex, router]);
 
   if (state.status !== "active" || !state.component) {
     return null;

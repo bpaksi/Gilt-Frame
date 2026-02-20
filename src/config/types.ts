@@ -23,7 +23,6 @@ export type AdvanceCondition =
   | "tap"
   | "correct_answers"
   | "compass_alignment"
-  | "admin_trigger"
   | "passphrase";
 
 // ─── Component Config Types ─────────────────────────────────────────────────
@@ -67,16 +66,16 @@ export type CompassPuzzleConfig = {
   instruction?: string;
 };
 
-/** Completion text with Continue button. */
+/** Ceremony animation + reward text with unlock/continue buttons. */
 export type RewardRevealConfig = {
   primary: string;
   secondary?: string | null;
-};
-
-/** Pulsing Marker with atmospheric text. Shown between chapters. */
-export type WaitingStateConfig = {
-  message?: string | null;
-  show_vault_teaser?: boolean;
+  /** Skip the gilt-frame ceremony and go straight to text. Default false. */
+  skip_ceremony?: boolean;
+  /** Label for the ceremony unlock button. Default "Press to Unlock". */
+  unlock_text?: string;
+  /** Label for the continue button on the text phase. Default "Continue". */
+  continue_text?: string;
 };
 
 /** Passphrase input puzzle — player enters hidden acrostic from letter. */
@@ -93,7 +92,6 @@ export type ComponentConfigMap = {
   MultipleChoice: MultipleChoiceConfig;
   CompassPuzzle: CompassPuzzleConfig;
   RewardReveal: RewardRevealConfig;
-  WaitingState: WaitingStateConfig;
   PassphrasePuzzle: PassphrasePuzzleConfig;
 };
 
@@ -109,7 +107,6 @@ export const COMPONENT_ADVANCE: Record<ComponentName, AdvanceCondition> = {
   MultipleChoice: "correct_answers",
   CompassPuzzle: "compass_alignment",
   RewardReveal: "tap",
-  WaitingState: "admin_trigger",
   PassphrasePuzzle: "passphrase",
 };
 

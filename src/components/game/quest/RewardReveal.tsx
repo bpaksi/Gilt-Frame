@@ -16,7 +16,9 @@ interface RewardRevealProps {
 }
 
 export default function RewardReveal({ config, onAdvance, chapterName }: RewardRevealProps) {
-  const [phase, setPhase] = useState<"ceremony" | "text">("ceremony");
+  const [phase, setPhase] = useState<"ceremony" | "text">(
+    config.skip_ceremony ? "text" : "ceremony"
+  );
 
   return (
     <div
@@ -50,9 +52,9 @@ export default function RewardReveal({ config, onAdvance, chapterName }: RewardR
       ))}
 
       {phase === "ceremony" ? (
-        <CeremonyPhase onUnlock={() => setPhase("text")} />
+        <CeremonyPhase onUnlock={() => setPhase("text")} unlockText={config.unlock_text} />
       ) : (
-        <TextPhase config={config} onAdvance={onAdvance} chapterName={chapterName} />
+        <TextPhase config={config} onAdvance={onAdvance} chapterName={chapterName} continueText={config.continue_text} />
       )}
     </div>
   );
@@ -60,7 +62,7 @@ export default function RewardReveal({ config, onAdvance, chapterName }: RewardR
 
 /* ─── Ceremony Phase ──────────────────────────────────────────────────────── */
 
-function CeremonyPhase({ onUnlock }: { onUnlock: () => void }) {
+function CeremonyPhase({ onUnlock, unlockText = "Press to Unlock" }: { onUnlock: () => void; unlockText?: string }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const orbRef = useRef<SVGCircleElement>(null);
   const borderRef = useRef<SVGRectElement>(null);
@@ -437,7 +439,7 @@ function CeremonyPhase({ onUnlock }: { onUnlock: () => void }) {
             animation: "pulse-soft 3s ease-in-out infinite, fade-in 0.8s ease forwards",
           }}
         >
-          Press to Unlock
+          {unlockText}
         </button>
       )}
 
@@ -458,10 +460,12 @@ function TextPhase({
   config,
   onAdvance,
   chapterName,
+  continueText = "Continue",
 }: {
   config: RewardRevealConfig;
   onAdvance: () => void;
   chapterName?: string;
+  continueText?: string;
 }) {
   const [showTitle, setShowTitle] = useState(false);
   const [showLines, setShowLines] = useState<boolean[]>([]);
@@ -639,7 +643,7 @@ function TextPhase({
           WebkitTapHighlightColor: "transparent",
         }}
       >
-        Continue
+        {continueText}
       </button>
 
       {/* Secondary text — below continue */}

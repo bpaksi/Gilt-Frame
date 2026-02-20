@@ -256,22 +256,15 @@ export const gameConfig: GameConfig = {
             secondary: "Your first fragment has been placed in the vault.",
           },
         },
-        ch1_wait: {
-          order: 9,
-          type: "website",
-          name: "The Wait",
-          component: "WaitingState",
-          config: {},
-        },
         ch1_post_solve: {
-          order: 10,
+          order: 9,
           type: "sms",
           name: "Post-Solve Confirmation",
           trigger: "auto",
           config: {
             to: "player",
             _trigger_note:
-              "Auto-fires when player reaches the WaitingState. Or manual from admin.",
+              "Auto-fires after RewardReveal completes. Or manual from admin.",
             body: "The Order sees clearly. Your first fragment has been placed in the vault.",
             image:
               "https://giltframe.org/marker/marker-v3-gold-512.png",
@@ -430,21 +423,14 @@ export const gameConfig: GameConfig = {
             secondary: "Your second fragment has been placed in the vault.",
           },
         },
-        ch2_wait: {
-          order: 8,
-          type: "website",
-          name: "The Wait",
-          component: "WaitingState",
-          config: {},
-        },
         ch2_post_solve: {
-          order: 9,
+          order: 8,
           type: "sms",
           name: "Post-Solve Confirmation",
           trigger: "auto",
           config: {
             to: "player",
-            _trigger_note: "Auto-send when player reaches WaitingState.",
+            _trigger_note: "Auto-send after RewardReveal completes.",
             body: "You see what others have not. Your Chronicle has been updated. The Council is watching with growing interest.",
             image:
               "https://giltframe.org/marker/marker-v3-gold-512.png",
@@ -457,7 +443,7 @@ export const gameConfig: GameConfig = {
         },
         // Teases Cassatt/Crystal Bridges without naming them.
         ch2_debrief_email: {
-          order: 10,
+          order: 9,
           type: "email",
           name: "The Debrief",
           trigger: "manual",
@@ -470,7 +456,7 @@ export const gameConfig: GameConfig = {
           },
         },
         ch2_sister_release: {
-          order: 11,
+          order: 10,
           type: "sms",
           name: "Companion Release",
           trigger: "auto",
