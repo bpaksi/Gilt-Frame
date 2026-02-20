@@ -3,7 +3,7 @@
  * Usage: pnpm contacts:env
  */
 
-import { christine, bob, sister } from "../src/config/contacts";
+import { christine, bob, eileen } from "../src/config/contacts";
 
-const json = JSON.stringify({ christine, bob, sister });
+const json = JSON.stringify({ christine, bob, eileen });
 console.log(json);

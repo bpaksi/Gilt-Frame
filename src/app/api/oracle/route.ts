@@ -82,22 +82,22 @@ export async function POST(request: Request) {
     unlockedLore
   );
 
-  // Call Gemini API
-  const geminiKey = process.env.GEMINI_API_KEY;
-  if (!geminiKey) {
+  // Call Perplexity API
+  const perplexityKey = process.env.PERPLEXITY_API_KEY;
+  if (!perplexityKey) {
     return Response.json(
       { error: "The Oracle is not yet awakened." },
       { status: 503 }
     );
   }
 
-  // Build multi-turn contents from recent history (sliding window)
+  // Build multi-turn messages from recent history (sliding window)
   const MAX_HISTORY_TURNS = 6;
   const MAX_HISTORY_CHARS = 3000;
   const history = todayConversations ?? [];
 
   // Take the most recent N exchanges, then trim by char budget
-  let recentHistory = history.slice(-MAX_HISTORY_TURNS);
+  const recentHistory = history.slice(-MAX_HISTORY_TURNS);
   let historyChars = recentHistory.reduce(
     (sum, c) => sum + c.question.length + c.response.length,
     0
@@ -107,41 +107,46 @@ export async function POST(request: Request) {
     historyChars -= removed.question.length + removed.response.length;
   }
 
-  const contents = [
+  const messages = [
+    { role: "system" as const, content: systemPrompt },
     ...recentHistory.flatMap((c) => [
-      { role: "user" as const, parts: [{ text: c.question }] },
-      { role: "model" as const, parts: [{ text: c.response }] },
+      { role: "user" as const, content: c.question },
+      { role: "assistant" as const, content: c.response },
     ]),
-    { role: "user" as const, parts: [{ text: question }] },
+    { role: "user" as const, content: question },
   ];
 
-  const geminiResponse = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse&key=${geminiKey}`,
+  const pplxResponse = await fetch(
+    "https://api.perplexity.ai/chat/completions",
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${perplexityKey}`,
+      },
       body: JSON.stringify({
-        system_instruction: { parts: [{ text: systemPrompt }] },
-        contents,
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 300,
-        },
+        model: "sonar",
+        messages,
+        max_tokens: 300,
+        temperature: 0.7,
+        stream: true,
+        disable_search: true,
       }),
     }
   );
 
-  if (!geminiResponse.ok || !geminiResponse.body) {
+  if (!pplxResponse.ok || !pplxResponse.body) {
     return Response.json(
       { error: "The Oracle is silent." },
       { status: 502 }
     );
   }
 
-  // Stream the response
-  const reader = geminiResponse.body.getReader();
+  // Stream the response (OpenAI-compatible SSE)
+  const reader = pplxResponse.body.getReader();
   const decoder = new TextDecoder();
   let fullResponse = "";
+  let tokensUsed: number | null = null;
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -163,10 +168,14 @@ export async function POST(request: Request) {
             try {
               const parsed = JSON.parse(jsonStr);
               const text =
-                parsed?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+                parsed?.choices?.[0]?.delta?.content ?? "";
               if (text) {
                 fullResponse += text;
                 controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
+              }
+              // Capture token usage from the final chunk
+              if (parsed?.usage?.total_tokens) {
+                tokensUsed = parsed.usage.total_tokens;
               }
             } catch {
               // Skip malformed JSON
@@ -186,7 +195,8 @@ export async function POST(request: Request) {
         .insert({
           question: question.trim(),
           response: fullResponse,
-          gemini_model: "gemini-2.0-flash",
+          gemini_model: "sonar",
+          tokens_used: tokensUsed,
           track,
         })
         .then(() => {});

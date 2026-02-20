@@ -1,5 +1,5 @@
 import type { GameConfig, Chapter, Step } from "./types";
-import { christine, bob, sister } from "./contacts";
+import { christine, bob, eileen } from "./contacts";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -15,7 +15,7 @@ export const gameConfig: GameConfig = {
     live: {
       player: christine,
       companion1: bob,
-      companion2: sister,
+      companion2: eileen,
       companion3: null,
       _description: "Christine's real game. Irreversible.",
     },
@@ -55,8 +55,7 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Send shortly after letter should arrive. Or 3-4 days after the letter if she's stuck. SMS with Marker image attached.",
             body: "The sign has arrived. giltframe.org",
-            image:
-              "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
           },
         },
         prologue_passphrase: {
@@ -133,8 +132,7 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Send morning of March 3 while at/near Kellogg Manor for anniversary. MMS with coordinates and Marker image.",
             body: "A Marker has been placed. 42.406256, -85.402025. Your first trial begins now. giltframe.org",
-            image:
-              "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
           },
         },
         ch1_arrived: {
@@ -147,8 +145,7 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Admin monitors player location (Find My). Send when player arrives at Kellogg Manor parking lot.",
             body: "The timekeeper awaits, Sparrow. Begin your trial. giltframe.org",
-            image:
-              "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
           },
         },
         // GPS compass from PIN (42.406256, -85.402025) to sundial (42.405278, -85.402778). ~125m walk.
@@ -263,8 +260,7 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Auto-fires after RewardReveal completes. Or manual from admin.",
             body: "The Order sees clearly. Your first fragment has been placed in the vault.",
-            image:
-              "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
           },
         },
       },
@@ -316,8 +312,7 @@ export const gameConfig: GameConfig = {
             to: "player",
             _trigger_note: "Day before or morning of museum visit.",
             body: "The lions are waiting, Sparrow.",
-            image:
-              "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
             companion_message: {
               to: "companion2",
               channel: "sms",
@@ -335,8 +330,7 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Send when Find My shows her at or near the AIC. The big moment. Also triggers quest on Current tab.",
             body: "You are close. Ascend to the second floor. Gallery 273. She is waiting. giltframe.org",
-            image:
-              "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
             companion_message: {
               to: "companion2",
               channel: "sms",
@@ -388,8 +382,7 @@ export const gameConfig: GameConfig = {
                 hint: "Anders Zorn painted Mrs. Potter Palmer in 1893. Find her.",
               },
             ],
-            question:
-              "What is the name of the painting you stand before?",
+            question: "What is the name of the painting you stand before?",
             correct_answer: "Mrs. Potter Palmer — Anders Zorn",
             painting_pool: [
               "The Child's Bath — Mary Cassatt",
@@ -478,8 +471,7 @@ export const gameConfig: GameConfig = {
                 hint: "Mary Cassatt painted The Child's Bath. Find it.",
               },
             ],
-            question:
-              "What is the name of the painting you stand before?",
+            question: "What is the name of the painting you stand before?",
             correct_answer: "The Child's Bath — Mary Cassatt",
             painting_pool: [
               "On a Balcony — Mary Cassatt",
@@ -559,8 +551,7 @@ export const gameConfig: GameConfig = {
             to: "player",
             _trigger_note: "Auto-send after RewardReveal completes.",
             body: "You see what others have not. Your Chronicle has been updated. The Council is watching with growing interest.",
-            image:
-              "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
             companion_message: {
               to: "companion2",
               channel: "sms",

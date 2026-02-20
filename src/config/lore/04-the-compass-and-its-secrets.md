@@ -3,4 +3,4 @@ title: "The Compass and Its Secrets"
 order: 4
 unlock_chapter_id: "ch1"
 ---
-The compass is the Order's oldest instrument. Not merely a tool for navigation, it is a cipher. Every bearing the Order assigns points toward the next revelation. The needle does not merely find north — it finds meaning. Those who follow the compass with patience will discover that every direction was chosen with purpose.
+The Keeper of Gull Lake built more than a manor — he built a message. Before his sight was taken, he set a bearing into the bones of his estate. The Order knew the number but not what it pointed toward. A Sparrow who came before you followed the compass and found the bearing's weight. That Sparrow did not return. The number endured. What it reveals, and to whom, the Order is still learning — with your help.
