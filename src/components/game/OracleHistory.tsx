@@ -1,20 +1,35 @@
 "use client";
 
 import { useState } from "react";
-import type { DisplayLoreEntry } from "@/lib/lore";
 
-interface ScrollsOfKnowledgeProps {
-  entries: DisplayLoreEntry[];
+type Conversation = {
+  question: string;
+  response: string;
+  created_at: string;
+};
+
+function relativeTime(dateStr: string): string {
+  const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes === 1) return "1 minute";
+  if (minutes < 60) return `${minutes} minutes`;
+  const hours = Math.floor(minutes / 60);
+  if (hours === 1) return "1 hour";
+  if (hours < 24) return `${hours} hours`;
+  const days = Math.floor(hours / 24);
+  if (days === 1) return "1 day";
+  return `${days} days`;
 }
 
-export default function ScrollsOfKnowledge({
-  entries,
-}: ScrollsOfKnowledgeProps) {
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+interface OracleHistoryProps {
+  conversations: Conversation[];
+}
 
-  const unlockedEntries = entries.filter((e) => e.unlocked);
+export default function OracleHistory({ conversations }: OracleHistoryProps) {
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
-  if (unlockedEntries.length === 0) {
+  if (conversations.length === 0) {
     return (
       <p
         style={{
@@ -27,28 +42,24 @@ export default function ScrollsOfKnowledge({
           padding: "40px 0",
         }}
       >
-        No scrolls have been revealed yet.
+        No questions have been asked yet.
         <br />
-        Continue your journey, Sparrow.
+        The Oracle awaits.
       </p>
     );
   }
 
+  const reversed = [...conversations].reverse();
+
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "1px",
-      }}
-    >
-      {unlockedEntries.map((entry) => {
-        const isExpanded = expandedId === entry.id;
+    <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
+      {reversed.map((conv, i) => {
+        const isExpanded = expandedIndex === i;
 
         return (
-          <div key={entry.id}>
+          <div key={i}>
             <button
-              onClick={() => setExpandedId(isExpanded ? null : entry.id)}
+              onClick={() => setExpandedIndex(isExpanded ? null : i)}
               style={{
                 width: "100%",
                 textAlign: "left",
@@ -60,6 +71,7 @@ export default function ScrollsOfKnowledge({
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
+                gap: "12px",
                 minHeight: "44px",
                 WebkitTapHighlightColor: "transparent",
               }}
@@ -72,7 +84,18 @@ export default function ScrollsOfKnowledge({
                   fontStyle: "italic",
                 }}
               >
-                {entry.title}
+                {conv.question}
+              </span>
+              <span
+                style={{
+                  color: "rgba(200, 165, 75, 0.25)",
+                  fontFamily: "Georgia, 'Times New Roman', serif",
+                  fontSize: "11px",
+                  fontStyle: "italic",
+                  flexShrink: 0,
+                }}
+              >
+                {relativeTime(conv.created_at)}
               </span>
             </button>
 
@@ -93,7 +116,7 @@ export default function ScrollsOfKnowledge({
                     lineHeight: 1.8,
                   }}
                 >
-                  {entry.content}
+                  {conv.response}
                 </p>
               </div>
             )}

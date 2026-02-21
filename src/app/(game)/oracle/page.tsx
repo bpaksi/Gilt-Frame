@@ -59,26 +59,23 @@ export default async function OraclePage() {
     unlocked: !l.unlock_chapter_id || completedChapters.includes(l.unlock_chapter_id),
   }));
 
-  // Get today's conversations
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-
+  // Get conversations for history
   const { data: convData } = await supabase
     .from("oracle_conversations")
-    .select("question, response")
+    .select("question, response, created_at")
     .eq("track", trackInfo.track)
-    .gte("created_at", today.toISOString())
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: true })
+    .limit(50);
 
   const conversations = (convData ?? []).map((c) => ({
     question: c.question,
     response: c.response,
+    created_at: c.created_at,
   }));
 
   return (
     <OracleView
       loreEntries={loreEntries}
-      completedChapters={completedChapters}
       conversations={conversations}
     />
   );

@@ -6,14 +6,15 @@ import MarkerSVG from "./MarkerSVG";
 type Conversation = {
   question: string;
   response: string;
+  created_at: string;
 };
 
 interface AskTheOracleProps {
-  initialConversations: Conversation[];
+  onConversation: (conv: Conversation) => void;
 }
 
-export default function AskTheOracle({ initialConversations }: AskTheOracleProps) {
-  const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
+export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
+  const [lastExchange, setLastExchange] = useState<Conversation | null>(null);
   const [question, setQuestion] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [currentResponse, setCurrentResponse] = useState("");
@@ -42,11 +43,10 @@ export default function AskTheOracle({ initialConversations }: AskTheOracleProps
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
-          setCurrentResponse(errData.error ?? "The Oracle is silent.");
-          setConversations((prev) => [
-            ...prev,
-            { question: q, response: errData.error ?? "The Oracle is silent." },
-          ]);
+          const errMsg = errData.error ?? "The Oracle is silent.";
+          const conv = { question: q, response: errMsg, created_at: new Date().toISOString() };
+          setLastExchange(conv);
+          onConversation(conv);
           setStreaming(false);
           setQuestion("");
           return;
@@ -66,10 +66,11 @@ export default function AskTheOracle({ initialConversations }: AskTheOracleProps
           return;
         }
 
-        // If not streaming SSE, handle as regular JSON (shouldn't happen but safety)
+        // If not streaming SSE, handle as regular JSON
         if (data && !res.headers.get("content-type")?.includes("text/event-stream")) {
-          setCurrentResponse(data.text ?? "");
-          setConversations((prev) => [...prev, { question: q, response: data.text ?? "" }]);
+          const conv = { question: q, response: data.text ?? "", created_at: new Date().toISOString() };
+          setLastExchange(conv);
+          onConversation(conv);
           setStreaming(false);
           setQuestion("");
           return;
@@ -121,7 +122,9 @@ export default function AskTheOracle({ initialConversations }: AskTheOracleProps
           }
         }
 
-        setConversations((prev) => [...prev, { question: q, response: fullText }]);
+        const conv = { question: q, response: fullText, created_at: new Date().toISOString() };
+        setLastExchange(conv);
+        onConversation(conv);
         setCurrentResponse("");
         setQuestion("");
       } catch {
@@ -130,7 +133,7 @@ export default function AskTheOracle({ initialConversations }: AskTheOracleProps
 
       setStreaming(false);
     },
-    [question, streaming]
+    [question, streaming, onConversation]
   );
 
   useEffect(() => {
@@ -147,20 +150,20 @@ export default function AskTheOracle({ initialConversations }: AskTheOracleProps
     >
       <p
         style={{
-          color: "rgba(200, 165, 75, 0.4)",
+          color: "rgba(200, 165, 75, 0.3)",
           fontFamily: "Georgia, 'Times New Roman', serif",
-          fontSize: "12px",
-          textTransform: "uppercase",
-          letterSpacing: "3px",
-          marginBottom: "8px",
+          fontSize: "13px",
+          fontStyle: "italic",
+          lineHeight: 1.7,
         }}
       >
-        Ask the Oracle
+        Speak freely, Sparrow. No question is unwelcome,
+        though the Oracle answers only as it sees fit.
       </p>
 
-      {/* Conversation history */}
-      {conversations.map((conv, i) => (
-        <div key={`${i}-${conv.question}`} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+      {/* Last completed exchange */}
+      {!streaming && lastExchange && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           <p
             style={{
               color: "rgba(200, 165, 75, 0.5)",
@@ -169,7 +172,7 @@ export default function AskTheOracle({ initialConversations }: AskTheOracleProps
               fontStyle: "italic",
             }}
           >
-            {conv.question}
+            {lastExchange.question}
           </p>
           <p
             style={{
@@ -182,10 +185,10 @@ export default function AskTheOracle({ initialConversations }: AskTheOracleProps
               paddingLeft: "16px",
             }}
           >
-            {conv.response}
+            {lastExchange.response}
           </p>
         </div>
-      ))}
+      )}
 
       {/* Current streaming response */}
       {streaming && currentResponse && (
