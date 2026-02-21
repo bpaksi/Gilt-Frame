@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import GiltFrame from "../GiltFrame";
+import { colors, fontFamily } from "@/components/ui/tokens";
 import type { PassphraseEntryConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
@@ -90,11 +91,11 @@ export default function PassphraseEntry({
           border: "none",
           borderBottom: `1px solid ${
             status === "error"
-              ? "rgba(200, 165, 75, 0.5)"
-              : "rgba(200, 165, 75, 0.3)"
+              ? colors.gold50
+              : colors.gold30
           }`,
-          color: "#C8A54B",
-          fontFamily: "Georgia, 'Times New Roman', serif",
+          color: colors.gold,
+          fontFamily: fontFamily,
           fontSize: "18px",
           fontStyle: "italic",
           letterSpacing: "2px",
@@ -113,8 +114,8 @@ export default function PassphraseEntry({
       />
       <div
         style={{
-          color: "rgba(200, 165, 75, 0.4)",
-          fontFamily: "Georgia, 'Times New Roman', serif",
+          color: colors.gold40,
+          fontFamily: fontFamily,
           fontSize: "14px",
           fontStyle: "italic",
           marginTop: "20px",
@@ -137,4 +138,12 @@ export const showcase: ShowcaseDefinition<PassphraseEntryProps> = {
   label: "Passphrase Entry",
   description: "Text input puzzle for hidden acrostic passphrase",
   uses: ["GiltFrame"],
+  defaults: {
+    config: {
+      passphrase: "gilded",
+      placeholder: "Speak the words.",
+    },
+    onAdvance: () => {},
+    validatePassphraseAction: async (p: string) => ({ success: p === "gilded" }),
+  },
 };

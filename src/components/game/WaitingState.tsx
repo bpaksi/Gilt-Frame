@@ -1,6 +1,7 @@
 "use client";
 
 import GiltFrame from "./GiltFrame";
+import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
 export default function WaitingState() {
@@ -8,8 +9,8 @@ export default function WaitingState() {
     <GiltFrame>
       <p
         style={{
-          color: "rgba(200, 165, 75, 0.5)",
-          fontFamily: "Georgia, 'Times New Roman', serif",
+          color: colors.gold50,
+          fontFamily,
           fontSize: "16px",
           fontStyle: "italic",
           textAlign: "center",

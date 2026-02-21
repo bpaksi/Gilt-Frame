@@ -1,6 +1,12 @@
 import { redirect } from "next/navigation";
-import TabBar from "../../components/ui/TabBar";
+import TabBar, { type TabConfig } from "../../components/ui/TabBar";
 import { resolveTrack } from "@/lib/track";
+
+const GAME_TABS: TabConfig[] = [
+  { label: "Pursuit", href: "/pursuit", icon: "marker" },
+  { label: "Journey", href: "/journey", icon: "book" },
+  { label: "Oracle", href: "/oracle", icon: "eye" },
+];
 
 export default async function GameLayout({
   children,
@@ -27,7 +33,7 @@ export default async function GameLayout({
       <main style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         {children}
       </main>
-      <TabBar />
+      <TabBar tabs={GAME_TABS} />
     </div>
   );
 }

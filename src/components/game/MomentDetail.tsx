@@ -4,20 +4,24 @@ import TextReveal from "./TextReveal";
 import MarkerSVG from "@/components/ui/MarkerSVG";
 import GhostButton from "@/components/ui/GhostButton";
 import UppercaseLabel from "@/components/ui/UppercaseLabel";
-import { colors } from "@/components/ui/tokens";
+import { colors, fontFamily } from "@/components/ui/tokens";
 import { useShareAction } from "@/lib/hooks/useShareAction";
-import type { MomentRow } from "@/lib/actions/moments";
-import { gameConfig } from "@/config";
+import type { ShowcaseDefinition } from "@/components/showcase";
+
+type MomentLike = {
+  id: string;
+  chapter_id?: string | null;
+  narrative_text?: string | null;
+  share_token: string;
+  created_at: string;
+};
 
 interface MomentDetailProps {
-  moment: MomentRow;
+  moment: MomentLike;
+  chapterName?: string;
 }
 
-export default function MomentDetail({ moment }: MomentDetailProps) {
-  const chapter = moment.chapter_id
-    ? gameConfig.chapters[moment.chapter_id]
-    : null;
-
+export default function MomentDetail({ moment, chapterName }: MomentDetailProps) {
   const date = new Date(moment.created_at).toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
@@ -43,17 +47,17 @@ export default function MomentDetail({ moment }: MomentDetailProps) {
       }}
     >
       {/* Chapter name */}
-      {chapter && (
+      {chapterName && (
         <UppercaseLabel style={{ color: colors.gold40 }}>
-          {chapter.name}
+          {chapterName}
         </UppercaseLabel>
       )}
 
       {/* Date */}
       <p
         style={{
-          color: "rgba(200, 165, 75, 0.3)",
-          fontFamily: "Georgia, 'Times New Roman', serif",
+          color: colors.gold30,
+          fontFamily,
           fontSize: "12px",
         }}
       >
@@ -78,3 +82,20 @@ export default function MomentDetail({ moment }: MomentDetailProps) {
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<MomentDetailProps> = {
+  category: "game",
+  label: "Moment Detail",
+  description: "Full narrative reveal for a journey moment with share action",
+  uses: ["TextReveal", "GhostButton", "UppercaseLabel", "MarkerSVG"],
+  defaults: {
+    moment: {
+      id: "demo-moment-1",
+      chapter_id: "ch1",
+      narrative_text: "You stood before the frame as the afternoon light caught its gilded edge. Something stirred within you. The Order had seen you arrive.",
+      share_token: "demo-token",
+      created_at: new Date().toISOString(),
+    },
+    chapterName: "The First Sight",
+  },
+};

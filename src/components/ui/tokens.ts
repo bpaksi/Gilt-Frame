@@ -19,10 +19,21 @@ export const colors = {
   gold12: "rgba(200, 165, 75, 0.12)",
   gold10: "rgba(200, 165, 75, 0.1)",
   gold08: "rgba(200, 165, 75, 0.08)",
+  gold06: "rgba(200, 165, 75, 0.06)",
+  gold04: "rgba(200, 165, 75, 0.04)",
+  gold03: "rgba(200, 165, 75, 0.03)",
+  gold55: "rgba(200, 165, 75, 0.55)",
+  gold45: "rgba(200, 165, 75, 0.45)",
+  gold15: "rgba(200, 165, 75, 0.15)",
+  goldBright: "rgba(232, 204, 106, 1)",
+  goldBright90: "rgba(232, 204, 106, 0.9)",
+  goldBright80: "rgba(232, 204, 106, 0.8)",
   errorRed70: "rgba(180, 50, 40, 0.7)",
   errorRed50: "rgba(180, 50, 40, 0.5)",
   bg: "#0a0a0a",
   surface: "rgba(30, 25, 18, 0.8)",
+  dark: "#1e1912",
+  white: "#ffffff",
 } as const;
 
 // ── Typography ──────────────────────────────────────────────────────────

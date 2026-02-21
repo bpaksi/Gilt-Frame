@@ -2,6 +2,8 @@
 
 import GiltFrame from "./GiltFrame";
 import GhostButton from "@/components/ui/GhostButton";
+import { colors, fontFamily } from "@/components/ui/tokens";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface LandingPageProps {
   isReplay?: boolean;
@@ -21,8 +23,8 @@ export default function LandingPage({
       ) : (
         <p
           style={{
-            color: "rgba(200, 165, 75, 0.35)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: colors.gold35,
+            fontFamily,
             fontSize: "16px",
             fontStyle: "italic",
             letterSpacing: "1px",
@@ -34,3 +36,11 @@ export default function LandingPage({
     </GiltFrame>
   );
 }
+
+export const showcase: ShowcaseDefinition<LandingPageProps> = {
+  category: "game",
+  label: "Landing Page",
+  description: "Entry screen with marker ceremony and status message",
+  uses: ["GiltFrame", "GhostButton"],
+  defaults: {},
+};

@@ -1,5 +1,6 @@
 "use client";
 
+import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface TextRevealProps {
@@ -27,8 +28,8 @@ export default function TextReveal({
             opacity: 0,
             animation: `fade-in 0.8s ease forwards`,
             animationDelay: `${baseDelay + i * delayBetween}ms`,
-            color: "rgba(200, 165, 75, 0.9)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: colors.gold90,
+            fontFamily,
             fontSize: "18px",
             fontStyle: "italic",
             textAlign: "center",

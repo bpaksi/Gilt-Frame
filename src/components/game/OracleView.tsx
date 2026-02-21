@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import type { DisplayLoreEntry } from "@/lib/lore";
+import { colors, fontFamily, MIN_TAP_TARGET } from "@/components/ui/tokens";
 import ScrollsOfKnowledge from "./ScrollsOfKnowledge";
 import AskTheOracle from "./AskTheOracle";
 import OracleHistory from "./OracleHistory";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 type Conversation = {
   question: string;
@@ -22,16 +24,16 @@ interface OracleViewProps {
 const tabStyle = (active: boolean): React.CSSProperties => ({
   background: "none",
   border: "none",
-  borderBottom: active ? "1px solid rgba(200, 165, 75, 0.3)" : "1px solid transparent",
+  borderBottom: active ? `1px solid ${colors.gold30}` : "1px solid transparent",
   padding: "0 0 8px 0",
-  color: active ? "rgba(200, 165, 75, 0.7)" : "rgba(200, 165, 75, 0.3)",
-  fontFamily: "Georgia, 'Times New Roman', serif",
+  color: active ? colors.gold70 : colors.gold30,
+  fontFamily,
   fontSize: "13px",
   fontStyle: "italic",
   textTransform: "uppercase" as const,
   letterSpacing: "3px",
   cursor: "pointer",
-  minHeight: "44px",
+  minHeight: MIN_TAP_TARGET,
   WebkitTapHighlightColor: "transparent",
 });
 
@@ -79,3 +81,11 @@ export default function OracleView({
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<OracleViewProps> = {
+  category: "game",
+  label: "Oracle View",
+  description: "Tabbed interface: Ask Oracle, Scrolls of Knowledge, History",
+  uses: ["AskTheOracle", "ScrollsOfKnowledge", "OracleHistory"],
+  defaults: { loreEntries: [], conversations: [] },
+};

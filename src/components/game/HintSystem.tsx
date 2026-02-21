@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import TextButton from "@/components/ui/TextButton";
-import { revealHint } from "@/lib/actions/quest";
-import type { HintItem } from "@/config";
+import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
+
+type HintItem = { tier: number; hint: string };
 
 interface HintSystemProps {
   hints: HintItem[];
@@ -31,9 +32,9 @@ export default function HintSystem({
   const allRevealed = !nextHint;
 
   const handleReveal = async () => {
-    if (!nextHint || loading) return;
+    if (!nextHint || loading || !revealHintAction) return;
     setLoading(true);
-    const result = await (revealHintAction ?? revealHint)(chapterId, stepIndex, nextHint.tier);
+    const result = await revealHintAction(chapterId, stepIndex, nextHint.tier);
     if (result) {
       setRevealedTiers((prev) => [...prev, nextHint.tier]);
     }
@@ -60,8 +61,8 @@ export default function HintSystem({
           <p
             key={h.tier}
             style={{
-              color: "rgba(200, 165, 75, 0.5)",
-              fontFamily: "Georgia, 'Times New Roman', serif",
+              color: colors.gold50,
+              fontFamily,
               fontSize: "14px",
               fontStyle: "italic",
               textAlign: "center",
@@ -78,7 +79,7 @@ export default function HintSystem({
       {!allRevealed && (
         <TextButton
           onClick={handleReveal}
-          disabled={loading}
+          disabled={loading || !revealHintAction}
           style={{ cursor: loading ? "wait" : undefined }}
         >
           {loading ? "Revealing..." : "Request a Hint"}

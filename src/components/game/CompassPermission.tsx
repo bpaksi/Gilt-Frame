@@ -1,6 +1,7 @@
 "use client";
 
 import MarkerSVG from "@/components/ui/MarkerSVG";
+import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface CompassPermissionProps {
@@ -31,8 +32,8 @@ export default function CompassPermission({
 
       <div
         style={{
-          color: "rgba(200, 165, 75, 0.7)",
-          fontFamily: "Georgia, 'Times New Roman', serif",
+          color: colors.gold70,
+          fontFamily,
           fontSize: "16px",
           fontStyle: "italic",
           textAlign: "center",

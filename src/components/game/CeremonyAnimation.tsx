@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import TextButton from "@/components/ui/TextButton";
+import { colors } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 import {
   easeInOut, easeOut, easeIn, clamp01, lerp, prog, pointOnBorder,
@@ -327,7 +328,7 @@ export default function CeremonyAnimation({
           <rect
             ref={borderRef}
             x={FRAME_X} y={FRAME_Y} width={FRAME_W} height={FRAME_H} rx="2"
-            fill="none" stroke="#C9A84C" strokeWidth="1.5"
+            fill="none" stroke={colors.gold} strokeWidth="1.5"
             style={{ opacity: 0 }}
           />
 
@@ -356,13 +357,13 @@ export default function CeremonyAnimation({
           <path
             ref={curve1Ref}
             d="M 64,65 C 64,130 136,112 136,176"
-            fill="none" stroke="#C9A84C" strokeWidth="1.5"
+            fill="none" stroke={colors.gold} strokeWidth="1.5"
             style={{ opacity: 0 }}
           />
           <path
             ref={curve2Ref}
             d="M 136,65 C 136,130 64,112 64,176"
-            fill="none" stroke="#C9A84C" strokeWidth="1.5"
+            fill="none" stroke={colors.gold} strokeWidth="1.5"
             style={{ opacity: 0 }}
           />
 
@@ -372,7 +373,7 @@ export default function CeremonyAnimation({
               key={`${pos.cx}-${pos.cy}`}
               ref={(el) => { dotRefs.current[i] = el; }}
               cx={pos.cx} cy={pos.cy} r="3"
-              fill="#C9A84C"
+              fill={colors.gold}
               style={{ opacity: 0 }}
             />
           ))}

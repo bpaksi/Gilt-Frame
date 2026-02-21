@@ -4,18 +4,23 @@ import Link from "next/link";
 import TextButton from "@/components/ui/TextButton";
 import UppercaseLabel from "@/components/ui/UppercaseLabel";
 import { useShareAction } from "@/lib/hooks/useShareAction";
-import type { MomentRow } from "@/lib/actions/moments";
-import { gameConfig } from "@/config";
+import { colors, fontFamily } from "@/components/ui/tokens";
+import type { ShowcaseDefinition } from "@/components/showcase";
+
+type MomentLike = {
+  id: string;
+  chapter_id?: string | null;
+  narrative_text?: string | null;
+  share_token: string;
+  created_at: string;
+};
 
 interface MomentCardProps {
-  moment: MomentRow;
+  moment: MomentLike;
+  chapterName?: string;
 }
 
-export default function MomentCard({ moment }: MomentCardProps) {
-  const chapter = moment.chapter_id
-    ? gameConfig.chapters[moment.chapter_id]
-    : null;
-
+export default function MomentCard({ moment, chapterName }: MomentCardProps) {
   const date = new Date(moment.created_at).toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
@@ -27,7 +32,7 @@ export default function MomentCard({ moment }: MomentCardProps) {
   return (
     <div
       style={{
-        border: "1px solid rgba(200, 165, 75, 0.12)",
+        border: `1px solid ${colors.gold12}`,
         padding: "20px",
         display: "flex",
         flexDirection: "column",
@@ -42,12 +47,12 @@ export default function MomentCard({ moment }: MomentCardProps) {
         }}
       >
         <UppercaseLabel style={{ letterSpacing: "2px" }}>
-          {chapter?.name ?? "Unknown Chapter"}
+          {chapterName ?? "Unknown Chapter"}
         </UppercaseLabel>
         <p
           style={{
-            color: "rgba(200, 165, 75, 0.3)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: colors.gold30,
+            fontFamily,
             fontSize: "11px",
           }}
         >
@@ -59,8 +64,8 @@ export default function MomentCard({ moment }: MomentCardProps) {
         <Link
           href={`/journey/${moment.id}`}
           style={{
-            color: "rgba(200, 165, 75, 0.8)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: colors.gold80,
+            fontFamily,
             fontSize: "15px",
             fontStyle: "italic",
             lineHeight: 1.7,
@@ -82,3 +87,20 @@ export default function MomentCard({ moment }: MomentCardProps) {
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<MomentCardProps> = {
+  category: "game",
+  label: "Moment Card",
+  description: "Journey timeline entry with chapter, date, narrative preview and share action",
+  uses: ["UppercaseLabel", "TextButton"],
+  defaults: {
+    moment: {
+      id: "demo-moment-1",
+      chapter_id: "ch1",
+      narrative_text: "You stood before the frame as the afternoon light caught its gilded edge. Something stirred within you.",
+      share_token: "demo-token",
+      created_at: new Date().toISOString(),
+    },
+    chapterName: "The First Sight",
+  },
+};

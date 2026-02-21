@@ -4,6 +4,7 @@ import { useState, useCallback, useRef, useMemo } from "react";
 import HintSystem from "../HintSystem";
 import OptionButton from "@/components/ui/OptionButton";
 import WaveDivider from "@/components/ui/WaveDivider";
+import { colors, fontFamily } from "@/components/ui/tokens";
 import { recordAnswer } from "@/lib/actions/quest";
 import type { MultipleChoiceConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
@@ -124,8 +125,8 @@ export default function MultipleChoice({
       {/* Question text */}
       <p
         style={{
-          color: "rgba(200, 165, 75, 0.9)",
-          fontFamily: "Georgia, 'Times New Roman', serif",
+          color: colors.gold90,
+          fontFamily,
           fontSize: "20px",
           fontStyle: "italic",
           textAlign: "center",
@@ -200,4 +201,16 @@ export const showcase: ShowcaseDefinition<MultipleChoiceProps> = {
   label: "Multiple Choice",
   description: "Sequential multiple-choice questions with hints",
   uses: ["HintSystem", "OptionButton", "WaveDivider"],
+  defaults: {
+    config: {
+      questions: [
+        {
+          question: "Who founded the Order of the Gilt Frame?",
+          options: ["A scholar", "A painter", "A merchant", "A knight"],
+          correct: 1,
+        },
+      ],
+    },
+    onAdvance: () => {},
+  },
 };

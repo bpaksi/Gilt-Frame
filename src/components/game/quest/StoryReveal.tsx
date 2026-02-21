@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import AmbientParticles from "@/components/ui/AmbientParticles";
 import GhostButton from "@/components/ui/GhostButton";
 import UppercaseLabel from "@/components/ui/UppercaseLabel";
+import { colors, fontFamily } from "@/components/ui/tokens";
 import type { StoryRevealConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 import CeremonyAnimation from "../CeremonyAnimation";
@@ -24,7 +25,7 @@ export default function StoryReveal({ config, onAdvance, chapterName }: StoryRev
       style={{
         position: "fixed",
         inset: 0,
-        background: "#0a0a0a",
+        background: colors.bg,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -52,6 +53,14 @@ export const showcase: ShowcaseDefinition<StoryRevealProps> = {
   label: "Story Reveal",
   description: "Ceremony animation with story text reveal and continue button",
   uses: ["AmbientParticles", "GhostButton", "UppercaseLabel", "CeremonyAnimation"],
+  defaults: {
+    config: {
+      primary: "You have uncovered the first thread. The mystery deepens.",
+      secondary: "The Order watches. The Sparrow rises.",
+      skip_ceremony: true,
+    },
+    onAdvance: () => {},
+  },
 };
 
 /* ─── Text Phase ──────────────────────────────────────────────────────────── */
@@ -204,8 +213,8 @@ function TextPhase({
             opacity: showLines[i] ? 1 : 0,
             transform: showLines[i] ? "translateY(0)" : "translateY(12px)",
             transition: "opacity 0.8s ease, transform 0.8s ease",
-            color: "rgba(200, 165, 75, 0.9)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: colors.gold90,
+            fontFamily: fontFamily,
             fontSize: "18px",
             fontStyle: "italic",
             textAlign: "center",
@@ -240,8 +249,8 @@ function TextPhase({
             opacity: showSecondary ? 0.7 : 0,
             transform: showSecondary ? "translateY(0)" : "translateY(12px)",
             transition: "opacity 0.8s ease, transform 0.8s ease",
-            color: "rgba(200, 165, 75, 0.7)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: colors.gold70,
+            fontFamily: fontFamily,
             fontSize: "14px",
             fontStyle: "italic",
             textAlign: "center",

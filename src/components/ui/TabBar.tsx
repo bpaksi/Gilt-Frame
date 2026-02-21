@@ -2,25 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { colors, fontFamily, MIN_TAP_TARGET } from "./tokens";
 import MarkerSVG from "./MarkerSVG";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
-const TABS = [
-  {
-    label: "Pursuit",
-    href: "/pursuit",
-    icon: "marker",
-  },
-  {
-    label: "Journey",
-    href: "/journey",
-    icon: "book",
-  },
-  {
-    label: "Oracle",
-    href: "/oracle",
-    icon: "eye",
-  },
-] as const;
+export type TabIconType = "marker" | "book" | "eye";
+
+export interface TabConfig {
+  label: string;
+  href: string;
+  icon: TabIconType;
+}
+
+interface TabBarProps {
+  tabs: TabConfig[];
+}
 
 function BookIcon({ color }: { color: string }) {
   return (
@@ -40,7 +36,7 @@ function EyeIcon({ color }: { color: string }) {
   );
 }
 
-export default function TabBar() {
+export default function TabBar({ tabs }: TabBarProps) {
   const pathname = usePathname();
 
   return (
@@ -52,18 +48,16 @@ export default function TabBar() {
         right: 0,
         height: "calc(60px + env(safe-area-inset-bottom))",
         paddingBottom: "env(safe-area-inset-bottom)",
-        background: "#0a0a0a",
-        borderTop: "1px solid rgba(200, 165, 75, 0.12)",
+        background: colors.bg,
+        borderTop: `1px solid ${colors.gold12}`,
         display: "flex",
         alignItems: "stretch",
         zIndex: 50,
       }}
     >
-      {TABS.map((tab) => {
+      {tabs.map((tab) => {
         const isActive = pathname === tab.href || pathname.startsWith(tab.href + "/");
-        const color = isActive
-          ? "rgba(200, 165, 75, 0.9)"
-          : "rgba(200, 165, 75, 0.35)";
+        const color = isActive ? colors.gold90 : colors.gold35;
 
         return (
           <Link
@@ -77,15 +71,13 @@ export default function TabBar() {
               justifyContent: "center",
               gap: "4px",
               textDecoration: "none",
-              minHeight: "44px",
+              minHeight: MIN_TAP_TARGET,
               color,
               transition: "color 0.2s ease",
             }}
           >
             <span style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {tab.icon === "marker" && (
-                <MarkerSVG size={22} variant={isActive ? "gold" : "gold"} />
-              )}
+              {tab.icon === "marker" && <MarkerSVG size={22} variant="gold" />}
               {tab.icon === "book" && <BookIcon color={color} />}
               {tab.icon === "eye" && <EyeIcon color={color} />}
             </span>
@@ -94,7 +86,7 @@ export default function TabBar() {
                 fontSize: "10px",
                 textTransform: "uppercase",
                 letterSpacing: "2px",
-                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontFamily,
                 color,
                 lineHeight: 1,
               }}
@@ -107,3 +99,16 @@ export default function TabBar() {
     </nav>
   );
 }
+
+export const showcase: ShowcaseDefinition<TabBarProps> = {
+  category: "ui",
+  label: "Tab Bar",
+  description: "Fixed bottom navigation bar with active-state icon highlighting",
+  defaults: {
+    tabs: [
+      { label: "Home", href: "#home", icon: "marker" },
+      { label: "Journey", href: "#journey", icon: "book" },
+      { label: "Oracle", href: "#oracle", icon: "eye" },
+    ],
+  },
+};

@@ -2,6 +2,8 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import MarkerSVG from "@/components/ui/MarkerSVG";
+import { colors, fontFamily, MIN_TAP_TARGET } from "@/components/ui/tokens";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 type Conversation = {
   question: string;
@@ -150,8 +152,8 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
     >
       <p
         style={{
-          color: "rgba(200, 165, 75, 0.3)",
-          fontFamily: "Georgia, 'Times New Roman', serif",
+          color: colors.gold30,
+          fontFamily,
           fontSize: "13px",
           fontStyle: "italic",
           lineHeight: 1.7,
@@ -166,8 +168,8 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           <p
             style={{
-              color: "rgba(200, 165, 75, 0.5)",
-              fontFamily: "Georgia, 'Times New Roman', serif",
+              color: colors.gold50,
+              fontFamily,
               fontSize: "14px",
               fontStyle: "italic",
             }}
@@ -176,12 +178,12 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
           </p>
           <p
             style={{
-              color: "rgba(200, 165, 75, 0.8)",
-              fontFamily: "Georgia, 'Times New Roman', serif",
+              color: colors.gold80,
+              fontFamily,
               fontSize: "15px",
               fontStyle: "italic",
               lineHeight: 1.8,
-              borderLeft: "2px solid rgba(200, 165, 75, 0.15)",
+              borderLeft: `2px solid ${colors.gold15}`,
               paddingLeft: "16px",
             }}
           >
@@ -195,8 +197,8 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           <p
             style={{
-              color: "rgba(200, 165, 75, 0.5)",
-              fontFamily: "Georgia, 'Times New Roman', serif",
+              color: colors.gold50,
+              fontFamily,
               fontSize: "14px",
               fontStyle: "italic",
             }}
@@ -205,12 +207,12 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
           </p>
           <p
             style={{
-              color: "rgba(200, 165, 75, 0.8)",
-              fontFamily: "Georgia, 'Times New Roman', serif",
+              color: colors.gold80,
+              fontFamily,
               fontSize: "15px",
               fontStyle: "italic",
               lineHeight: 1.8,
-              borderLeft: "2px solid rgba(200, 165, 75, 0.15)",
+              borderLeft: `2px solid ${colors.gold15}`,
               paddingLeft: "16px",
             }}
           >
@@ -232,8 +234,8 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
           <MarkerSVG size={20} variant="gold" animated />
           <p
             style={{
-              color: "rgba(200, 165, 75, 0.4)",
-              fontFamily: "Georgia, 'Times New Roman', serif",
+              color: colors.gold40,
+              fontFamily,
               fontSize: "13px",
               fontStyle: "italic",
             }}
@@ -259,14 +261,14 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
           style={{
             flex: 1,
             background: "transparent",
-            border: "1px solid rgba(200, 165, 75, 0.2)",
-            color: "rgba(200, 165, 75, 0.8)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            border: `1px solid ${colors.gold20}`,
+            color: colors.gold80,
+            fontFamily,
             fontSize: "15px",
             fontStyle: "italic",
             padding: "12px 16px",
             outline: "none",
-            minHeight: "44px",
+            minHeight: MIN_TAP_TARGET,
           }}
         />
         <button
@@ -274,17 +276,17 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
           disabled={streaming || !question.trim()}
           style={{
             background: "none",
-            border: "1px solid rgba(200, 165, 75, 0.2)",
+            border: `1px solid ${colors.gold20}`,
             color:
               streaming || !question.trim()
-                ? "rgba(200, 165, 75, 0.2)"
-                : "rgba(200, 165, 75, 0.6)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+                ? colors.gold20
+                : colors.gold60,
+            fontFamily,
             fontSize: "14px",
             fontStyle: "italic",
             padding: "12px 20px",
             cursor: streaming || !question.trim() ? "default" : "pointer",
-            minHeight: "44px",
+            minHeight: MIN_TAP_TARGET,
             WebkitTapHighlightColor: "transparent",
           }}
         >
@@ -294,3 +296,11 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<AskTheOracleProps> = {
+  category: "game",
+  label: "Ask the Oracle",
+  description: "Streaming Q&A interface with progressive delay throttling",
+  uses: ["MarkerSVG"],
+  defaults: { onConversation: () => {} },
+};

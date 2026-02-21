@@ -75,8 +75,20 @@ export default function Accordion<T>({
   );
 }
 
-export const showcase: ShowcaseDefinition = {
+type DemoItem = { title: string; body: string };
+
+export const showcase: ShowcaseDefinition<AccordionProps<DemoItem>> = {
   category: "ui",
   label: "Accordion",
   description: "Expandable list with single-item expansion",
+  defaults: {
+    items: [
+      { title: "The Gilt Frame", body: "A secret order that guards the boundaries between worlds." },
+      { title: "The Sparrows", body: "Initiates who seek to prove their worth through trials of perception." },
+      { title: "The Oracle", body: "Speak your questions into the dark. Answers come to those who listen." },
+    ],
+    keyExtractor: (_item, index) => String(index),
+    renderHeader: (item) => item.title,
+    renderBody: (item) => item.body,
+  },
 };

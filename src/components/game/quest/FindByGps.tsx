@@ -11,6 +11,7 @@ import MarkerSVG from "@/components/ui/MarkerSVG";
 import GhostButton from "@/components/ui/GhostButton";
 import type { FindByGpsConfig, HintItem } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
+import { colors, fontFamily, MIN_TAP_TARGET } from "@/components/ui/tokens";
 
 interface FindByGpsProps {
   config: FindByGpsConfig;
@@ -73,7 +74,7 @@ export default function FindByGps({
       // Compass ring
       ctx.beginPath();
       ctx.arc(CENTER, CENTER, RING_R, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(201, 168, 76, 0.25)";
+      ctx.strokeStyle = colors.gold25;
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
@@ -104,8 +105,8 @@ export default function FindByGps({
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.strokeStyle = isMajor
-          ? "rgba(201, 168, 76, 0.5)"
-          : "rgba(201, 168, 76, 0.2)";
+          ? colors.gold50
+          : colors.gold20;
         ctx.lineWidth = isMajor ? 1.5 : 1;
         ctx.stroke();
 
@@ -113,8 +114,8 @@ export default function FindByGps({
           const label = cardinals[deg / 90];
           const lx = CENTER + Math.cos(rad) * (RING_R - 30);
           const ly = CENTER + Math.sin(rad) * (RING_R - 30);
-          ctx.font = "italic 14px Georgia, serif";
-          ctx.fillStyle = "rgba(201, 168, 76, 0.45)";
+          ctx.font = `italic 14px ${fontFamily}`;
+          ctx.fillStyle = colors.gold45;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(label, lx, ly);
@@ -144,7 +145,7 @@ export default function FindByGps({
           CENTER + Math.cos(arrowAngle) * arrowLen,
           CENTER + Math.sin(arrowAngle) * arrowLen
         );
-        ctx.strokeStyle = "rgba(201, 168, 76, 0.7)";
+        ctx.strokeStyle = colors.gold70;
         ctx.lineWidth = 3;
         ctx.stroke();
 
@@ -164,7 +165,7 @@ export default function FindByGps({
           ex - headLen * Math.cos(arrowAngle + headAngle),
           ey - headLen * Math.sin(arrowAngle + headAngle)
         );
-        ctx.strokeStyle = "rgba(201, 168, 76, 0.7)";
+        ctx.strokeStyle = colors.gold70;
         ctx.lineWidth = 3;
         ctx.stroke();
 
@@ -191,7 +192,7 @@ export default function FindByGps({
 
       // Center marker outline
       ctx.globalAlpha = 0.3;
-      ctx.strokeStyle = "rgba(201, 168, 76, 0.5)";
+      ctx.strokeStyle = colors.gold50;
       ctx.lineWidth = 1;
       ctx.strokeRect(CENTER - 15, CENTER - 20, 30, 40);
       ctx.globalAlpha = 1;
@@ -296,8 +297,8 @@ export default function FindByGps({
         {config.wayfinding_text && (
           <p
             style={{
-              color: "rgba(200, 165, 75, 0.7)",
-              fontFamily: "Georgia, 'Times New Roman', serif",
+              color: colors.gold70,
+              fontFamily: fontFamily,
               fontSize: "17px",
               fontStyle: "italic",
               textAlign: "center",
@@ -320,8 +321,8 @@ export default function FindByGps({
         {distanceText && (
           <p
             style={{
-              color: "rgba(200, 165, 75, 0.6)",
-              fontFamily: "Georgia, 'Times New Roman', serif",
+              color: colors.gold60,
+              fontFamily: fontFamily,
               fontSize: "15px",
               fontStyle: "italic",
               textAlign: "center",
@@ -383,8 +384,8 @@ export default function FindByGps({
               style={{
                 opacity: lineVisibility[i] ? 1 : 0,
                 transition: "opacity 0.8s ease",
-                color: "rgba(200, 165, 75, 0.85)",
-                fontFamily: "Georgia, 'Times New Roman', serif",
+                color: colors.gold85,
+                fontFamily: fontFamily,
                 fontSize: "18px",
                 fontStyle: "italic",
                 textAlign: "center",
@@ -411,8 +412,8 @@ export default function FindByGps({
           alignItems: "center",
           gap: "24px",
           padding: "20px",
-          minWidth: "44px",
-          minHeight: "44px",
+          minWidth: MIN_TAP_TARGET,
+          minHeight: MIN_TAP_TARGET,
           WebkitTapHighlightColor: "transparent",
         }}
       >
@@ -432,8 +433,8 @@ export default function FindByGps({
           style={{
             opacity: textVisible ? 1 : 0,
             transition: "opacity 0.8s ease",
-            color: "rgba(200, 165, 75, 0.7)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: colors.gold70,
+            fontFamily: fontFamily,
             fontSize: "16px",
             fontStyle: "italic",
             textAlign: "center",
@@ -454,4 +455,11 @@ export const showcase: ShowcaseDefinition<FindByGpsProps> = {
   label: "Find by GPS",
   description: "GPS compass (full mode) leading to tappable marker, or tappable marker only (lite mode, no coordinates).",
   uses: ["HintSystem", "CompassPermission", "MarkerSVG", "GhostButton"],
+  defaults: {
+    config: {
+      instruction: "Tap the marker when you have found it.",
+      title_lines: ["You have arrived.", "Something stirs nearby."],
+    },
+    onAdvance: () => {},
+  },
 };

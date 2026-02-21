@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import AmbientParticles from "@/components/ui/AmbientParticles";
+import { colors } from "@/components/ui/tokens";
 import MarkerAnimation from "./MarkerAnimation";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
@@ -31,7 +32,7 @@ export default function GiltFrame({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        background: "#0a0a0a",
+        background: colors.bg,
         overflow: "hidden",
         position: "relative",
         padding: "40px 24px",

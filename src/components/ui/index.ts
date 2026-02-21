@@ -1,5 +1,7 @@
 export { colors, fontFamily, MIN_TAP_TARGET, questContainerStyle } from "./tokens";
 export { default as Accordion } from "./Accordion";
+export { default as TabBar } from "./TabBar";
+export type { TabConfig, TabIconType } from "./TabBar";
 export { default as AmbientParticles } from "./AmbientParticles";
 export { default as EmptyState } from "./EmptyState";
 export { default as GhostButton } from "./GhostButton";

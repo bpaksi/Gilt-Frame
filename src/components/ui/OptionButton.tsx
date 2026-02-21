@@ -27,7 +27,7 @@ const stateStyles: Record<OptionState, { border: string; bg: string; text: strin
     bg: colors.gold10,
     text: colors.gold,
     opacity: 1,
-    shadow: `inset 0 0 20px rgba(200, 165, 75, 0.06), 0 0 8px rgba(200, 165, 75, 0.04)`,
+    shadow: `inset 0 0 20px ${colors.gold06}, 0 0 8px ${colors.gold04}`,
   },
   wrong: {
     border: colors.errorRed50,

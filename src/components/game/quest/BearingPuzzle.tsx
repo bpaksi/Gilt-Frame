@@ -4,6 +4,7 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
 import CompassPermission from "../CompassPermission";
 import MarkerSVG from "@/components/ui/MarkerSVG";
+import { colors, fontFamily } from "@/components/ui/tokens";
 import type { BearingPuzzleConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
@@ -119,7 +120,7 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
       // Compass ring
       ctx.beginPath();
       ctx.arc(CENTER, CENTER, RING_R, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(201, 168, 76, 0.3)";
+      ctx.strokeStyle = colors.gold30;
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
@@ -138,8 +139,8 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.strokeStyle = isMajor
-          ? "rgba(201, 168, 76, 0.55)"
-          : "rgba(201, 168, 76, 0.25)";
+          ? colors.gold55
+          : colors.gold25;
         ctx.lineWidth = isMajor ? 1.5 : 1;
         ctx.stroke();
 
@@ -147,8 +148,8 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
           const label = cardinals[deg / 90];
           const lx = CENTER + Math.cos(rad) * (RING_R - 30);
           const ly = CENTER + Math.sin(rad) * (RING_R - 30);
-          ctx.font = "italic 14px Georgia, serif";
-          ctx.fillStyle = "rgba(201, 168, 76, 0.55)";
+          ctx.font = `italic 14px ${fontFamily}`;
+          ctx.fillStyle = colors.gold55;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(label, lx, ly);
@@ -160,13 +161,13 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
       ctx.beginPath();
       ctx.moveTo(CENTER, CENTER + 30);
       ctx.lineTo(CENTER, CENTER - needleLen);
-      ctx.strokeStyle = "rgba(201, 168, 76, 0.55)";
+      ctx.strokeStyle = colors.gold55;
       ctx.lineWidth = 2;
       ctx.stroke();
       // Tip dot
       ctx.beginPath();
       ctx.arc(CENTER, CENTER - needleLen, 6, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(201, 168, 76, 0.55)";
+      ctx.fillStyle = colors.gold55;
       ctx.fill();
 
       // Drive DOM marker from draw loop
@@ -289,8 +290,8 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
         `}</style>
         <div
           style={{
-            color: "rgba(201, 168, 76, 0.7)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: colors.gold70,
+            fontFamily: fontFamily,
             fontSize: "17px",
             fontStyle: "italic",
             textAlign: "center",
@@ -303,8 +304,8 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
         <div
           key={countdown}
           style={{
-            color: "rgba(232, 204, 106, 0.9)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: colors.goldBright90,
+            fontFamily: fontFamily,
             fontSize: "64px",
             fontStyle: "italic",
             letterSpacing: "4px",
@@ -339,8 +340,8 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
         `}</style>
         <div
           style={{
-            color: "rgba(232, 204, 106, 0.9)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: colors.goldBright90,
+            fontFamily: fontFamily,
             fontSize: "22px",
             fontStyle: "italic",
             textAlign: "center",
@@ -370,8 +371,8 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
       >
         <div
           style={{
-            color: "rgba(200, 165, 75, 0.7)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: colors.gold70,
+            fontFamily: fontFamily,
             fontSize: "16px",
             fontStyle: "italic",
             textAlign: "center",
@@ -404,8 +405,8 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
       {config.instruction && (
         <div
           style={{
-            color: "rgba(200, 165, 75, 0.55)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: colors.gold55,
+            fontFamily: fontFamily,
             fontSize: "17px",
             fontStyle: "italic",
             textAlign: "center",
@@ -430,7 +431,7 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
       <div
         ref={statusTextRef}
         style={{
-          fontFamily: "Georgia, 'Times New Roman', serif",
+          fontFamily: fontFamily,
           fontSize: "15px",
           fontStyle: "italic",
           textAlign: "center",
@@ -449,4 +450,10 @@ export const showcase: ShowcaseDefinition<BearingPuzzleProps> = {
   label: "Bearing Puzzle",
   description: "Device orientation puzzle — point phone at target bearing and hold steady",
   uses: ["CompassPermission", "MarkerSVG"],
+  defaults: {
+    config: {
+      compass_target: 180,
+    },
+    onAdvance: () => {},
+  },
 };

@@ -30,7 +30,7 @@ export default function GhostButton({ children, disabled, style, ...rest }: Ghos
         : colors.gold70;
 
   const shadowGlow = !disabled && hover
-    ? `0 0 12px rgba(200, 165, 75, 0.06), inset 0 0 12px rgba(200, 165, 75, 0.03)`
+    ? `0 0 12px ${colors.gold06}, inset 0 0 12px ${colors.gold03}`
     : "none";
 
   return (

@@ -8,6 +8,7 @@ import OptionButton from "@/components/ui/OptionButton";
 import WaveDivider from "@/components/ui/WaveDivider";
 import type { FindByTextConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
+import { colors, fontFamily, MIN_TAP_TARGET } from "@/components/ui/tokens";
 
 interface FindByTextProps {
   config: FindByTextConfig;
@@ -163,8 +164,8 @@ export default function FindByText({
               style={{
                 opacity: lineVisibility[i] ? 1 : 0,
                 transition: "opacity 0.8s ease",
-                color: "rgba(200, 165, 75, 0.85)",
-                fontFamily: "Georgia, 'Times New Roman', serif",
+                color: colors.gold85,
+                fontFamily: fontFamily,
                 fontSize: "18px",
                 fontStyle: "italic",
                 textAlign: "center",
@@ -191,8 +192,8 @@ export default function FindByText({
             alignItems: "center",
             gap: "24px",
             padding: "20px",
-            minWidth: "44px",
-            minHeight: "44px",
+            minWidth: MIN_TAP_TARGET,
+            minHeight: MIN_TAP_TARGET,
             WebkitTapHighlightColor: "transparent",
           }}
         >
@@ -212,8 +213,8 @@ export default function FindByText({
             style={{
               opacity: instructionVisible ? 1 : 0,
               transition: "opacity 0.8s ease",
-              color: "rgba(200, 165, 75, 0.7)",
-              fontFamily: "Georgia, 'Times New Roman', serif",
+              color: colors.gold70,
+              fontFamily: fontFamily,
               fontSize: "16px",
               fontStyle: "italic",
               textAlign: "center",
@@ -264,8 +265,8 @@ export default function FindByText({
       {/* Question */}
       <p
         style={{
-          color: "rgba(200, 165, 75, 0.9)",
-          fontFamily: "Georgia, 'Times New Roman', serif",
+          color: colors.gold90,
+          fontFamily: fontFamily,
           fontSize: "20px",
           fontStyle: "italic",
           textAlign: "center",
@@ -315,4 +316,21 @@ export const showcase: ShowcaseDefinition<FindByTextProps> = {
   label: "Find by Text",
   description: "Text-guided search leading to looping multiple-choice identification",
   uses: ["MarkerSVG", "HintSystem", "OptionButton", "WaveDivider"],
+  defaults: {
+    config: {
+      guidance_text: "In the east wing, seek the canvas that glows.\nLook for what time has gilded.",
+      hints: [
+        { tier: 1, hint: "It hangs near the window." },
+        { tier: 2, hint: "The title begins with 'The'." },
+      ],
+      question: "What is the name of the painting?",
+      correct_answer: "The Golden Hour",
+      painting_pool: [
+        "The Silver Mist",
+        "The Amber Tide",
+        "The Copper Dawn",
+      ],
+    },
+    onAdvance: () => {},
+  },
 };

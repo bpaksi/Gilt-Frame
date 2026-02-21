@@ -1,5 +1,6 @@
 "use client";
 
+import { colors } from "./tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface MarkerSVGProps {
@@ -9,9 +10,9 @@ interface MarkerSVGProps {
 }
 
 const COLORS = {
-  gold: "#C8A54B",
-  dark: "#1e1912",
-  white: "#ffffff",
+  gold: colors.gold,
+  dark: colors.dark,
+  white: colors.white,
 };
 
 export default function MarkerSVG({

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { resolveTrack } from "@/lib/track";
 import { getMomentById } from "@/lib/actions/moments";
+import { gameConfig } from "@/config";
 import MomentDetail from "@/components/game/MomentDetail";
 
 export const metadata: Metadata = {
@@ -20,5 +21,9 @@ export default async function MomentDetailPage({
   const moment = await getMomentById(momentId, trackInfo.track);
   if (!moment) notFound();
 
-  return <MomentDetail moment={moment} />;
+  const chapterName = moment.chapter_id
+    ? gameConfig.chapters[moment.chapter_id]?.name
+    : undefined;
+
+  return <MomentDetail moment={moment} chapterName={chapterName} />;
 }
