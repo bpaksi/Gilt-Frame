@@ -103,8 +103,7 @@ export async function POST(request: NextRequest) {
       track,
       chapter_id: "prologue",
       moment_type: "passphrase",
-      title: "The Words Spoken",
-      body: "The acrostic revealed its truth. The Order heard.",
+      narrative_text: "The acrostic revealed its truth. The Order heard.",
       share_token: crypto.randomUUID(),
     })
     .then(() => {});

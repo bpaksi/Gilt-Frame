@@ -14,7 +14,7 @@ export type MomentRow = {
   track: string;
 };
 
-export async function getMoments(track: string): Promise<MomentRow[]> {
+export async function getMoments(track: "test" | "live"): Promise<MomentRow[]> {
   const supabase = createAdminClient();
   const { data } = await supabase
     .from("moments")
@@ -26,7 +26,7 @@ export async function getMoments(track: string): Promise<MomentRow[]> {
 
 export async function getMomentById(
   id: string,
-  track: string
+  track: "test" | "live"
 ): Promise<MomentRow | null> {
   const supabase = createAdminClient();
   const { data } = await supabase

@@ -40,24 +40,24 @@ export type Database = {
           details: Json | null
           event_type: string
           id: string
-          source: string
-          track: string | null
+          source: Database["public"]["Enums"]["activity_source"]
+          track: Database["public"]["Enums"]["track_type"] | null
         }
         Insert: {
           created_at?: string | null
           details?: Json | null
           event_type: string
           id?: string
-          source: string
-          track?: string | null
+          source: Database["public"]["Enums"]["activity_source"]
+          track?: Database["public"]["Enums"]["track_type"] | null
         }
         Update: {
           created_at?: string | null
           details?: Json | null
           event_type?: string
           id?: string
-          source?: string
-          track?: string | null
+          source?: Database["public"]["Enums"]["activity_source"]
+          track?: Database["public"]["Enums"]["track_type"] | null
         }
         Relationships: []
       }
@@ -67,21 +67,21 @@ export type Database = {
           completed_at: string | null
           id: string
           started_at: string
-          track: string
+          track: Database["public"]["Enums"]["track_type"]
         }
         Insert: {
           chapter_id: string
           completed_at?: string | null
           id?: string
           started_at?: string
-          track: string
+          track: Database["public"]["Enums"]["track_type"]
         }
         Update: {
           chapter_id?: string
           completed_at?: string | null
           id?: string
           started_at?: string
-          track?: string
+          track?: Database["public"]["Enums"]["track_type"]
         }
         Relationships: []
       }
@@ -94,7 +94,7 @@ export type Database = {
           last_seen: string | null
           revoked: boolean
           token: string
-          track: string
+          track: Database["public"]["Enums"]["track_type"]
           user_agent: string | null
         }
         Insert: {
@@ -105,7 +105,7 @@ export type Database = {
           last_seen?: string | null
           revoked?: boolean
           token: string
-          track: string
+          track: Database["public"]["Enums"]["track_type"]
           user_agent?: string | null
         }
         Update: {
@@ -116,7 +116,7 @@ export type Database = {
           last_seen?: string | null
           revoked?: boolean
           token?: string
-          track?: string
+          track?: Database["public"]["Enums"]["track_type"]
           user_agent?: string | null
         }
         Relationships: []
@@ -157,7 +157,7 @@ export type Database = {
           error: string | null
           id: string
           sent_at: string | null
-          status: string | null
+          status: Database["public"]["Enums"]["message_status"] | null
           step_progress_id: string | null
           to: string
         }
@@ -167,7 +167,7 @@ export type Database = {
           error?: string | null
           id?: string
           sent_at?: string | null
-          status?: string | null
+          status?: Database["public"]["Enums"]["message_status"] | null
           step_progress_id?: string | null
           to: string
         }
@@ -177,7 +177,7 @@ export type Database = {
           error?: string | null
           id?: string
           sent_at?: string | null
-          status?: string | null
+          status?: Database["public"]["Enums"]["message_status"] | null
           step_progress_id?: string | null
           to?: string
         }
@@ -197,33 +197,33 @@ export type Database = {
           chapter_id: string | null
           created_at: string
           id: string
-          moment_type: string
+          moment_type: Database["public"]["Enums"]["moment_type"]
           narrative_text: string | null
           quest_id: string | null
           share_token: string
-          track: string
+          track: Database["public"]["Enums"]["track_type"]
         }
         Insert: {
           assets?: Json
           chapter_id?: string | null
           created_at?: string
           id?: string
-          moment_type: string
+          moment_type: Database["public"]["Enums"]["moment_type"]
           narrative_text?: string | null
           quest_id?: string | null
           share_token?: string
-          track?: string
+          track?: Database["public"]["Enums"]["track_type"]
         }
         Update: {
           assets?: Json
           chapter_id?: string | null
           created_at?: string
           id?: string
-          moment_type?: string
+          moment_type?: Database["public"]["Enums"]["moment_type"]
           narrative_text?: string | null
           quest_id?: string | null
           share_token?: string
-          track?: string
+          track?: Database["public"]["Enums"]["track_type"]
         }
         Relationships: []
       }
@@ -236,7 +236,7 @@ export type Database = {
           question: string
           response: string
           tokens_used: number | null
-          track: string
+          track: Database["public"]["Enums"]["track_type"]
         }
         Insert: {
           created_at?: string
@@ -246,7 +246,7 @@ export type Database = {
           question: string
           response: string
           tokens_used?: number | null
-          track?: string
+          track?: Database["public"]["Enums"]["track_type"]
         }
         Update: {
           created_at?: string
@@ -256,7 +256,7 @@ export type Database = {
           question?: string
           response?: string
           tokens_used?: number | null
-          track?: string
+          track?: Database["public"]["Enums"]["track_type"]
         }
         Relationships: []
       }
@@ -347,7 +347,14 @@ export type Database = {
       reset_track: { Args: { p_track: string }; Returns: undefined }
     }
     Enums: {
-      [_ in never]: never
+      activity_source: "player" | "admin" | "system"
+      message_status: "pending" | "scheduled" | "sent" | "delivered" | "failed"
+      moment_type:
+        | "quest_complete"
+        | "chapter_start"
+        | "chapter_complete"
+        | "passphrase"
+      track_type: "test" | "live"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -477,7 +484,17 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      activity_source: ["player", "admin", "system"],
+      message_status: ["pending", "scheduled", "sent", "delivered", "failed"],
+      moment_type: [
+        "quest_complete",
+        "chapter_start",
+        "chapter_complete",
+        "passphrase",
+      ],
+      track_type: ["test", "live"],
+    },
   },
 } as const
 

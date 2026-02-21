@@ -51,7 +51,7 @@ export async function sendStep(
   const step = matchedStep as SmsStep | EmailStep | LetterStep;
 
   const supabase = createAdminClient();
-  let messageStatus = "sent";
+  let messageStatus: "pending" | "scheduled" | "sent" | "delivered" | "failed" = "sent";
   let error: string | undefined;
 
   // Ensure chapter_progress row exists
@@ -163,7 +163,7 @@ export async function sendStep(
   if (step.config.companion_message) {
     const comp = step.config.companion_message;
     const compRecipient = resolveRecipient(trackObj, comp.to);
-    let companionStatus = "pending";
+    let companionStatus: "pending" | "scheduled" | "sent" | "delivered" | "failed" = "pending";
 
     if (compRecipient) {
       const result = await sendSms(compRecipient.phone, comp.body);
