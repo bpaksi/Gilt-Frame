@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createAdminAuthClient } from "@/lib/supabase/server-auth";
 import { createRateLimiter, getClientIp } from "@/lib/rate-limit";
 
 const limiter = createRateLimiter(5, 15 * 60 * 1000);
@@ -14,7 +14,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { email, password } = await request.json();
+  let body: { email?: unknown; password?: unknown };
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+  }
+  const { email, password } = body;
 
   if (!email || !password) {
     return NextResponse.json(
@@ -23,15 +29,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { auth: { persistSession: false } }
-  );
+  const response = NextResponse.json({ success: true });
+
+  // Pass response cookies so the SSR client can write session cookies on sign-in
+  const supabase = await createAdminAuthClient(response.cookies);
 
   const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
+    email: email as string,
+    password: password as string,
   });
 
   if (error || !data.user || !data.session) {
@@ -49,14 +54,7 @@ export async function POST(request: NextRequest) {
 
   limiter.clear(ip);
 
-  const response = NextResponse.json({ success: true });
-  response.cookies.set("admin_session", data.session.access_token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7,
-    path: "/",
-  });
-
+  // Session cookies (access + refresh token) are set automatically by the
+  // @supabase/ssr client via the setAll cookie handler above.
   return response;
 }

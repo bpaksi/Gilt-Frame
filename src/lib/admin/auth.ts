@@ -1,18 +1,12 @@
-import { cookies } from "next/headers";
-import { createClient } from "@supabase/supabase-js";
+import { createAdminAuthClient } from "@/lib/supabase/server-auth";
 
+/**
+ * Verifies the admin session stored in cookies. Uses @supabase/ssr so that
+ * expired access tokens are automatically refreshed via the stored refresh
+ * token — no manual token management required.
+ */
 export async function verifyAdminSession(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const adminSession = cookieStore.get("admin_session");
-
-  if (!adminSession?.value) return false;
-
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { auth: { persistSession: false } }
-  );
-
-  const { data, error } = await supabase.auth.getUser(adminSession.value);
+  const supabase = await createAdminAuthClient();
+  const { data, error } = await supabase.auth.getUser();
   return !error && !!data.user;
 }
