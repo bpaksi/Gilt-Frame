@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useCallback, useRef, useMemo, useEffect } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
+import { useStaggeredReveal } from "@/lib/hooks/useStaggeredReveal";
 import MarkerSVG from "../MarkerSVG";
 import HintSystem from "./HintSystem";
+import OptionButton from "@/components/ui/OptionButton";
+import WaveDivider from "@/components/ui/WaveDivider";
 import type { GuidedIdentificationConfig } from "@/config";
 
 interface GuidedIdentificationProps {
@@ -56,40 +59,13 @@ export default function GuidedIdentification({
 
   // ── Guidance phase entrance animation ────────────────────────────────
   const guidanceLines = useMemo(() => guidance_text.split("\n"), [guidance_text]);
-  const [lineVisibility, setLineVisibility] = useState<boolean[]>([]);
-  const [markerVisible, setMarkerVisible] = useState(false);
-  const [instructionVisible, setInstructionVisible] = useState(false);
-  const [tapReady, setTapReady] = useState(false);
-  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-
-  // Stagger title lines on mount and on return from identification
-  useEffect(() => {
-    if (phase !== "guidance") return;
-
-    const timers = timersRef.current;
-
-    guidanceLines.forEach((_line: string, i: number) => {
-      const t = setTimeout(() => {
-        setLineVisibility((prev) => {
-          const next = [...prev];
-          next[i] = true;
-          return next;
-        });
-      }, i * 500 + 400);
-      timers.push(t);
-    });
-
-    const lastLineDelay = (guidanceLines.length - 1) * 500 + 400 + 800;
-    const markerDelay = lastLineDelay + 1000;
-    timers.push(setTimeout(() => setMarkerVisible(true), markerDelay));
-    timers.push(setTimeout(() => setInstructionVisible(true), markerDelay + 800));
-    timers.push(setTimeout(() => setTapReady(true), markerDelay + 1200));
-
-    return () => {
-      timers.forEach(clearTimeout);
-      timersRef.current = [];
-    };
-  }, [phase, guidanceLines]);
+  const { lineVisibility, markerVisible, textVisible: instructionVisible, tapReady } = useStaggeredReveal({
+    lines: guidanceLines,
+    active: phase === "guidance",
+    markerDelay: 1000,
+    textDelay: 800,
+    tapDelay: 1200,
+  });
 
   // ── Build shuffled options each time we enter identification ──────────
   const [options, setOptions] = useState<string[]>([]);
@@ -119,10 +95,6 @@ export default function GuidedIdentification({
   const returnToGuidance = useCallback(() => {
     setFadeState("out");
     setTimeout(() => {
-      setLineVisibility([]);
-      setMarkerVisible(false);
-      setInstructionVisible(false);
-      setTapReady(false);
       setPhase("guidance");
       setFadeState("in");
     }, 500);
@@ -254,20 +226,9 @@ export default function GuidedIdentification({
         {/* Hint system — always available, player-initiated */}
         {hints.length > 0 && chapterId && stepIndex !== undefined && (
           <>
-            <svg
-              width="120"
-              height="10"
-              viewBox="0 0 120 10"
-              fill="none"
+            <WaveDivider
               style={{ opacity: instructionVisible ? 0.3 : 0, transition: "opacity 0.4s ease", margin: "-8px 0" }}
-            >
-              <path
-                d="M0 5 Q15 1 30 5 Q45 9 60 5 Q75 1 90 5 Q105 9 120 5"
-                stroke="rgba(200, 165, 75, 1)"
-                strokeWidth="1"
-                fill="none"
-              />
-            </svg>
+            />
             <HintSystem
               hints={hints}
               chapterId={chapterId}
@@ -324,46 +285,20 @@ export default function GuidedIdentification({
       >
         {options.map((option, i) => {
           const isSelected = selectedIdx === i;
-          const isCorrectOption = isSelected && isCorrect === true;
-          const isWrongOption = isSelected && isCorrect === false;
-
-          let borderColor = "rgba(200, 165, 75, 0.25)";
-          let bgColor = "transparent";
-          let textColor = "rgba(200, 165, 75, 0.8)";
-
-          if (isCorrectOption) {
-            borderColor = "rgba(200, 165, 75, 0.8)";
-            bgColor = "rgba(200, 165, 75, 0.1)";
-            textColor = "rgba(200, 165, 75, 1)";
-          } else if (isWrongOption) {
-            borderColor = "rgba(180, 50, 40, 0.5)";
-            textColor = "rgba(180, 50, 40, 0.7)";
-          }
+          const state = isSelected && isCorrect === true
+            ? "correct" as const
+            : isSelected && isCorrect === false
+              ? "wrong" as const
+              : "default" as const;
 
           return (
-            <button
+            <OptionButton
               key={option}
-              onClick={() => handleSelect(i)}
+              label={option}
+              state={state}
               disabled={locked}
-              style={{
-                background: bgColor,
-                border: `1px solid ${borderColor}`,
-                color: textColor,
-                fontFamily: "Georgia, 'Times New Roman', serif",
-                fontSize: "15px",
-                fontStyle: "italic",
-                padding: "14px 20px",
-                textAlign: "left",
-                cursor: locked ? "default" : "pointer",
-                transition:
-                  "background 0.3s ease, border-color 0.3s ease, color 0.3s ease, opacity 0.3s ease",
-                opacity: isWrongOption ? 0.5 : 1,
-                minHeight: "44px",
-                WebkitTapHighlightColor: "transparent",
-              }}
-            >
-              {option}
-            </button>
+              onClick={() => handleSelect(i)}
+            />
           );
         })}
       </div>

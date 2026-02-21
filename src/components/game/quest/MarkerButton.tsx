@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useStaggeredReveal } from "@/lib/hooks/useStaggeredReveal";
 import MarkerSVG from "../MarkerSVG";
 import type { MarkerButtonConfig } from "@/config";
+
+const EMPTY_LINES: string[] = [];
 
 interface MarkerButtonProps {
   config: MarkerButtonConfig;
@@ -11,46 +13,11 @@ interface MarkerButtonProps {
 
 export default function MarkerButton({ config, onAdvance }: MarkerButtonProps) {
   const { title_lines } = config;
-  const [markerVisible, setMarkerVisible] = useState(false);
-  const [textVisible, setTextVisible] = useState(false);
-  const [tapReady, setTapReady] = useState(false);
-  const [lineVisibility, setLineVisibility] = useState<boolean[]>([]);
-  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-
   const hasTitle = title_lines && title_lines.length > 0;
 
-  useEffect(() => {
-    const timers = timersRef.current;
-
-    if (hasTitle) {
-      // Stagger title lines first, then show marker
-      title_lines.forEach((_, i) => {
-        const t = setTimeout(() => {
-          setLineVisibility((prev) => {
-            const next = [...prev];
-            next[i] = true;
-            return next;
-          });
-        }, i * 500 + 400);
-        timers.push(t);
-      });
-
-      const lastLineDelay = (title_lines.length - 1) * 500 + 400 + 800;
-      const markerDelay = lastLineDelay + 1500;
-      const t2 = setTimeout(() => setMarkerVisible(true), markerDelay);
-      const t3 = setTimeout(() => setTextVisible(true), markerDelay + 1200);
-      const t4 = setTimeout(() => setTapReady(true), markerDelay + 1600);
-      timers.push(t2, t3, t4);
-    } else {
-      // No title — original timing
-      const t1 = setTimeout(() => setMarkerVisible(true), 1200);
-      const t2 = setTimeout(() => setTextVisible(true), 2800);
-      const t3 = setTimeout(() => setTapReady(true), 3200);
-      timers.push(t1, t2, t3);
-    }
-
-    return () => timers.forEach(clearTimeout);
-  }, [hasTitle, title_lines]);
+  const { lineVisibility, markerVisible, textVisible, tapReady } = useStaggeredReveal({
+    lines: hasTitle ? title_lines : EMPTY_LINES,
+  });
 
   const handleTap = () => {
     if (!tapReady) return;

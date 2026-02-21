@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import Accordion from "@/components/ui/Accordion";
+import EmptyState from "@/components/ui/EmptyState";
+import { colors, fontFamily } from "@/components/ui/tokens";
 import type { DisplayLoreEntry } from "@/lib/lore";
 
 interface ScrollsOfKnowledgeProps {
@@ -10,96 +12,35 @@ interface ScrollsOfKnowledgeProps {
 export default function ScrollsOfKnowledge({
   entries,
 }: ScrollsOfKnowledgeProps) {
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-
   const unlockedEntries = entries.filter((e) => e.unlocked);
 
   if (unlockedEntries.length === 0) {
     return (
-      <p
-        style={{
-          color: "rgba(200, 165, 75, 0.35)",
-          fontFamily: "Georgia, 'Times New Roman', serif",
-          fontSize: "14px",
-          fontStyle: "italic",
-          textAlign: "center",
-          lineHeight: 1.8,
-          padding: "40px 0",
-        }}
-      >
+      <EmptyState style={{ color: colors.gold35, fontSize: "14px", letterSpacing: undefined, padding: "40px 0" }}>
         No scrolls have been revealed yet.
         <br />
         Continue your journey, Sparrow.
-      </p>
+      </EmptyState>
     );
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "1px",
-      }}
-    >
-      {unlockedEntries.map((entry) => {
-        const isExpanded = expandedId === entry.id;
-
-        return (
-          <div key={entry.id}>
-            <button
-              onClick={() => setExpandedId(isExpanded ? null : entry.id)}
-              style={{
-                width: "100%",
-                textAlign: "left",
-                background: "none",
-                border: "none",
-                borderBottom: "1px solid rgba(200, 165, 75, 0.08)",
-                padding: "14px 0",
-                cursor: "pointer",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                minHeight: "44px",
-                WebkitTapHighlightColor: "transparent",
-              }}
-            >
-              <span
-                style={{
-                  color: "rgba(200, 165, 75, 0.7)",
-                  fontFamily: "Georgia, 'Times New Roman', serif",
-                  fontSize: "15px",
-                  fontStyle: "italic",
-                }}
-              >
-                {entry.title}
-              </span>
-            </button>
-
-            {isExpanded && (
-              <div
-                style={{
-                  padding: "12px 0 20px 0",
-                  opacity: 0,
-                  animation: "fade-in 0.4s ease forwards",
-                }}
-              >
-                <p
-                  style={{
-                    color: "rgba(200, 165, 75, 0.6)",
-                    fontFamily: "Georgia, 'Times New Roman', serif",
-                    fontSize: "14px",
-                    fontStyle: "italic",
-                    lineHeight: 1.8,
-                  }}
-                >
-                  {entry.content}
-                </p>
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
+    <Accordion
+      items={unlockedEntries}
+      keyExtractor={(e) => e.id}
+      renderHeader={(e) => (
+        <span
+          style={{
+            color: colors.gold70,
+            fontFamily,
+            fontSize: "15px",
+            fontStyle: "italic",
+          }}
+        >
+          {e.title}
+        </span>
+      )}
+      renderBody={(e) => <>{e.content}</>}
+    />
   );
 }

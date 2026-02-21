@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import TextButton from "@/components/ui/TextButton";
 import { revealHint } from "@/lib/actions/quest";
 import type { HintItem } from "@/config";
 
@@ -72,28 +73,13 @@ export default function HintSystem({
 
       {/* Request hint button */}
       {!allRevealed && (
-        <button
+        <TextButton
           onClick={handleReveal}
           disabled={loading}
-          style={{
-            background: "none",
-            border: "none",
-            color: "rgba(200, 165, 75, 0.4)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: "13px",
-            fontStyle: "italic",
-            cursor: loading ? "wait" : "pointer",
-            padding: "8px 0",
-            textAlign: "center",
-            minHeight: "44px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            WebkitTapHighlightColor: "transparent",
-          }}
+          style={{ cursor: loading ? "wait" : undefined }}
         >
           {loading ? "Revealing..." : "Request a Hint"}
-        </button>
+        </TextButton>
       )}
     </div>
   );

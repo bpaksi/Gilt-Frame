@@ -1,8 +1,11 @@
 "use client";
 
-import { useCallback } from "react";
 import TextReveal from "./quest/TextReveal";
 import MarkerSVG from "./MarkerSVG";
+import GhostButton from "@/components/ui/GhostButton";
+import UppercaseLabel from "@/components/ui/UppercaseLabel";
+import { colors } from "@/components/ui/tokens";
+import { useShareAction } from "@/lib/hooks/useShareAction";
 import type { MomentRow } from "@/lib/actions/moments";
 import { gameConfig } from "@/config";
 
@@ -25,18 +28,7 @@ export default function MomentDetail({ moment }: MomentDetailProps) {
     ? moment.narrative_text.split(/(?<=\.)\s+/).filter((l) => l.trim())
     : [];
 
-  const handleShare = useCallback(async () => {
-    const url = `${window.location.origin}/moment/${moment.share_token}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "A Moment from the Order", url });
-      } catch {
-        // User cancelled
-      }
-    } else {
-      await navigator.clipboard.writeText(url);
-    }
-  }, [moment.share_token]);
+  const handleShare = useShareAction(moment.share_token);
 
   return (
     <div
@@ -52,17 +44,9 @@ export default function MomentDetail({ moment }: MomentDetailProps) {
     >
       {/* Chapter name */}
       {chapter && (
-        <p
-          style={{
-            color: "rgba(200, 165, 75, 0.4)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: "12px",
-            textTransform: "uppercase",
-            letterSpacing: "3px",
-          }}
-        >
+        <UppercaseLabel style={{ color: colors.gold40 }}>
           {chapter.name}
-        </p>
+        </UppercaseLabel>
       )}
 
       {/* Date */}
@@ -80,24 +64,12 @@ export default function MomentDetail({ moment }: MomentDetailProps) {
       {lines.length > 0 && <TextReveal lines={lines} delayBetween={500} />}
 
       {/* Share */}
-      <button
+      <GhostButton
         onClick={handleShare}
-        style={{
-          background: "none",
-          border: "1px solid rgba(200, 165, 75, 0.2)",
-          color: "rgba(200, 165, 75, 0.5)",
-          fontFamily: "Georgia, 'Times New Roman', serif",
-          fontSize: "13px",
-          fontStyle: "italic",
-          letterSpacing: "1px",
-          padding: "10px 24px",
-          cursor: "pointer",
-          minHeight: "44px",
-          WebkitTapHighlightColor: "transparent",
-        }}
+        style={{ fontSize: "13px", letterSpacing: "1px", padding: "10px 24px" }}
       >
         Share this moment
-      </button>
+      </GhostButton>
 
       {/* Watermark */}
       <div style={{ opacity: 0.15, marginTop: "auto" }}>

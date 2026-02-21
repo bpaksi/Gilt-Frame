@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback } from "react";
+import TextButton from "@/components/ui/TextButton";
+import UppercaseLabel from "@/components/ui/UppercaseLabel";
+import { useShareAction } from "@/lib/hooks/useShareAction";
 import type { MomentRow } from "@/lib/actions/moments";
 import { gameConfig } from "@/config";
 
@@ -20,18 +22,7 @@ export default function MomentCard({ moment }: MomentCardProps) {
     year: "numeric",
   });
 
-  const handleShare = useCallback(async () => {
-    const url = `${window.location.origin}/moment/${moment.share_token}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "A Moment from the Order", url });
-      } catch {
-        // User cancelled
-      }
-    } else {
-      await navigator.clipboard.writeText(url);
-    }
-  }, [moment.share_token]);
+  const handleShare = useShareAction(moment.share_token);
 
   return (
     <div
@@ -50,17 +41,9 @@ export default function MomentCard({ moment }: MomentCardProps) {
           alignItems: "baseline",
         }}
       >
-        <p
-          style={{
-            color: "rgba(200, 165, 75, 0.5)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: "12px",
-            textTransform: "uppercase",
-            letterSpacing: "2px",
-          }}
-        >
+        <UppercaseLabel style={{ letterSpacing: "2px" }}>
           {chapter?.name ?? "Unknown Chapter"}
-        </p>
+        </UppercaseLabel>
         <p
           style={{
             color: "rgba(200, 165, 75, 0.3)",
@@ -90,27 +73,12 @@ export default function MomentCard({ moment }: MomentCardProps) {
         </Link>
       )}
 
-      <button
+      <TextButton
         onClick={handleShare}
-        style={{
-          alignSelf: "flex-end",
-          background: "none",
-          border: "none",
-          color: "rgba(200, 165, 75, 0.4)",
-          fontFamily: "Georgia, 'Times New Roman', serif",
-          fontSize: "12px",
-          fontStyle: "italic",
-          letterSpacing: "1px",
-          cursor: "pointer",
-          padding: "8px 0",
-          minHeight: "44px",
-          display: "flex",
-          alignItems: "center",
-          WebkitTapHighlightColor: "transparent",
-        }}
+        style={{ alignSelf: "flex-end", fontSize: "12px", letterSpacing: "1px" }}
       >
         Share
-      </button>
+      </TextButton>
     </div>
   );
 }

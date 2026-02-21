@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useRef, useMemo } from "react";
 import HintSystem from "./HintSystem";
+import OptionButton from "@/components/ui/OptionButton";
+import WaveDivider from "@/components/ui/WaveDivider";
 import { recordAnswer } from "@/lib/actions/quest";
 import type { MultipleChoiceConfig } from "@/config";
 
@@ -146,45 +148,20 @@ export default function MultipleChoice({
       >
         {question.options.map((option, i) => {
           const isSelected = selectedIdx === i;
-          const isCorrectOption = isSelected && isCorrect === true;
-          const isWrongOption = isSelected && isCorrect === false;
-
-          let borderColor = "rgba(200, 165, 75, 0.25)";
-          let bgColor = "transparent";
-          let textColor = "rgba(200, 165, 75, 0.8)";
-
-          if (isCorrectOption) {
-            borderColor = "rgba(200, 165, 75, 0.8)";
-            bgColor = "rgba(200, 165, 75, 0.1)";
-            textColor = "rgba(200, 165, 75, 1)";
-          } else if (isWrongOption) {
-            borderColor = "rgba(180, 50, 40, 0.5)";
-            textColor = "rgba(180, 50, 40, 0.7)";
-          }
+          const state = isSelected && isCorrect === true
+            ? "correct" as const
+            : isSelected && isCorrect === false
+              ? "wrong" as const
+              : "default" as const;
 
           return (
-            <button
+            <OptionButton
               key={option}
-              onClick={() => handleSelect(i)}
+              label={option}
+              state={state}
               disabled={locked || transitioning}
-              style={{
-                background: bgColor,
-                border: `1px solid ${borderColor}`,
-                color: textColor,
-                fontFamily: "Georgia, 'Times New Roman', serif",
-                fontSize: "15px",
-                fontStyle: "italic",
-                padding: "14px 20px",
-                textAlign: "left",
-                cursor: locked || transitioning ? "default" : "pointer",
-                transition: "background 0.3s ease, border-color 0.3s ease, color 0.3s ease, opacity 0.3s ease",
-                opacity: isWrongOption ? 0.5 : 1,
-                minHeight: "44px",
-                WebkitTapHighlightColor: "transparent",
-              }}
-            >
-              {option}
-            </button>
+              onClick={() => handleSelect(i)}
+            />
           );
         })}
       </div>
@@ -192,24 +169,13 @@ export default function MultipleChoice({
       {/* Scrollwork divider + per-question hints */}
       {currentHints && chapterId && stepIndex !== undefined && (
         <>
-          <svg
-            width="120"
-            height="10"
-            viewBox="0 0 120 10"
-            fill="none"
+          <WaveDivider
             style={{
               opacity: optionsVisible ? 0.3 : 0,
               transition: "opacity 0.4s ease",
               margin: "-12px 0",
             }}
-          >
-            <path
-              d="M0 5 Q15 1 30 5 Q45 9 60 5 Q75 1 90 5 Q105 9 120 5"
-              stroke="rgba(200, 165, 75, 1)"
-              strokeWidth="1"
-              fill="none"
-            />
-          </svg>
+          />
           <HintSystem
             key={currentQ}
             hints={currentHints}

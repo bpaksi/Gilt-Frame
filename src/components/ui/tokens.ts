@@ -1,0 +1,44 @@
+import type { CSSProperties } from "react";
+
+// ── Color tokens ────────────────────────────────────────────────────────
+// Matches @theme block in globals.css
+
+export const colors = {
+  gold: "rgba(200, 165, 75, 1)",
+  gold90: "rgba(200, 165, 75, 0.9)",
+  gold85: "rgba(200, 165, 75, 0.85)",
+  gold80: "rgba(200, 165, 75, 0.8)",
+  gold70: "rgba(200, 165, 75, 0.7)",
+  gold60: "rgba(200, 165, 75, 0.6)",
+  gold50: "rgba(200, 165, 75, 0.5)",
+  gold40: "rgba(200, 165, 75, 0.4)",
+  gold35: "rgba(200, 165, 75, 0.35)",
+  gold30: "rgba(200, 165, 75, 0.3)",
+  gold25: "rgba(200, 165, 75, 0.25)",
+  gold20: "rgba(200, 165, 75, 0.2)",
+  gold12: "rgba(200, 165, 75, 0.12)",
+  gold10: "rgba(200, 165, 75, 0.1)",
+  gold08: "rgba(200, 165, 75, 0.08)",
+  errorRed70: "rgba(180, 50, 40, 0.7)",
+  errorRed50: "rgba(180, 50, 40, 0.5)",
+  bg: "#0a0a0a",
+  surface: "rgba(30, 25, 18, 0.8)",
+} as const;
+
+// ── Typography ──────────────────────────────────────────────────────────
+
+export const fontFamily = "Georgia, 'Times New Roman', serif";
+
+// ── Layout ──────────────────────────────────────────────────────────────
+
+export const MIN_TAP_TARGET = "44px";
+
+export const questContainerStyle: CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  minHeight: "100%",
+  flex: 1,
+  padding: "40px 24px",
+};

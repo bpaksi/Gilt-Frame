@@ -1,6 +1,7 @@
 "use client";
 
 import GiltFrame from "./GiltFrame";
+import GhostButton from "@/components/ui/GhostButton";
 
 interface LandingPageProps {
   isReplay?: boolean;
@@ -14,24 +15,9 @@ export default function LandingPage({
   return (
     <GiltFrame>
       {isReplay ? (
-        <button
-          onClick={onReplayEnd}
-          style={{
-            background: "transparent",
-            border: "1px solid rgba(200, 165, 75, 0.3)",
-            color: "rgba(200, 165, 75, 0.7)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: "14px",
-            fontStyle: "italic",
-            letterSpacing: "2px",
-            padding: "12px 32px",
-            cursor: "pointer",
-            transition: "border-color 0.3s ease, color 0.3s ease",
-            minHeight: "44px",
-          }}
-        >
+        <GhostButton onClick={onReplayEnd} style={{ fontSize: "14px", padding: "12px 32px" }}>
           Return to Journey
-        </button>
+        </GhostButton>
       ) : (
         <p
           style={{

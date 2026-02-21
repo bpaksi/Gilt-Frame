@@ -3,6 +3,7 @@ import { resolveTrack } from "@/lib/track";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getAllLore } from "@/lib/lore";
 import OracleView from "@/components/game/OracleView";
+import EmptyState from "@/components/ui/EmptyState";
 
 export const metadata: Metadata = {
   title: "The Oracle | The Order of the Gilt Frame",
@@ -13,32 +14,11 @@ export default async function OraclePage() {
 
   if (!trackInfo) {
     return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "100%",
-          flex: 1,
-          padding: "40px 24px",
-        }}
-      >
-        <p
-          style={{
-            color: "rgba(200, 165, 75, 0.5)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: "16px",
-            fontStyle: "italic",
-            textAlign: "center",
-            letterSpacing: "1px",
-            lineHeight: 1.8,
-          }}
-        >
-          The Oracle listens.
-          <br />
-          Ask when you are ready.
-        </p>
-      </div>
+      <EmptyState centered>
+        The Oracle listens.
+        <br />
+        Ask when you are ready.
+      </EmptyState>
     );
   }
 

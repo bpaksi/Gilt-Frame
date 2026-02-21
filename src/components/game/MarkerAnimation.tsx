@@ -319,13 +319,6 @@ export default function MarkerAnimation({ onComplete, delayMs = 800 }: MarkerAni
         </svg>
       </div>
 
-      <style>{`
-        @keyframes screenFlash {
-          0% { opacity: 0; }
-          10% { opacity: 1; }
-          100% { opacity: 0; }
-        }
-      `}</style>
     </>
   );
 }

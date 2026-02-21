@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import AmbientParticles from "@/components/ui/AmbientParticles";
 import MarkerAnimation from "./MarkerAnimation";
 
 interface GiltFrameProps {
@@ -35,26 +36,7 @@ export default function GiltFrame({
         padding: "40px 24px",
       }}
     >
-      {/* Ambient particles */}
-      {[0, 1, 2, 3, 4].map((particleId) => (
-        <div
-          key={particleId}
-          style={{
-            position: "absolute",
-            width: "2px",
-            height: "2px",
-            background: "#C8A54B",
-            borderRadius: "50%",
-            filter: "blur(0.5px)",
-            opacity: animationDone ? 0.3 : 0,
-            animation: animationDone
-              ? `drift ${5 + particleId}s ease-in-out ${particleId * 0.8}s infinite`
-              : "none",
-            top: `${20 + particleId * 15}%`,
-            left: `${10 + particleId * 20}%`,
-          }}
-        />
-      ))}
+      <AmbientParticles count={5} opacity={0.3} active={animationDone} />
 
       <MarkerAnimation onComplete={handleAnimationComplete} delayMs={delayMs} />
 
