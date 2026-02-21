@@ -26,10 +26,21 @@ export async function POST(request: Request) {
   }
 
   const track = enrollment.track;
-  const { question, skipDelay } = await request.json();
+
+  let body: { question?: unknown; skipDelay?: unknown };
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "Invalid request body." }, { status: 400 });
+  }
+  const { question, skipDelay } = body;
 
   if (!question || typeof question !== "string" || question.trim().length === 0) {
     return Response.json({ error: "No question provided" }, { status: 400 });
+  }
+
+  if (question.trim().length > 2000) {
+    return Response.json({ error: "Question is too long. Please ask something shorter." }, { status: 400 });
   }
 
   // Fetch today's conversations (for both count-based throttling and history)
@@ -45,8 +56,8 @@ export async function POST(request: Request) {
 
   const conversationCount = count ?? 0;
 
-  // Delay logic
-  if (!skipDelay) {
+  // Delay logic — skipDelay is only honoured on the test track (prevents live players from bypassing throttling via devtools)
+  if (!skipDelay || track !== "test") {
     if (conversationCount >= 11) {
       const waitSeconds = 180 + Math.floor(Math.random() * 420);
       return Response.json({ delayed: true, waitSeconds });

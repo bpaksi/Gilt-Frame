@@ -26,14 +26,16 @@ function parseResult(res: Response, data: Record<string, unknown>): TwilioResult
     return { success: false, sid: data.sid as string, error };
   }
 
-  console.log("[Twilio] Sent:", { sid: data.sid, status: data.status, to: data.to });
+  const redactedTo = typeof data.to === "string" ? data.to.replace(/\d{4}$/, "****") : "unknown";
+  console.log("[Twilio] Sent:", { sid: data.sid, status: data.status, to: redactedTo });
   return { success: true, sid: data.sid as string };
 }
 
 export async function sendSms(to: string, body: string, mediaUrl?: string): Promise<TwilioResult> {
   const e164To = toE164(to);
   if (DRY_RUN) {
-    console.log("[DRY RUN] SMS", { to: e164To, from: TWILIO_FROM_NUMBER, body, ...(mediaUrl && { mediaUrl }) });
+    const redactedDryTo = e164To.replace(/\d{4}$/, "****");
+    console.log("[DRY RUN] SMS", { to: redactedDryTo, from: TWILIO_FROM_NUMBER, body, ...(mediaUrl && { mediaUrl }) });
     return { success: true, sid: "dry-run" };
   }
   const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;

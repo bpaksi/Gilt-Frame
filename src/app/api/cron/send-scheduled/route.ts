@@ -4,6 +4,11 @@ import { sendStep } from "@/lib/messaging/send";
 
 export async function GET(request: Request) {
   // Verify cron secret to prevent unauthorized invocations
+  if (!process.env.CRON_SECRET) {
+    console.error("[cron/send-scheduled] CRON_SECRET env var is not set — all scheduled sends are blocked.");
+    return NextResponse.json({ error: "Server misconfiguration." }, { status: 503 });
+  }
+
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

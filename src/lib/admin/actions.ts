@@ -319,6 +319,10 @@ export async function activateChapter(
   track: "test" | "live",
   chapterId: string
 ): Promise<{ success: boolean; error?: string }> {
+  if (track !== "test") {
+    return { success: false, error: "Chapter activation is only allowed on the test track." };
+  }
+
   const chapter = gameConfig.chapters[chapterId];
   if (!chapter) {
     return { success: false, error: "Chapter not found." };

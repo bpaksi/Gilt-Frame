@@ -1,16 +1,16 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import TabBar from "../../components/ui/TabBar";
+import { resolveTrack } from "@/lib/track";
 
 export default async function GameLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const deviceToken = cookieStore.get("device_token");
+  // Verify the device_token cookie maps to a valid, non-revoked enrollment
+  const trackInfo = await resolveTrack();
 
-  if (!deviceToken?.value) {
+  if (!trackInfo) {
     redirect("/");
   }
 
