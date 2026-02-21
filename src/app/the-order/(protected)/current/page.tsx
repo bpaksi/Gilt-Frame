@@ -130,7 +130,7 @@ export default async function AdminCurrentPage() {
   }
 
   return (
-    <div style={{ padding: "16px" }}>
+    <div className="p-4 max-w-2xl">
       <PlayerStateCard state={enrichedState} />
 
       {currentStep && (
@@ -149,23 +149,10 @@ export default async function AdminCurrentPage() {
 
       <Link
         href="/the-order/send-hint"
-        style={{
-          display: "block",
-          textAlign: "center",
-          padding: "10px 16px",
-          background: "#fff",
-          border: "1px solid #d0d0d0",
-          borderRadius: "8px",
-          marginBottom: "16px",
-          fontSize: "13px",
-          fontWeight: 600,
-          color: "#336699",
-          textDecoration: "none",
-        }}
+        className="admin-card block text-center py-2.5 px-4 mb-4 text-[13px] font-semibold text-admin-blue no-underline transition-all duration-150 hover:shadow-md hover:-translate-y-px"
       >
         Send Hint Message
       </Link>
-
     </div>
   );
 }

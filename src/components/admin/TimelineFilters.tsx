@@ -14,28 +14,11 @@ export default function TimelineFilters({
   const chapters = Object.entries(gameConfig.chapters);
 
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #d0d0d0",
-        borderRadius: "8px",
-        padding: "12px 16px",
-        marginBottom: "16px",
-      }}
-    >
+    <div className="admin-card py-3 px-4 mb-4">
       <select
         value={selectedChapter}
         onChange={(e) => onChapterChange(e.target.value)}
-        style={{
-          height: "32px",
-          padding: "0 8px",
-          border: "1px solid #d0d0d0",
-          borderRadius: "4px",
-          fontSize: "12px",
-          fontFamily: "inherit",
-          background: "#fff",
-          color: "#333333",
-        }}
+        className="admin-input admin-focus h-8 px-2 border border-admin-border rounded text-xs font-inherit bg-admin-card text-admin-text transition-colors"
       >
         {chapters.map(([id, ch], index) => (
           <option key={id} value={id}>

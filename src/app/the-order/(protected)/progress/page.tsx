@@ -28,17 +28,8 @@ export default async function AdminProgressPage() {
   const firstIncomplete = chapterIds.find((id) => !completedIds.has(id)) ?? chapterIds[0];
 
   return (
-    <div style={{ padding: "16px" }}>
-      <div
-        style={{
-          fontSize: "11px",
-          fontWeight: 600,
-          letterSpacing: "1.5px",
-          textTransform: "uppercase",
-          color: "#666666",
-          marginBottom: "12px",
-        }}
-      >
+    <div className="p-4">
+      <div className="text-[11px] font-semibold tracking-[1.5px] uppercase text-admin-text-muted mb-3">
         Activity Log
       </div>
       <EventTimeline

@@ -17,21 +17,9 @@ export default function SignOutButton() {
     <button
       onClick={handleSignOut}
       disabled={loading}
-      style={{
-        display: "block",
-        width: "100%",
-        padding: "14px 16px",
-        background: "#fff",
-        border: "1px solid #d0d0d0",
-        borderRadius: "8px",
-        color: "#c62828",
-        fontSize: "14px",
-        fontWeight: 500,
-        textAlign: "left",
-        cursor: loading ? "not-allowed" : "pointer",
-        fontFamily: "inherit",
-        opacity: loading ? 0.6 : 1,
-      }}
+      className={`admin-focus block w-full py-3.5 px-4 bg-admin-card border border-admin-border rounded-lg text-admin-red text-sm font-medium text-left font-inherit transition-all duration-150 ${
+        loading ? "cursor-not-allowed opacity-60" : "cursor-pointer opacity-100 hover:bg-red-50 hover:border-red-200"
+      }`}
     >
       {loading ? "Signing out..." : "Sign Out"}
     </button>

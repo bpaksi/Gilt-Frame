@@ -58,77 +58,24 @@ export default function FreeformCompose({
     }
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    height: "36px",
-    padding: "0 10px",
-    border: "1px solid #d0d0d0",
-    borderRadius: "4px",
-    fontSize: "13px",
-    fontFamily: "inherit",
-    background: "#fff",
-    color: "#333333",
-    outline: "none",
-    boxSizing: "border-box",
-  };
-
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #d0d0d0",
-        borderRadius: "8px",
-        padding: "12px 16px",
-        marginBottom: "16px",
-      }}
-    >
-      <div
-        style={{
-          fontSize: "11px",
-          fontWeight: 600,
-          letterSpacing: "1.5px",
-          textTransform: "uppercase",
-          color: "#666666",
-          marginBottom: "10px",
-        }}
-      >
+    <div className="admin-card py-3 px-4 mb-4">
+      <div className="text-[11px] font-semibold tracking-[1.5px] uppercase text-admin-text-muted mb-2.5">
         Compose
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "8px",
-          marginBottom: "8px",
-          flexWrap: "wrap",
-        }}
-      >
+      <div className="flex gap-2 mb-2 flex-wrap">
         {/* Channel toggle */}
-        <div
-          style={{
-            display: "flex",
-            height: "32px",
-            borderRadius: "4px",
-            border: "1px solid #d0d0d0",
-            overflow: "hidden",
-          }}
-        >
+        <div className="flex h-8 rounded border border-admin-border overflow-hidden">
           {(["sms", "email"] as const).map((ch) => (
             <button
               key={ch}
               onClick={() => setChannel(ch)}
-              style={{
-                padding: "0 12px",
-                border: "none",
-                background: channel === ch ? "#336699" : "#fff",
-                color: channel === ch ? "#fff" : "#666666",
-                fontSize: "11px",
-                fontWeight: 600,
-                letterSpacing: "0.5px",
-                textTransform: "uppercase",
-                cursor: "pointer",
-                fontFamily: "inherit",
-              }}
+              className={`admin-focus px-3 border-none text-[11px] font-semibold tracking-[0.5px] uppercase cursor-pointer font-inherit transition-colors duration-150 ${
+                channel === ch
+                  ? "bg-admin-blue text-white"
+                  : "bg-admin-card text-admin-text-muted hover:bg-gray-100"
+              }`}
             >
               {ch}
             </button>
@@ -139,7 +86,7 @@ export default function FreeformCompose({
         <select
           value={to}
           onChange={(e) => setTo(e.target.value)}
-          style={{ ...inputStyle, width: "auto", flex: 1, minWidth: "100px" }}
+          className="admin-input admin-focus h-9 px-2.5 border border-admin-border rounded text-[13px] font-inherit bg-admin-card text-admin-text outline-none flex-1 min-w-[100px] transition-colors"
         >
           <option value="player">Player</option>
           <option value="companion1">Companion 1</option>
@@ -150,7 +97,7 @@ export default function FreeformCompose({
         <select
           value={signature}
           onChange={(e) => setSignature(e.target.value)}
-          style={{ ...inputStyle, width: "auto", flex: 1, minWidth: "120px" }}
+          className="admin-input admin-focus h-9 px-2.5 border border-admin-border rounded text-[13px] font-inherit bg-admin-card text-admin-text outline-none flex-1 min-w-[120px] transition-colors"
         >
           {SIGNATURES.map((s) => (
             <option key={s.label} value={s.value}>
@@ -166,7 +113,7 @@ export default function FreeformCompose({
           placeholder="Subject"
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
-          style={{ ...inputStyle, marginBottom: "8px" }}
+          className="admin-input admin-focus w-full h-9 px-2.5 border border-admin-border rounded text-[13px] font-inherit bg-admin-card text-admin-text outline-none mb-2 transition-colors"
         />
       )}
 
@@ -174,46 +121,26 @@ export default function FreeformCompose({
         placeholder="Message body..."
         value={body}
         onChange={(e) => setBody(e.target.value)}
-        style={{
-          ...inputStyle,
-          height: "80px",
-          padding: "8px 10px",
-          resize: "vertical",
-        }}
+        className="admin-input admin-focus w-full h-20 py-2 px-2.5 border border-admin-border rounded text-[13px] font-inherit bg-admin-card text-admin-text outline-none resize-y transition-colors"
       />
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          marginTop: "8px",
-        }}
-      >
+      <div className="flex items-center gap-2 mt-2">
         <button
           onClick={handleSend}
           disabled={!body.trim() || sending}
-          style={{
-            height: "32px",
-            padding: "0 16px",
-            background:
-              !body.trim() || sending ? "#5a8ab5" : "#336699",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            fontSize: "12px",
-            fontWeight: 600,
-            cursor: !body.trim() || sending ? "not-allowed" : "pointer",
-            fontFamily: "inherit",
-          }}
+          className={`admin-btn admin-focus h-8 px-4 text-white border-none rounded text-xs font-semibold font-inherit transition-colors duration-150 ${
+            !body.trim() || sending
+              ? "bg-admin-blue-disabled cursor-not-allowed"
+              : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
+          }`}
         >
           {sending ? "Sending..." : "SEND"}
         </button>
         {result && (
-          <span style={{ fontSize: "12px", color: "#2e7d32" }}>{result}</span>
+          <span className="text-xs text-admin-green">{result}</span>
         )}
         {error && (
-          <span style={{ fontSize: "12px", color: "#c62828" }}>{error}</span>
+          <span className="text-xs text-admin-red">{error}</span>
         )}
       </div>
     </div>

@@ -68,77 +68,42 @@ export default function HintPush({
   }
 
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #d0d0d0",
-        borderRadius: "8px",
-        padding: "12px 16px",
-        marginBottom: "16px",
-      }}
-    >
-      <div
-        style={{
-          fontSize: "11px",
-          fontWeight: 600,
-          letterSpacing: "1.5px",
-          textTransform: "uppercase",
-          color: "#666666",
-          marginBottom: "8px",
-        }}
-      >
+    <div className="admin-card py-3 px-4 mb-4">
+      <div className="text-[11px] font-semibold tracking-[1.5px] uppercase text-admin-text-muted mb-2">
         Alerts — {revealedTiers.length}/{config.hints.length} revealed
       </div>
 
       {nextTier ? (
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ flex: 1, fontSize: "13px", color: "#333333" }}>
+        <div className="flex items-center gap-2.5">
+          <div className="flex-1 text-[13px] text-admin-text">
             Next: Tier {nextTier.tier}
           </div>
           <button
             onClick={handlePush}
             disabled={pushing}
-            style={{
-              height: "28px",
-              padding: "0 12px",
-              background: pushing ? "#f0a830" : "#e68a00",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              fontSize: "11px",
-              fontWeight: 600,
-              cursor: pushing ? "not-allowed" : "pointer",
-            }}
+            className={`admin-btn admin-focus h-7 px-3 text-white border-none rounded text-[11px] font-semibold transition-colors duration-150 ${
+              pushing
+                ? "bg-[#f0a830] cursor-not-allowed"
+                : "bg-admin-orange hover:brightness-110 cursor-pointer"
+            }`}
           >
             {pushing ? "..." : "PUSH ALERT"}
           </button>
         </div>
       ) : (
-        <div style={{ fontSize: "13px", color: "#999999" }}>
+        <div className="text-[13px] text-admin-text-faint">
           All alerts revealed.
         </div>
       )}
 
       {lastPushed && (
-        <div
-          style={{
-            fontSize: "12px",
-            color: "#2e7d32",
-            marginTop: "6px",
-          }}
-        >
+        <div className="text-xs text-admin-green mt-1.5">
           {lastPushed}
         </div>
       )}
 
       {error && (
-        <div
-          style={{
-            fontSize: "12px",
-            color: "#c62828",
-            marginTop: "6px",
-          }}
-        >
+        <div className="text-xs text-admin-red mt-1.5">
           {error}
         </div>
       )}

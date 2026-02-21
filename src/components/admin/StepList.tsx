@@ -59,25 +59,8 @@ export default function StepList({
   const orderedSteps = getOrderedSteps(chapter);
 
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #d0d0d0",
-        borderRadius: "8px",
-        padding: "12px 16px",
-        marginBottom: "16px",
-      }}
-    >
-      <div
-        style={{
-          fontSize: "11px",
-          fontWeight: 600,
-          letterSpacing: "1.5px",
-          textTransform: "uppercase",
-          color: "#666666",
-          marginBottom: "8px",
-        }}
-      >
+    <div className="admin-card py-3 px-4 mb-4">
+      <div className="text-[11px] font-semibold tracking-[1.5px] uppercase text-admin-text-muted mb-2">
         {chapter.name}
       </div>
       {orderedSteps.map((step, index) => {

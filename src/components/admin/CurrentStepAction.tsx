@@ -50,7 +50,6 @@ export default function CurrentStepAction({
     setError("");
 
     try {
-      // If a delay is selected, schedule instead of sending immediately
       if (delayMornings) {
         const res = await adminFetch("/api/admin/schedule", {
           method: "POST",
@@ -67,7 +66,6 @@ export default function CurrentStepAction({
         return;
       }
 
-      // Send immediately
       const sendRes = await adminFetch("/api/admin/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -80,7 +78,6 @@ export default function CurrentStepAction({
         return;
       }
 
-      // For letters, also mark as done (received = delivered)
       if (isLetter) {
         const returnedMessageId = sendData.messageId ?? messageProgress?.id;
         const doneRes = await adminFetch("/api/admin/mark-done", {
@@ -151,36 +148,16 @@ export default function CurrentStepAction({
   // Website steps: waiting for player
   if (step.type === "website") {
     return (
-      <div style={cardStyle}>
+      <div className="admin-card px-4 py-3.5 mb-4">
         <StepHeader name={step.name} type={step.type} />
         {renderDetails()}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            marginTop: "12px",
-            padding: "10px 12px",
-            background: "#fff8e1",
-            borderRadius: "6px",
-            border: "1px solid #ffe0b2",
-          }}
-        >
-          <span
-            style={{
-              width: "8px",
-              height: "8px",
-              borderRadius: "50%",
-              background: "#e68a00",
-              animation: "pulse 2s ease-in-out infinite",
-            }}
-          />
-          <span style={{ fontSize: "13px", color: "#e65100", fontWeight: 500 }}>
+        <div className="flex items-center gap-2 mt-3 py-2.5 px-3 bg-amber-50 rounded-md border border-orange-200">
+          <span className="w-2 h-2 rounded-full bg-admin-orange animate-admin-pulse" />
+          <span className="text-[13px] text-orange-800 font-medium">
             Waiting for player...
           </span>
         </div>
-        <style>{`@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }`}</style>
-        <div style={{ marginTop: "12px" }}>
+        <div className="mt-3">
           <HintPush
             track={track}
             chapterId={chapterId}
@@ -194,41 +171,28 @@ export default function CurrentStepAction({
 
   // Offline steps
   const actionLabel = isLetter ? "RECEIVED" : delayMornings ? "SEND" : "SEND NOW";
-  const actionColor = isLetter ? "#2e7d32" : "#336699";
-  const actionColorDisabled = isLetter ? "#6d9b6f" : "#5a8ab5";
 
   return (
-    <div style={cardStyle}>
+    <div className="admin-card px-4 py-3.5 mb-4">
       <StepHeader name={step.name} type={step.type} />
       {location && <Detail label="Location" value={location} />}
       {renderDetails()}
 
       {alreadyDelivered ? (
-        <StatusBadge text="Delivered" color="#2e7d32" icon="\u2713" />
+        <StatusBadge text="Delivered" color="#2e7d32" icon={"\u2713"} />
       ) : alreadySent ? (
-        <StatusBadge text="Sent" color="#c0a060" icon="\u25D1" />
+        <StatusBadge text="Sent" color="#c0a060" icon={"\u25D1"} />
       ) : done ? (
         <StatusBadge
           text={isLetter ? "Marked received" : "Sent successfully"}
           color="#2e7d32"
-          icon="\u2713"
+          icon={"\u2713"}
         />
       ) : isScheduled ? (
-        <div style={{ marginTop: "12px" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "10px 12px",
-              background: "#fff8e1",
-              borderRadius: "6px",
-              border: "1px solid #ffe0b2",
-              marginBottom: "8px",
-            }}
-          >
-            <span style={{ fontSize: "14px" }}>{"\u23F1"}</span>
-            <span style={{ fontSize: "13px", color: "#e65100", fontWeight: 500 }}>
+        <div className="mt-3">
+          <div className="flex items-center gap-2 py-2.5 px-3 bg-amber-50 rounded-md border border-orange-200 mb-2">
+            <span className="text-sm">{"\u23F1"}</span>
+            <span className="text-[13px] text-orange-800 font-medium">
               Scheduled for{" "}
               {scheduledAt
                 ? new Date(scheduledAt).toLocaleString([], {
@@ -243,44 +207,24 @@ export default function CurrentStepAction({
           <button
             onClick={handleSend}
             disabled={sending}
-            style={{
-              height: "36px",
-              padding: "0 24px",
-              background: sending ? actionColorDisabled : actionColor,
-              color: "#fff",
-              border: "none",
-              borderRadius: "6px",
-              fontSize: "13px",
-              fontWeight: 700,
-              letterSpacing: "0.5px",
-              cursor: sending ? "not-allowed" : "pointer",
-              fontFamily: "inherit",
-              width: "100%",
-            }}
+            className={`admin-btn admin-focus w-full h-9 rounded-md text-[13px] font-bold tracking-[0.5px] text-white border-none font-inherit transition-colors duration-150 ${
+              isLetter
+                ? sending ? "bg-admin-green-disabled cursor-not-allowed" : "bg-admin-green hover:brightness-110 cursor-pointer"
+                : sending ? "bg-admin-blue-disabled cursor-not-allowed" : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
+            }`}
           >
             {sending ? "Processing..." : "SEND NOW"}
           </button>
         </div>
       ) : (
-        <div style={{ marginTop: "12px" }}>
+        <div className="mt-3">
           {supportsDelay && (
             <select
               value={delayMornings ?? ""}
               onChange={(e) =>
                 setDelayMornings(e.target.value ? Number(e.target.value) : null)
               }
-              style={{
-                width: "100%",
-                height: "36px",
-                padding: "0 8px",
-                border: "1px solid #d0d0d0",
-                borderRadius: "6px",
-                fontSize: "12px",
-                fontFamily: "inherit",
-                background: "#fff",
-                color: "#333333",
-                marginBottom: "8px",
-              }}
+              className="admin-input admin-focus w-full h-9 px-2 border border-admin-border rounded-md text-xs font-inherit bg-admin-card text-admin-text mb-2 transition-colors"
             >
               <option value="">No delay</option>
               <option value="1">Next morning (4:30am)</option>
@@ -293,20 +237,11 @@ export default function CurrentStepAction({
           <button
             onClick={handleSend}
             disabled={sending}
-            style={{
-              height: "36px",
-              padding: "0 24px",
-              background: sending ? actionColorDisabled : actionColor,
-              color: "#fff",
-              border: "none",
-              borderRadius: "6px",
-              fontSize: "13px",
-              fontWeight: 700,
-              letterSpacing: "0.5px",
-              cursor: sending ? "not-allowed" : "pointer",
-              fontFamily: "inherit",
-              width: "100%",
-            }}
+            className={`admin-btn admin-focus w-full h-9 rounded-md text-[13px] font-bold tracking-[0.5px] text-white border-none font-inherit transition-colors duration-150 ${
+              isLetter
+                ? sending ? "bg-admin-green-disabled cursor-not-allowed" : "bg-admin-green hover:brightness-110 cursor-pointer"
+                : sending ? "bg-admin-blue-disabled cursor-not-allowed" : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
+            }`}
           >
             {sending ? "Processing..." : actionLabel}
           </button>
@@ -314,7 +249,7 @@ export default function CurrentStepAction({
       )}
 
       {error && (
-        <div style={{ fontSize: "12px", color: "#c62828", marginTop: "8px" }}>
+        <div className="text-xs text-admin-red mt-2">
           {error}
         </div>
       )}
@@ -326,25 +261,11 @@ export default function CurrentStepAction({
 
 function StepHeader({ name, type }: { name: string; type: string }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
-        marginBottom: "10px",
-      }}
-    >
-      <span style={{ fontSize: "15px", fontWeight: 600, color: "#1a1a1a" }}>
+    <div className="flex items-center gap-2 mb-2.5">
+      <span className="text-[15px] font-semibold text-admin-text-dark">
         {name}
       </span>
-      <span
-        style={{
-          fontSize: "10px",
-          color: "#999999",
-          textTransform: "uppercase",
-          letterSpacing: "0.5px",
-        }}
-      >
+      <span className="text-[10px] text-admin-text-faint uppercase tracking-[0.5px]">
         {type}
       </span>
     </div>
@@ -362,33 +283,21 @@ function Detail({
 }) {
   return (
     <div
-      style={{
-        display: "flex",
-        gap: "8px",
-        fontSize: "12px",
-        marginBottom: "4px",
-        alignItems: multiline ? "flex-start" : "center",
-      }}
+      className={`flex gap-2 text-xs mb-1 ${
+        multiline ? "items-start" : "items-center"
+      }`}
     >
       <span
-        style={{
-          color: "#999999",
-          fontWeight: 600,
-          textTransform: "uppercase",
-          letterSpacing: "0.5px",
-          fontSize: "10px",
-          minWidth: "52px",
-          paddingTop: multiline ? "2px" : undefined,
-        }}
+        className={`text-admin-text-faint font-semibold uppercase tracking-[0.5px] text-[10px] min-w-[52px] ${
+          multiline ? "pt-0.5" : ""
+        }`}
       >
         {label}
       </span>
       <span
-        style={{
-          color: "#333333",
-          whiteSpace: multiline ? "pre-wrap" : undefined,
-          wordBreak: multiline ? "break-word" : undefined,
-        }}
+        className={`text-admin-text ${
+          multiline ? "whitespace-pre-wrap break-words" : ""
+        }`}
       >
         {value}
       </span>
@@ -407,28 +316,11 @@ function StatusBadge({
 }) {
   return (
     <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "6px",
-        marginTop: "12px",
-        fontSize: "13px",
-        color,
-        fontWeight: 500,
-      }}
+      className="flex items-center gap-1.5 mt-3 text-[13px] font-medium"
+      style={{ color }}
     >
-      <span style={{ fontSize: "16px" }}>{icon}</span>
+      <span className="text-base">{icon}</span>
       {text}
     </div>
   );
 }
-
-// ─── Styles ──────────────────────────────────────────────────────────────────
-
-const cardStyle: React.CSSProperties = {
-  background: "#fff",
-  border: "1px solid #d0d0d0",
-  borderRadius: "8px",
-  padding: "14px 16px",
-  marginBottom: "16px",
-};

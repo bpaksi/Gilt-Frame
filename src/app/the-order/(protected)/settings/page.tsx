@@ -21,47 +21,23 @@ export default async function AdminSettingsPage() {
   const chapter = gameConfig.chapters[chapterId];
   const chapterName = state.chapterName ?? chapter?.name ?? chapterId;
   return (
-    <div style={{ padding: "16px", maxWidth: "600px" }}>
-      <div
-        style={{
-          fontSize: "11px",
-          fontWeight: 600,
-          letterSpacing: "1.5px",
-          textTransform: "uppercase",
-          color: "#666666",
-          marginBottom: "16px",
-        }}
-      >
+    <div className="p-4 max-w-xl">
+      <div className="text-[11px] font-semibold tracking-[1.5px] uppercase text-admin-text-muted mb-4">
         Settings
       </div>
-      <nav style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <nav className="flex flex-col gap-2">
         {LINKS.map((link) => (
           <Link
             key={link.href}
             href={link.href}
-            style={{
-              display: "block",
-              padding: "14px 16px",
-              background: "#fff",
-              border: "1px solid #d0d0d0",
-              borderRadius: "8px",
-              color: "#333333",
-              textDecoration: "none",
-              fontSize: "14px",
-              fontWeight: 500,
-            }}
+            className="admin-focus group flex items-center justify-between py-3.5 px-4 admin-card text-admin-text no-underline text-sm font-medium transition-all duration-150 hover:shadow-md hover:-translate-y-px"
           >
-            {link.label} →
+            <span>{link.label}</span>
+            <span className="text-admin-text-faint transition-transform duration-150 group-hover:translate-x-0.5">&rarr;</span>
           </Link>
         ))}
       </nav>
-      <hr
-        style={{
-          border: "none",
-          borderTop: "1px solid #d0d0d0",
-          margin: "24px 0 16px",
-        }}
-      />
+      <div className="h-px bg-admin-border my-6" />
       <ResetChapter
         track={track}
         chapterId={chapterId}

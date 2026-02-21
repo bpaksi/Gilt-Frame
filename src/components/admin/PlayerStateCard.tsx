@@ -16,26 +16,18 @@ export default function PlayerStateCard({
   const chapterNum = getChapterNumber(state.chapterId);
 
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #d0d0d0",
-        borderRadius: "8px",
-        padding: "16px",
-        marginBottom: "16px",
-      }}
-    >
+    <div className="admin-card p-4 mb-4">
       {state.chapterName ? (
         <>
-          <div style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase", color: "#999999", marginBottom: "2px" }}>
+          <div className="text-[10px] font-semibold tracking-[1px] uppercase text-admin-text-faint mb-0.5">
             Chapter {chapterNum ?? ""}
           </div>
-          <div style={{ fontSize: "16px", fontWeight: 600 }}>
+          <div className="text-base font-semibold text-admin-text-dark">
             {state.chapterName}
           </div>
         </>
       ) : (
-        <div style={{ fontSize: "14px", color: "#999999" }}>
+        <div className="text-sm text-admin-text-faint">
           No active workflow. Activate one from Settings.
         </div>
       )}

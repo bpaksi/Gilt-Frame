@@ -46,7 +46,7 @@ export default function OracleReview() {
 
   if (loading) {
     return (
-      <div style={{ fontSize: "13px", color: "#999999", padding: "20px 0" }}>
+      <div className="text-[13px] text-admin-text-faint py-5">
         Loading...
       </div>
     );
@@ -54,15 +54,7 @@ export default function OracleReview() {
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          gap: "16px",
-          fontSize: "12px",
-          color: "#666666",
-          marginBottom: "16px",
-        }}
-      >
+      <div className="flex gap-4 text-xs text-admin-text-muted mb-4">
         <span>{conversations.length} conversations</span>
         <span>{totalTokens.toLocaleString()} tokens used</span>
         <span>
@@ -73,51 +65,28 @@ export default function OracleReview() {
       {conversations.map((c) => (
         <div
           key={c.id}
-          style={{
-            background: c.flagged ? "#fef2f2" : "#fff",
-            border: `1px solid ${c.flagged ? "#e0b0b0" : "#d0d0d0"}`,
-            borderRadius: "8px",
-            padding: "12px 16px",
-            marginBottom: "8px",
-          }}
+          className={`rounded-lg py-3 px-4 mb-2 border transition-colors ${
+            c.flagged
+              ? "bg-red-50 border-red-200"
+              : "bg-admin-card border-admin-border shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)]"
+          }`}
         >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              marginBottom: "6px",
-            }}
-          >
-            <div style={{ fontSize: "13px", fontWeight: 500, flex: 1 }}>
+          <div className="flex justify-between items-start mb-1.5">
+            <div className="text-[13px] font-medium flex-1 text-admin-text-dark">
               Q: {c.question}
             </div>
             <button
               onClick={() => toggleFlag(c.id, c.flagged)}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontSize: "14px",
-                padding: "0 4px",
-                flexShrink: 0,
-              }}
+              className="admin-focus bg-transparent border-none cursor-pointer text-sm px-1 shrink-0 rounded transition-opacity hover:opacity-70"
             >
               {c.flagged ? "\u{1F6A9}" : "\u2690"}
             </button>
           </div>
-          <div
-            style={{
-              fontSize: "12px",
-              color: "#333333",
-              lineHeight: 1.5,
-              marginBottom: "6px",
-            }}
-          >
+          <div className="text-xs text-admin-text leading-6 mb-1.5">
             A: {c.response.slice(0, 200)}
             {c.response.length > 200 ? "..." : ""}
           </div>
-          <div style={{ fontSize: "10px", color: "#999999" }}>
+          <div className="text-[10px] text-admin-text-faint">
             {new Date(c.created_at).toLocaleString()}
             {c.tokens_used && ` \u2022 ${c.tokens_used} tokens`}
             {c.gemini_model && ` \u2022 ${c.gemini_model}`}
@@ -126,7 +95,7 @@ export default function OracleReview() {
       ))}
 
       {conversations.length === 0 && (
-        <div style={{ fontSize: "13px", color: "#999999" }}>
+        <div className="admin-card py-5 px-4 text-center text-[13px] text-admin-text-faint">
           No AI conversations yet.
         </div>
       )}

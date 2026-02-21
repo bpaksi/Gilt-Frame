@@ -2,43 +2,13 @@ import Link from "next/link";
 
 export default function AdminHeader() {
   return (
-    <header
-      style={{
-        height: "52px",
-        background: "#336699",
-        borderBottom: "1px solid #2a5580",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 16px",
-        position: "sticky",
-        top: 0,
-        zIndex: 40,
-      }}
-    >
-      <span
-        style={{
-          fontSize: "13px",
-          fontWeight: 600,
-          letterSpacing: "2px",
-          textTransform: "uppercase",
-          color: "#ffffff",
-          fontFamily: "Arial, Helvetica, sans-serif",
-        }}
-      >
+    <header className="md:hidden h-[52px] bg-admin-blue border-b border-admin-blue-hover flex items-center justify-between px-4 sticky top-0 z-40 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+      <span className="text-[13px] font-semibold tracking-[2px] uppercase text-white font-sans">
         Dashboard
       </span>
       <Link
         href="/the-order/settings"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "36px",
-          height: "36px",
-          color: "#ffffff",
-          textDecoration: "none",
-        }}
+        className="admin-focus flex items-center justify-center w-9 h-9 text-white/80 no-underline md:hidden rounded-md transition-colors hover:bg-white/10 hover:text-white"
       >
         <svg
           width="20"

@@ -14,6 +14,29 @@
   --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
   --animate-drift: drift 6s ease-in-out infinite;
   --animate-fade-in: fade-in 2s ease forwards;
+  --animate-admin-pulse: admin-pulse 2s ease-in-out infinite;
+
+  /* Admin theme tokens */
+  --color-admin-blue: #336699;
+  --color-admin-blue-hover: #2a5580;
+  --color-admin-blue-disabled: #5a8ab5;
+  --color-admin-red: #c62828;
+  --color-admin-red-hover: #a52020;
+  --color-admin-orange: #e68a00;
+  --color-admin-green: #2e7d32;
+  --color-admin-green-disabled: #6d9b6f;
+  --color-admin-gold: #b8860b;
+  --color-admin-gold-hover: #9a7209;
+  --color-admin-bg: #f0f0f0;
+  --color-admin-card: #ffffff;
+  --color-admin-border: #d0d0d0;
+  --color-admin-border-light: #e8e8e8;
+  --color-admin-surface: #e8e8e8;
+  --color-admin-text: #333333;
+  --color-admin-text-dark: #1a1a1a;
+  --color-admin-text-muted: #666666;
+  --color-admin-text-faint: #999999;
+  --color-admin-focus: rgba(51, 102, 153, 0.35);
 }
 
 @keyframes pulse-soft {
@@ -31,6 +54,11 @@
   to { opacity: 1; }
 }
 
+@keyframes admin-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20% { transform: translateX(-6px); }
@@ -39,74 +67,113 @@
   80% { transform: translateX(4px); }
 }
 
-:root {
-  --color-gold: rgba(200, 165, 75, 1);
-  --color-gold-90: rgba(200, 165, 75, 0.9);
-  --color-gold-60: rgba(200, 165, 75, 0.6);
-  --color-gold-35: rgba(200, 165, 75, 0.35);
-  --color-gold-25: rgba(200, 165, 75, 0.25);
-  --color-gold-12: rgba(200, 165, 75, 0.12);
-  --color-bg: #0a0a0a;
-  --color-surface: rgba(30, 25, 18, 0.8);
+@layer base {
+  :root {
+    --color-gold: rgba(200, 165, 75, 1);
+    --color-gold-90: rgba(200, 165, 75, 0.9);
+    --color-gold-60: rgba(200, 165, 75, 0.6);
+    --color-gold-35: rgba(200, 165, 75, 0.35);
+    --color-gold-25: rgba(200, 165, 75, 0.25);
+    --color-gold-12: rgba(200, 165, 75, 0.12);
+    --color-bg: #0a0a0a;
+    --color-surface: rgba(30, 25, 18, 0.8);
+  }
+
+  html {
+    height: 100%;
+    background: #0a0a0a;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100%;
+    background: #0a0a0a;
+    color: rgba(200, 165, 75, 0.9);
+    font-family: Georgia, 'Times New Roman', serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Dark scrollbars (game) */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0a0a0a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(200, 165, 75, 0.2);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(200, 165, 75, 0.4);
+  }
+
+  .shake {
+    animation: shake 0.4s ease;
+  }
+
+  a,
+  button,
+  [role="button"],
+  [type="button"],
+  [type="submit"],
+  [type="reset"],
+  select,
+  summary,
+  label[for],
+  [onclick],
+  [tabindex]:not([tabindex="-1"]) {
+    cursor: pointer;
+  }
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+@layer components {
+  /* Admin focus ring */
+  .admin-focus:focus-visible {
+    outline: 2px solid var(--color-admin-focus);
+    outline-offset: 2px;
+  }
 
-html {
-  height: 100%;
-  background: #0a0a0a;
-  -webkit-text-size-adjust: 100%;
-}
+  /* Admin input focus */
+  .admin-input:focus {
+    border-color: var(--color-admin-blue);
+    box-shadow: 0 0 0 3px var(--color-admin-focus);
+  }
 
-body {
-  min-height: 100%;
-  background: #0a0a0a;
-  color: rgba(200, 165, 75, 0.9);
-  font-family: Georgia, 'Times New Roman', serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-}
+  /* Admin button press */
+  .admin-btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
 
-/* Dark scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-}
+  /* Admin card base */
+  .admin-card {
+    background: var(--color-admin-card);
+    border: 1px solid var(--color-admin-border);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    color: var(--color-admin-text);
+  }
 
-::-webkit-scrollbar-track {
-  background: #0a0a0a;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(200, 165, 75, 0.2);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(200, 165, 75, 0.4);
-}
-
-.shake {
-  animation: shake 0.4s ease;
-}
-
-a,
-button,
-[role="button"],
-[type="button"],
-[type="submit"],
-[type="reset"],
-select,
-summary,
-label[for],
-[onclick],
-[tabindex]:not([tabindex="-1"]) {
-  cursor: pointer;
+  /* Admin sidebar scrollbar */
+  .admin-sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .admin-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .admin-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+  }
+  .admin-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
 }

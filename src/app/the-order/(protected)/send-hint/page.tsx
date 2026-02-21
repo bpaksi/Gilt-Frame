@@ -6,19 +6,10 @@ export default async function SendHintPage() {
   const track = await getAdminTrack();
 
   return (
-    <div style={{ padding: "16px" }}>
+    <div className="p-4">
       <Link
         href="/the-order/current"
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "4px",
-          fontSize: "13px",
-          color: "#336699",
-          textDecoration: "none",
-          marginBottom: "12px",
-          fontWeight: 500,
-        }}
+        className="inline-flex items-center gap-1 text-[13px] text-admin-blue no-underline mb-3 font-medium transition-opacity hover:opacity-70"
       >
         &larr; Back to Current
       </Link>

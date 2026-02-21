@@ -65,60 +65,20 @@ export default function EnrollmentClient({
     setTimeout(() => setCopied(false), 2000);
   }
 
-  const inputStyle: React.CSSProperties = {
-    height: "40px",
-    padding: "0 12px",
-    border: "1px solid #d0d0d0",
-    fontSize: "14px",
-    fontFamily: "Arial, Helvetica, sans-serif",
-    background: "#fff",
-    color: "#333333",
-    outline: "none",
-  };
-
-  const btnStyle = (disabled?: boolean): React.CSSProperties => ({
-    height: "40px",
-    padding: "0 20px",
-    background: disabled ? "#5a8ab5" : "#336699",
-    color: "#ffffff",
-    border: "none",
-    fontFamily: "Arial, Helvetica, sans-serif",
-    fontSize: "13px",
-    letterSpacing: "1px",
-    cursor: disabled ? "not-allowed" : "pointer",
-    whiteSpace: "nowrap",
-  });
-
   return (
     <div>
       {/* Capacity summary */}
-      <div
-        style={{
-          display: "flex",
-          gap: "24px",
-          marginBottom: "32px",
-          fontSize: "14px",
-          color: "#666666",
-        }}
-      >
+      <div className="flex gap-6 mb-8 text-sm text-admin-text-muted">
         <span>Live: {active("live").length}/5 enrolled</span>
         <span>Test: {active("test").length}/5 enrolled</span>
       </div>
 
       {/* Generate form */}
-      <div
-        style={{
-          display: "flex",
-          gap: "12px",
-          alignItems: "center",
-          marginBottom: "24px",
-          flexWrap: "wrap",
-        }}
-      >
+      <div className="flex gap-3 items-center mb-6 flex-wrap">
         <select
           value={track}
           onChange={(e) => setTrack(e.target.value as "test" | "live")}
-          style={{ ...inputStyle, width: "120px" }}
+          className="admin-input admin-focus h-10 px-3 border border-admin-border rounded text-sm font-sans bg-admin-card text-admin-text outline-none w-[120px] transition-colors"
         >
           <option value="test">Test</option>
           <option value="live">Live</option>
@@ -126,148 +86,157 @@ export default function EnrollmentClient({
         <button
           onClick={generateLink}
           disabled={generating}
-          style={btnStyle(generating)}
+          className={`admin-btn admin-focus h-10 px-5 text-white border-none font-sans text-[13px] tracking-[1px] whitespace-nowrap rounded transition-colors duration-150 ${
+            generating
+              ? "bg-admin-blue-disabled cursor-not-allowed"
+              : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
+          }`}
         >
           {generating ? "Generating\u2026" : "Generate Link"}
         </button>
       </div>
 
       {error && (
-        <p style={{ color: "#c62828", fontSize: "14px", marginBottom: "16px" }}>
+        <p className="text-admin-red text-sm mb-4">
           {error}
         </p>
       )}
 
       {newUrl && (
-        <div
-          style={{
-            display: "flex",
-            gap: "12px",
-            alignItems: "center",
-            marginBottom: "24px",
-            padding: "12px 16px",
-            background: "#f0f8f0",
-            border: "1px solid #c3e6cb",
-            flexWrap: "wrap",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "monospace",
-              fontSize: "13px",
-              flex: 1,
-              wordBreak: "break-all",
-            }}
-          >
+        <div className="flex gap-3 items-center mb-6 py-3 px-4 bg-green-50 border border-green-200 rounded-lg flex-wrap">
+          <span className="font-mono text-[13px] flex-1 break-all">
             {newUrl}
           </span>
           <button
             onClick={() => copyToClipboard(newUrl)}
-            style={btnStyle()}
+            className="admin-btn admin-focus h-10 px-5 bg-admin-blue text-white border-none font-sans text-[13px] tracking-[1px] cursor-pointer whitespace-nowrap rounded transition-colors duration-150 hover:bg-admin-blue-hover"
           >
             {copied ? "Copied!" : "Copy"}
           </button>
         </div>
       )}
 
-      {/* Enrollments table */}
+      {/* Desktop table */}
       {enrollments.length > 0 && (
-        <table
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            fontSize: "13px",
-          }}
-        >
-          <thead>
-            <tr>
-              {["Track", "Status", "Enrolled", "Last Seen", "Agent", ""].map(
-                (h) => (
-                  <th
-                    key={h}
-                    style={{
-                      textAlign: "left",
-                      padding: "8px 12px",
-                      borderBottom: "1px solid #d0d0d0",
-                      fontWeight: 400,
-                      letterSpacing: "1px",
-                      color: "#999999",
-                      fontSize: "11px",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {h}
-                  </th>
-                )
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {enrollments.map((e) => (
-              <tr
-                key={e.id}
-                style={{
-                  opacity: e.revoked ? 0.4 : 1,
-                  borderBottom: "1px solid #e8e8e8",
-                }}
-              >
-                <td style={{ padding: "10px 12px" }}>{e.track}</td>
-                <td style={{ padding: "10px 12px" }}>
-                  {e.revoked
-                    ? "Revoked"
-                    : e.enrolled_at
-                    ? "Active"
-                    : "Pending"}
-                </td>
-                <td style={{ padding: "10px 12px" }}>
-                  {e.enrolled_at
-                    ? new Date(e.enrolled_at).toLocaleDateString()
-                    : "\u2014"}
-                </td>
-                <td style={{ padding: "10px 12px" }}>
-                  {e.last_seen
-                    ? new Date(e.last_seen).toLocaleDateString()
-                    : "\u2014"}
-                </td>
-                <td
-                  style={{
-                    padding: "10px 12px",
-                    maxWidth: "200px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    color: "#666666",
-                  }}
-                  title={e.user_agent ?? ""}
-                >
-                  {e.user_agent ? e.user_agent.slice(0, 40) + "\u2026" : "\u2014"}
-                </td>
-                <td style={{ padding: "10px 12px" }}>
-                  {!e.revoked && (
-                    <button
-                      onClick={() => revokeEnrollment(e.id)}
-                      style={{
-                        background: "none",
-                        border: "1px solid #d0d0d0",
-                        fontFamily: "Arial, Helvetica, sans-serif",
-                        fontSize: "12px",
-                        cursor: "pointer",
-                        padding: "4px 10px",
-                        color: "#c62828",
-                      }}
+        <div className="hidden md:block admin-card overflow-hidden">
+          <table className="w-full border-collapse text-[13px]">
+            <thead>
+              <tr>
+                {["Track", "Status", "Enrolled", "Last Seen", "Agent", ""].map(
+                  (h) => (
+                    <th
+                      key={h}
+                      className="text-left py-2.5 px-3 border-b border-admin-border font-normal tracking-[1px] text-admin-text-faint text-[11px] uppercase"
                     >
-                      Revoke
-                    </button>
-                  )}
-                </td>
+                      {h}
+                    </th>
+                  )
+                )}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {enrollments.map((e) => (
+                <tr
+                  key={e.id}
+                  className={`border-b border-admin-border-light last:border-b-0 transition-colors ${
+                    e.revoked ? "opacity-40" : "hover:bg-gray-50"
+                  }`}
+                >
+                  <td className="py-2.5 px-3 font-medium">{e.track}</td>
+                  <td className="py-2.5 px-3">
+                    <span className={`text-xs font-medium ${
+                      e.revoked ? "text-admin-red" : e.enrolled_at ? "text-admin-green" : "text-admin-orange"
+                    }`}>
+                      {e.revoked
+                        ? "Revoked"
+                        : e.enrolled_at
+                        ? "Active"
+                        : "Pending"}
+                    </span>
+                  </td>
+                  <td className="py-2.5 px-3">
+                    {e.enrolled_at
+                      ? new Date(e.enrolled_at).toLocaleDateString()
+                      : "\u2014"}
+                  </td>
+                  <td className="py-2.5 px-3">
+                    {e.last_seen
+                      ? new Date(e.last_seen).toLocaleDateString()
+                      : "\u2014"}
+                  </td>
+                  <td
+                    className="py-2.5 px-3 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap text-admin-text-muted"
+                    title={e.user_agent ?? ""}
+                  >
+                    {e.user_agent ? e.user_agent.slice(0, 40) + "\u2026" : "\u2014"}
+                  </td>
+                  <td className="py-2.5 px-3">
+                    {!e.revoked && (
+                      <button
+                        onClick={() => revokeEnrollment(e.id)}
+                        className="admin-btn admin-focus bg-transparent border border-admin-border font-sans text-xs cursor-pointer py-1 px-2.5 rounded text-admin-red transition-colors duration-150 hover:bg-red-50 hover:border-red-200"
+                      >
+                        Revoke
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Mobile cards */}
+      {enrollments.length > 0 && (
+        <div className="md:hidden flex flex-col gap-3">
+          {enrollments.map((e) => (
+            <div
+              key={e.id}
+              className={`admin-card p-4 ${
+                e.revoked ? "opacity-40" : ""
+              }`}
+            >
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <span className="text-xs font-semibold uppercase tracking-[1px] text-admin-text-faint">
+                    {e.track}
+                  </span>
+                  <span className={`ml-2 text-xs font-medium ${
+                    e.revoked ? "text-admin-red" : e.enrolled_at ? "text-admin-green" : "text-admin-orange"
+                  }`}>
+                    {e.revoked ? "Revoked" : e.enrolled_at ? "Active" : "Pending"}
+                  </span>
+                </div>
+                {!e.revoked && (
+                  <button
+                    onClick={() => revokeEnrollment(e.id)}
+                    className="admin-btn admin-focus bg-transparent border border-admin-border font-sans text-[11px] cursor-pointer py-1 px-2 rounded text-admin-red transition-colors duration-150 hover:bg-red-50 hover:border-red-200"
+                  >
+                    Revoke
+                  </button>
+                )}
+              </div>
+              <div className="text-[11px] text-admin-text-muted space-y-0.5">
+                <div>
+                  Enrolled: {e.enrolled_at ? new Date(e.enrolled_at).toLocaleDateString() : "\u2014"}
+                </div>
+                <div>
+                  Last seen: {e.last_seen ? new Date(e.last_seen).toLocaleDateString() : "\u2014"}
+                </div>
+                {e.user_agent && (
+                  <div className="truncate">
+                    {e.user_agent.slice(0, 50)}{e.user_agent.length > 50 ? "\u2026" : ""}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
       {enrollments.length === 0 && (
-        <p style={{ color: "#999999", fontSize: "14px" }}>
+        <p className="text-admin-text-faint text-sm">
           No enrollments yet. Generate a link above.
         </p>
       )}

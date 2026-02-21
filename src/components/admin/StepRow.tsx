@@ -59,18 +59,18 @@ export default function StepRow({
   const effectiveDelivered = currentState === "delivered" || stepState === "delivered";
 
   const stateIcon = effectiveDelivered
-    ? "✓"
+    ? "\u2713"
     : currentState === "sent" || (stepState === "sent" && currentState !== "delivered")
-      ? "◑"
+      ? "\u25D1"
       : stepState === "ready"
-        ? "●"
+        ? "\u25CF"
         : stepState === "active"
-          ? "◉"
+          ? "\u25C9"
           : stepState === "scheduled"
-            ? "⏱"
+            ? "\u23F1"
             : effectiveSent
-              ? "✓"
-              : "○";
+              ? "\u2713"
+              : "\u25CB";
 
   const isCompleted = effectiveSent || completed;
   const isCurrent = !isCompleted && (stepState === "ready" || stepState === "active");
@@ -224,40 +224,25 @@ export default function StepRow({
   const showDoneButton = !readOnly && isOffline && !effectiveDelivered && messageId &&
     (currentState === "sent" || (stepState === "sent" && currentState !== "delivered"));
 
-  const displayIcon = completed ? "✓" : stateIcon;
+  const displayIcon = completed ? "\u2713" : stateIcon;
   const displayColor = completed ? "#b0b0b0" : stateColor;
 
   return (
     <div
-      style={{
-        position: "relative",
-        overflow: "hidden",
-        borderBottom: "1px solid #e8e8e8",
-        borderRadius: isCurrent ? "4px" : undefined,
-      }}
+      className={`relative overflow-hidden border-b border-admin-border-light ${
+        isCurrent ? "rounded" : ""
+      }`}
     >
       {/* Hidden button behind the row */}
       {canSwipeComplete && (
         <button
           onClick={handleComplete}
           disabled={completing}
-          style={{
-            position: "absolute",
-            right: 0,
-            top: 0,
-            bottom: 0,
-            width: `${BUTTON_WIDTH}px`,
-            background: completing ? "#7a5a20" : "#b8860b",
-            color: "#fff",
-            border: "none",
-            fontSize: "11px",
-            fontWeight: 700,
-            letterSpacing: "0.5px",
-            cursor: completing ? "not-allowed" : "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+          className={`absolute right-0 top-0 bottom-0 w-20 text-white border-none text-[11px] font-bold tracking-[0.5px] flex items-center justify-center transition-colors ${
+            completing
+              ? "bg-[#7a5a20] cursor-not-allowed"
+              : "bg-admin-gold hover:bg-admin-gold-hover cursor-pointer"
+          }`}
         >
           {completing ? "..." : "COMPLETE"}
         </button>
@@ -268,71 +253,39 @@ export default function StepRow({
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
+        className={`flex items-center gap-2.5 relative z-[1] ${
+          isCurrent
+            ? "py-2.5 px-4 bg-blue-50 -mx-4"
+            : "py-2.5 px-0 bg-admin-card"
+        } ${isCompleted ? "opacity-45" : "opacity-100"}`}
         style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          padding: isCurrent ? "10px 16px" : "10px 0",
-          opacity: isCompleted ? 0.45 : 1,
-          background: isCurrent ? "#f0f5fa" : "#fff",
-          margin: isCurrent ? "0 -16px" : undefined,
           transform: canSwipeComplete ? `translateX(-${swipeOffset}px)` : undefined,
           transition: isDragging.current ? "none" : "transform 0.2s ease-out",
-          position: "relative",
-          zIndex: 1,
         }}
       >
         <span
-          style={{
-            fontSize: "16px",
-            color: displayColor,
-            width: "20px",
-            textAlign: "center",
-            flexShrink: 0,
-          }}
+          className="text-base w-5 text-center shrink-0"
+          style={{ color: displayColor }}
         >
           {displayIcon}
         </span>
 
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div
-            style={{
-              fontSize: "13px",
-              fontWeight: 500,
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              flexWrap: "wrap",
-            }}
-          >
-            <span style={{ color: isCompleted ? "#999999" : isCurrent ? "#1a1a1a" : "#333333", fontWeight: isCurrent ? 600 : 500 }}>{step.name}</span>
-            <span
-              style={{
-                fontSize: "10px",
-                color: "#999999",
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-              }}
-            >
+        <div className="flex-1 min-w-0">
+          <div className="text-[13px] font-medium flex items-center gap-1.5 flex-wrap">
+            <span className={`${isCompleted ? "text-admin-text-faint" : isCurrent ? "text-admin-text-dark font-semibold" : "text-admin-text font-medium"}`}>
+              {step.name}
+            </span>
+            <span className="text-[10px] text-admin-text-faint uppercase tracking-[0.5px]">
               {step.type}
             </span>
             {hasCompanion && (
-              <span
-                style={{
-                  fontSize: "9px",
-                  background: "#e8eef5",
-                  color: "#336699",
-                  padding: "1px 5px",
-                  borderRadius: "3px",
-                  fontWeight: 600,
-                }}
-              >
+              <span className="text-[9px] bg-blue-50 text-admin-blue px-1.5 py-px rounded-sm font-semibold">
                 +auto
               </span>
             )}
           </div>
           {error && (
-            <div style={{ fontSize: "11px", color: "#c62828", marginTop: "2px" }}>
+            <div className="text-[11px] text-admin-red mt-0.5">
               {error}
             </div>
           )}
@@ -342,19 +295,11 @@ export default function StepRow({
           <button
             onClick={handleSend}
             disabled={sending}
-            style={{
-              height: "28px",
-              padding: "0 12px",
-              background: sending ? "#5a8ab5" : "#336699",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              fontSize: "11px",
-              fontWeight: 600,
-              letterSpacing: "0.5px",
-              cursor: sending ? "not-allowed" : "pointer",
-              flexShrink: 0,
-            }}
+            className={`admin-btn admin-focus h-7 px-3 text-white border-none rounded text-[11px] font-semibold tracking-[0.5px] shrink-0 transition-colors duration-150 ${
+              sending
+                ? "bg-admin-blue-disabled cursor-not-allowed"
+                : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
+            }`}
           >
             {sending ? "..." : "SEND"}
           </button>
@@ -364,35 +309,35 @@ export default function StepRow({
           <button
             onClick={handleMarkDone}
             disabled={marking}
-            style={{
-              height: "28px",
-              padding: "0 12px",
-              background: marking ? "#6d9b6f" : "#2e7d32",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              fontSize: "11px",
-              fontWeight: 600,
-              letterSpacing: "0.5px",
-              cursor: marking ? "not-allowed" : "pointer",
-              flexShrink: 0,
-            }}
+            className={`admin-btn admin-focus h-7 px-3 text-white border-none rounded text-[11px] font-semibold tracking-[0.5px] shrink-0 transition-colors duration-150 ${
+              marking
+                ? "bg-admin-green-disabled cursor-not-allowed"
+                : "bg-admin-green hover:brightness-110 cursor-pointer"
+            }`}
           >
             {marking ? "..." : "DONE"}
           </button>
         )}
 
-        {canSwipeComplete && showHint && !swiped && swipeOffset === 0 && (
-          <span
-            style={{
-              fontSize: "14px",
-              color: "#b8860b",
-              flexShrink: 0,
-              opacity: 0.5,
-              transition: "opacity 0.3s ease",
-            }}
+        {/* Desktop: visible COMPLETE button */}
+        {canSwipeComplete && (
+          <button
+            onClick={handleComplete}
+            disabled={completing}
+            className={`admin-btn admin-focus hidden md:inline-flex h-7 px-3 border-none rounded text-[11px] font-bold tracking-[0.5px] shrink-0 transition-colors duration-150 ${
+              completing
+                ? "bg-[#7a5a20] text-white/70 cursor-not-allowed"
+                : "bg-admin-gold text-white hover:bg-admin-gold-hover cursor-pointer"
+            }`}
           >
-            ‹‹
+            {completing ? "..." : "COMPLETE"}
+          </button>
+        )}
+
+        {/* Mobile: swipe hint */}
+        {canSwipeComplete && showHint && !swiped && swipeOffset === 0 && (
+          <span className="text-sm text-admin-gold shrink-0 opacity-50 transition-opacity duration-300 md:hidden">
+            {"\u2039\u2039"}
           </span>
         )}
       </div>

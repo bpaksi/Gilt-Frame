@@ -76,59 +76,36 @@ export default function ResetChapter({
     const isReset = confirmAction === "reset";
     return (
       <div
-        style={{
-          background: "#fff",
-          border: `1px solid ${isReset ? "#e0b0b0" : "#b0c0e0"}`,
-          borderRadius: "8px",
-          padding: "12px 16px",
-          marginBottom: "16px",
-        }}
+        className={`bg-admin-card rounded-lg py-3 px-4 mb-4 border ${
+          isReset ? "border-red-200" : "border-blue-200"
+        }`}
       >
-        <div style={{ fontSize: "13px", color: isReset ? "#c62828" : "#333333", marginBottom: "8px" }}>
+        <div className={`text-[13px] mb-2 ${isReset ? "text-admin-red" : "text-admin-text"}`}>
           {isReset
             ? "Purge all test track data? This wipes all chapters, messages, answers, activity, moments, and oracle history."
             : `Mark "${chapterName}" as complete? This adds completed_step rows for all remaining steps and marks the chapter done.`}
         </div>
-        <div style={{ display: "flex", gap: "8px" }}>
+        <div className="flex gap-2">
           <button
             onClick={isReset ? handleReset : handleComplete}
             disabled={loading}
-            style={{
-              height: "32px",
-              padding: "0 16px",
-              background: loading
-                ? (isReset ? "#e08080" : "#8090b0")
-                : (isReset ? "#c62828" : "#336699"),
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              fontSize: "12px",
-              fontWeight: 600,
-              cursor: loading ? "not-allowed" : "pointer",
-              fontFamily: "inherit",
-            }}
+            className={`admin-btn admin-focus h-8 px-4 text-white border-none rounded text-xs font-semibold font-inherit transition-colors duration-150 ${
+              loading
+                ? isReset ? "bg-red-300 cursor-not-allowed" : "bg-blue-300 cursor-not-allowed"
+                : isReset ? "bg-admin-red hover:bg-admin-red-hover cursor-pointer" : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
+            }`}
           >
             {loading ? "Processing..." : "Confirm"}
           </button>
           <button
             onClick={() => { setConfirmAction(null); setError(""); }}
-            style={{
-              height: "32px",
-              padding: "0 16px",
-              background: "#fff",
-              color: "#666666",
-              border: "1px solid #d0d0d0",
-              borderRadius: "4px",
-              fontSize: "12px",
-              cursor: "pointer",
-              fontFamily: "inherit",
-            }}
+            className="admin-focus h-8 px-4 bg-admin-card text-admin-text-muted border border-admin-border rounded text-xs cursor-pointer font-inherit transition-colors hover:bg-gray-50"
           >
             Cancel
           </button>
         </div>
         {error && (
-          <div style={{ fontSize: "12px", color: "#c62828", marginTop: "6px" }}>
+          <div className="text-xs text-admin-red mt-1.5">
             {error}
           </div>
         )}
@@ -137,44 +114,16 @@ export default function ResetChapter({
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: "8px",
-        marginBottom: "16px",
-      }}
-    >
+    <div className="flex gap-2 mb-4">
       <button
         onClick={() => setConfirmAction("complete")}
-        style={{
-          height: "32px",
-          padding: "0 16px",
-          background: "#fff",
-          color: "#336699",
-          border: "1px solid #336699",
-          borderRadius: "4px",
-          fontSize: "12px",
-          fontWeight: 600,
-          cursor: "pointer",
-          fontFamily: "inherit",
-        }}
+        className="admin-btn admin-focus h-8 px-4 bg-admin-card text-admin-blue border border-admin-blue rounded text-xs font-semibold cursor-pointer font-inherit transition-colors hover:bg-admin-blue hover:text-white"
       >
         Complete Chapter
       </button>
       <button
         onClick={() => setConfirmAction("reset")}
-        style={{
-          height: "32px",
-          padding: "0 16px",
-          background: "#fff",
-          color: "#c62828",
-          border: "1px solid #c62828",
-          borderRadius: "4px",
-          fontSize: "12px",
-          fontWeight: 600,
-          cursor: "pointer",
-          fontFamily: "inherit",
-        }}
+        className="admin-btn admin-focus h-8 px-4 bg-admin-card text-admin-red border border-admin-red rounded text-xs font-semibold cursor-pointer font-inherit transition-colors hover:bg-admin-red hover:text-white"
       >
         Reset All Data
       </button>

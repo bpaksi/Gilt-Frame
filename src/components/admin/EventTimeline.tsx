@@ -156,16 +156,9 @@ export default function EventTimeline({
         />
       )}
 
-      <div
-        style={{
-          background: "#fff",
-          border: "1px solid #d0d0d0",
-          borderRadius: "8px",
-          padding: "12px 16px",
-        }}
-      >
+      <div className="admin-card py-3 px-4">
         {filtered.length === 0 ? (
-          <div style={{ fontSize: "13px", color: "#999999", padding: "20px 0", textAlign: "center" }}>
+          <div className="text-[13px] text-admin-text-faint py-5 text-center">
             No events yet.
           </div>
         ) : (
@@ -174,45 +167,32 @@ export default function EventTimeline({
             return (
               <div
                 key={event.id}
-                style={{
-                  display: "flex",
-                  gap: "10px",
-                  padding: "8px 0",
-                  borderBottom: "1px solid #e8e8e8",
-                  alignItems: "flex-start",
-                }}
+                className="flex gap-2.5 py-2 border-b border-admin-border-light items-start last:border-b-0 transition-colors hover:bg-gray-50 -mx-2 px-2 rounded-sm"
               >
-                <span style={{ fontSize: "14px", width: "20px", textAlign: "center", flexShrink: 0, paddingTop: "1px" }}>
+                <span className="text-sm w-5 text-center shrink-0 pt-px">
                   {eventIcon(event.event_type)}
                 </span>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: "13px", fontWeight: 500, display: "flex", alignItems: "center", gap: "6px" }}>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13px] font-medium flex items-center gap-1.5">
                     {eventDisplayName(event.event_type)}
                     {event.source === "admin" && (
-                      <span style={{ fontSize: "9px", background: "#e8e0f0", color: "#6b4c9a", padding: "1px 5px", borderRadius: "3px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      <span className="text-[9px] bg-purple-100 text-purple-700 px-1.5 py-px rounded-sm font-semibold uppercase tracking-[0.5px]">
                         admin
                       </span>
                     )}
                   </div>
                   {typeof details?.step_name === "string" && (
-                    <div style={{ fontSize: "11px", color: "#666666" }}>
+                    <div className="text-[11px] text-admin-text-muted">
                       {details.step_name}
                     </div>
                   )}
                   {typeof details?.chapter_id === "string" && (
-                    <div style={{ fontSize: "10px", color: "#999999" }}>
+                    <div className="text-[10px] text-admin-text-faint">
                       {details.chapter_id}
                     </div>
                   )}
                 </div>
-                <span
-                  style={{
-                    fontSize: "11px",
-                    color: "#999999",
-                    whiteSpace: "nowrap",
-                    flexShrink: 0,
-                  }}
-                >
+                <span className="text-[11px] text-admin-text-faint whitespace-nowrap shrink-0">
                   {formatTime(event.created_at)}
                 </span>
               </div>

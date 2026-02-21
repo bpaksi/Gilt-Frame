@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import AdminHeader from "@/components/admin/AdminHeader";
+import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminTabBar from "@/components/admin/AdminTabBar";
 import TrackToggle from "@/components/admin/TrackToggle";
 import { getAdminTrack } from "@/lib/admin/track";
@@ -26,27 +27,17 @@ export default async function ProtectedAdminLayout({
   const track = await getAdminTrack();
 
   return (
-    <div
-      style={{
-        minHeight: "100dvh",
-        background: "#f0f0f0",
-        fontFamily: "Arial, Helvetica, sans-serif",
-        color: "#333333",
-      }}
-    >
-      <AdminHeader />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          padding: "12px 16px 0",
-        }}
-      >
-        <TrackToggle initialTrack={track} />
+    <div className="min-h-dvh bg-admin-bg font-sans text-admin-text">
+      <AdminSidebar initialTrack={track} />
+      <div className="md:ml-56">
+        <AdminHeader />
+        <div className="flex justify-center px-4 pt-3 md:hidden">
+          <TrackToggle initialTrack={track} />
+        </div>
+        <main className="pb-[calc(72px+env(safe-area-inset-bottom))] md:pb-0">
+          {children}
+        </main>
       </div>
-      <main style={{ paddingBottom: "calc(72px + env(safe-area-inset-bottom))" }}>
-        {children}
-      </main>
       <AdminTabBar />
     </div>
   );

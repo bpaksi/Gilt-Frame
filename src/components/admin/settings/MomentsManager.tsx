@@ -46,7 +46,7 @@ export default function MomentsManager() {
 
   if (loading) {
     return (
-      <div style={{ fontSize: "13px", color: "#999999", padding: "20px 0" }}>
+      <div className="text-[13px] text-admin-text-faint py-5">
         Loading...
       </div>
     );
@@ -58,78 +58,38 @@ export default function MomentsManager() {
         moments.map((m) => (
           <div
             key={m.id}
-            style={{
-              background: "#fff",
-              border: "1px solid #d0d0d0",
-              borderRadius: "8px",
-              padding: "12px 16px",
-              marginBottom: "8px",
-            }}
+            className="admin-card py-3 px-4 mb-2"
           >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
+            <div className="flex justify-between items-center">
               <div>
-                <span style={{ fontSize: "13px", fontWeight: 500 }}>
+                <span className="text-[13px] font-medium text-admin-text-dark">
                   {m.moment_type}
                 </span>
                 {m.chapter_id && (
-                  <span style={{ fontSize: "11px", color: "#999999", marginLeft: "8px" }}>
+                  <span className="text-[11px] text-admin-text-faint ml-2">
                     {m.chapter_id}
                   </span>
                 )}
               </div>
               <button
                 onClick={() => copyShareLink(m.share_token, m.id)}
-                style={{
-                  height: "24px",
-                  padding: "0 10px",
-                  background: "#fff",
-                  color: "#336699",
-                  border: "1px solid #336699",
-                  borderRadius: "4px",
-                  fontSize: "10px",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                }}
+                className="admin-btn admin-focus h-6 px-2.5 bg-admin-card text-admin-blue border border-admin-blue rounded text-[10px] font-semibold cursor-pointer font-inherit transition-colors duration-150 hover:bg-admin-blue hover:text-white"
               >
                 {copiedId === m.id ? "Copied!" : "Copy Link"}
               </button>
             </div>
             {m.narrative_text && (
-              <div
-                style={{
-                  fontSize: "12px",
-                  color: "#333333",
-                  marginTop: "6px",
-                  lineHeight: 1.4,
-                }}
-              >
+              <div className="text-xs text-admin-text mt-1.5 leading-snug">
                 {m.narrative_text}
               </div>
             )}
-            <div style={{ fontSize: "10px", color: "#999999", marginTop: "4px" }}>
+            <div className="text-[10px] text-admin-text-faint mt-1">
               {new Date(m.created_at).toLocaleDateString()}
             </div>
           </div>
         ))
       ) : (
-        <div
-          style={{
-            background: "#fff",
-            border: "1px solid #d0d0d0",
-            borderRadius: "8px",
-            padding: "20px 16px",
-            textAlign: "center",
-            fontSize: "13px",
-            color: "#999999",
-          }}
-        >
+        <div className="admin-card py-5 px-4 text-center text-[13px] text-admin-text-faint">
           No snapshots captured yet. Snapshots are created as the user completes
           tasks.
         </div>

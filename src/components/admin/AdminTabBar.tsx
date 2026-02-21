@@ -51,63 +51,32 @@ export default function AdminTabBar() {
   const pathname = usePathname();
 
   return (
-    <nav
-      style={{
-        position: "fixed",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: "calc(60px + env(safe-area-inset-bottom))",
-        paddingBottom: "env(safe-area-inset-bottom)",
-        background: "#e8e8e8",
-        borderTop: "1px solid #d0d0d0",
-        display: "flex",
-        alignItems: "stretch",
-        zIndex: 50,
-      }}
-    >
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 h-[calc(60px+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] bg-admin-card border-t border-admin-border flex items-stretch z-50 shadow-[0_-2px_8px_rgba(0,0,0,0.06)]">
       {TABS.map((tab) => {
         const isActive =
           pathname === tab.href || pathname.startsWith(tab.href + "/");
-        const color = isActive ? "#336699" : "#666666";
+        const color = isActive ? "#336699" : "#999999";
 
         return (
           <Link
             key={tab.href}
             href={tab.href}
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "4px",
-              textDecoration: "none",
-              minHeight: "44px",
-              color,
-              transition: "color 0.2s ease",
-            }}
+            className={`admin-focus relative flex-1 flex flex-col items-center justify-center gap-1 no-underline min-h-[44px] transition-colors ${
+              isActive ? "text-admin-blue" : "text-admin-text-faint"
+            }`}
           >
-            <span
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            {isActive && (
+              <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-admin-blue rounded-full" />
+            )}
+            <span className="flex items-center justify-center">
               {tab.icon === "radar" && <RadarIcon color={color} />}
               {tab.icon === "timeline" && <TimelineIcon color={color} />}
             </span>
             <span
-              style={{
-                fontSize: "10px",
-                textTransform: "uppercase",
-                letterSpacing: "2px",
-                fontFamily: "Arial, Helvetica, sans-serif",
-                color,
-                lineHeight: 1,
-                fontWeight: isActive ? 600 : 400,
-              }}
+              className={`text-[10px] uppercase tracking-[2px] font-sans leading-none ${
+                isActive ? "font-semibold" : "font-normal"
+              }`}
+              style={{ color }}
             >
               {tab.label}
             </span>

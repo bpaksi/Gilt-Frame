@@ -28,53 +28,25 @@ export default function TrackToggle({
     router.refresh();
   }
 
-  const pillStyle = (
-    side: "test" | "live",
-    isActive: boolean
-  ): React.CSSProperties => ({
-    flex: 1,
-    height: "32px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "11px",
-    fontWeight: isActive ? 700 : 500,
-    letterSpacing: "1.5px",
-    textTransform: "uppercase",
-    cursor: switching ? "not-allowed" : "pointer",
-    border: "none",
-    background: isActive
-      ? side === "live"
-        ? "#c62828"
-        : "#336699"
-      : "transparent",
-    color: isActive ? "#fff" : "#666666",
-    borderRadius: side === "test" ? "6px 0 0 6px" : "0 6px 6px 0",
-    transition: "all 0.15s ease",
-    fontFamily: "Arial, Helvetica, sans-serif",
-  });
-
   return (
-    <div
-      style={{
-        display: "flex",
-        width: "160px",
-        height: "32px",
-        borderRadius: "6px",
-        border: "1px solid #d0d0d0",
-        overflow: "hidden",
-        background: "#e8e8e8",
-      }}
-    >
+    <div className="flex w-40 h-8 rounded-md border border-white/15 overflow-hidden bg-white/8">
       <button
         onClick={() => handleSwitch("test")}
-        style={pillStyle("test", track === "test")}
+        className={`admin-focus flex-1 h-8 flex items-center justify-center text-[11px] font-bold tracking-[1.5px] uppercase border-none transition-all duration-200 font-sans ${
+          track === "test"
+            ? "bg-white/20 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]"
+            : "bg-transparent text-white/50 hover:text-white/70 hover:bg-white/5"
+        } ${switching ? "cursor-not-allowed opacity-70" : "cursor-pointer"}`}
       >
         Test
       </button>
       <button
         onClick={() => handleSwitch("live")}
-        style={pillStyle("live", track === "live")}
+        className={`admin-focus flex-1 h-8 flex items-center justify-center text-[11px] font-bold tracking-[1.5px] uppercase border-none transition-all duration-200 font-sans ${
+          track === "live"
+            ? "bg-admin-red text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]"
+            : "bg-transparent text-white/50 hover:text-white/70 hover:bg-white/5"
+        } ${switching ? "cursor-not-allowed opacity-70" : "cursor-pointer"}`}
       >
         Live
       </button>

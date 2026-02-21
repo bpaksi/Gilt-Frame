@@ -10,30 +10,15 @@ export default async function EnrollmentPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div style={{ padding: "40px 24px", maxWidth: "720px" }}>
-      <div style={{ display: "flex", alignItems: "baseline", gap: "16px", marginBottom: "32px" }}>
+    <div className="p-4 md:py-10 md:px-6 max-w-3xl">
+      <div className="flex items-baseline gap-4 mb-8">
         <Link
           href="/the-order/settings"
-          style={{
-            fontFamily: "Arial, Helvetica, sans-serif",
-            fontSize: "14px",
-            color: "#999999",
-            textDecoration: "none",
-            letterSpacing: "1px",
-          }}
+          className="font-sans text-sm text-admin-text-faint no-underline tracking-[1px] transition-colors hover:text-admin-blue"
         >
           ← Settings
         </Link>
-        <h1
-          style={{
-            fontFamily: "Arial, Helvetica, sans-serif",
-            fontSize: "20px",
-            fontWeight: 400,
-            letterSpacing: "2px",
-            textTransform: "uppercase",
-            margin: 0,
-          }}
-        >
+        <h1 className="font-sans text-xl font-normal tracking-[2px] uppercase m-0">
           Device Enrollment
         </h1>
       </div>
