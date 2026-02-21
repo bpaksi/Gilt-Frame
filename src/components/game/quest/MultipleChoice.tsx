@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from "react";
 import HintSystem from "../HintSystem";
 import QuizQuestion from "../QuizQuestion";
-import WaveDivider from "@/components/ui/WaveDivider";
+import OrnateDivider from "@/components/ui/OrnateDivider";
 import { recordAnswer, revealHint } from "@/lib/actions/quest";
 import type { MultipleChoiceConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
@@ -108,7 +108,7 @@ export default function MultipleChoice({
       {/* Scrollwork divider + per-question hints */}
       {currentHints && chapterId && stepIndex !== undefined && (
         <>
-          <WaveDivider
+          <OrnateDivider
             style={{
               opacity: questionsVisible ? 0.3 : 0,
               transition: "opacity 0.4s ease",
@@ -133,7 +133,7 @@ export const showcase: ShowcaseDefinition<MultipleChoiceProps> = {
   category: "quest",
   label: "Multiple Choice",
   description: "Sequential multiple-choice questions with hints",
-  uses: ["HintSystem", "QuizQuestion", "WaveDivider"],
+  uses: ["HintSystem", "QuizQuestion", "OrnateDivider"],
   defaults: {
     config: {
       questions: [

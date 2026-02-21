@@ -7,7 +7,7 @@ import TextButton, { showcase as textButton } from "@/components/ui/TextButton";
 import OptionButton, { showcase as optionButton } from "@/components/ui/OptionButton";
 import GoldText, { showcase as goldText } from "@/components/ui/GoldText";
 import UppercaseLabel, { showcase as uppercaseLabel } from "@/components/ui/UppercaseLabel";
-import WaveDivider, { showcase as waveDivider } from "@/components/ui/WaveDivider";
+import OrnateDivider, { showcase as ornateDivider } from "@/components/ui/OrnateDivider";
 import EmptyState, { showcase as emptyState } from "@/components/ui/EmptyState";
 import AmbientParticles, { showcase as ambientParticles } from "@/components/ui/AmbientParticles";
 import MarkerSVG, { showcase as markerSVG } from "@/components/ui/MarkerSVG";
@@ -51,7 +51,7 @@ const ALL_ENTRIES: ShowcaseEntry[] = [
   { id: "OptionButton",     filePath: "src/components/ui/OptionButton.tsx",      showcase: optionButton,     Component: OptionButton },
   { id: "GoldText",         filePath: "src/components/ui/GoldText.tsx",          showcase: goldText,         Component: GoldText },
   { id: "UppercaseLabel",   filePath: "src/components/ui/UppercaseLabel.tsx",    showcase: uppercaseLabel,   Component: UppercaseLabel },
-  { id: "WaveDivider",      filePath: "src/components/ui/WaveDivider.tsx",       showcase: waveDivider,      Component: WaveDivider },
+  { id: "OrnateDivider",    filePath: "src/components/ui/OrnateDivider.tsx",     showcase: ornateDivider,    Component: OrnateDivider },
   { id: "EmptyState",       filePath: "src/components/ui/EmptyState.tsx",        showcase: emptyState,       Component: EmptyState },
   { id: "AmbientParticles", filePath: "src/components/ui/AmbientParticles.tsx",  showcase: ambientParticles, Component: AmbientParticles },
   { id: "MarkerSVG",        filePath: "src/components/ui/MarkerSVG.tsx",         showcase: markerSVG,        Component: MarkerSVG },

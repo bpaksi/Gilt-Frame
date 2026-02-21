@@ -4,7 +4,7 @@ import { useState, useCallback, useMemo } from "react";
 import MarkerTap from "../MarkerTap";
 import QuizQuestion from "../QuizQuestion";
 import HintSystem from "../HintSystem";
-import WaveDivider from "@/components/ui/WaveDivider";
+import OrnateDivider from "@/components/ui/OrnateDivider";
 import { revealHint } from "@/lib/actions/quest";
 import type { FindByTextConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
@@ -132,7 +132,7 @@ export default function FindByText({
         {/* Hint system — always available, player-initiated */}
         {hints.length > 0 && chapterId && stepIndex !== undefined && (
           <>
-            <WaveDivider
+            <OrnateDivider
               style={{ opacity: 0.3, transition: "opacity 0.4s ease", margin: "-8px 0" }}
             />
             <HintSystem
@@ -177,7 +177,7 @@ export const showcase: ShowcaseDefinition<FindByTextProps> = {
   category: "quest",
   label: "Find by Text",
   description: "Text-guided search leading to looping multiple-choice identification",
-  uses: ["MarkerTap", "QuizQuestion", "HintSystem", "WaveDivider"],
+  uses: ["MarkerTap", "QuizQuestion", "HintSystem", "OrnateDivider"],
   defaults: {
     config: {
       guidance_text: "In the east wing, seek the canvas that glows.\nLook for what time has gilded.",

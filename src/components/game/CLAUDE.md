@@ -110,7 +110,7 @@ export const showcase: ShowcaseDefinition<Props> = {
   category: "quest",          // "ui" | "game" | "quest"
   label: "Multiple Choice",   // Human-readable name
   description: "Single-question puzzle with tiered hints and shake animation on wrong answers.",
-  uses: ["HintSystem", "OptionButton", "WaveDivider"],  // gallery component IDs rendered internally
+  uses: ["HintSystem", "OptionButton", "OrnateDivider"],  // gallery component IDs rendered internally
   defaults: {                 // All required props satisfied; no DB needed
     config: { /* ... */ },
     onAdvance: () => {},
