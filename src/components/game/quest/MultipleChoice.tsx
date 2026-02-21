@@ -4,7 +4,7 @@ import { useState, useCallback, useMemo } from "react";
 import HintSystem from "../HintSystem";
 import QuizQuestion from "../QuizQuestion";
 import WaveDivider from "@/components/ui/WaveDivider";
-import { recordAnswer } from "@/lib/actions/quest";
+import { recordAnswer, revealHint } from "@/lib/actions/quest";
 import type { MultipleChoiceConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
@@ -25,8 +25,8 @@ export default function MultipleChoice({
   chapterId,
   stepIndex,
   revealedHintTiers,
-  recordAnswerAction,
-  revealHintAction,
+  recordAnswerAction = recordAnswer,
+  revealHintAction = revealHint,
 }: MultipleChoiceProps) {
   const { questions } = config;
   const [currentQ, setCurrentQ] = useState(0);

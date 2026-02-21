@@ -5,6 +5,7 @@ import MarkerTap from "../MarkerTap";
 import QuizQuestion from "../QuizQuestion";
 import HintSystem from "../HintSystem";
 import WaveDivider from "@/components/ui/WaveDivider";
+import { revealHint } from "@/lib/actions/quest";
 import type { FindByTextConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
@@ -41,7 +42,7 @@ export default function FindByText({
   chapterId,
   stepIndex,
   revealedHintTiers,
-  revealHintAction,
+  revealHintAction = revealHint,
 }: FindByTextProps) {
   const {
     guidance_text,

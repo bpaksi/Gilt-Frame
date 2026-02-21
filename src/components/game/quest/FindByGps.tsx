@@ -9,6 +9,7 @@ import CompassPermission from "../CompassPermission";
 import CompassRose from "../CompassRose";
 import MarkerTap from "../MarkerTap";
 import GhostButton from "@/components/ui/GhostButton";
+import { revealHint } from "@/lib/actions/quest";
 import type { FindByGpsConfig, HintItem } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 import { colors, fontFamily } from "@/components/ui/tokens";
@@ -29,7 +30,7 @@ export default function FindByGps({
   chapterId,
   stepIndex,
   revealedHintTiers,
-  revealHintAction,
+  revealHintAction = revealHint,
 }: FindByGpsProps) {
   const hasCoords = config.target_lat !== undefined && config.target_lng !== undefined;
   const [phase, setPhase] = useState<"compass" | "marker">(hasCoords ? "compass" : "marker");
