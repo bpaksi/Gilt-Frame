@@ -2,20 +2,20 @@
 
 import { useState, useRef, useEffect } from "react";
 import GiltFrame from "../GiltFrame";
-import type { PassphrasePuzzleConfig } from "@/config";
+import type { PassphraseEntryConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
-interface PassphrasePuzzleProps {
-  config: PassphrasePuzzleConfig;
+interface PassphraseEntryProps {
+  config: PassphraseEntryConfig;
   onAdvance: () => void;
   validatePassphraseAction?: (passphrase: string) => Promise<{ success: boolean; error?: string }>;
 }
 
-export default function PassphrasePuzzle({
+export default function PassphraseEntry({
   config,
   onAdvance,
   validatePassphraseAction,
-}: PassphrasePuzzleProps) {
+}: PassphraseEntryProps) {
   const [status, setStatus] = useState<
     "idle" | "submitting" | "error" | "success"
   >("idle");
@@ -132,9 +132,9 @@ export default function PassphrasePuzzle({
   );
 }
 
-export const showcase: ShowcaseDefinition<PassphrasePuzzleProps> = {
+export const showcase: ShowcaseDefinition<PassphraseEntryProps> = {
   category: "quest",
-  label: "Passphrase Puzzle",
+  label: "Passphrase Entry",
   description: "Text input puzzle for hidden acrostic passphrase",
   uses: ["GiltFrame"],
 };

@@ -4,17 +4,17 @@ import { useState, useEffect, useRef } from "react";
 import AmbientParticles from "@/components/ui/AmbientParticles";
 import GhostButton from "@/components/ui/GhostButton";
 import UppercaseLabel from "@/components/ui/UppercaseLabel";
-import type { RewardRevealConfig } from "@/config";
+import type { StoryRevealConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 import CeremonyAnimation from "../CeremonyAnimation";
 
-interface RewardRevealProps {
-  config: RewardRevealConfig;
+interface StoryRevealProps {
+  config: StoryRevealConfig;
   onAdvance: () => void;
   chapterName?: string;
 }
 
-export default function RewardReveal({ config, onAdvance, chapterName }: RewardRevealProps) {
+export default function StoryReveal({ config, onAdvance, chapterName }: StoryRevealProps) {
   const [phase, setPhase] = useState<"ceremony" | "text">(
     config.skip_ceremony ? "text" : "ceremony"
   );
@@ -47,10 +47,10 @@ export default function RewardReveal({ config, onAdvance, chapterName }: RewardR
   );
 }
 
-export const showcase: ShowcaseDefinition<RewardRevealProps> = {
+export const showcase: ShowcaseDefinition<StoryRevealProps> = {
   category: "quest",
-  label: "Reward Reveal",
-  description: "Ceremony animation with reward text reveal",
+  label: "Story Reveal",
+  description: "Ceremony animation with story text reveal and continue button",
   uses: ["AmbientParticles", "GhostButton", "UppercaseLabel", "CeremonyAnimation"],
 };
 
@@ -62,7 +62,7 @@ function TextPhase({
   chapterName,
   continueText = "Continue",
 }: {
-  config: RewardRevealConfig;
+  config: StoryRevealConfig;
   onAdvance: () => void;
   chapterName?: string;
   continueText?: string;
@@ -142,7 +142,6 @@ function TextPhase({
               animation: `rewardDrift-${i % 4} ${6 + (i % 5) * 2}s ease-in-out infinite`,
               animationDelay: `${i * 0.7}s`,
               willChange: "transform, opacity",
-              // Unique per-particle path via CSS custom properties
               ["--xd" as string]: `${i % 2 === 0 ? xDrift : -xDrift}px`,
               ["--yd" as string]: `${i % 3 === 0 ? -yDrift : yDrift}px`,
             }}

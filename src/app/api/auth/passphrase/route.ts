@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { gameConfig, getOrderedSteps, type PassphrasePuzzleConfig } from "@/config";
+import { gameConfig, getOrderedSteps, type PassphraseEntryConfig } from "@/config";
 import { createRateLimiter, getClientIp } from "@/lib/rate-limit";
 
 const prologue = gameConfig.chapters["prologue"];
 const passphraseStep = prologue
   ? getOrderedSteps(prologue).find(
-      (s) => s.type === "website" && s.component === "PassphrasePuzzle"
+      (s) => s.type === "website" && s.component === "PassphraseEntry"
     )
   : null;
 const PASSPHRASE = passphraseStep
-  ? (passphraseStep.config as PassphrasePuzzleConfig).passphrase
+  ? (passphraseStep.config as PassphraseEntryConfig).passphrase
   : undefined;
 
 const limiter = createRateLimiter(10, 15 * 60 * 1000);

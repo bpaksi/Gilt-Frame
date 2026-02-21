@@ -411,8 +411,8 @@ function buildComponentProps(
       }
     };
 
-    // PassphrasePuzzle: inject validate action
-    if (entry.id === "PassphrasePuzzle") {
+    // PassphraseEntry: inject validate action
+    if (entry.id === "PassphraseEntry") {
       const passphrase = (config as { passphrase?: string }).passphrase ?? "";
       base.validatePassphraseAction = async (input: string) => {
         try {
@@ -424,8 +424,8 @@ function buildComponentProps(
       };
     }
 
-    // RewardReveal: pass chapterName
-    if (entry.id === "RewardReveal") {
+    // StoryReveal: pass chapterName
+    if (entry.id === "StoryReveal") {
       base.chapterName = "Gallery Preview";
     }
 

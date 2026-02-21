@@ -24,13 +24,12 @@ import IndoorWayfinding, { showcase as indoorWayfinding } from "@/components/gam
 import CeremonyAnimation, { showcase as ceremonyAnimation } from "@/components/game/CeremonyAnimation";
 
 // ── Quest Components ─────────────────────────────────────────────────────────
-import WayfindingCompass, { showcase as wayfindingCompass } from "@/components/game/quest/WayfindingCompass";
-import MarkerButton, { showcase as markerButton } from "@/components/game/quest/MarkerButton";
+import FindByGps, { showcase as findByGps } from "@/components/game/quest/FindByGps";
 import MultipleChoice, { showcase as multipleChoice } from "@/components/game/quest/MultipleChoice";
-import CompassPuzzle, { showcase as compassPuzzle } from "@/components/game/quest/CompassPuzzle";
-import RewardReveal, { showcase as rewardReveal } from "@/components/game/quest/RewardReveal";
-import PassphrasePuzzle, { showcase as passphrasePuzzle } from "@/components/game/quest/PassphrasePuzzle";
-import GuidedIdentification, { showcase as guidedIdentification } from "@/components/game/quest/GuidedIdentification";
+import BearingPuzzle, { showcase as bearingPuzzle } from "@/components/game/quest/BearingPuzzle";
+import StoryReveal, { showcase as storyReveal } from "@/components/game/quest/StoryReveal";
+import PassphraseEntry, { showcase as passphraseEntry } from "@/components/game/quest/PassphraseEntry";
+import FindByText, { showcase as findByText } from "@/components/game/quest/FindByText";
 
 export type ShowcaseEntry = {
   id: string;
@@ -63,13 +62,12 @@ const ALL_ENTRIES: ShowcaseEntry[] = [
   { id: "IndoorWayfinding",  filePath: "src/components/game/IndoorWayfinding.tsx",    showcase: indoorWayfinding,  Component: IndoorWayfinding },
   { id: "CeremonyAnimation", filePath: "src/components/game/CeremonyAnimation.tsx",   showcase: ceremonyAnimation, Component: CeremonyAnimation },
   // Quest
-  { id: "WayfindingCompass",    filePath: "src/components/game/quest/WayfindingCompass.tsx",    showcase: wayfindingCompass,    Component: WayfindingCompass },
-  { id: "MarkerButton",         filePath: "src/components/game/quest/MarkerButton.tsx",         showcase: markerButton,         Component: MarkerButton },
-  { id: "MultipleChoice",       filePath: "src/components/game/quest/MultipleChoice.tsx",       showcase: multipleChoice,       Component: MultipleChoice },
-  { id: "CompassPuzzle",        filePath: "src/components/game/quest/CompassPuzzle.tsx",        showcase: compassPuzzle,        Component: CompassPuzzle },
-  { id: "RewardReveal",         filePath: "src/components/game/quest/RewardReveal.tsx",         showcase: rewardReveal,         Component: RewardReveal },
-  { id: "PassphrasePuzzle",     filePath: "src/components/game/quest/PassphrasePuzzle.tsx",     showcase: passphrasePuzzle,     Component: PassphrasePuzzle },
-  { id: "GuidedIdentification", filePath: "src/components/game/quest/GuidedIdentification.tsx", showcase: guidedIdentification, Component: GuidedIdentification },
+  { id: "FindByGps",       filePath: "src/components/game/quest/FindByGps.tsx",       showcase: findByGps,       Component: FindByGps },
+  { id: "MultipleChoice",  filePath: "src/components/game/quest/MultipleChoice.tsx",  showcase: multipleChoice,  Component: MultipleChoice },
+  { id: "BearingPuzzle",   filePath: "src/components/game/quest/BearingPuzzle.tsx",   showcase: bearingPuzzle,   Component: BearingPuzzle },
+  { id: "StoryReveal",     filePath: "src/components/game/quest/StoryReveal.tsx",     showcase: storyReveal,     Component: StoryReveal },
+  { id: "PassphraseEntry", filePath: "src/components/game/quest/PassphraseEntry.tsx", showcase: passphraseEntry, Component: PassphraseEntry },
+  { id: "FindByText",      filePath: "src/components/game/quest/FindByText.tsx",      showcase: findByText,      Component: FindByText },
 ];
 
 /** Map of component ID → IDs of components that use it (computed from `uses` declarations) */

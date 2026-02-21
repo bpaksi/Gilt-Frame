@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import WaitingState from "@/components/game/WaitingState";
-import QuestStateMachine from "@/components/game/quest/QuestStateMachine";
+import QuestRunner from "./QuestRunner";
 import { getQuestState } from "@/lib/actions/quest";
 
 export const metadata: Metadata = {
@@ -14,5 +14,5 @@ export default async function CurrentPage() {
     return <WaitingState />;
   }
 
-  return <QuestStateMachine initialState={questState} />;
+  return <QuestRunner initialState={questState} />;
 }

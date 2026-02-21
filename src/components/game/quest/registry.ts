@@ -2,23 +2,21 @@ import type { ComponentType } from "react";
 import type { ComponentName } from "@/config";
 import { lazy } from "react";
 
-const WayfindingCompass = lazy(() => import("./WayfindingCompass"));
-const MarkerButton = lazy(() => import("./MarkerButton"));
+const FindByGps = lazy(() => import("./FindByGps"));
 const MultipleChoice = lazy(() => import("./MultipleChoice"));
 
-const CompassPuzzle = lazy(() => import("./CompassPuzzle"));
-const RewardReveal = lazy(() => import("./RewardReveal"));
-const PassphrasePuzzle = lazy(() => import("./PassphrasePuzzle"));
-const GuidedIdentification = lazy(() => import("./GuidedIdentification"));
+const BearingPuzzle = lazy(() => import("./BearingPuzzle"));
+const StoryReveal = lazy(() => import("./StoryReveal"));
+const PassphraseEntry = lazy(() => import("./PassphraseEntry"));
+const FindByText = lazy(() => import("./FindByText"));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const componentRegistry: Record<ComponentName, ComponentType<any>> = {
-  WayfindingCompass,
-  MarkerButton,
+  FindByGps,
   MultipleChoice,
 
-  CompassPuzzle,
-  RewardReveal,
-  PassphrasePuzzle,
-  GuidedIdentification,
+  BearingPuzzle,
+  StoryReveal,
+  PassphraseEntry,
+  FindByText,
 };

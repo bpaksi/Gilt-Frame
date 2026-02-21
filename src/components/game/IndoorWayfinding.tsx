@@ -3,11 +3,18 @@
 import MarkerSVG from "@/components/ui/MarkerSVG";
 import HintSystem from "./HintSystem";
 import GhostButton from "@/components/ui/GhostButton";
-import type { WayfindingCompassConfig, HintItem } from "@/config";
+import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
+type HintItem = { tier: number; hint: string };
+
+type IndoorConfig = {
+  wayfinding_text?: string;
+  hints?: HintItem[];
+};
+
 interface IndoorWayfindingProps {
-  config: WayfindingCompassConfig;
+  config: IndoorConfig;
   onAdvance: () => void;
   chapterId?: string;
   stepIndex?: number;
@@ -41,8 +48,8 @@ export default function IndoorWayfinding({
       {config.wayfinding_text && (
         <p
           style={{
-            color: "rgba(200, 165, 75, 0.9)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: colors.gold90,
+            fontFamily,
             fontSize: "18px",
             fontStyle: "italic",
             textAlign: "center",
@@ -60,7 +67,7 @@ export default function IndoorWayfinding({
 
       {config.hints && chapterId && stepIndex !== undefined && (
         <HintSystem
-          hints={config.hints as HintItem[]}
+          hints={config.hints}
           chapterId={chapterId}
           stepIndex={stepIndex}
           initialRevealedTiers={revealedHintTiers}
@@ -76,4 +83,8 @@ export const showcase: ShowcaseDefinition<IndoorWayfindingProps> = {
   label: "Indoor Wayfinding",
   description: "Text-based indoor directions with arrival button",
   uses: ["MarkerSVG", "HintSystem", "GhostButton"],
+  defaults: {
+    config: { wayfinding_text: "Proceed to the east gallery and locate the gilded frame." },
+    onAdvance: () => {},
+  },
 };

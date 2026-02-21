@@ -4,11 +4,11 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
 import CompassPermission from "../CompassPermission";
 import MarkerSVG from "@/components/ui/MarkerSVG";
-import type { CompassPuzzleConfig } from "@/config";
+import type { BearingPuzzleConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
-interface CompassPuzzleProps {
-  config: CompassPuzzleConfig;
+interface BearingPuzzleProps {
+  config: BearingPuzzleConfig;
   onAdvance: () => void;
 }
 
@@ -34,7 +34,7 @@ function signedAngularDistance(heading: number, target: number): number {
   return d;
 }
 
-export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps) {
+export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const markerRef = useRef<HTMLDivElement>(null);
   const statusTextRef = useRef<HTMLDivElement>(null);
@@ -444,9 +444,9 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
   );
 }
 
-export const showcase: ShowcaseDefinition<CompassPuzzleProps> = {
+export const showcase: ShowcaseDefinition<BearingPuzzleProps> = {
   category: "quest",
-  label: "Compass Puzzle",
-  description: "Device orientation puzzle — point at target bearing",
+  label: "Bearing Puzzle",
+  description: "Device orientation puzzle — point phone at target bearing and hold steady",
   uses: ["CompassPermission", "MarkerSVG"],
 };

@@ -2,16 +2,16 @@
 
 import { Suspense, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { componentRegistry } from "./registry";
-import StateFader from "../StateFader";
+import { componentRegistry } from "@/components/game/quest/registry";
+import StateFader from "@/components/game/StateFader";
 import type { QuestState } from "@/lib/actions/quest";
 import { advanceQuest } from "@/lib/actions/quest";
 
-interface QuestStateMachineProps {
+interface QuestRunnerProps {
   initialState: QuestState;
 }
 
-export default function QuestStateMachine({ initialState }: QuestStateMachineProps) {
+export default function QuestRunner({ initialState }: QuestRunnerProps) {
   const [state, setState] = useState(initialState);
   const [prevInitialState, setPrevInitialState] = useState(initialState);
   const router = useRouter();

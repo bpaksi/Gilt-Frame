@@ -35,18 +35,24 @@ export type QuestionItem = {
   hints?: string[];
 };
 
-/** GPS outdoor compass OR text-based indoor directions. */
-export type WayfindingCompassConfig = {
+/**
+ * GPS outdoor compass (full mode) OR tappable marker only (lite mode).
+ *
+ * Full mode: target_lat + target_lng present → Phase 1: GPS compass navigates
+ * to geofence → Phase 2: tappable marker advances the quest.
+ *
+ * Lite mode: no coordinates → Phase 1 skipped → tappable marker only
+ * (narrative beat, no navigation).
+ */
+export type FindByGpsConfig = {
+  // Phase 1 — GPS navigation (optional; omit for lite mode)
   target_lat?: number;
   target_lng?: number;
-  /** Meters — auto-advance when player enters. Null = show 'I have arrived' button. */
+  /** Meters — auto-transitions to marker tap when player enters. */
   geofence_radius?: number;
   wayfinding_text?: string;
   hints?: HintItem[];
-};
-
-/** Tappable Marker SVG with pulsing text below. Optional title lines above. */
-export type MarkerButtonConfig = {
+  // Phase 2 — Marker tap (always present)
   title_lines?: string[];
   instruction: string;
 };
@@ -58,7 +64,7 @@ export type MultipleChoiceConfig = {
 };
 
 /** Device orientation puzzle — point phone at target bearing and hold steady. */
-export type CompassPuzzleConfig = {
+export type BearingPuzzleConfig = {
   compass_target: number;
   compass_tolerance?: number;
   min_rotation?: number;
@@ -67,7 +73,7 @@ export type CompassPuzzleConfig = {
 };
 
 /** Ceremony animation + reward text with unlock/continue buttons. */
-export type RewardRevealConfig = {
+export type StoryRevealConfig = {
   primary: string;
   secondary?: string | null;
   /** Skip the gilt-frame ceremony and go straight to text. Default false. */
@@ -79,13 +85,13 @@ export type RewardRevealConfig = {
 };
 
 /** Passphrase input puzzle — player enters hidden acrostic from letter. */
-export type PassphrasePuzzleConfig = {
+export type PassphraseEntryConfig = {
   placeholder?: string;
   passphrase: string;
 };
 
 /**
- * Two-phase identification puzzle that loops until correct.
+ * Two-phase find-and-confirm puzzle that loops until correct.
  *
  * Phase 1 — GUIDANCE: Displays guidance_text (the initial clue). A "?" button
  * reveals progressive hints (tiered). Player reads, looks around, then taps
@@ -99,7 +105,7 @@ export type PassphrasePuzzleConfig = {
  * The 3 distractors are re-randomized on each wrong attempt so the player
  * can't brute-force by elimination.
  */
-export type GuidedIdentificationConfig = {
+export type FindByTextConfig = {
   /** The initial text clue shown at the top of the guidance phase. */
   guidance_text: string;
   /** Progressive hints revealed on wrong attempts (and via "?" button). */
@@ -117,13 +123,12 @@ export type GuidedIdentificationConfig = {
 // ─── Component ↔ Config Pairing ─────────────────────────────────────────────
 
 export type ComponentConfigMap = {
-  WayfindingCompass: WayfindingCompassConfig;
-  MarkerButton: MarkerButtonConfig;
+  FindByGps: FindByGpsConfig;
   MultipleChoice: MultipleChoiceConfig;
-  CompassPuzzle: CompassPuzzleConfig;
-  RewardReveal: RewardRevealConfig;
-  PassphrasePuzzle: PassphrasePuzzleConfig;
-  GuidedIdentification: GuidedIdentificationConfig;
+  BearingPuzzle: BearingPuzzleConfig;
+  StoryReveal: StoryRevealConfig;
+  PassphraseEntry: PassphraseEntryConfig;
+  FindByText: FindByTextConfig;
 };
 
 export type ComponentName = keyof ComponentConfigMap;
@@ -133,13 +138,12 @@ export type ComponentConfig = ComponentConfigMap[ComponentName];
 
 /** Advance condition is intrinsic to the component — derive, don't configure. */
 export const COMPONENT_ADVANCE: Record<ComponentName, AdvanceCondition> = {
-  WayfindingCompass: "geofence",
-  MarkerButton: "tap",
+  FindByGps: "tap",
   MultipleChoice: "correct_answers",
-  CompassPuzzle: "compass_alignment",
-  RewardReveal: "tap",
-  PassphrasePuzzle: "passphrase",
-  GuidedIdentification: "correct_answers",
+  BearingPuzzle: "compass_alignment",
+  StoryReveal: "tap",
+  PassphraseEntry: "passphrase",
+  FindByText: "correct_answers",
 };
 
 // ─── Companion Message ──────────────────────────────────────────────────────

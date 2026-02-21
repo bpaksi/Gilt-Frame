@@ -24,7 +24,7 @@ export const gameConfig: GameConfig = {
   chapters: {
     // ── Prologue ──────────────────────────────────────────────────────────────
     // Letter → SMS → Passphrase (website) → Acceptance SMS.
-    // The passphrase is a proper website step rendered by QuestStateMachine.
+    // The passphrase is a proper website step rendered by QuestRunner.
     prologue: {
       name: "The Summons",
       location: null,
@@ -62,7 +62,7 @@ export const gameConfig: GameConfig = {
           order: 2,
           type: "website",
           name: "The Passphrase",
-          component: "PassphrasePuzzle",
+          component: "PassphraseEntry",
 
           config: {
             placeholder: "Speak the words.",
@@ -73,7 +73,7 @@ export const gameConfig: GameConfig = {
           order: 3,
           type: "website",
           name: "The Reward",
-          component: "RewardReveal",
+          component: "StoryReveal",
           config: {
             primary:
               "You have spoken the words. The Sight stirs within you, Sparrow. What was lost is now reborn.",
@@ -149,7 +149,7 @@ export const gameConfig: GameConfig = {
           },
         },
         // GPS compass from PIN (42.406256, -85.402025) to sundial (42.405278, -85.402778). ~125m walk.
-        // geofence_radius: 9m ≈ 30ft. Auto-advances when player enters.
+        // geofence_radius: 9m ≈ 30ft. Phase 1 auto-transitions to marker tap on geofence entry.
         //
         // DEV TESTING — simulate geofence without a phone:
         //   Chrome DevTools → ⋮ menu → More tools → Sensors → Location → "Other..."
@@ -160,25 +160,17 @@ export const gameConfig: GameConfig = {
           order: 3,
           type: "website",
           name: "The Wayfinding",
-          component: "WayfindingCompass",
+          component: "FindByGps",
           config: {
             target_lat: 42.405278,
             target_lng: -85.402778,
             geofence_radius: 9,
             wayfinding_text: "Travel to the timekeeper, Sparrow.",
-          },
-        },
-        ch1_arrival: {
-          order: 4,
-          type: "website",
-          name: "The Arrival",
-          component: "MarkerButton",
-          config: {
             instruction: "The timekeeper stands before me",
           },
         },
         ch1_confirmation: {
-          order: 5,
+          order: 4,
           type: "website",
           name: "The Confirmation",
           component: "MultipleChoice",
@@ -212,10 +204,10 @@ export const gameConfig: GameConfig = {
           },
         },
         ch1_sparrow_moment: {
-          order: 6,
+          order: 5,
           type: "website",
           name: "The Sparrow Moment",
-          component: "MarkerButton",
+          component: "FindByGps",
           config: {
             title_lines: [
               "This bird casts its shadow over time.",
@@ -227,10 +219,10 @@ export const gameConfig: GameConfig = {
         },
         // compass_bearing: 255° W — confirmed from recon compass photo at sundial
         ch1_compass_puzzle: {
-          order: 7,
+          order: 6,
           type: "website",
           name: "The Compass Puzzle",
-          component: "CompassPuzzle",
+          component: "BearingPuzzle",
           config: {
             compass_target: 255,
             compass_tolerance: 8,
@@ -240,10 +232,10 @@ export const gameConfig: GameConfig = {
           },
         },
         ch1_reward: {
-          order: 8,
+          order: 7,
           type: "website",
           name: "The Reward",
-          component: "RewardReveal",
+          component: "StoryReveal",
           config: {
             primary:
               "The needle has shown you the way. Take flight, Sparrow — destiny awaits.",
@@ -251,14 +243,14 @@ export const gameConfig: GameConfig = {
           },
         },
         ch1_post_solve: {
-          order: 9,
+          order: 8,
           type: "sms",
           name: "Post-Solve Confirmation",
           trigger: "auto",
           config: {
             to: "player",
             _trigger_note:
-              "Auto-fires after RewardReveal completes. Or manual from admin.",
+              "Auto-fires after StoryReveal completes. Or manual from admin.",
             body: "The Order sees clearly. Your first fragment has been placed in the vault.",
             image: "https://giltframe.org/marker/marker-v3-gold-512.png",
           },
@@ -339,7 +331,7 @@ export const gameConfig: GameConfig = {
           },
         },
         // ── PAINTING 1: Find & Identify the Zorn Portrait ─────────────────────
-        // GuidedIdentification: two-phase step that LOOPS until she confirms
+        // FindAndConfirm: two-phase step that LOOPS until she confirms
         // she is standing in front of the correct painting.
         //
         // Phase 1 (GUIDANCE): Shows text clue + progressive hints.
@@ -360,7 +352,7 @@ export const gameConfig: GameConfig = {
           order: 4,
           type: "website",
           name: "The Portrait",
-          component: "GuidedIdentification",
+          component: "FindByText",
           config: {
             guidance_text:
               "Your second trial awaits.\nA patron of the Order presided over the great Fair of 1893.\nA Swedish painter captured her likeness in this very room.",
@@ -433,7 +425,7 @@ export const gameConfig: GameConfig = {
         },
 
         // ── PAINTING 2: Find & Identify the Cassatt ────────────────────────
-        // Same GuidedIdentification mechanic as the Zorn step, but lighter.
+        // Same FindAndConfirm mechanic as the Zorn step, but lighter.
         // She already knows how the loop works. The guidance text IS the
         // trail transition — "The patron's eye was guided by another."
         //
@@ -449,7 +441,7 @@ export const gameConfig: GameConfig = {
           order: 6,
           type: "website",
           name: "The Advisor's Trail",
-          component: "GuidedIdentification",
+          component: "FindByText",
           config: {
             guidance_text:
               "The patron's eye was guided by another.\nHer advisor's work endures in this very room.",
@@ -535,7 +527,7 @@ export const gameConfig: GameConfig = {
           order: 8,
           type: "website",
           name: "The Reward",
-          component: "RewardReveal",
+          component: "StoryReveal",
           config: {
             primary:
               "Mrs. Palmer did not collect alone. Her closest advisor was a fellow member of the Order \u2014 a painter who saw what others could not. You stood before her vision today. 1893. Two frames. One purpose.",
@@ -549,7 +541,7 @@ export const gameConfig: GameConfig = {
           trigger: "auto",
           config: {
             to: "player",
-            _trigger_note: "Auto-send after RewardReveal completes.",
+            _trigger_note: "Auto-send after StoryReveal completes.",
             body: "You see what others have not. Your Chronicle has been updated. The Council is watching with growing interest.",
             image: "https://giltframe.org/marker/marker-v3-gold-512.png",
             companion_message: {

@@ -6,11 +6,11 @@ import MarkerSVG from "@/components/ui/MarkerSVG";
 import HintSystem from "../HintSystem";
 import OptionButton from "@/components/ui/OptionButton";
 import WaveDivider from "@/components/ui/WaveDivider";
-import type { GuidedIdentificationConfig } from "@/config";
+import type { FindByTextConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
-interface GuidedIdentificationProps {
-  config: GuidedIdentificationConfig;
+interface FindByTextProps {
+  config: FindByTextConfig;
   onAdvance: () => void;
   chapterId?: string;
   stepIndex?: number;
@@ -36,14 +36,14 @@ function pickDistractors(pool: string[], exclude: string, n: number): string[] {
 
 type Phase = "guidance" | "identification";
 
-export default function GuidedIdentification({
+export default function FindByText({
   config,
   onAdvance,
   chapterId,
   stepIndex,
   revealedHintTiers,
   revealHintAction,
-}: GuidedIdentificationProps) {
+}: FindByTextProps) {
   const {
     guidance_text,
     hints,
@@ -310,9 +310,9 @@ export default function GuidedIdentification({
   );
 }
 
-export const showcase: ShowcaseDefinition<GuidedIdentificationProps> = {
+export const showcase: ShowcaseDefinition<FindByTextProps> = {
   category: "quest",
-  label: "Guided Identification",
-  description: "Two-phase identification puzzle with guidance and quiz",
+  label: "Find by Text",
+  description: "Text-guided search leading to looping multiple-choice identification",
   uses: ["MarkerSVG", "HintSystem", "OptionButton", "WaveDivider"],
 };
