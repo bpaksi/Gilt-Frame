@@ -29,7 +29,7 @@ export default async function Home() {
         .eq("device_token", deviceTokenCookie.value)
         .then(() => {});
 
-      redirect("/current");
+      redirect("/pursuit");
     }
   }
 

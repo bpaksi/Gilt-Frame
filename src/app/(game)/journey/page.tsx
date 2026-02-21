@@ -4,7 +4,7 @@ import { getMoments } from "@/lib/actions/moments";
 import JourneyTimeline from "@/components/game/JourneyTimeline";
 
 export const metadata: Metadata = {
-  title: "Your Journey | The Order of the Gilt Frame",
+  title: "Journey | The Order of the Gilt Frame",
 };
 
 export default async function JourneyPage() {

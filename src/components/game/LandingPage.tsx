@@ -30,7 +30,7 @@ export default function LandingPage({
             minHeight: "44px",
           }}
         >
-          Return to The Journey
+          Return to Journey
         </button>
       ) : (
         <p

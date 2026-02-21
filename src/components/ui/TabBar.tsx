@@ -6,12 +6,12 @@ import MarkerSVG from "../game/MarkerSVG";
 
 const TABS = [
   {
-    label: "Current",
-    href: "/current",
+    label: "Pursuit",
+    href: "/pursuit",
     icon: "marker",
   },
   {
-    label: "The Journey",
+    label: "Journey",
     href: "/journey",
     icon: "book",
   },
