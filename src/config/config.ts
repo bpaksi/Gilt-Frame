@@ -357,22 +357,10 @@ export const gameConfig: GameConfig = {
             guidance_text:
               "Your second trial awaits.\nA patron of the Order presided over the great Fair of 1893.\nA Swedish painter captured her likeness in this very room.",
             hints: [
-              {
-                tier: 1,
-                hint: "She held the highest authority a woman could claim at the Fair.",
-              },
-              {
-                tier: 2,
-                hint: "Her name shaped Chicago society. Look for a portrait, not a scene.",
-              },
-              {
-                tier: 3,
-                hint: "The Palmer name endures. She stands tall, regal, commanding.",
-              },
-              {
-                tier: 4,
-                hint: "Anders Zorn painted Mrs. Potter Palmer in 1893. Find her.",
-              },
+              "She held the highest authority a woman could claim at the Fair.",
+              "Her name shaped Chicago society. Look for a portrait, not a scene.",
+              "The Palmer name endures. She stands tall, regal, commanding.",
+              "Anders Zorn painted Mrs. Potter Palmer in 1893. Find her.",
             ],
             question: "What is the name of the painting you stand before?",
             correct_answer: "Mrs. Potter Palmer — Anders Zorn",
@@ -446,22 +434,10 @@ export const gameConfig: GameConfig = {
             guidance_text:
               "The patron's eye was guided by another.\nHer advisor's work endures in this very room.",
             hints: [
-              {
-                tier: 1,
-                hint: "The advisor was a painter — an American woman living abroad.",
-              },
-              {
-                tier: 2,
-                hint: "Her work depicts quiet domestic scenes — mothers, children, daily ritual.",
-              },
-              {
-                tier: 3,
-                hint: "This painting was created in the same year as the portrait you just found. 1893.",
-              },
-              {
-                tier: 4,
-                hint: "Mary Cassatt painted The Child's Bath. Find it.",
-              },
+              "The advisor was a painter — an American woman living abroad.",
+              "Her work depicts quiet domestic scenes — mothers, children, daily ritual.",
+              "This painting was created in the same year as the portrait you just found. 1893.",
+              "Mary Cassatt painted The Child's Bath. Find it.",
             ],
             question: "What is the name of the painting you stand before?",
             correct_answer: "The Child's Bath — Mary Cassatt",

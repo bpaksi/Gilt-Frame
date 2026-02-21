@@ -4,7 +4,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import {
   gameConfig,
   getOrderedSteps,
-  type HintItem,
 } from "@/config";
 
 export async function POST(request: NextRequest) {
@@ -36,9 +35,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const config = step.config as { hints?: HintItem[] };
-  const hintItem = config.hints?.find((h) => h.tier === hintTier);
-  if (!hintItem && !overrideContent) {
+  const config = step.config as { hints?: string[] };
+  const hintText = config.hints?.[hintTier - 1];
+  if (hintText === undefined && !overrideContent) {
     return NextResponse.json(
       { error: "Hint tier not found and no override provided." },
       { status: 404 }
@@ -106,6 +105,6 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({
     success: true,
-    hint: overrideContent ?? hintItem?.hint,
+    hint: overrideContent ?? hintText,
   });
 }

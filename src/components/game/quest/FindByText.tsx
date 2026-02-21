@@ -182,8 +182,8 @@ export const showcase: ShowcaseDefinition<FindByTextProps> = {
     config: {
       guidance_text: "In the east wing, seek the canvas that glows.\nLook for what time has gilded.",
       hints: [
-        { tier: 1, hint: "It hangs near the window." },
-        { tier: 2, hint: "The title begins with 'The'." },
+        "It hangs near the window.",
+        "The title begins with 'The'.",
       ],
       question: "What is the name of the painting?",
       correct_answer: "The Golden Hour",

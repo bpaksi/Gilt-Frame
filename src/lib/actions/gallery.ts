@@ -4,7 +4,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import {
   gameConfig,
   getOrderedSteps,
-  type HintItem,
 } from "@/config";
 
 const GALLERY_USER_AGENT = "gallery";
@@ -134,27 +133,27 @@ export async function galleryRevealHint(
   if (!step || step.type !== "website") return null;
 
   const config = step.config as {
-    hints?: HintItem[];
+    hints?: string[];
     questions?: { hints?: string[] }[];
   };
 
-  // Check step-level hints first
-  let hintItem = config.hints?.find((h) => h.tier === tier);
-  // Then check per-question hints
-  if (!hintItem && config.questions) {
+  // Step-level hints (string[], tier is 1-based index)
+  let hintText = config.hints?.[tier - 1];
+  // Per-question hints with tier offset
+  if (hintText === undefined && config.questions) {
     let tierOffset = 0;
     for (const q of config.questions) {
       if (q.hints) {
         const localIndex = tier - tierOffset - 1;
         if (localIndex >= 0 && localIndex < q.hints.length) {
-          hintItem = { tier, hint: q.hints[localIndex] };
+          hintText = q.hints[localIndex];
           break;
         }
         tierOffset += q.hints.length;
       }
     }
   }
-  if (!hintItem) return null;
+  if (hintText === undefined) return null;
 
   // Setup to get a step_progress_id
   const { stepProgressId } = await gallerySetup(chapterId, stepIndex);
@@ -165,7 +164,7 @@ export async function galleryRevealHint(
     hint_tier: tier,
   });
 
-  return { hint: hintItem.hint };
+  return { hint: hintText };
 }
 
 /**

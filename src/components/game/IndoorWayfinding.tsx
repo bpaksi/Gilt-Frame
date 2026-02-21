@@ -6,11 +6,9 @@ import GhostButton from "@/components/ui/GhostButton";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
-type HintItem = { tier: number; hint: string };
-
 type IndoorConfig = {
   wayfinding_text?: string;
-  hints?: HintItem[];
+  hints?: string[];
 };
 
 interface IndoorWayfindingProps {

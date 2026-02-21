@@ -29,6 +29,5 @@ export type {
   StoryRevealConfig,
   PassphraseEntryConfig,
   FindByTextConfig,
-  HintItem,
   QuestionItem,
 } from "./types";

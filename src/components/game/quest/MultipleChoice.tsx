@@ -36,15 +36,11 @@ export default function MultipleChoice({
 
   const question = questions[currentQ];
 
-  // Derive HintItems with globally unique tiers from per-question string[]
-  const currentHints = useMemo(() => {
-    if (!question.hints?.length) return null;
-    // Tier offset: sum of hint counts from all preceding questions
-    const offset = questions
-      .slice(0, currentQ)
-      .reduce((sum, q) => sum + (q.hints?.length ?? 0), 0);
-    return question.hints.map((hint, i) => ({ tier: offset + i + 1, hint }));
-  }, [questions, currentQ, question.hints]);
+  // Compute tier offset for globally unique hint tiers across questions
+  const hintTierOffset = useMemo(
+    () => questions.slice(0, currentQ).reduce((sum, q) => sum + (q.hints?.length ?? 0), 0),
+    [questions, currentQ]
+  );
 
   const handleResult = useCallback(
     (correct: boolean) => {
@@ -106,7 +102,7 @@ export default function MultipleChoice({
       />
 
       {/* Scrollwork divider + per-question hints */}
-      {currentHints && chapterId && stepIndex !== undefined && (
+      {question.hints?.length && chapterId && stepIndex !== undefined && (
         <>
           <OrnateDivider
             style={{
@@ -117,7 +113,8 @@ export default function MultipleChoice({
           />
           <HintSystem
             key={currentQ}
-            hints={currentHints}
+            hints={question.hints}
+            tierOffset={hintTierOffset}
             chapterId={chapterId}
             stepIndex={stepIndex}
             initialRevealedTiers={revealedHintTiers}

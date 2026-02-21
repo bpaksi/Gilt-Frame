@@ -27,7 +27,6 @@ export type AdvanceCondition =
 
 // ─── Component Config Types ─────────────────────────────────────────────────
 
-export type HintItem = { tier: number; hint: string };
 export type QuestionItem = {
   question: string;
   options: string[];
@@ -51,7 +50,7 @@ export type FindByGpsConfig = {
   /** Meters — auto-transitions to marker tap when player enters. */
   geofence_radius?: number;
   wayfinding_text?: string;
-  hints?: HintItem[];
+  hints?: string[];
   // Phase 2 — Marker tap (always present)
   title_lines?: string[];
   instruction: string;
@@ -60,7 +59,6 @@ export type FindByGpsConfig = {
 /** Sequential multiple-choice questions. */
 export type MultipleChoiceConfig = {
   questions: QuestionItem[];
-  hints?: HintItem[];
 };
 
 /** Device orientation puzzle — point phone at target bearing and hold steady. */
@@ -115,7 +113,7 @@ export type FindByTextConfig = {
   /** The initial text clue shown at the top of the guidance phase. */
   guidance_text: string;
   /** Progressive hints revealed on wrong attempts (and via "?" button). */
-  hints: HintItem[];
+  hints: string[];
   /** The identification question, e.g. "What is the name of the painting you stand before?" */
   question: string;
   /** The correct painting name exactly as it should appear in the option. */

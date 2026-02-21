@@ -10,7 +10,7 @@ import CompassRose from "../CompassRose";
 import MarkerTap from "../MarkerTap";
 import GhostButton from "@/components/ui/GhostButton";
 import { revealHint } from "@/lib/actions/quest";
-import type { FindByGpsConfig, HintItem } from "@/config";
+import type { FindByGpsConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { NavigateFrameData } from "../CompassRose";
@@ -173,7 +173,7 @@ export default function FindByGps({
 
         {config.hints && chapterId && stepIndex !== undefined && (
           <HintSystem
-            hints={config.hints as HintItem[]}
+            hints={config.hints}
             chapterId={chapterId}
             stepIndex={stepIndex}
             initialRevealedTiers={revealedHintTiers}

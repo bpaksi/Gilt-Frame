@@ -5,7 +5,6 @@ import { adminFetch } from "@/lib/admin/fetch";
 import {
   gameConfig,
   getOrderedSteps,
-  type HintItem,
 } from "@/config";
 
 export default function HintPush({
@@ -30,12 +29,11 @@ export default function HintPush({
   const step = orderedSteps[stepIndex];
   if (!step || step.type !== "website") return null;
 
-  const config = step.config as { hints?: HintItem[] };
+  const config = step.config as { hints?: string[] };
   if (!config.hints || config.hints.length === 0) return null;
 
-  const nextTier = config.hints.find(
-    (h) => !revealedTiers.includes(h.tier)
-  );
+  const nextTierIndex = config.hints.findIndex((_, i) => !revealedTiers.includes(i + 1));
+  const nextTier = nextTierIndex >= 0 ? nextTierIndex + 1 : null;
 
   async function handlePush() {
     if (!nextTier || pushing) return;
@@ -50,7 +48,7 @@ export default function HintPush({
           track,
           chapterId,
           stepIndex,
-          hintTier: nextTier.tier,
+          hintTier: nextTier,
         }),
       });
 
@@ -58,7 +56,7 @@ export default function HintPush({
       if (!res.ok) {
         setError(data.error ?? "Push failed.");
       } else {
-        setLastPushed(`Tier ${nextTier.tier}: ${data.hint}`);
+        setLastPushed(`Tier ${nextTier}: ${data.hint}`);
       }
     } catch {
       setError("Network error.");
@@ -76,7 +74,7 @@ export default function HintPush({
       {nextTier ? (
         <div className="flex items-center gap-2.5">
           <div className="flex-1 text-[13px] text-admin-text">
-            Next: Tier {nextTier.tier}
+            Next: Tier {nextTier}
           </div>
           <button
             onClick={handlePush}

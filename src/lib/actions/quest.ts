@@ -9,7 +9,6 @@ import {
   type ComponentName,
   type ComponentConfig,
   type AdvanceCondition,
-  type HintItem,
 } from "@/config";
 import { sendStep, scheduleStep } from "@/lib/messaging/send";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -304,26 +303,26 @@ export async function revealHint(
   if (!step || step.type !== "website") return null;
 
   const config = step.config as {
-    hints?: HintItem[];
+    hints?: string[];
     questions?: { hints?: string[] }[];
   };
-  // Check step-level hints first (HintItem[])
-  let hintItem = config.hints?.find((h) => h.tier === hintTier);
-  // Then check per-question hints (string[] with derived tiers)
-  if (!hintItem && config.questions) {
+  // Step-level hints (string[], tier is 1-based index)
+  let hintText = config.hints?.[hintTier - 1];
+  // Per-question hints with tier offset
+  if (hintText === undefined && config.questions) {
     let tierOffset = 0;
     for (const q of config.questions) {
       if (q.hints) {
         const localIndex = hintTier - tierOffset - 1;
         if (localIndex >= 0 && localIndex < q.hints.length) {
-          hintItem = { tier: hintTier, hint: q.hints[localIndex] };
+          hintText = q.hints[localIndex];
           break;
         }
         tierOffset += q.hints.length;
       }
     }
   }
-  if (!hintItem) return null;
+  if (hintText === undefined) return null;
 
   const supabase = createAdminClient();
 
@@ -356,7 +355,7 @@ export async function revealHint(
     },
   });
 
-  return { hint: hintItem.hint };
+  return { hint: hintText };
 }
 
 export async function pollChapterProgress(

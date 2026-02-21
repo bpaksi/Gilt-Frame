@@ -65,6 +65,7 @@ export default function ComponentGallery({
   const [mountKey, setMountKey] = useState(0);
   const [ctx, setCtx] = useState<GalleryContext>(initialContext);
   const [error, setError] = useState<string | null>(null);
+  const [isDone, setIsDone] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const entries = getEntriesByCategory(category);
@@ -99,6 +100,7 @@ export default function ComponentGallery({
                 stepIndex: preset.stepIndex,
               });
               setSelectedId(newEntry.id);
+              setIsDone(false);
               setMountKey((k) => k + 1);
             } catch (e) {
               setError(e instanceof Error ? e.message : "Setup failed");
@@ -113,6 +115,7 @@ export default function ComponentGallery({
       setConfig(defaults);
       setOriginalConfig(defaults);
       setSelectedId(newEntry.id);
+      setIsDone(false);
       setMountKey((k) => k + 1);
     },
     [ctx.stepProgressId],
@@ -137,6 +140,7 @@ export default function ComponentGallery({
             chapterId: preset.chapterId,
             stepIndex: preset.stepIndex,
           });
+          setIsDone(false);
           setMountKey((k) => k + 1);
         } catch (e) {
           setError(e instanceof Error ? e.message : "Setup failed");
@@ -148,11 +152,13 @@ export default function ComponentGallery({
 
   const handleApplyConfig = useCallback((newConfig: Record<string, unknown>) => {
     setConfig(newConfig);
+    setIsDone(false);
     setMountKey((k) => k + 1);
   }, []);
 
   const handleReset = useCallback(() => {
     setError(null);
+    setIsDone(false);
     setConfig(originalConfig);
 
     startTransition(async () => {
@@ -184,7 +190,8 @@ export default function ComponentGallery({
   const usesIds = entry?.showcase.uses ?? [];
 
   // Build props for the rendered component
-  const componentProps = buildComponentProps(entry, config, ctx, setError);
+  const onDone = useCallback(() => setIsDone(true), []);
+  const componentProps = buildComponentProps(entry, config, ctx, setError, onDone);
 
   return (
     <div className="flex flex-col gap-4 h-full">
@@ -227,7 +234,7 @@ export default function ComponentGallery({
         </select>
 
         <button
-          onClick={() => setMountKey((k) => k + 1)}
+          onClick={() => { setIsDone(false); setMountKey((k) => k + 1); }}
           className="admin-btn admin-focus px-3 py-2 text-xs font-semibold tracking-wider uppercase bg-admin-surface hover:bg-admin-border text-admin-text-muted rounded-md transition-colors"
         >
           ↺ Refresh
@@ -282,34 +289,38 @@ export default function ComponentGallery({
         {/* Viewport column */}
         <div className="flex flex-col gap-3 items-center flex-shrink-0">
           <GameViewport device={device}>
-            <ErrorBoundary
-              key={mountKey}
-              fallback={(err) => (
-                <div className="flex items-center justify-center flex-1 p-6 text-red-400 text-sm font-mono text-center">
-                  {err}
-                </div>
-              )}
-            >
-              {entry && category !== "quest" ? (
-                <div
-                  style={{
-                    flex: 1,
-                    overflowY: "auto",
-                    padding: "24px 20px",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "16px",
-                    border: `1px dashed ${colors.gold30}`,
-                    margin: "12px",
-                    borderRadius: "4px",
-                  }}
-                >
+            {isDone ? (
+              <DoneOverlay onRefresh={handleReset} />
+            ) : (
+              <ErrorBoundary
+                key={mountKey}
+                fallback={(err) => (
+                  <div className="flex items-center justify-center flex-1 p-6 text-red-400 text-sm font-mono text-center">
+                    {err}
+                  </div>
+                )}
+              >
+                {entry && category !== "quest" ? (
+                  <div
+                    style={{
+                      flex: 1,
+                      overflowY: "auto",
+                      padding: "24px 20px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "16px",
+                      border: `1px dashed ${colors.gold30}`,
+                      margin: "12px",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    <entry.Component {...componentProps} />
+                  </div>
+                ) : entry ? (
                   <entry.Component {...componentProps} />
-                </div>
-              ) : entry ? (
-                <entry.Component {...componentProps} />
-              ) : null}
-            </ErrorBoundary>
+                ) : null}
+              </ErrorBoundary>
+            )}
           </GameViewport>
 
           {isPending && (
@@ -365,6 +376,56 @@ export default function ComponentGallery({
   );
 }
 
+// ── Done Overlay ───────────────────────────────────────────────────────────────
+
+function DoneOverlay({ onRefresh }: { onRefresh: () => void }) {
+  return (
+    <div
+      style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "20px",
+        background: "rgba(0,0,0,0.6)",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+        <span style={{ fontSize: "36px", lineHeight: 1 }}>✓</span>
+        <span
+          style={{
+            color: colors.gold80,
+            fontFamily,
+            fontSize: "13px",
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+          }}
+        >
+          Component Done
+        </span>
+      </div>
+      <button
+        onClick={onRefresh}
+        style={{
+          background: "transparent",
+          border: `1px solid ${colors.gold30}`,
+          color: colors.gold80,
+          fontFamily,
+          fontSize: "12px",
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          padding: "8px 20px",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        ↺ Refresh
+      </button>
+    </div>
+  );
+}
+
 // ── Helper: build component props ─────────────────────────────────────────────
 
 function buildComponentProps(
@@ -372,6 +433,7 @@ function buildComponentProps(
   config: Record<string, unknown>,
   ctx: GalleryContext,
   setError: (msg: string | null) => void,
+  onDone: () => void,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any> {
   if (!entry) return {};
@@ -382,7 +444,7 @@ function buildComponentProps(
   if (entry.showcase.category === "quest") {
     const base: Record<string, unknown> = {
       config,
-      onAdvance: noop,
+      onAdvance: onDone,
       chapterId: ctx.chapterId,
       stepIndex: ctx.stepIndex,
       revealedHintTiers: [],
@@ -438,10 +500,10 @@ function buildComponentProps(
     const props: Record<string, unknown> = { ...config };
 
     // Components that need callback props
-    if (entry.id === "CompassPermission") props.onPermission = noop;
+    if (entry.id === "CompassPermission") props.onPermission = onDone;
     if (entry.id === "IndoorWayfinding") {
       props.config = config;
-      props.onAdvance = noop;
+      props.onAdvance = onDone;
       props.chapterId = "gallery";
       props.stepIndex = 0;
       props.revealHintAction = async (chapterId: string, stepIndex: number, tier: number) => {
@@ -452,18 +514,8 @@ function buildComponentProps(
         }
       };
     }
-    if (entry.id === "MarkerAnimation") props.onComplete = noop;
-    if (entry.id === "CeremonyAnimation") props.onUnlock = noop;
-    if (entry.id === "HintSystem") {
-      props.revealHintAction = async (chapterId: string, stepIndex: number, tier: number) => {
-        try {
-          return await galleryRevealHint(chapterId, stepIndex, tier);
-        } catch {
-          return null;
-        }
-      };
-    }
-
+    if (entry.id === "MarkerAnimation") props.onComplete = onDone;
+    if (entry.id === "CeremonyAnimation") props.onUnlock = onDone;
     return props;
   }
 
@@ -486,6 +538,9 @@ function buildComponentProps(
 
   // OptionButton: add onClick
   if (entry.id === "OptionButton") props.onClick = noop;
+
+  // GhostButton: clicking the button is the completion action
+  if (entry.id === "GhostButton") props.onClick = onDone;
 
   return props;
 }
