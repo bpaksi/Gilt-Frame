@@ -92,7 +92,7 @@ export default function PassphraseEntry({
           borderBottom: `1px solid ${
             status === "error"
               ? colors.gold50
-              : colors.gold30
+              : colors.gold40
           }`,
           color: colors.gold,
           fontFamily: fontFamily,
@@ -114,7 +114,7 @@ export default function PassphraseEntry({
       />
       <div
         style={{
-          color: colors.gold40,
+          color: colors.gold55,
           fontFamily: fontFamily,
           fontSize: "14px",
           fontStyle: "italic",

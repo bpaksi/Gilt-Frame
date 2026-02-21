@@ -48,7 +48,7 @@ export default function MomentDetail({ moment, chapterName }: MomentDetailProps)
     >
       {/* Chapter name */}
       {chapterName && (
-        <UppercaseLabel style={{ color: colors.gold40 }}>
+        <UppercaseLabel style={{ color: colors.gold55 }}>
           {chapterName}
         </UppercaseLabel>
       )}
@@ -56,7 +56,7 @@ export default function MomentDetail({ moment, chapterName }: MomentDetailProps)
       {/* Date */}
       <p
         style={{
-          color: colors.gold30,
+          color: colors.gold50,
           fontFamily,
           fontSize: "12px",
         }}

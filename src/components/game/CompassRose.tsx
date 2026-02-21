@@ -159,7 +159,7 @@ export default function CompassRose(props: CompassRoseProps) {
       // Outer ring
       ctx.beginPath();
       ctx.arc(CENTER, CENTER, RING_R, 0, Math.PI * 2);
-      ctx.strokeStyle = isNavigate ? colors.gold25 : colors.gold30;
+      ctx.strokeStyle = isNavigate ? colors.gold30 : colors.gold40;
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
@@ -187,7 +187,7 @@ export default function CompassRose(props: CompassRoseProps) {
           const lx = CENTER + Math.cos(rad) * (RING_R - 30);
           const ly = CENTER + Math.sin(rad) * (RING_R - 30);
           ctx.font = `italic 14px ${fontFamily}`;
-          ctx.fillStyle = isNavigate ? colors.gold45 : colors.gold55;
+          ctx.fillStyle = isNavigate ? colors.gold60 : colors.gold55;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(cardinals[deg / 90]!, lx, ly);

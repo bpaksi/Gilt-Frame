@@ -19,7 +19,7 @@ export default function TextButton({ children, disabled, style, ...rest }: TextB
       ? colors.gold70
       : hover
         ? colors.gold50
-        : colors.gold40;
+        : colors.gold55;
 
   return (
     <button

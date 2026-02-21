@@ -152,7 +152,7 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
     >
       <p
         style={{
-          color: colors.gold30,
+          color: colors.gold50,
           fontFamily,
           fontSize: "13px",
           fontStyle: "italic",
@@ -234,7 +234,7 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
           <MarkerSVG size={20} variant="gold" animated />
           <p
             style={{
-              color: colors.gold40,
+              color: colors.gold55,
               fontFamily,
               fontSize: "13px",
               fontStyle: "italic",

@@ -24,9 +24,9 @@ interface OracleViewProps {
 const tabStyle = (active: boolean): React.CSSProperties => ({
   background: "none",
   border: "none",
-  borderBottom: active ? `1px solid ${colors.gold30}` : "1px solid transparent",
+  borderBottom: active ? `1px solid ${colors.gold45}` : "1px solid transparent",
   padding: "0 0 8px 0",
-  color: active ? colors.gold70 : colors.gold30,
+  color: active ? colors.gold70 : colors.gold50,
   fontFamily,
   fontSize: "13px",
   fontStyle: "italic",

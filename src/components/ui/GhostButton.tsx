@@ -18,8 +18,8 @@ export default function GhostButton({ children, disabled, style, ...rest }: Ghos
     : pressed
       ? colors.gold50
       : hover
-        ? colors.gold40
-        : colors.gold30;
+        ? colors.gold50
+        : colors.gold40;
 
   const textColor = disabled
     ? colors.gold30
