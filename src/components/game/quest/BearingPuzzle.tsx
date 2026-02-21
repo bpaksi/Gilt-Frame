@@ -63,7 +63,7 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
     [],
   );
 
-  // Phase driven by CompassRose.onSolved
+  // Phase driven by CompassRose.onComplete
   const handleSolved = useCallback(() => {
     setPhase("locking");
   }, []);
@@ -95,7 +95,7 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
         <MarkerTap
           lines={[config.permission_message ?? "The compass awaits your permission."]}
           instruction="Enable Compass"
-          onTap={handlePermission}
+          onComplete={handlePermission}
           markerDelay={0}
           textDelay={0}
           tapDelay={0}
@@ -138,7 +138,7 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
         minRotation={config.min_rotation}
         holdSeconds={config.hold_seconds}
         size={680}
-        onSolved={handleSolved}
+        onComplete={handleSolved}
         onFrame={handleFrame}
       />
       <div

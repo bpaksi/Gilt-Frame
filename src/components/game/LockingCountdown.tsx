@@ -148,6 +148,6 @@ export const showcase: ShowcaseDefinition<LockingCountdownProps> = {
     message: "The compass yields its secret…",
     resolution: "The way is found",
     from: 5,
-    onComplete: () => {},
   },
+  callbacks: { onComplete: "done" },
 };

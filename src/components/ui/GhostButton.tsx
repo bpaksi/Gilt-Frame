@@ -68,4 +68,5 @@ export const showcase: ShowcaseDefinition<GhostButtonProps> = {
   label: "Ghost Button",
   description: "Bordered button with hover glow",
   defaults: { children: "Press to Continue" },
+  callbacks: { onClick: "done" },
 };

@@ -439,8 +439,12 @@ function buildComponentProps(
   if (!entry) return {};
 
   const noop = () => {};
+  const wire = (role: "done" | "noop") => (role === "done" ? onDone : noop);
 
-  // Quest components get config + action props
+  // ── Quest ──────────────────────────────────────────────────────────────────
+  // Quest components have a universal contract: onAdvance signals completion.
+  // Action overrides (revealHintAction, recordAnswerAction, etc.) are injected
+  // by the gallery so DB writes stay scoped to the test track.
   if (entry.showcase.category === "quest") {
     const base: Record<string, unknown> = {
       config,
@@ -450,7 +454,6 @@ function buildComponentProps(
       revealedHintTiers: [],
     };
 
-    // Inject gallery action props
     base.revealHintAction = async (chapterId: string, stepIndex: number, tier: number) => {
       try {
         return await galleryRevealHint(chapterId, stepIndex, tier);
@@ -474,7 +477,6 @@ function buildComponentProps(
       }
     };
 
-    // PassphraseEntry: inject validate action
     if (entry.id === "PassphraseEntry") {
       const passphrase = (config as { passphrase?: string }).passphrase ?? "";
       base.validatePassphraseAction = async (input: string) => {
@@ -487,7 +489,6 @@ function buildComponentProps(
       };
     }
 
-    // StoryReveal: pass chapterName
     if (entry.id === "StoryReveal") {
       base.chapterName = "Gallery Preview";
     }
@@ -495,52 +496,52 @@ function buildComponentProps(
     return base;
   }
 
-  // Game building blocks — use their showcase defaults merged with config
-  if (entry.showcase.category === "game") {
-    const props: Record<string, unknown> = { ...config };
+  // ── Game & UI ──────────────────────────────────────────────────────────────
+  // Callbacks are declared generically in each component's showcase.callbacks.
+  // Action injections (async server actions) are the only per-component specials.
+  const props: Record<string, unknown> = { ...config };
 
-    // Components that need callback props
-    if (entry.id === "CompassPermission") props.onPermission = onDone;
+  // Wire all declared callbacks from the showcase definition
+  for (const [key, role] of Object.entries(entry.showcase.callbacks ?? {})) {
+    props[key] = wire(role);
+  }
+
+  if (entry.showcase.category === "game") {
+    // IndoorWayfinding and HintSystem need gallery-scoped action injections
     if (entry.id === "IndoorWayfinding") {
       props.config = config;
-      props.onAdvance = onDone;
       props.chapterId = "gallery";
       props.stepIndex = 0;
       props.revealHintAction = async (chapterId: string, stepIndex: number, tier: number) => {
-        try {
-          return await galleryRevealHint(chapterId, stepIndex, tier);
-        } catch {
-          return null;
-        }
+        try { return await galleryRevealHint(chapterId, stepIndex, tier); }
+        catch { return null; }
       };
     }
-    if (entry.id === "MarkerAnimation") props.onComplete = onDone;
-    if (entry.id === "CeremonyAnimation") props.onUnlock = onDone;
-    return props;
+    if (entry.id === "HintSystem") {
+      props.chapterId = "gallery";
+      props.stepIndex = 0;
+      props.revealHintAction = async (chapterId: string, stepIndex: number, tier: number) => {
+        try { return await galleryRevealHint(chapterId, stepIndex, tier); }
+        catch { return null; }
+      };
+    }
   }
 
-  // UI primitives — use config directly as props
-  const props: Record<string, unknown> = { ...config };
-
-  // Accordion needs special render props
-  if (entry.id === "Accordion") {
-    props.items = ["The Summons", "The Trial of Sight", "The Hidden Gallery"];
-    props.keyExtractor = (_: string, i: number) => String(i);
-    props.renderHeader = (item: string) => (
-      <span style={{ color: colors.gold80, fontFamily: fontFamily, fontSize: "15px", fontStyle: "italic" }}>
-        {item}
-      </span>
-    );
-    props.renderBody = (item: string) => (
-      <span>{item} — details of this chapter.</span>
-    );
+  if (entry.showcase.category === "ui") {
+    // Accordion requires render function props that can't be expressed as config
+    if (entry.id === "Accordion") {
+      props.items = ["The Summons", "The Trial of Sight", "The Hidden Gallery"];
+      props.keyExtractor = (_: string, i: number) => String(i);
+      props.renderHeader = (item: string) => (
+        <span style={{ color: colors.gold80, fontFamily: fontFamily, fontSize: "15px", fontStyle: "italic" }}>
+          {item}
+        </span>
+      );
+      props.renderBody = (item: string) => (
+        <span>{item} — details of this chapter.</span>
+      );
+    }
   }
-
-  // OptionButton: add onClick
-  if (entry.id === "OptionButton") props.onClick = noop;
-
-  // GhostButton: clicking the button is the completion action
-  if (entry.id === "GhostButton") props.onClick = onDone;
 
   return props;
 }

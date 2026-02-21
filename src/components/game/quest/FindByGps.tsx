@@ -102,7 +102,7 @@ export default function FindByGps({
         >
           <MarkerTap
             instruction="Enable Location"
-            onTap={handlePermission}
+            onComplete={handlePermission}
             markerDelay={0}
             textDelay={0}
             tapDelay={0}
@@ -203,7 +203,7 @@ export default function FindByGps({
       <MarkerTap
         lines={hasTitle ? title_lines : []}
         instruction={config.instruction}
-        onTap={handleTap}
+        onComplete={handleTap}
         active={phase === "marker"}
       />
     </div>

@@ -11,7 +11,7 @@ interface MarkerTapProps {
   /** Instruction text displayed below the marker. Omit for no instruction. */
   instruction?: string;
   /** Called when the user taps the marker (only fires once tapReady is true). */
-  onTap: () => void;
+  onComplete: () => void;
   /** Whether the stagger sequence is running. Defaults to true. */
   active?: boolean;
   /** Override delay (ms) between last line settling and marker appearing. */
@@ -24,14 +24,14 @@ interface MarkerTapProps {
 
 /**
  * GAME component: staggered title lines → pulsing gold marker → instruction text.
- * The whole block is a tap target; calls `onTap` once the sequence has settled.
+ * The whole block is a tap target; calls `onComplete` once the sequence has settled.
  *
  * Used by FindByGps (marker phase) and FindByText (guidance phase).
  */
 export default function MarkerTap({
   lines = [],
   instruction,
-  onTap,
+  onComplete,
   active = true,
   markerDelay,
   textDelay,
@@ -86,7 +86,7 @@ export default function MarkerTap({
       )}
 
       <button
-        onClick={() => { if (tapReady) onTap(); }}
+        onClick={() => { if (tapReady) onComplete(); }}
         disabled={!tapReady}
         style={{
           background: "none",
@@ -146,5 +146,5 @@ export const showcase: ShowcaseDefinition<MarkerTapProps> = {
     instruction: "Tap the marker when you have found it.",
     active: true,
   },
-  callbacks: { onTap: "done" },
+  callbacks: { onComplete: "done" },
 };

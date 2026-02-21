@@ -9,7 +9,7 @@ export default function BeginningClient() {
   return (
     <LandingPage
       isReplay={true}
-      onReplayEnd={() => router.push("/journey")}
+      onComplete={() => router.push("/journey")}
     />
   );
 }

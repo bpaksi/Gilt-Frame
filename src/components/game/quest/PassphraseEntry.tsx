@@ -77,7 +77,7 @@ export default function PassphraseEntry({
   }
 
   return (
-    <GiltFrame onAnimationComplete={() => setInputReady(true)}>
+    <GiltFrame onComplete={() => setInputReady(true)}>
       <input
         ref={inputRef}
         type="text"

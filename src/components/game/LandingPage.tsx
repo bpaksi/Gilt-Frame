@@ -7,17 +7,17 @@ import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface LandingPageProps {
   isReplay?: boolean;
-  onReplayEnd?: () => void;
+  onComplete?: () => void;
 }
 
 export default function LandingPage({
   isReplay = false,
-  onReplayEnd,
+  onComplete,
 }: LandingPageProps) {
   return (
     <GiltFrame>
       {isReplay ? (
-        <GhostButton onClick={onReplayEnd} style={{ fontSize: "14px", padding: "12px 32px" }}>
+        <GhostButton onClick={onComplete} style={{ fontSize: "14px", padding: "12px 32px" }}>
           Return to Journey
         </GhostButton>
       ) : (
@@ -43,4 +43,5 @@ export const showcase: ShowcaseDefinition<LandingPageProps> = {
   description: "Entry screen with marker ceremony and status message",
   uses: ["GiltFrame", "GhostButton"],
   defaults: {},
+  callbacks: { onComplete: "done" },
 };

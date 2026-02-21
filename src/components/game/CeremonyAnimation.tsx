@@ -12,13 +12,13 @@ import {
 } from "./puzzleSolveAnimation";
 
 interface CeremonyAnimationProps {
-  onUnlock: () => void;
+  onComplete: () => void;
   unlockText?: string;
   supernova?: boolean;
 }
 
 export default function CeremonyAnimation({
-  onUnlock,
+  onComplete,
   unlockText = "Press to Unlock",
   supernova = false,
 }: CeremonyAnimationProps) {
@@ -383,7 +383,7 @@ export default function CeremonyAnimation({
       {/* Press to Unlock */}
       {showUnlock && (
         <TextButton
-          onClick={onUnlock}
+          onClick={onComplete}
           style={{
             marginTop: "32px",
             fontSize: "14px",
@@ -405,5 +405,6 @@ export const showcase: ShowcaseDefinition<CeremonyAnimationProps> = {
   label: "Ceremony Animation",
   description: "Orb ceremony with optional supernova prelude",
   uses: ["TextButton"],
-  defaults: { unlockText: "Press to Unlock", supernova: false, onUnlock: () => {} },
+  defaults: { unlockText: "Press to Unlock", supernova: false },
+  callbacks: { onComplete: "done" },
 };

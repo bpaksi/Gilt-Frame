@@ -302,5 +302,6 @@ export const showcase: ShowcaseDefinition<AskTheOracleProps> = {
   label: "Ask the Oracle",
   description: "Streaming Q&A interface with progressive delay throttling",
   uses: ["MarkerSVG"],
-  defaults: { onConversation: () => {} },
+  defaults: {},
+  callbacks: { onConversation: "noop" },
 };

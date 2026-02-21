@@ -140,7 +140,7 @@ export const showcase: ShowcaseDefinition<QuizQuestionProps> = {
     question: "Who founded the Order of the Gilt Frame?",
     options: ["A scholar", "A painter", "A merchant", "A knight"],
     correctIndex: 1,
-    onResult: () => {},
     visible: true,
   },
+  callbacks: { onResult: "noop" },
 };

@@ -70,7 +70,7 @@ type AlignMode = {
   /** Seconds to hold on target to solve. Default 1.5. */
   holdSeconds?: number;
   /** Called once when hold timer completes. */
-  onSolved?: () => void;
+  onComplete?: () => void;
   /** Called each RAF frame — use to drive external DOM elements. */
   onFrame?: (data: AlignFrameData) => void;
 };
@@ -273,7 +273,7 @@ export default function CompassRose(props: CompassRoseProps) {
             holdProgress = clamp(held / holdSeconds, 0, 1);
             if (held >= holdSeconds && !solvedRef.current) {
               solvedRef.current = true;
-              p.onSolved?.();
+              p.onComplete?.();
               return; // stop loop — parent will unmount on phase change
             }
           }
@@ -333,4 +333,5 @@ export const showcase: ShowcaseDefinition<CompassRoseProps> = {
   defaults: {
     mode: "navigate",
   },
+  callbacks: { onComplete: "done", onFrame: "noop" },
 };

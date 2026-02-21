@@ -122,7 +122,7 @@ export default function FindByText({
         <MarkerTap
           lines={guidanceLines}
           instruction={confirmation_instruction}
-          onTap={goToIdentification}
+          onComplete={goToIdentification}
           active={phase === "guidance"}
           markerDelay={1000}
           textDelay={800}

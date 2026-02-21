@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import AmbientParticles from "@/components/ui/AmbientParticles";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import MarkerAnimation from "./MarkerAnimation";
 import type { ShowcaseDefinition } from "@/components/showcase";
@@ -9,20 +8,20 @@ import type { ShowcaseDefinition } from "@/components/showcase";
 interface GiltFrameProps {
   children: React.ReactNode;
   delayMs?: number;
-  onAnimationComplete?: () => void;
+  onComplete?: () => void;
 }
 
 export default function GiltFrame({
   children,
   delayMs = 800,
-  onAnimationComplete,
+  onComplete,
 }: GiltFrameProps) {
   const [animationDone, setAnimationDone] = useState(false);
 
   const handleAnimationComplete = useCallback(() => {
     setAnimationDone(true);
-    onAnimationComplete?.();
-  }, [onAnimationComplete]);
+    onComplete?.();
+  }, [onComplete]);
 
   return (
     <div
@@ -38,8 +37,6 @@ export default function GiltFrame({
         padding: "40px 24px",
       }}
     >
-      <AmbientParticles count={5} opacity={0.3} active={animationDone} />
-
       <MarkerAnimation onComplete={handleAnimationComplete} delayMs={delayMs} />
 
       <div
@@ -60,7 +57,7 @@ export const showcase: ShowcaseDefinition<GiltFrameProps> = {
   category: "game",
   label: "Gilt Frame",
   description: "Layout wrapper with marker ceremony animation",
-  uses: ["AmbientParticles", "MarkerAnimation"],
+  uses: ["MarkerAnimation"],
   defaults: {
     children: (
       <p
@@ -78,4 +75,5 @@ export const showcase: ShowcaseDefinition<GiltFrameProps> = {
       </p>
     ),
   },
+  callbacks: { onComplete: "noop" },
 };

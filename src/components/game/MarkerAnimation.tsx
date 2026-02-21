@@ -329,7 +329,6 @@ export const showcase: ShowcaseDefinition<MarkerAnimationProps> = {
   category: "game",
   label: "Marker Animation",
   description: "8-phase orb ceremony tracing the gilt frame border",
-  defaults: {
-    onComplete: () => {},
-  },
+  defaults: {},
+  callbacks: { onComplete: "done" },
 };

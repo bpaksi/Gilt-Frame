@@ -13,7 +13,7 @@ type IndoorConfig = {
 
 interface IndoorWayfindingProps {
   config: IndoorConfig;
-  onAdvance: () => void;
+  onComplete: () => void;
   chapterId?: string;
   stepIndex?: number;
   revealedHintTiers?: number[];
@@ -22,7 +22,7 @@ interface IndoorWayfindingProps {
 
 export default function IndoorWayfinding({
   config,
-  onAdvance,
+  onComplete,
   chapterId,
   stepIndex,
   revealedHintTiers,
@@ -59,7 +59,7 @@ export default function IndoorWayfinding({
         </p>
       )}
 
-      <GhostButton onClick={onAdvance}>
+      <GhostButton onClick={onComplete}>
         I have arrived
       </GhostButton>
 
@@ -83,6 +83,6 @@ export const showcase: ShowcaseDefinition<IndoorWayfindingProps> = {
   uses: ["MarkerSVG", "HintSystem", "GhostButton"],
   defaults: {
     config: { wayfinding_text: "Proceed to the east gallery and locate the gilded frame." },
-    onAdvance: () => {},
   },
+  callbacks: { onComplete: "done" },
 };

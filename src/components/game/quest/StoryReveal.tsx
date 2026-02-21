@@ -38,7 +38,7 @@ export default function StoryReveal({ config, onAdvance, chapterName }: StoryRev
       {phase === "ceremony" ? (
         <CeremonyAnimation
           supernova
-          onUnlock={() => setPhase("text")}
+          onComplete={() => setPhase("text")}
           unlockText={config.unlock_text}
         />
       ) : (

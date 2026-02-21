@@ -57,4 +57,5 @@ export const showcase: ShowcaseDefinition<TextButtonProps> = {
   label: "Text Button",
   description: "Lightweight text-only button with hover states",
   defaults: { children: "Request a Hint" },
+  callbacks: { onClick: "done" },
 };

@@ -90,4 +90,5 @@ export const showcase: ShowcaseDefinition<OptionButtonProps> = {
   label: "Option Button",
   description: "Quiz answer button with correct/wrong states",
   defaults: { label: "The Starry Night" },
+  callbacks: { onClick: "noop" },
 };

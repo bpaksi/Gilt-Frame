@@ -6,10 +6,10 @@ import CeremonyAnimation from "./CeremonyAnimation";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface PuzzleSolveProps {
-  onAdvance: () => void;
+  onComplete: () => void;
 }
 
-export default function PuzzleSolve({ onAdvance }: PuzzleSolveProps) {
+export default function PuzzleSolve({ onComplete }: PuzzleSolveProps) {
   return (
     <div
       style={{
@@ -24,7 +24,7 @@ export default function PuzzleSolve({ onAdvance }: PuzzleSolveProps) {
       }}
     >
       <AmbientParticles />
-      <CeremonyAnimation onUnlock={onAdvance} />
+      <CeremonyAnimation onComplete={onComplete} />
     </div>
   );
 }
@@ -34,5 +34,6 @@ export const showcase: ShowcaseDefinition<PuzzleSolveProps> = {
   label: "Puzzle Solve",
   description: "Full-screen ceremony overlay triggered on step completion",
   uses: ["AmbientParticles", "CeremonyAnimation"],
-  defaults: { onAdvance: () => {} },
+  defaults: {},
+  callbacks: { onComplete: "done" },
 };
