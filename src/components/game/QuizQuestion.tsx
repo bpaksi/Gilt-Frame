@@ -54,11 +54,12 @@ export default function QuizQuestion({
     if (correct) {
       setTimeout(() => onResult(true), 800);
     } else {
-      // Trigger shake animation
+      // Trigger shake animation (rAF ensures the browser commits one frame
+      // without the class before re-adding it, reliably restarting the animation)
       if (shakeRef.current) {
-        shakeRef.current.classList.remove("shake");
-        void shakeRef.current.offsetWidth; // force reflow
-        shakeRef.current.classList.add("shake");
+        const el = shakeRef.current;
+        el.classList.remove("shake");
+        requestAnimationFrame(() => el.classList.add("shake"));
       }
       // Reset visual state, then report
       setTimeout(() => {
