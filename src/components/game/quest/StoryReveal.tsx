@@ -145,7 +145,7 @@ function TextPhase({
               width: variant === 0 ? "3px" : "2px",
               height: variant === 0 ? "3px" : "2px",
               borderRadius: "50%",
-              background: `rgba(200, 165, 75, ${0.15 + (i % 4) * 0.05})`,
+              background: [colors.gold15, colors.gold20, colors.gold25, colors.gold30][i % 4],
               left: `${8 + ((i * 17 + 5) % 84)}%`,
               top: `${6 + ((i * 23 + 11) % 82)}%`,
               animation: `rewardDrift-${i % 4} ${6 + (i % 5) * 2}s ease-in-out infinite`,

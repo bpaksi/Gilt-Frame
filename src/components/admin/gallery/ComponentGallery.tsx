@@ -14,6 +14,7 @@ import {
   galleryRecordAnswer,
   galleryValidatePassphrase,
 } from "@/lib/actions/gallery";
+import { colors, fontFamily } from "@/components/ui/tokens";
 
 const CATEGORIES: { key: ShowcaseCategory; label: string }[] = [
   { key: "ui", label: "UI" },
@@ -298,7 +299,7 @@ export default function ComponentGallery({
                     display: "flex",
                     flexDirection: "column",
                     gap: "16px",
-                    border: "1px dashed rgba(200, 165, 75, 0.3)",
+                    border: `1px dashed ${colors.gold30}`,
                     margin: "12px",
                     borderRadius: "4px",
                   }}
@@ -474,7 +475,7 @@ function buildComponentProps(
     props.items = ["The Summons", "The Trial of Sight", "The Hidden Gallery"];
     props.keyExtractor = (_: string, i: number) => String(i);
     props.renderHeader = (item: string) => (
-      <span style={{ color: "rgba(200, 165, 75, 0.8)", fontFamily: "Georgia, serif", fontSize: "15px", fontStyle: "italic" }}>
+      <span style={{ color: colors.gold80, fontFamily: fontFamily, fontSize: "15px", fontStyle: "italic" }}>
         {item}
       </span>
     );

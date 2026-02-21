@@ -52,5 +52,5 @@ export const showcase: ShowcaseDefinition<CompassPermissionProps> = {
   label: "Compass Permission",
   description: "Permission prompt with animated marker",
   uses: ["MarkerSVG"],
-  defaults: { children: "Enable Compass" },
+  defaults: { children: "Enable Compass", onPermission: () => {} },
 };

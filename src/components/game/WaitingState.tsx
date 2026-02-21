@@ -4,7 +4,11 @@ import GiltFrame from "./GiltFrame";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
-export default function WaitingState() {
+interface WaitingStateProps {
+  message: string;
+}
+
+export default function WaitingState({ message }: WaitingStateProps) {
   return (
     <GiltFrame>
       <p
@@ -20,15 +24,18 @@ export default function WaitingState() {
           whiteSpace: "pre-line",
         }}
       >
-        {"The Order will contact you\nwhen ready."}
+        {message}
       </p>
     </GiltFrame>
   );
 }
 
-export const showcase: ShowcaseDefinition = {
+export const showcase: ShowcaseDefinition<WaitingStateProps> = {
   category: "game",
   label: "Waiting State",
   description: "Full-page waiting screen with marker animation",
   uses: ["GiltFrame"],
+  defaults: {
+    message: "The Order will contact you\nwhen ready.",
+  },
 };

@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { colors, fontFamily } from "@/components/ui/tokens";
 
 export type DeviceSize = {
   label: string;
@@ -38,11 +39,11 @@ export default function GameViewport({ device, children }: GameViewportProps) {
         overflow: "hidden",
         flexShrink: 0,
         // Replicate (game)/layout.tsx inline styles exactly
-        background: "#0a0a0a",
+        background: colors.bg,
         display: "flex",
         flexDirection: "column",
-        color: "rgba(200, 165, 75, 0.9)",
-        fontFamily: "Georgia, 'Times New Roman', serif",
+        color: colors.gold90,
+        fontFamily: fontFamily,
         // Creates containing block for position:fixed children
         transform: "scale(1)",
         position: "relative",

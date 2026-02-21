@@ -70,6 +70,12 @@ export type BearingPuzzleConfig = {
   min_rotation?: number;
   hold_seconds?: number;
   instruction?: string;
+  /** Shown above the countdown after solving. Default: "The compass yields its secret…" */
+  locking_message?: string;
+  /** Shown after the countdown completes. Default: "The way is found" */
+  resolution_message?: string;
+  /** Shown on the orientation permission screen. Default: "The compass awaits your permission." */
+  permission_message?: string;
 };
 
 /** Ceremony animation + reward text with unlock/continue buttons. */
@@ -118,6 +124,8 @@ export type FindByTextConfig = {
   painting_pool: string[];
   /** Number of wrong options to show alongside the correct answer. Default 3. */
   num_distractors?: number;
+  /** Button label on the guidance phase marker. Default: "I think I've found it." */
+  confirmation_instruction?: string;
 };
 
 // ─── Component ↔ Config Pairing ─────────────────────────────────────────────

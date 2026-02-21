@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import AmbientParticles from "@/components/ui/AmbientParticles";
-import { colors } from "@/components/ui/tokens";
+import { colors, fontFamily } from "@/components/ui/tokens";
 import MarkerAnimation from "./MarkerAnimation";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
@@ -61,5 +61,21 @@ export const showcase: ShowcaseDefinition<GiltFrameProps> = {
   label: "Gilt Frame",
   description: "Layout wrapper with marker ceremony animation",
   uses: ["AmbientParticles", "MarkerAnimation"],
-  defaults: { children: null },
+  defaults: {
+    children: (
+      <p
+        style={{
+          color: colors.gold50,
+          fontFamily,
+          fontSize: "16px",
+          fontStyle: "italic",
+          textAlign: "center",
+          letterSpacing: "1px",
+          lineHeight: "1.8",
+        }}
+      >
+        The ceremony is complete.
+      </p>
+    ),
+  },
 };

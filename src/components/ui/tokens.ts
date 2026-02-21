@@ -34,6 +34,20 @@ export const colors = {
   surface: "rgba(30, 25, 18, 0.8)",
   dark: "#1e1912",
   white: "#ffffff",
+  // Warm-white glow — used by animation orbs and particle effects
+  warmGlow60: "rgba(255, 248, 220, 0.6)",
+  warmGlow50: "rgba(255, 248, 220, 0.5)",
+  warmGlow40: "rgba(255, 248, 220, 0.4)",
+  orbWhite90: "rgba(255, 253, 240, 0.9)",
+  flashWhite25: "rgba(255, 251, 230, 0.25)",
+} as const;
+
+// ── Color bases (RGB only) ───────────────────────────────────────────────
+// Use these for dynamic-alpha template literals: `rgba(${colorBases.gold}, ${alpha})`
+
+export const colorBases = {
+  gold: "200, 165, 75",
+  goldBright: "232, 204, 106",
 } as const;
 
 // ── Typography ──────────────────────────────────────────────────────────

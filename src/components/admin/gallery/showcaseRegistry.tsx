@@ -16,12 +16,16 @@ import Accordion, { showcase as accordion } from "@/components/ui/Accordion";
 // ── Game Building Blocks ─────────────────────────────────────────────────────
 import GiltFrame, { showcase as giltFrame } from "@/components/game/GiltFrame";
 import WaitingState, { showcase as waitingState } from "@/components/game/WaitingState";
+import MarkerTap, { showcase as markerTap } from "@/components/game/MarkerTap";
+import QuizQuestion, { showcase as quizQuestion } from "@/components/game/QuizQuestion";
+import CompassRose, { showcase as compassRose } from "@/components/game/CompassRose";
 import MarkerAnimation, { showcase as markerAnimation } from "@/components/game/MarkerAnimation";
 import HintSystem, { showcase as hintSystem } from "@/components/game/HintSystem";
 import TextReveal, { showcase as textReveal } from "@/components/game/TextReveal";
 import CompassPermission, { showcase as compassPermission } from "@/components/game/CompassPermission";
 import IndoorWayfinding, { showcase as indoorWayfinding } from "@/components/game/IndoorWayfinding";
 import CeremonyAnimation, { showcase as ceremonyAnimation } from "@/components/game/CeremonyAnimation";
+import LockingCountdown, { showcase as lockingCountdown } from "@/components/game/LockingCountdown";
 
 // ── Quest Components ─────────────────────────────────────────────────────────
 import FindByGps, { showcase as findByGps } from "@/components/game/quest/FindByGps";
@@ -55,12 +59,16 @@ const ALL_ENTRIES: ShowcaseEntry[] = [
   // Game
   { id: "GiltFrame",         filePath: "src/components/game/GiltFrame.tsx",          showcase: giltFrame,         Component: GiltFrame },
   { id: "WaitingState",      filePath: "src/components/game/WaitingState.tsx",        showcase: waitingState,      Component: WaitingState },
+  { id: "MarkerTap",         filePath: "src/components/game/MarkerTap.tsx",           showcase: markerTap,         Component: MarkerTap },
+  { id: "QuizQuestion",      filePath: "src/components/game/QuizQuestion.tsx",        showcase: quizQuestion,      Component: QuizQuestion },
+  { id: "CompassRose",       filePath: "src/components/game/CompassRose.tsx",         showcase: compassRose,       Component: CompassRose },
   { id: "MarkerAnimation",   filePath: "src/components/game/MarkerAnimation.tsx",     showcase: markerAnimation,   Component: MarkerAnimation },
   { id: "HintSystem",        filePath: "src/components/game/HintSystem.tsx",          showcase: hintSystem,        Component: HintSystem },
   { id: "TextReveal",        filePath: "src/components/game/TextReveal.tsx",          showcase: textReveal,        Component: TextReveal },
   { id: "CompassPermission", filePath: "src/components/game/CompassPermission.tsx",   showcase: compassPermission, Component: CompassPermission },
   { id: "IndoorWayfinding",  filePath: "src/components/game/IndoorWayfinding.tsx",    showcase: indoorWayfinding,  Component: IndoorWayfinding },
-  { id: "CeremonyAnimation", filePath: "src/components/game/CeremonyAnimation.tsx",   showcase: ceremonyAnimation, Component: CeremonyAnimation },
+  { id: "CeremonyAnimation",   filePath: "src/components/game/CeremonyAnimation.tsx",    showcase: ceremonyAnimation,   Component: CeremonyAnimation },
+  { id: "LockingCountdown",    filePath: "src/components/game/LockingCountdown.tsx",     showcase: lockingCountdown,    Component: LockingCountdown },
   // Quest
   { id: "FindByGps",       filePath: "src/components/game/quest/FindByGps.tsx",       showcase: findByGps,       Component: FindByGps },
   { id: "MultipleChoice",  filePath: "src/components/game/quest/MultipleChoice.tsx",  showcase: multipleChoice,  Component: MultipleChoice },

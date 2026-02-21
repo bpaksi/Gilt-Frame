@@ -1,357 +1,81 @@
 "use client";
 
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useState, useCallback } from "react";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
 import CompassPermission from "../CompassPermission";
+import CompassRose from "../CompassRose";
+import LockingCountdown from "../LockingCountdown";
 import MarkerSVG from "@/components/ui/MarkerSVG";
-import { colors, fontFamily } from "@/components/ui/tokens";
+import { colors, colorBases, fontFamily } from "@/components/ui/tokens";
 import type { BearingPuzzleConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
+import type { AlignFrameData } from "../CompassRose";
 
 interface BearingPuzzleProps {
   config: BearingPuzzleConfig;
   onAdvance: () => void;
 }
 
-const SIZE = 680;
-const CENTER = SIZE / 2;
-const RING_R = 280;
-
-function clamp(val: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, val));
-}
-
-function angularDistance(a: number, b: number): number {
-  let d = Math.abs(a - b) % 360;
-  if (d > 180) d = 360 - d;
-  return d;
-}
-
-/** Signed angular distance from target to heading: positive = CW, negative = CCW. Range -180..+180 */
-function signedAngularDistance(heading: number, target: number): number {
-  let d = heading - target;
-  if (d > 180) d -= 360;
-  if (d < -180) d += 360;
-  return d;
-}
-
 export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const markerRef = useRef<HTMLDivElement>(null);
   const statusTextRef = useRef<HTMLDivElement>(null);
   const orientation = useDeviceOrientation();
   const [needsPermission, setNeedsPermission] = useState(true);
-  const [phase, setPhase] = useState<"compass" | "locking" | "found">("compass");
-  const [countdown, setCountdown] = useState(5);
-  const rafRef = useRef<number>(0);
-
-  const maxCWRef = useRef(0);
-  const maxCCWRef = useRef(0);
-  const holdStartRef = useRef<number | null>(null);
-
-  const target = config.compass_target;
-  const tolerance = config.compass_tolerance ?? 8;
-  const minRotation = config.min_rotation ?? 45;
-  const holdSeconds = config.hold_seconds ?? 1.5;
-
-  // Desktop simulation
-  const mouseRef = useRef<{ x: number; y: number }>({ x: CENTER, y: CENTER });
-  const isDesktop = typeof window !== "undefined" && !("ontouchstart" in window);
+  const [phase, setPhase] = useState<"compass" | "locking">("compass");
 
   const handlePermission = useCallback(async () => {
     await orientation.requestPermission();
     setNeedsPermission(false);
   }, [orientation]);
 
-  useEffect(() => {
-    if (needsPermission || phase !== "compass") return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    function draw() {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, SIZE, SIZE);
-
-      let heading = orientation.heading ?? 0;
-      if (isDesktop) {
-        const dx = mouseRef.current.x - CENTER;
-        const dy = mouseRef.current.y - CENTER;
-        heading = ((Math.atan2(dx, -dy) * 180) / Math.PI + 360) % 360;
-      }
-
-      // Track bidirectional sweep from target
-      const signedDist = signedAngularDistance(heading, target);
-      maxCWRef.current = Math.max(maxCWRef.current, signedDist);
-      maxCCWRef.current = Math.min(maxCCWRef.current, signedDist);
-
-      const angDist = angularDistance(heading, target);
-      const proximity = clamp(1 - angDist / 90, 0, 1);
-      const isOnTarget = angDist <= tolerance;
-      const hasRotatedEnough =
-        maxCWRef.current >= minRotation && maxCCWRef.current <= -minRotation;
-
-      // Check hold timer for solve
-      let holdProgress = 0;
-      if (isOnTarget && hasRotatedEnough) {
-        if (holdStartRef.current === null) {
-          holdStartRef.current = performance.now();
-        } else {
-          const held = (performance.now() - holdStartRef.current) / 1000;
-          holdProgress = clamp(held / holdSeconds, 0, 1);
-          if (held >= holdSeconds) {
-            setCountdown(5);
-            setPhase("locking");
-            return;
-          }
-        }
-      } else {
-        holdStartRef.current = null;
-      }
-
-      // Ramping shake during hold
-      const now = performance.now() / 1000;
-      const shakeFreq = 8 + holdProgress * 16;
-      const shakeAmp = holdProgress * holdProgress * 1.5;
-      const shakeX = Math.sin(now * shakeFreq * Math.PI * 2) * shakeAmp;
-      const shakeY = Math.cos(now * shakeFreq * Math.PI * 2 * 0.7) * shakeAmp;
-
-      // Compass ring
-      ctx.beginPath();
-      ctx.arc(CENTER, CENTER, RING_R, 0, Math.PI * 2);
-      ctx.strokeStyle = colors.gold30;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      // Tick marks and cardinals
-      const cardinals = ["N", "E", "S", "W"];
-      for (let deg = 0; deg < 360; deg += 10) {
-        const rad = ((deg - heading) * Math.PI) / 180 - Math.PI / 2;
-        const isMajor = deg % 90 === 0;
-        const len = isMajor ? 16 : 10;
-        const x1 = CENTER + Math.cos(rad) * (RING_R - len);
-        const y1 = CENTER + Math.sin(rad) * (RING_R - len);
-        const x2 = CENTER + Math.cos(rad) * RING_R;
-        const y2 = CENTER + Math.sin(rad) * RING_R;
-
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.strokeStyle = isMajor
-          ? colors.gold55
-          : colors.gold25;
-        ctx.lineWidth = isMajor ? 1.5 : 1;
-        ctx.stroke();
-
-        if (isMajor) {
-          const label = cardinals[deg / 90];
-          const lx = CENTER + Math.cos(rad) * (RING_R - 30);
-          const ly = CENTER + Math.sin(rad) * (RING_R - 30);
-          ctx.font = `italic 14px ${fontFamily}`;
-          ctx.fillStyle = colors.gold55;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText(label, lx, ly);
-        }
-      }
-
-      // Fixed needle (points up = current heading)
-      const needleLen = RING_R - 80;
-      ctx.beginPath();
-      ctx.moveTo(CENTER, CENTER + 30);
-      ctx.lineTo(CENTER, CENTER - needleLen);
-      ctx.strokeStyle = colors.gold55;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      // Tip dot
-      ctx.beginPath();
-      ctx.arc(CENTER, CENTER - needleLen, 6, 0, Math.PI * 2);
-      ctx.fillStyle = colors.gold55;
-      ctx.fill();
-
-      // Drive DOM marker from draw loop
+  // Drive DOM refs from CompassRose frame data — no React re-renders in the hot path
+  const handleFrame = useCallback(
+    ({ proximity, isOnTarget, hasRotatedEnough, holdProgress, shakeX, shakeY }: AlignFrameData) => {
       const markerEl = markerRef.current;
       const textEl = statusTextRef.current;
+
       if (markerEl) {
-        const opacity = 0.1 + proximity * 0.9;
-        const glowBlur = proximity > 0.3
-          ? 15 + proximity * 50 + holdProgress * 30
-          : 0;
+        const glowBlur = proximity > 0.3 ? 15 + proximity * 50 + holdProgress * 30 : 0;
         const glowColor = isOnTarget
-          ? `rgba(232, 204, 106, ${0.4 + holdProgress * 0.4})`
-          : `rgba(201, 168, 76, ${proximity * 0.3})`;
-        markerEl.style.opacity = String(opacity);
-        markerEl.style.filter = glowBlur > 0
-          ? `drop-shadow(0 0 ${glowBlur}px ${glowColor})`
-          : "none";
+          ? `rgba(${colorBases.goldBright}, ${0.4 + holdProgress * 0.4})`
+          : `rgba(${colorBases.gold}, ${proximity * 0.3})`;
+        markerEl.style.opacity = String(0.1 + proximity * 0.9);
+        markerEl.style.filter = glowBlur > 0 ? `drop-shadow(0 0 ${glowBlur}px ${glowColor})` : "none";
         markerEl.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
       }
       if (textEl) {
         if (isOnTarget && hasRotatedEnough) {
           textEl.textContent = "hold...";
           textEl.style.opacity = "0.8";
-          textEl.style.color = "rgba(232, 204, 106, 0.8)";
+          textEl.style.color = colors.goldBright90;
           textEl.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
         } else if (hasRotatedEnough) {
           textEl.textContent = "closer...";
           textEl.style.opacity = String(0.3 + proximity * 0.5);
-          textEl.style.color = "rgba(201, 168, 76, 0.5)";
+          textEl.style.color = colors.gold50;
           textEl.style.transform = "none";
         } else {
           textEl.textContent = "";
           textEl.style.opacity = "0";
         }
       }
+    },
+    [],
+  );
 
-      rafRef.current = requestAnimationFrame(draw);
-    }
+  // Phase driven by CompassRose.onSolved
+  const handleSolved = useCallback(() => {
+    setPhase("locking");
+  }, []);
 
-    rafRef.current = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [
-    needsPermission,
-    phase,
-    orientation.heading,
-    target,
-    tolerance,
-    minRotation,
-    holdSeconds,
-    isDesktop,
-  ]);
-
-  // Locking phase: countdown 5→1, then transition to found
-  useEffect(() => {
-    if (phase !== "locking") return;
-    let current = 5;
-    const interval = setInterval(() => {
-      current -= 1;
-      if (current <= 0) {
-        clearInterval(interval);
-        setPhase("found");
-      } else {
-        setCountdown(current);
-      }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [phase]);
-
-  // Found phase: pause then advance
-  useEffect(() => {
-    if (phase !== "found") return;
-    const timer = setTimeout(onAdvance, 2100);
-    return () => clearTimeout(timer);
-  }, [phase, onAdvance]);
-
-  // Desktop mouse tracking
-  useEffect(() => {
-    if (!isDesktop || needsPermission) return;
-    const handleMouse = (e: MouseEvent) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = SIZE / rect.width;
-      const scaleY = SIZE / rect.height;
-      mouseRef.current = {
-        x: (e.clientX - rect.left) * scaleX,
-        y: (e.clientY - rect.top) * scaleY,
-      };
-    };
-    window.addEventListener("mousemove", handleMouse);
-    return () => window.removeEventListener("mousemove", handleMouse);
-  }, [isDesktop, needsPermission]);
 
   if (phase === "locking") {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "100%",
-          flex: 1,
-          gap: "32px",
-          padding: "40px 24px",
-          animation: "compassFadeIn 400ms ease-out both",
-        }}
-      >
-        <style>{`
-          @keyframes compassFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-          @keyframes countdownPulse {
-            0% { opacity: 0.3; transform: scale(0.85); }
-            20% { opacity: 1; transform: scale(1); }
-            80% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0.6; transform: scale(0.97); }
-          }
-        `}</style>
-        <div
-          style={{
-            color: colors.gold70,
-            fontFamily: fontFamily,
-            fontSize: "17px",
-            fontStyle: "italic",
-            textAlign: "center",
-            letterSpacing: "3px",
-            lineHeight: 1.8,
-          }}
-        >
-          The compass yields its secret…
-        </div>
-        <div
-          key={countdown}
-          style={{
-            color: colors.goldBright90,
-            fontFamily: fontFamily,
-            fontSize: "64px",
-            fontStyle: "italic",
-            letterSpacing: "4px",
-            animation: "countdownPulse 1s ease-out both",
-          }}
-        >
-          {countdown}
-        </div>
-      </div>
-    );
-  }
-
-  if (phase === "found") {
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "100%",
-          flex: 1,
-          padding: "40px 24px",
-          animation: "compassFadeIn 600ms ease-out both",
-        }}
-      >
-        <style>{`
-          @keyframes compassFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-        `}</style>
-        <div
-          style={{
-            color: colors.goldBright90,
-            fontFamily: fontFamily,
-            fontSize: "22px",
-            fontStyle: "italic",
-            textAlign: "center",
-            letterSpacing: "4px",
-            lineHeight: 1.8,
-          }}
-        >
-          The way is found
-        </div>
-      </div>
+      <LockingCountdown
+        message={config.locking_message ?? "The compass yields its secret…"}
+        resolution={config.resolution_message ?? "The way is found"}
+        onComplete={onAdvance}
+      />
     );
   }
 
@@ -380,7 +104,7 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
             lineHeight: 1.8,
           }}
         >
-          The compass awaits your permission.
+          {config.permission_message ?? "The compass awaits your permission."}
         </div>
         <CompassPermission onPermission={handlePermission}>
           Enable Compass
@@ -416,11 +140,15 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
           {config.instruction}
         </div>
       )}
-      <canvas
-        ref={canvasRef}
-        width={SIZE}
-        height={SIZE}
-        style={{ width: "min(85%, 420px)", height: "min(85%, 420px)" }}
+      <CompassRose
+        mode="align"
+        target={config.compass_target}
+        tolerance={config.compass_tolerance}
+        minRotation={config.min_rotation}
+        holdSeconds={config.hold_seconds}
+        size={680}
+        onSolved={handleSolved}
+        onFrame={handleFrame}
       />
       <div
         ref={markerRef}
@@ -449,7 +177,7 @@ export const showcase: ShowcaseDefinition<BearingPuzzleProps> = {
   category: "quest",
   label: "Bearing Puzzle",
   description: "Device orientation puzzle — point phone at target bearing and hold steady",
-  uses: ["CompassPermission", "MarkerSVG"],
+  uses: ["CompassPermission", "CompassRose", "LockingCountdown", "MarkerSVG"],
   defaults: {
     config: {
       compass_target: 180,

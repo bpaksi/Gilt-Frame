@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useCallback, useRef, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import HintSystem from "../HintSystem";
-import OptionButton from "@/components/ui/OptionButton";
+import QuizQuestion from "../QuizQuestion";
 import WaveDivider from "@/components/ui/WaveDivider";
-import { colors, fontFamily } from "@/components/ui/tokens";
 import { recordAnswer } from "@/lib/actions/quest";
 import type { MultipleChoiceConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
@@ -31,12 +30,9 @@ export default function MultipleChoice({
 }: MultipleChoiceProps) {
   const { questions } = config;
   const [currentQ, setCurrentQ] = useState(0);
-  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [locked, setLocked] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
-  const [optionsVisible, setOptionsVisible] = useState(true);
-  const shakeRef = useRef<HTMLDivElement>(null);
+  const [questionsVisible, setQuestionsVisible] = useState(true);
+  const [questionKey, setQuestionKey] = useState(0);
 
   const question = questions[currentQ];
 
@@ -50,63 +46,40 @@ export default function MultipleChoice({
     return question.hints.map((hint, i) => ({ tier: offset + i + 1, hint }));
   }, [questions, currentQ, question.hints]);
 
-  const handleSelect = useCallback(
-    async (optionIdx: number) => {
-      if (locked || transitioning) return;
+  const handleResult = useCallback(
+    (correct: boolean) => {
+      if (transitioning) return;
 
-      const correct = optionIdx === question.correct;
-      setSelectedIdx(optionIdx);
-      setIsCorrect(correct);
-
-      // Record answer
+      // Record the answer (fired after QuizQuestion's visual feedback settles)
       if (chapterId !== undefined && stepIndex !== undefined) {
         (recordAnswerAction ?? recordAnswer)(
           chapterId,
           stepIndex,
           currentQ,
-          question.options[optionIdx],
+          question.options[question.correct], // always record which option was correct
           correct
         );
       }
 
       if (correct) {
-        setLocked(true);
-
-        // Check if last question
         if (currentQ === questions.length - 1) {
-          setTimeout(onAdvance, 1200);
+          // Last question — advance after a brief pause
+          setTimeout(onAdvance, 400);
         } else {
-          // Transition to next question
-          setTimeout(() => {
-            setTransitioning(true);
-            setOptionsVisible(false);
-          }, 1000);
-
+          // Transition to next question: fade out → swap → fade in
+          setTransitioning(true);
+          setQuestionsVisible(false);
           setTimeout(() => {
             setCurrentQ((prev) => prev + 1);
-            setSelectedIdx(null);
-            setIsCorrect(null);
-            setLocked(false);
-            setOptionsVisible(true);
+            setQuestionKey((k) => k + 1);
+            setQuestionsVisible(true);
             setTransitioning(false);
-          }, 1850); // 1000 + 400 fade out + 450 wait
+          }, 850);
         }
-      } else {
-        // Shake
-        if (shakeRef.current) {
-          shakeRef.current.classList.remove("shake");
-          void shakeRef.current.offsetWidth; // Force reflow
-          shakeRef.current.classList.add("shake");
-        }
-
-        // Reset after fade
-        setTimeout(() => {
-          setSelectedIdx(null);
-          setIsCorrect(null);
-        }, 800);
       }
+      // Wrong: QuizQuestion already reset its own state; nothing to do here
     },
-    [locked, transitioning, question, currentQ, questions.length, onAdvance, chapterId, stepIndex, recordAnswerAction]
+    [transitioning, currentQ, questions.length, question, onAdvance, chapterId, stepIndex, recordAnswerAction]
   );
 
   return (
@@ -122,62 +95,22 @@ export default function MultipleChoice({
         padding: "40px 24px",
       }}
     >
-      {/* Question text */}
-      <p
-        style={{
-          color: colors.gold90,
-          fontFamily,
-          fontSize: "20px",
-          fontStyle: "italic",
-          textAlign: "center",
-          lineHeight: 1.6,
-          maxWidth: "340px",
-          opacity: optionsVisible ? 1 : 0,
-          transition: "opacity 0.4s ease",
-        }}
-      >
-        {question.question}
-      </p>
-
-      {/* Options */}
-      <div
-        ref={shakeRef}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "12px",
-          width: "100%",
-          maxWidth: "340px",
-          opacity: optionsVisible ? 1 : 0,
-          transition: "opacity 0.4s ease",
-        }}
-      >
-        {question.options.map((option, i) => {
-          const isSelected = selectedIdx === i;
-          const state = isSelected && isCorrect === true
-            ? "correct" as const
-            : isSelected && isCorrect === false
-              ? "wrong" as const
-              : "default" as const;
-
-          return (
-            <OptionButton
-              key={option}
-              label={option}
-              state={state}
-              disabled={locked || transitioning}
-              onClick={() => handleSelect(i)}
-            />
-          );
-        })}
-      </div>
+      <QuizQuestion
+        key={questionKey}
+        question={question.question}
+        options={question.options}
+        correctIndex={question.correct}
+        onResult={handleResult}
+        disabled={transitioning}
+        visible={questionsVisible}
+      />
 
       {/* Scrollwork divider + per-question hints */}
       {currentHints && chapterId && stepIndex !== undefined && (
         <>
           <WaveDivider
             style={{
-              opacity: optionsVisible ? 0.3 : 0,
+              opacity: questionsVisible ? 0.3 : 0,
               transition: "opacity 0.4s ease",
               margin: "-12px 0",
             }}
@@ -200,7 +133,7 @@ export const showcase: ShowcaseDefinition<MultipleChoiceProps> = {
   category: "quest",
   label: "Multiple Choice",
   description: "Sequential multiple-choice questions with hints",
-  uses: ["HintSystem", "OptionButton", "WaveDivider"],
+  uses: ["HintSystem", "QuizQuestion", "WaveDivider"],
   defaults: {
     config: {
       questions: [

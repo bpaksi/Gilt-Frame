@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { colors } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface MarkerAnimationProps {
@@ -209,7 +210,7 @@ export default function MarkerAnimation({ onComplete, delayMs = 800 }: MarkerAni
         style={{
           position: "fixed",
           inset: 0,
-          background: "radial-gradient(ellipse at center, rgba(255,251,230,0.25) 0%, transparent 60%)",
+          background: `radial-gradient(ellipse at center, ${colors.flashWhite25} 0%, transparent 60%)`,
           opacity: 0,
           pointerEvents: "none",
           zIndex: 5,
@@ -259,13 +260,13 @@ export default function MarkerAnimation({ onComplete, delayMs = 800 }: MarkerAni
           <rect
             ref={markerBorderRef}
             x="10" y="10" width="180" height="240" rx="2"
-            fill="none" stroke="#C9A84C" strokeWidth="1"
+            fill="none" stroke={colors.gold} strokeWidth="1"
             style={{ opacity: 0 }}
           />
           <rect
             ref={afterglowRef}
             x="10" y="10" width="180" height="240" rx="2"
-            fill="none" stroke="#C9A84C" strokeWidth="1.5"
+            fill="none" stroke={colors.gold} strokeWidth="1.5"
             filter="url(#softAfterGlow)"
             style={{ opacity: 0 }}
           />
@@ -279,7 +280,7 @@ export default function MarkerAnimation({ onComplete, delayMs = 800 }: MarkerAni
               key={r}
               ref={(el) => { trailRefs.current[i] = el; }}
               cx="0" cy="0" r={r}
-              fill="rgba(255, 248, 220, 0.5)"
+              fill={colors.warmGlow50}
               filter="url(#trailGlow)"
               style={{ opacity: 0 }}
             />
@@ -287,20 +288,20 @@ export default function MarkerAnimation({ onComplete, delayMs = 800 }: MarkerAni
           <circle
             ref={orbRef}
             cx={CENTER_X} cy={CENTER_Y} r="5"
-            fill="rgba(255, 253, 240, 0.9)"
+            fill={colors.orbWhite90}
             filter="url(#fuzzyOrbGlow)"
             style={{ opacity: 0 }}
           />
           <path
             ref={curve1Ref}
             d="M 64,65 C 64,130 136,112 136,176"
-            fill="none" stroke="#C9A84C" strokeWidth="1.5"
+            fill="none" stroke={colors.gold} strokeWidth="1.5"
             style={{ opacity: 0 }}
           />
           <path
             ref={curve2Ref}
             d="M 136,65 C 136,130 64,112 64,176"
-            fill="none" stroke="#C9A84C" strokeWidth="1.5"
+            fill="none" stroke={colors.gold} strokeWidth="1.5"
             style={{ opacity: 0 }}
           />
           {([
@@ -313,7 +314,7 @@ export default function MarkerAnimation({ onComplete, delayMs = 800 }: MarkerAni
               key={`${pos.cx}-${pos.cy}`}
               ref={(el) => { dotRefs.current[i] = el; }}
               cx={pos.cx} cy={pos.cy} r="3"
-              fill="#C9A84C"
+              fill={colors.gold}
               style={{ opacity: 0 }}
             />
           ))}
@@ -328,4 +329,7 @@ export const showcase: ShowcaseDefinition<MarkerAnimationProps> = {
   category: "game",
   label: "Marker Animation",
   description: "8-phase orb ceremony tracing the gilt frame border",
+  defaults: {
+    onComplete: () => {},
+  },
 };

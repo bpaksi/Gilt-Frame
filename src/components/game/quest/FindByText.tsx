@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useCallback, useRef, useMemo } from "react";
-import { useStaggeredReveal } from "@/lib/hooks/useStaggeredReveal";
-import MarkerSVG from "@/components/ui/MarkerSVG";
+import { useState, useCallback, useMemo } from "react";
+import MarkerTap from "../MarkerTap";
+import QuizQuestion from "../QuizQuestion";
 import HintSystem from "../HintSystem";
-import OptionButton from "@/components/ui/OptionButton";
 import WaveDivider from "@/components/ui/WaveDivider";
 import type { FindByTextConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
-import { colors, fontFamily, MIN_TAP_TARGET } from "@/components/ui/tokens";
 
 interface FindByTextProps {
   config: FindByTextConfig;
@@ -52,24 +50,14 @@ export default function FindByText({
     correct_answer,
     painting_pool,
     num_distractors = 3,
+    confirmation_instruction = "I think I've found it.",
   } = config;
 
   const [phase, setPhase] = useState<Phase>("guidance");
-  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [locked, setLocked] = useState(false);
   const [fadeState, setFadeState] = useState<"in" | "out">("in");
-  const shakeRef = useRef<HTMLDivElement>(null);
 
   // ── Guidance phase entrance animation ────────────────────────────────
   const guidanceLines = useMemo(() => guidance_text.split("\n"), [guidance_text]);
-  const { lineVisibility, markerVisible, textVisible: instructionVisible, tapReady } = useStaggeredReveal({
-    lines: guidanceLines,
-    active: phase === "guidance",
-    markerDelay: 1000,
-    textDelay: 800,
-    tapDelay: 1200,
-  });
 
   // ── Build shuffled options each time we enter identification ──────────
   const [options, setOptions] = useState<string[]>([]);
@@ -80,21 +68,17 @@ export default function FindByText({
     const all = shuffle([correct_answer, ...distractors]);
     setOptions(all);
     setCorrectIdx(all.indexOf(correct_answer));
-    setSelectedIdx(null);
-    setIsCorrect(null);
-    setLocked(false);
   }, [painting_pool, correct_answer, num_distractors]);
 
   // ── Phase transitions ────────────────────────────────────────────────
   const goToIdentification = useCallback(() => {
-    if (!tapReady) return;
     setFadeState("out");
     setTimeout(() => {
       buildOptions();
       setPhase("identification");
       setFadeState("in");
     }, 500);
-  }, [tapReady, buildOptions]);
+  }, [buildOptions]);
 
   const returnToGuidance = useCallback(() => {
     setFadeState("out");
@@ -104,32 +88,17 @@ export default function FindByText({
     }, 500);
   }, []);
 
-  // ── Handle answer selection ──────────────────────────────────────────
-  const handleSelect = useCallback(
-    (optionIdx: number) => {
-      if (locked) return;
-
-      const correct = optionIdx === correctIdx;
-      setSelectedIdx(optionIdx);
-      setIsCorrect(correct);
-
+  // ── Handle quiz result ───────────────────────────────────────────────
+  const handleResult = useCallback(
+    (correct: boolean) => {
       if (correct) {
-        setLocked(true);
-        setTimeout(onAdvance, 1200);
+        setTimeout(onAdvance, 400);
       } else {
-        // Shake gently
-        if (shakeRef.current) {
-          shakeRef.current.classList.remove("shake");
-          void shakeRef.current.offsetWidth;
-          shakeRef.current.classList.add("shake");
-        }
-        // After shake settles, return to guidance
-        setTimeout(() => {
-          returnToGuidance();
-        }, 1200);
+        // QuizQuestion already reset its own state; return to guidance phase
+        returnToGuidance();
       }
     },
-    [locked, correctIdx, onAdvance, returnToGuidance]
+    [onAdvance, returnToGuidance]
   );
 
   // ── Render: Guidance phase ───────────────────────────────────────────
@@ -149,89 +118,21 @@ export default function FindByText({
           transition: "opacity 0.45s ease",
         }}
       >
-        {/* Guidance text lines — stagger in */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "8px",
-          }}
-        >
-          {guidanceLines.map((line: string, i: number) => (
-            <p
-              key={i}
-              style={{
-                opacity: lineVisibility[i] ? 1 : 0,
-                transition: "opacity 0.8s ease",
-                color: colors.gold85,
-                fontFamily: fontFamily,
-                fontSize: "18px",
-                fontStyle: "italic",
-                textAlign: "center",
-                lineHeight: 1.8,
-                maxWidth: "320px",
-                margin: 0,
-              }}
-            >
-              {line}
-            </p>
-          ))}
-        </div>
-
-        {/* Marker + "I think I've found it" */}
-        <button
-          onClick={goToIdentification}
-          disabled={!tapReady}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: tapReady ? "pointer" : "default",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "24px",
-            padding: "20px",
-            minWidth: MIN_TAP_TARGET,
-            minHeight: MIN_TAP_TARGET,
-            WebkitTapHighlightColor: "transparent",
-          }}
-        >
-          <div
-            style={{
-              opacity: markerVisible ? 1 : 0,
-              transition: "opacity 0.8s ease",
-              animation: markerVisible
-                ? "pulse-soft 2s ease-in-out infinite"
-                : undefined,
-            }}
-          >
-            <MarkerSVG size={100} variant="gold" />
-          </div>
-
-          <p
-            style={{
-              opacity: instructionVisible ? 1 : 0,
-              transition: "opacity 0.8s ease",
-              color: colors.gold70,
-              fontFamily: fontFamily,
-              fontSize: "16px",
-              fontStyle: "italic",
-              textAlign: "center",
-              letterSpacing: "1px",
-              lineHeight: 1.8,
-              maxWidth: "280px",
-            }}
-          >
-            I think I&rsquo;ve found it.
-          </p>
-        </button>
+        <MarkerTap
+          lines={guidanceLines}
+          instruction={confirmation_instruction}
+          onTap={goToIdentification}
+          active={phase === "guidance"}
+          markerDelay={1000}
+          textDelay={800}
+          tapDelay={1200}
+        />
 
         {/* Hint system — always available, player-initiated */}
         {hints.length > 0 && chapterId && stepIndex !== undefined && (
           <>
             <WaveDivider
-              style={{ opacity: instructionVisible ? 0.3 : 0, transition: "opacity 0.4s ease", margin: "-8px 0" }}
+              style={{ opacity: 0.3, transition: "opacity 0.4s ease", margin: "-8px 0" }}
             />
             <HintSystem
               hints={hints}
@@ -256,57 +157,17 @@ export default function FindByText({
         justifyContent: "center",
         minHeight: "100%",
         flex: 1,
-        gap: "32px",
         padding: "40px 24px",
         opacity: fadeState === "in" ? 1 : 0,
         transition: "opacity 0.45s ease",
       }}
     >
-      {/* Question */}
-      <p
-        style={{
-          color: colors.gold90,
-          fontFamily: fontFamily,
-          fontSize: "20px",
-          fontStyle: "italic",
-          textAlign: "center",
-          lineHeight: 1.6,
-          maxWidth: "340px",
-        }}
-      >
-        {question}
-      </p>
-
-      {/* Options */}
-      <div
-        ref={shakeRef}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "12px",
-          width: "100%",
-          maxWidth: "340px",
-        }}
-      >
-        {options.map((option, i) => {
-          const isSelected = selectedIdx === i;
-          const state = isSelected && isCorrect === true
-            ? "correct" as const
-            : isSelected && isCorrect === false
-              ? "wrong" as const
-              : "default" as const;
-
-          return (
-            <OptionButton
-              key={option}
-              label={option}
-              state={state}
-              disabled={locked}
-              onClick={() => handleSelect(i)}
-            />
-          );
-        })}
-      </div>
+      <QuizQuestion
+        question={question}
+        options={options}
+        correctIndex={correctIdx}
+        onResult={handleResult}
+      />
     </div>
   );
 }
@@ -315,7 +176,7 @@ export const showcase: ShowcaseDefinition<FindByTextProps> = {
   category: "quest",
   label: "Find by Text",
   description: "Text-guided search leading to looping multiple-choice identification",
-  uses: ["MarkerSVG", "HintSystem", "OptionButton", "WaveDivider"],
+  uses: ["MarkerTap", "QuizQuestion", "HintSystem", "WaveDivider"],
   defaults: {
     config: {
       guidance_text: "In the east wing, seek the canvas that glows.\nLook for what time has gilded.",

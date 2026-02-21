@@ -97,7 +97,7 @@ export default function CeremonyAnimation({
             c.setAttribute("cx", String(x));
             c.setAttribute("cy", String(y));
             c.setAttribute("r", String(2 + (1 - stagger) * 2));
-            c.setAttribute("fill", "rgba(255, 248, 220, 0.6)");
+            c.setAttribute("fill", colors.warmGlow60);
             c.setAttribute("class", "nova-p");
             c.style.opacity = String(o);
             svg.appendChild(c);
@@ -114,7 +114,7 @@ export default function CeremonyAnimation({
           ring.setAttribute("cy", String(CENTER_Y));
           ring.setAttribute("r", String(ringR));
           ring.setAttribute("fill", "none");
-          ring.setAttribute("stroke", "rgba(255, 248, 220, 0.4)");
+          ring.setAttribute("stroke", colors.warmGlow40);
           ring.setAttribute("stroke-width", String(2.5 - ringT * 2));
           ring.setAttribute("class", "nova-p");
           ring.style.opacity = String(ringO);
@@ -152,7 +152,7 @@ export default function CeremonyAnimation({
             circle.setAttribute("cx", String(x));
             circle.setAttribute("cy", String(y));
             circle.setAttribute("r", "2");
-            circle.setAttribute("fill", "rgba(255, 248, 220, 0.5)");
+            circle.setAttribute("fill", colors.warmGlow50);
             circle.setAttribute("class", "gather-particle");
             circle.style.opacity = String(opacity);
             svg.appendChild(circle);
@@ -287,7 +287,7 @@ export default function CeremonyAnimation({
           position: "fixed",
           inset: 0,
           background:
-            "radial-gradient(ellipse at center, rgba(255,251,230,0.25) 0%, transparent 60%)",
+            `radial-gradient(ellipse at center, ${colors.flashWhite25} 0%, transparent 60%)`,
           opacity: 0,
           pointerEvents: "none",
           zIndex: 5,
@@ -338,7 +338,7 @@ export default function CeremonyAnimation({
               key={r}
               ref={(el) => { trailRefs.current[i] = el; }}
               cx="0" cy="0" r={r}
-              fill="rgba(255, 248, 220, 0.5)"
+              fill={colors.warmGlow50}
               filter="url(#puzzleTrailGlow)"
               style={{ opacity: 0 }}
             />
@@ -348,7 +348,7 @@ export default function CeremonyAnimation({
           <circle
             ref={orbRef}
             cx={CENTER_X} cy={CENTER_Y} r="5"
-            fill="rgba(255, 253, 240, 0.9)"
+            fill={colors.orbWhite90}
             filter="url(#puzzleOrbGlow)"
             style={{ opacity: 0 }}
           />
@@ -405,5 +405,5 @@ export const showcase: ShowcaseDefinition<CeremonyAnimationProps> = {
   label: "Ceremony Animation",
   description: "Orb ceremony with optional supernova prelude",
   uses: ["TextButton"],
-  defaults: { unlockText: "Press to Unlock", supernova: false },
+  defaults: { unlockText: "Press to Unlock", supernova: false, onUnlock: () => {} },
 };

@@ -101,5 +101,6 @@ export const showcase: ShowcaseDefinition<HintSystemProps> = {
     ],
     chapterId: "gallery",
     stepIndex: 0,
+    revealHintAction: async () => ({ hint: "" }),
   },
 };
