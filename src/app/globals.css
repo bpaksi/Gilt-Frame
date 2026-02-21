@@ -49,6 +49,16 @@
   50% { opacity: 0.3; transform: translateY(-10px); }
 }
 
+/* AmbientParticles movement variants — back-and-forth, transform only */
+@keyframes ap-0 { 0%,100%{transform:translate(0,0);} 50%{transform:translate(-6px,-18px);} }
+@keyframes ap-1 { 0%,100%{transform:translate(0,0);} 50%{transform:translate(9px,-25px);} }
+@keyframes ap-2 { 0%,100%{transform:translate(0,0);} 30%{transform:translate(-3px,-11px);} 70%{transform:translate(-9px,-27px);} }
+@keyframes ap-3 { 0%,100%{transform:translate(0,0);} 50%{transform:translate(14px,-7px);} }
+@keyframes ap-4 { 0%,100%{transform:translate(0,0);} 50%{transform:translate(-13px,-31px);} }
+@keyframes ap-5 { 0%,100%{transform:translate(0,0);} 40%{transform:translate(5px,-15px);} 80%{transform:translate(4px,-31px);} }
+@keyframes ap-6 { 0%,100%{transform:translate(0,0);} 50%{transform:translate(-17px,-9px);} }
+@keyframes ap-7 { 0%,100%{transform:translate(0,0);} 50%{transform:translate(7px,-38px);} }
+
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
