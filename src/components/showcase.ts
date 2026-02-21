@@ -1,7 +1,12 @@
 export type ShowcaseCategory = "ui" | "game" | "quest";
 
-/** Gallery behavior for a callback prop. "done" triggers the done overlay; "noop" is a placeholder. */
-export type ShowcaseCallback = "done" | "noop";
+/**
+ * Gallery behavior for a callback prop.
+ * "done"   — calling this signals the component completed its purpose; triggers the done overlay.
+ * "noop"   — data/lifecycle callback; wired as a no-op placeholder.
+ * "action" — async DB action; the gallery injects a test-scoped implementation from its action registry.
+ */
+export type ShowcaseCallback = "done" | "noop" | "action";
 
 export type ShowcaseDefinition<Props = unknown> = {
   category: ShowcaseCategory;
@@ -13,8 +18,6 @@ export type ShowcaseDefinition<Props = unknown> = {
   /**
    * Declares all callback props this component expects and their gallery role.
    * Every function prop should appear here so the gallery can wire it automatically.
-   * "done" — calling this callback signals the component has completed its purpose.
-   * "noop" — data/event callback; wired as a no-op placeholder.
    */
   callbacks?: Record<string, ShowcaseCallback>;
 };

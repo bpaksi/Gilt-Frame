@@ -83,6 +83,8 @@ export const showcase: ShowcaseDefinition<IndoorWayfindingProps> = {
   uses: ["MarkerSVG", "HintSystem", "GhostButton"],
   defaults: {
     config: { wayfinding_text: "Proceed to the east gallery and locate the gilded frame." },
+    chapterId: "gallery",
+    stepIndex: 0,
   },
-  callbacks: { onComplete: "done" },
+  callbacks: { onComplete: "done", revealHintAction: "action" },
 };

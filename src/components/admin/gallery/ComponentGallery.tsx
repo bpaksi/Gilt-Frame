@@ -439,7 +439,21 @@ function buildComponentProps(
   if (!entry) return {};
 
   const noop = () => {};
-  const wire = (role: "done" | "noop") => (role === "done" ? onDone : noop);
+
+  // Registry of gallery-scoped implementations for "action" callbacks.
+  // Each key matches a prop name declared as "action" in a component's showcase.callbacks.
+  const actionRegistry: Record<string, unknown> = {
+    revealHintAction: async (chapterId: string, stepIndex: number, tier: number) => {
+      try { return await galleryRevealHint(chapterId, stepIndex, tier); }
+      catch { return null; }
+    },
+  };
+
+  const wire = (role: "done" | "noop" | "action", key: string) => {
+    if (role === "done") return onDone;
+    if (role === "action") return actionRegistry[key] ?? noop;
+    return noop;
+  };
 
   // ── Quest ──────────────────────────────────────────────────────────────────
   // Quest components have a universal contract: onAdvance signals completion.
@@ -503,28 +517,7 @@ function buildComponentProps(
 
   // Wire all declared callbacks from the showcase definition
   for (const [key, role] of Object.entries(entry.showcase.callbacks ?? {})) {
-    props[key] = wire(role);
-  }
-
-  if (entry.showcase.category === "game") {
-    // IndoorWayfinding and HintSystem need gallery-scoped action injections
-    if (entry.id === "IndoorWayfinding") {
-      props.config = config;
-      props.chapterId = "gallery";
-      props.stepIndex = 0;
-      props.revealHintAction = async (chapterId: string, stepIndex: number, tier: number) => {
-        try { return await galleryRevealHint(chapterId, stepIndex, tier); }
-        catch { return null; }
-      };
-    }
-    if (entry.id === "HintSystem") {
-      props.chapterId = "gallery";
-      props.stepIndex = 0;
-      props.revealHintAction = async (chapterId: string, stepIndex: number, tier: number) => {
-        try { return await galleryRevealHint(chapterId, stepIndex, tier); }
-        catch { return null; }
-      };
-    }
+    props[key] = wire(role, key);
   }
 
   if (entry.showcase.category === "ui") {
