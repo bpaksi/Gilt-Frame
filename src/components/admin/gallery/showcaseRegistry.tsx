@@ -22,7 +22,6 @@ import CompassRose, { showcase as compassRose } from "@/components/game/CompassR
 import MarkerAnimation, { showcase as markerAnimation } from "@/components/game/MarkerAnimation";
 import HintSystem, { showcase as hintSystem } from "@/components/game/HintSystem";
 import TextReveal, { showcase as textReveal } from "@/components/game/TextReveal";
-import CompassPermission, { showcase as compassPermission } from "@/components/game/CompassPermission";
 import IndoorWayfinding, { showcase as indoorWayfinding } from "@/components/game/IndoorWayfinding";
 import CeremonyAnimation, { showcase as ceremonyAnimation } from "@/components/game/CeremonyAnimation";
 import LockingCountdown, { showcase as lockingCountdown } from "@/components/game/LockingCountdown";
@@ -65,7 +64,6 @@ const ALL_ENTRIES: ShowcaseEntry[] = [
   { id: "MarkerAnimation",   filePath: "src/components/game/MarkerAnimation.tsx",     showcase: markerAnimation,   Component: MarkerAnimation },
   { id: "HintSystem",        filePath: "src/components/game/HintSystem.tsx",          showcase: hintSystem,        Component: HintSystem },
   { id: "TextReveal",        filePath: "src/components/game/TextReveal.tsx",          showcase: textReveal,        Component: TextReveal },
-  { id: "CompassPermission", filePath: "src/components/game/CompassPermission.tsx",   showcase: compassPermission, Component: CompassPermission },
   { id: "IndoorWayfinding",  filePath: "src/components/game/IndoorWayfinding.tsx",    showcase: indoorWayfinding,  Component: IndoorWayfinding },
   { id: "CeremonyAnimation",   filePath: "src/components/game/CeremonyAnimation.tsx",    showcase: ceremonyAnimation,   Component: CeremonyAnimation },
   { id: "LockingCountdown",    filePath: "src/components/game/LockingCountdown.tsx",     showcase: lockingCountdown,    Component: LockingCountdown },

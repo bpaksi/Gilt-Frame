@@ -2,7 +2,7 @@
 
 import { useRef, useState, useCallback } from "react";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
-import CompassPermission from "../CompassPermission";
+import MarkerTap from "../MarkerTap";
 import CompassRose from "../CompassRose";
 import LockingCountdown from "../LockingCountdown";
 import MarkerSVG from "@/components/ui/MarkerSVG";
@@ -89,26 +89,17 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
           justifyContent: "center",
           minHeight: "100%",
           flex: 1,
-          gap: "32px",
           padding: "40px 24px",
         }}
       >
-        <div
-          style={{
-            color: colors.gold70,
-            fontFamily: fontFamily,
-            fontSize: "16px",
-            fontStyle: "italic",
-            textAlign: "center",
-            letterSpacing: "3px",
-            lineHeight: 1.8,
-          }}
-        >
-          {config.permission_message ?? "The compass awaits your permission."}
-        </div>
-        <CompassPermission onPermission={handlePermission}>
-          Enable Compass
-        </CompassPermission>
+        <MarkerTap
+          lines={[config.permission_message ?? "The compass awaits your permission."]}
+          instruction="Enable Compass"
+          onTap={handlePermission}
+          markerDelay={0}
+          textDelay={0}
+          tapDelay={0}
+        />
       </div>
     );
   }
@@ -177,7 +168,7 @@ export const showcase: ShowcaseDefinition<BearingPuzzleProps> = {
   category: "quest",
   label: "Bearing Puzzle",
   description: "Device orientation puzzle — point phone at target bearing and hold steady",
-  uses: ["CompassPermission", "CompassRose", "LockingCountdown", "MarkerSVG"],
+  uses: ["MarkerTap", "CompassRose", "LockingCountdown", "MarkerSVG"],
   defaults: {
     config: {
       compass_target: 180,

@@ -5,7 +5,6 @@ import { useGeolocation } from "@/lib/hooks/useGeolocation";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
 import { thematicDistanceText } from "@/lib/geo";
 import HintSystem from "../HintSystem";
-import CompassPermission from "../CompassPermission";
 import CompassRose from "../CompassRose";
 import MarkerTap from "../MarkerTap";
 import GhostButton from "@/components/ui/GhostButton";
@@ -101,9 +100,13 @@ export default function FindByGps({
             padding: "40px 24px",
           }}
         >
-          <CompassPermission onPermission={handlePermission}>
-            Enable Location
-          </CompassPermission>
+          <MarkerTap
+            instruction="Enable Location"
+            onTap={handlePermission}
+            markerDelay={0}
+            textDelay={0}
+            tapDelay={0}
+          />
         </div>
       );
     }
@@ -211,7 +214,7 @@ export const showcase: ShowcaseDefinition<FindByGpsProps> = {
   category: "quest",
   label: "Find by GPS",
   description: "GPS compass (full mode) leading to tappable marker, or tappable marker only (lite mode, no coordinates).",
-  uses: ["HintSystem", "CompassPermission", "CompassRose", "MarkerTap", "GhostButton"],
+  uses: ["HintSystem", "CompassRose", "MarkerTap", "GhostButton"],
   defaults: {
     config: {
       instruction: "Tap the marker when you have found it.",

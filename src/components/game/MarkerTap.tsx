@@ -6,10 +6,10 @@ import { colors, fontFamily, MIN_TAP_TARGET } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface MarkerTapProps {
-  /** Lines of text staggered in above the marker. Pass empty array for no title. */
-  lines: string[];
-  /** Instruction text displayed below the marker. */
-  instruction: string;
+  /** Lines of text staggered in above the marker. Omit or pass empty array for no header. */
+  lines?: string[];
+  /** Instruction text displayed below the marker. Omit for no instruction. */
+  instruction?: string;
   /** Called when the user taps the marker (only fires once tapReady is true). */
   onTap: () => void;
   /** Whether the stagger sequence is running. Defaults to true. */
@@ -29,7 +29,7 @@ interface MarkerTapProps {
  * Used by FindByGps (marker phase) and FindByText (guidance phase).
  */
 export default function MarkerTap({
-  lines,
+  lines = [],
   instruction,
   onTap,
   active = true,
@@ -112,23 +112,25 @@ export default function MarkerTap({
           <MarkerSVG size={120} variant="gold" />
         </div>
 
-        <p
-          style={{
-            opacity: textVisible ? 1 : 0,
-            transition: "opacity 0.8s ease",
-            color: colors.gold70,
-            fontFamily: fontFamily,
-            fontSize: "16px",
-            fontStyle: "italic",
-            textAlign: "center",
-            letterSpacing: "1px",
-            lineHeight: 1.8,
-            maxWidth: "280px",
-            margin: 0,
-          }}
-        >
-          {instruction}
-        </p>
+        {instruction && (
+          <p
+            style={{
+              opacity: textVisible ? 1 : 0,
+              transition: "opacity 0.8s ease",
+              color: colors.gold70,
+              fontFamily: fontFamily,
+              fontSize: "16px",
+              fontStyle: "italic",
+              textAlign: "center",
+              letterSpacing: "1px",
+              lineHeight: 1.8,
+              maxWidth: "280px",
+              margin: 0,
+            }}
+          >
+            {instruction}
+          </p>
+        )}
       </button>
     </div>
   );
@@ -137,12 +139,12 @@ export default function MarkerTap({
 export const showcase: ShowcaseDefinition<MarkerTapProps> = {
   category: "game",
   label: "Marker Tap",
-  description: "Staggered title lines with pulsing marker tap target and instruction text",
+  description: "Canonical pause/confirmation tap target. Optional staggered header lines above marker, optional instruction text below. Replaces CompassPermission.",
   uses: ["MarkerSVG"],
   defaults: {
     lines: ["You have arrived.", "Something stirs nearby."],
     instruction: "Tap the marker when you have found it.",
-    onTap: () => {},
     active: true,
   },
+  callbacks: { onTap: "done" },
 };
