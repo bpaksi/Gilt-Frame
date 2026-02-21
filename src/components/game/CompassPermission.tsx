@@ -1,6 +1,7 @@
 "use client";
 
-import MarkerSVG from "../MarkerSVG";
+import MarkerSVG from "@/components/ui/MarkerSVG";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface CompassPermissionProps {
   onPermission: () => void;
@@ -44,3 +45,10 @@ export default function CompassPermission({
     </button>
   );
 }
+
+export const showcase: ShowcaseDefinition<CompassPermissionProps> = {
+  category: "game",
+  label: "Compass Permission",
+  description: "Permission prompt with animated marker",
+  defaults: { children: "Enable Compass" },
+};

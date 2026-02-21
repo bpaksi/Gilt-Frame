@@ -7,4 +7,5 @@ export { default as GoldText } from "./GoldText";
 export { default as OptionButton } from "./OptionButton";
 export { default as TextButton } from "./TextButton";
 export { default as UppercaseLabel } from "./UppercaseLabel";
+export { default as MarkerSVG } from "./MarkerSVG";
 export { default as WaveDivider } from "./WaveDivider";

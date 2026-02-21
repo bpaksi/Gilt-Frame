@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useCallback, useRef, useMemo } from "react";
-import HintSystem from "./HintSystem";
+import HintSystem from "../HintSystem";
 import OptionButton from "@/components/ui/OptionButton";
 import WaveDivider from "@/components/ui/WaveDivider";
 import { recordAnswer } from "@/lib/actions/quest";
 import type { MultipleChoiceConfig } from "@/config";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface MultipleChoiceProps {
   config: MultipleChoiceConfig;
@@ -13,6 +14,8 @@ interface MultipleChoiceProps {
   chapterId?: string;
   stepIndex?: number;
   revealedHintTiers?: number[];
+  recordAnswerAction?: (chapterId: string, stepIndex: number, questionIndex: number, selectedOption: string, correct: boolean) => Promise<void>;
+  revealHintAction?: (chapterId: string, stepIndex: number, tier: number) => Promise<{ hint: string } | null>;
 }
 
 
@@ -22,6 +25,8 @@ export default function MultipleChoice({
   chapterId,
   stepIndex,
   revealedHintTiers,
+  recordAnswerAction,
+  revealHintAction,
 }: MultipleChoiceProps) {
   const { questions } = config;
   const [currentQ, setCurrentQ] = useState(0);
@@ -54,7 +59,7 @@ export default function MultipleChoice({
 
       // Record answer
       if (chapterId !== undefined && stepIndex !== undefined) {
-        recordAnswer(
+        (recordAnswerAction ?? recordAnswer)(
           chapterId,
           stepIndex,
           currentQ,
@@ -100,7 +105,7 @@ export default function MultipleChoice({
         }, 800);
       }
     },
-    [locked, transitioning, question, currentQ, questions.length, onAdvance, chapterId, stepIndex]
+    [locked, transitioning, question, currentQ, questions.length, onAdvance, chapterId, stepIndex, recordAnswerAction]
   );
 
   return (
@@ -182,9 +187,16 @@ export default function MultipleChoice({
             chapterId={chapterId}
             stepIndex={stepIndex}
             initialRevealedTiers={revealedHintTiers}
+            revealHintAction={revealHintAction}
           />
         </>
       )}
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<MultipleChoiceProps> = {
+  category: "quest",
+  label: "Multiple Choice",
+  description: "Sequential multiple-choice questions with hints",
+};

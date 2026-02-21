@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import { colors, fontFamily } from "./tokens";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 type Variant = "body" | "heading" | "hint" | "muted";
 
@@ -49,3 +50,10 @@ export default function GoldText({ variant = "body", children, style }: GoldText
     </p>
   );
 }
+
+export const showcase: ShowcaseDefinition<GoldTextProps> = {
+  category: "ui",
+  label: "Gold Text",
+  description: "Typographic component with body/heading/hint/muted variants",
+  defaults: { children: "The Sight stirs within you, Sparrow.", variant: "body" },
+};

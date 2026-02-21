@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface MarkerAnimationProps {
   onComplete: () => void;
@@ -322,3 +323,9 @@ export default function MarkerAnimation({ onComplete, delayMs = 800 }: MarkerAni
     </>
   );
 }
+
+export const showcase: ShowcaseDefinition<MarkerAnimationProps> = {
+  category: "game",
+  label: "Marker Animation",
+  description: "8-phase orb ceremony tracing the gilt frame border",
+};

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import TextButton from "@/components/ui/TextButton";
+import type { ShowcaseDefinition } from "@/components/showcase";
 import {
   easeInOut, easeOut, easeIn, clamp01, lerp, prog, pointOnBorder,
   TIMELINE, FRAME_X, FRAME_Y, FRAME_W, FRAME_H,
@@ -397,3 +398,10 @@ export default function CeremonyAnimation({
     </>
   );
 }
+
+export const showcase: ShowcaseDefinition<CeremonyAnimationProps> = {
+  category: "game",
+  label: "Ceremony Animation",
+  description: "Orb ceremony with optional supernova prelude",
+  defaults: { unlockText: "Press to Unlock", supernova: false },
+};

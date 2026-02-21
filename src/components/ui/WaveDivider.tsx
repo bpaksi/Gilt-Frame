@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { colors } from "./tokens";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface WaveDividerProps {
   style?: CSSProperties;
@@ -23,3 +24,9 @@ export default function WaveDivider({ style }: WaveDividerProps) {
     </svg>
   );
 }
+
+export const showcase: ShowcaseDefinition<WaveDividerProps> = {
+  category: "ui",
+  label: "Wave Divider",
+  description: "SVG wavy line divider",
+};

@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { componentRegistry } from "./registry";
-import StateFader from "./StateFader";
+import StateFader from "../StateFader";
 import type { QuestState } from "@/lib/actions/quest";
 import { advanceQuest } from "@/lib/actions/quest";
 

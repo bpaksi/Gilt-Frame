@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import { colors, fontFamily } from "./tokens";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface EmptyStateProps {
   children: ReactNode;
@@ -36,3 +37,10 @@ export default function EmptyState({ children, centered, style }: EmptyStateProp
 
   return text;
 }
+
+export const showcase: ShowcaseDefinition<EmptyStateProps> = {
+  category: "ui",
+  label: "Empty State",
+  description: "Placeholder text for empty views",
+  defaults: { children: "No moments captured yet.", centered: true },
+};

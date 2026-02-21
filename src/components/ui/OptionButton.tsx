@@ -2,6 +2,7 @@
 
 import { useState, type CSSProperties } from "react";
 import { colors, fontFamily, MIN_TAP_TARGET } from "./tokens";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 type OptionState = "default" | "correct" | "wrong";
 
@@ -83,3 +84,10 @@ export default function OptionButton({
     </button>
   );
 }
+
+export const showcase: ShowcaseDefinition<OptionButtonProps> = {
+  category: "ui",
+  label: "Option Button",
+  description: "Quiz answer button with correct/wrong states",
+  defaults: { label: "The Starry Night" },
+};

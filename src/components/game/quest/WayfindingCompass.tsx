@@ -4,11 +4,12 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import { useGeolocation } from "@/lib/hooks/useGeolocation";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
 import { haversineDistance, bearingTo, thematicDistanceText } from "@/lib/geo";
-import HintSystem from "./HintSystem";
-import CompassPermission from "./CompassPermission";
-import IndoorWayfinding from "./IndoorWayfinding";
+import HintSystem from "../HintSystem";
+import CompassPermission from "../CompassPermission";
+import IndoorWayfinding from "../IndoorWayfinding";
 import GhostButton from "@/components/ui/GhostButton";
 import type { WayfindingCompassConfig, HintItem } from "@/config";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface WayfindingCompassProps {
   config: WayfindingCompassConfig;
@@ -16,6 +17,7 @@ interface WayfindingCompassProps {
   chapterId?: string;
   stepIndex?: number;
   revealedHintTiers?: number[];
+  revealHintAction?: (chapterId: string, stepIndex: number, tier: number) => Promise<{ hint: string } | null>;
 }
 
 const SIZE = 560;
@@ -28,6 +30,7 @@ export default function WayfindingCompass({
   chapterId,
   stepIndex,
   revealedHintTiers,
+  revealHintAction,
 }: WayfindingCompassProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const geo = useGeolocation();
@@ -235,6 +238,7 @@ export default function WayfindingCompass({
         chapterId={chapterId}
         stepIndex={stepIndex}
         revealedHintTiers={revealedHintTiers}
+        revealHintAction={revealHintAction}
       />
     );
   }
@@ -295,7 +299,7 @@ export default function WayfindingCompass({
         ref={canvasRef}
         width={SIZE}
         height={SIZE}
-        style={{ width: "min(80vw, 400px)", height: "min(80vw, 400px)" }}
+        style={{ width: "min(80%, 400px)", height: "min(80%, 400px)" }}
       />
 
       {distanceText && (
@@ -328,8 +332,15 @@ export default function WayfindingCompass({
           chapterId={chapterId}
           stepIndex={stepIndex}
           initialRevealedTiers={revealedHintTiers}
+          revealHintAction={revealHintAction}
         />
       )}
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<WayfindingCompassProps> = {
+  category: "quest",
+  label: "Wayfinding Compass",
+  description: "GPS outdoor compass or indoor text directions",
+};

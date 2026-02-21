@@ -1,5 +1,7 @@
 "use client";
 
+import type { ShowcaseDefinition } from "@/components/showcase";
+
 interface MarkerSVGProps {
   size?: number;
   variant?: "gold" | "dark" | "white";
@@ -61,3 +63,10 @@ export default function MarkerSVG({
     </svg>
   );
 }
+
+export const showcase: ShowcaseDefinition<MarkerSVGProps> = {
+  category: "ui",
+  label: "Marker SVG",
+  description: "Hourglass marker icon with gold/dark/white variants",
+  defaults: { size: 80, variant: "gold", animated: true },
+};

@@ -4,12 +4,14 @@ import { useState } from "react";
 import TextButton from "@/components/ui/TextButton";
 import { revealHint } from "@/lib/actions/quest";
 import type { HintItem } from "@/config";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface HintSystemProps {
   hints: HintItem[];
   chapterId: string;
   stepIndex: number;
   initialRevealedTiers?: number[];
+  revealHintAction?: (chapterId: string, stepIndex: number, tier: number) => Promise<{ hint: string } | null>;
 }
 
 const EMPTY_TIERS: number[] = [];
@@ -19,6 +21,7 @@ export default function HintSystem({
   chapterId,
   stepIndex,
   initialRevealedTiers = EMPTY_TIERS,
+  revealHintAction,
 }: HintSystemProps) {
   const [revealedTiers, setRevealedTiers] = useState<number[]>(initialRevealedTiers);
   const [loading, setLoading] = useState(false);
@@ -30,7 +33,7 @@ export default function HintSystem({
   const handleReveal = async () => {
     if (!nextHint || loading) return;
     setLoading(true);
-    const result = await revealHint(chapterId, stepIndex, nextHint.tier);
+    const result = await (revealHintAction ?? revealHint)(chapterId, stepIndex, nextHint.tier);
     if (result) {
       setRevealedTiers((prev) => [...prev, nextHint.tier]);
     }
@@ -84,3 +87,17 @@ export default function HintSystem({
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<HintSystemProps> = {
+  category: "game",
+  label: "Hint System",
+  description: "Tiered hint reveal with progressive disclosure",
+  defaults: {
+    hints: [
+      { tier: 1, hint: "Look for something gilded." },
+      { tier: 2, hint: "The frame catches the afternoon light." },
+    ],
+    chapterId: "gallery",
+    stepIndex: 0,
+  },
+};

@@ -2,11 +2,12 @@
 
 import { useState, useCallback, useRef, useMemo } from "react";
 import { useStaggeredReveal } from "@/lib/hooks/useStaggeredReveal";
-import MarkerSVG from "../MarkerSVG";
-import HintSystem from "./HintSystem";
+import MarkerSVG from "@/components/ui/MarkerSVG";
+import HintSystem from "../HintSystem";
 import OptionButton from "@/components/ui/OptionButton";
 import WaveDivider from "@/components/ui/WaveDivider";
 import type { GuidedIdentificationConfig } from "@/config";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface GuidedIdentificationProps {
   config: GuidedIdentificationConfig;
@@ -14,6 +15,7 @@ interface GuidedIdentificationProps {
   chapterId?: string;
   stepIndex?: number;
   revealedHintTiers?: number[];
+  revealHintAction?: (chapterId: string, stepIndex: number, tier: number) => Promise<{ hint: string } | null>;
 }
 
 /** Shuffle array (Fisher–Yates) — returns new array. */
@@ -40,6 +42,7 @@ export default function GuidedIdentification({
   chapterId,
   stepIndex,
   revealedHintTiers,
+  revealHintAction,
 }: GuidedIdentificationProps) {
   const {
     guidance_text,
@@ -234,6 +237,7 @@ export default function GuidedIdentification({
               chapterId={chapterId}
               stepIndex={stepIndex}
               initialRevealedTiers={revealedHintTiers}
+              revealHintAction={revealHintAction}
             />
           </>
         )}
@@ -305,3 +309,9 @@ export default function GuidedIdentification({
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<GuidedIdentificationProps> = {
+  category: "quest",
+  label: "Guided Identification",
+  description: "Two-phase identification puzzle with guidance and quiz",
+};

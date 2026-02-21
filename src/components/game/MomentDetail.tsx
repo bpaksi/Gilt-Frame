@@ -1,7 +1,7 @@
 "use client";
 
-import TextReveal from "./quest/TextReveal";
-import MarkerSVG from "./MarkerSVG";
+import TextReveal from "./TextReveal";
+import MarkerSVG from "@/components/ui/MarkerSVG";
 import GhostButton from "@/components/ui/GhostButton";
 import UppercaseLabel from "@/components/ui/UppercaseLabel";
 import { colors } from "@/components/ui/tokens";

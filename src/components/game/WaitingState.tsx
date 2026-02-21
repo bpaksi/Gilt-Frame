@@ -1,6 +1,7 @@
 "use client";
 
 import GiltFrame from "./GiltFrame";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 export default function WaitingState() {
   return (
@@ -23,3 +24,9 @@ export default function WaitingState() {
     </GiltFrame>
   );
 }
+
+export const showcase: ShowcaseDefinition = {
+  category: "game",
+  label: "Waiting State",
+  description: "Full-page waiting screen with marker animation",
+};

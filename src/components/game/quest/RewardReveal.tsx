@@ -5,7 +5,8 @@ import AmbientParticles from "@/components/ui/AmbientParticles";
 import GhostButton from "@/components/ui/GhostButton";
 import UppercaseLabel from "@/components/ui/UppercaseLabel";
 import type { RewardRevealConfig } from "@/config";
-import CeremonyAnimation from "./CeremonyAnimation";
+import type { ShowcaseDefinition } from "@/components/showcase";
+import CeremonyAnimation from "../CeremonyAnimation";
 
 interface RewardRevealProps {
   config: RewardRevealConfig;
@@ -45,6 +46,12 @@ export default function RewardReveal({ config, onAdvance, chapterName }: RewardR
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<RewardRevealProps> = {
+  category: "quest",
+  label: "Reward Reveal",
+  description: "Ceremony animation with reward text reveal",
+};
 
 /* ─── Text Phase ──────────────────────────────────────────────────────────── */
 

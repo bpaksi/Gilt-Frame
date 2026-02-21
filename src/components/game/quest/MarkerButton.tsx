@@ -1,8 +1,9 @@
 "use client";
 
 import { useStaggeredReveal } from "@/lib/hooks/useStaggeredReveal";
-import MarkerSVG from "../MarkerSVG";
+import MarkerSVG from "@/components/ui/MarkerSVG";
 import type { MarkerButtonConfig } from "@/config";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 const EMPTY_LINES: string[] = [];
 
@@ -130,3 +131,9 @@ export default function MarkerButton({ config, onAdvance }: MarkerButtonProps) {
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<MarkerButtonProps> = {
+  category: "quest",
+  label: "Marker Button",
+  description: "Tappable marker with pulsing text",
+};

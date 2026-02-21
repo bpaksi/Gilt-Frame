@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { colors, fontFamily, MIN_TAP_TARGET } from "./tokens";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface AccordionProps<T> {
   items: T[];
@@ -73,3 +74,9 @@ export default function Accordion<T>({
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition = {
+  category: "ui",
+  label: "Accordion",
+  description: "Expandable list with single-item expansion",
+};

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import MarkerSVG from "../game/MarkerSVG";
+import MarkerSVG from "./MarkerSVG";
 
 const TABS = [
   {

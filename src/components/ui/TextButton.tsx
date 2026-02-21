@@ -2,6 +2,7 @@
 
 import { useState, type CSSProperties, type ReactNode, type ButtonHTMLAttributes } from "react";
 import { colors, fontFamily, MIN_TAP_TARGET } from "./tokens";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface TextButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "style"> {
   children: ReactNode;
@@ -50,3 +51,10 @@ export default function TextButton({ children, disabled, style, ...rest }: TextB
     </button>
   );
 }
+
+export const showcase: ShowcaseDefinition<TextButtonProps> = {
+  category: "ui",
+  label: "Text Button",
+  description: "Lightweight text-only button with hover states",
+  defaults: { children: "Request a Hint" },
+};

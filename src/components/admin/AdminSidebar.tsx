@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { href: "/the-order/current", label: "Current", icon: "radar" },
   { href: "/the-order/progress", label: "Progress", icon: "timeline" },
   { href: "/the-order/send-hint", label: "Send Hint", icon: "hint" },
+  { href: "/the-order/gallery", label: "Gallery", icon: "gallery" },
   { href: "/the-order/settings", label: "Settings", icon: "settings" },
 ] as const;
 
@@ -46,6 +47,17 @@ function HintIcon() {
   );
 }
 
+function GalleryIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
+    </svg>
+  );
+}
+
 function SettingsIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -59,6 +71,7 @@ const ICON_MAP = {
   radar: RadarIcon,
   timeline: TimelineIcon,
   hint: HintIcon,
+  gallery: GalleryIcon,
   settings: SettingsIcon,
 } as const;
 

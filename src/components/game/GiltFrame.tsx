@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import AmbientParticles from "@/components/ui/AmbientParticles";
 import MarkerAnimation from "./MarkerAnimation";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface GiltFrameProps {
   children: React.ReactNode;
@@ -53,3 +54,10 @@ export default function GiltFrame({
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<GiltFrameProps> = {
+  category: "game",
+  label: "Gilt Frame",
+  description: "Layout wrapper with marker ceremony animation",
+  defaults: { children: null },
+};

@@ -1,4 +1,5 @@
 import { colors } from "./tokens";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface AmbientParticlesProps {
   count?: number;
@@ -43,3 +44,10 @@ export default function AmbientParticles({
     </>
   );
 }
+
+export const showcase: ShowcaseDefinition<AmbientParticlesProps> = {
+  category: "ui",
+  label: "Ambient Particles",
+  description: "Floating gold dust particles with drift animation",
+  defaults: { count: 6, opacity: 0.3, active: true },
+};

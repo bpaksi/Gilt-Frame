@@ -1,5 +1,7 @@
 "use client";
 
+import type { ShowcaseDefinition } from "@/components/showcase";
+
 interface TextRevealProps {
   lines: string[];
   delayBetween?: number;
@@ -41,3 +43,12 @@ export default function TextReveal({
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<TextRevealProps> = {
+  category: "game",
+  label: "Text Reveal",
+  description: "Staggered line-by-line text animation",
+  defaults: {
+    lines: ["The Sight stirs within you.", "What was lost is now reborn.", "The Order has heard you."],
+  },
+};

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import MarkerSVG from "./MarkerSVG";
+import MarkerSVG from "@/components/ui/MarkerSVG";
 
 type Conversation = {
   question: string;

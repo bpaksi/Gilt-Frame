@@ -2,6 +2,7 @@
 
 import { useState, type CSSProperties, type ReactNode, type ButtonHTMLAttributes } from "react";
 import { colors, fontFamily, MIN_TAP_TARGET } from "./tokens";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface GhostButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "style"> {
   children: ReactNode;
@@ -61,3 +62,10 @@ export default function GhostButton({ children, disabled, style, ...rest }: Ghos
     </button>
   );
 }
+
+export const showcase: ShowcaseDefinition<GhostButtonProps> = {
+  category: "ui",
+  label: "Ghost Button",
+  description: "Bordered button with hover glow",
+  defaults: { children: "Press to Continue" },
+};

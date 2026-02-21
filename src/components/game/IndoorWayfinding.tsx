@@ -1,9 +1,10 @@
 "use client";
 
-import MarkerSVG from "../MarkerSVG";
+import MarkerSVG from "@/components/ui/MarkerSVG";
 import HintSystem from "./HintSystem";
 import GhostButton from "@/components/ui/GhostButton";
 import type { WayfindingCompassConfig, HintItem } from "@/config";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface IndoorWayfindingProps {
   config: WayfindingCompassConfig;
@@ -11,6 +12,7 @@ interface IndoorWayfindingProps {
   chapterId?: string;
   stepIndex?: number;
   revealedHintTiers?: number[];
+  revealHintAction?: (chapterId: string, stepIndex: number, tier: number) => Promise<{ hint: string } | null>;
 }
 
 export default function IndoorWayfinding({
@@ -19,6 +21,7 @@ export default function IndoorWayfinding({
   chapterId,
   stepIndex,
   revealedHintTiers,
+  revealHintAction,
 }: IndoorWayfindingProps) {
   return (
     <div
@@ -61,8 +64,15 @@ export default function IndoorWayfinding({
           chapterId={chapterId}
           stepIndex={stepIndex}
           initialRevealedTiers={revealedHintTiers}
+          revealHintAction={revealHintAction}
         />
       )}
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<IndoorWayfindingProps> = {
+  category: "game",
+  label: "Indoor Wayfinding",
+  description: "Text-based indoor directions with arrival button",
+};

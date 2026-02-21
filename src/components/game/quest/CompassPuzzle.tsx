@@ -2,9 +2,10 @@
 
 import { useRef, useEffect, useState, useCallback } from "react";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
-import CompassPermission from "./CompassPermission";
-import MarkerSVG from "../MarkerSVG";
+import CompassPermission from "../CompassPermission";
+import MarkerSVG from "@/components/ui/MarkerSVG";
 import type { CompassPuzzleConfig } from "@/config";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface CompassPuzzleProps {
   config: CompassPuzzleConfig;
@@ -418,7 +419,7 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
         ref={canvasRef}
         width={SIZE}
         height={SIZE}
-        style={{ width: "min(85vw, 420px)", height: "min(85vw, 420px)" }}
+        style={{ width: "min(85%, 420px)", height: "min(85%, 420px)" }}
       />
       <div
         ref={markerRef}
@@ -442,3 +443,9 @@ export default function CompassPuzzle({ config, onAdvance }: CompassPuzzleProps)
     </div>
   );
 }
+
+export const showcase: ShowcaseDefinition<CompassPuzzleProps> = {
+  category: "quest",
+  label: "Compass Puzzle",
+  description: "Device orientation puzzle — point at target bearing",
+};

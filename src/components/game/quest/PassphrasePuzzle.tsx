@@ -3,15 +3,18 @@
 import { useState, useRef, useEffect } from "react";
 import GiltFrame from "../GiltFrame";
 import type { PassphrasePuzzleConfig } from "@/config";
+import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface PassphrasePuzzleProps {
   config: PassphrasePuzzleConfig;
   onAdvance: () => void;
+  validatePassphraseAction?: (passphrase: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 export default function PassphrasePuzzle({
   config,
   onAdvance,
+  validatePassphraseAction,
 }: PassphrasePuzzleProps) {
   const [status, setStatus] = useState<
     "idle" | "submitting" | "error" | "success"
@@ -33,20 +36,33 @@ export default function PassphrasePuzzle({
     setStatus("submitting");
     setErrorMsg("");
 
-    const res = await fetch("/api/auth/passphrase", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ passphrase }),
-    });
+    let success: boolean;
+    let errorText: string | undefined;
 
-    if (res.ok) {
+    if (validatePassphraseAction) {
+      const result = await validatePassphraseAction(passphrase);
+      success = result.success;
+      errorText = result.error;
+    } else {
+      const res = await fetch("/api/auth/passphrase", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passphrase }),
+      });
+      success = res.ok;
+      if (!success) {
+        const data = await res.json();
+        errorText = data.error;
+      }
+    }
+
+    if (success) {
       setStatus("success");
       setTimeout(() => onAdvance(), 800);
     } else {
-      const data = await res.json();
       setStatus("error");
       setShaking(true);
-      setErrorMsg(data.error || "You have not been summoned.");
+      setErrorMsg(errorText || "You have not been summoned.");
       setTimeout(() => setShaking(false), 400);
       setTimeout(() => {
         setErrorMsg("");
@@ -115,3 +131,9 @@ export default function PassphrasePuzzle({
     </GiltFrame>
   );
 }
+
+export const showcase: ShowcaseDefinition<PassphrasePuzzleProps> = {
+  category: "quest",
+  label: "Passphrase Puzzle",
+  description: "Text input puzzle for hidden acrostic passphrase",
+};

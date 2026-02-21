@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getMomentByShareToken } from "@/lib/actions/moments";
 import { gameConfig } from "@/config";
-import MarkerSVG from "@/components/game/MarkerSVG";
+import MarkerSVG from "@/components/ui/MarkerSVG";
 
 export async function generateMetadata({
   params,
