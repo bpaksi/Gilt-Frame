@@ -136,4 +136,5 @@ export const showcase: ShowcaseDefinition<MarkerButtonProps> = {
   category: "quest",
   label: "Marker Button",
   description: "Tappable marker with pulsing text",
+  uses: ["MarkerSVG"],
 };

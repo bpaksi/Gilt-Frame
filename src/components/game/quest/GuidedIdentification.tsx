@@ -314,4 +314,5 @@ export const showcase: ShowcaseDefinition<GuidedIdentificationProps> = {
   category: "quest",
   label: "Guided Identification",
   description: "Two-phase identification puzzle with guidance and quiz",
+  uses: ["MarkerSVG", "HintSystem", "OptionButton", "WaveDivider"],
 };

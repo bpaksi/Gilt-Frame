@@ -343,4 +343,5 @@ export const showcase: ShowcaseDefinition<WayfindingCompassProps> = {
   category: "quest",
   label: "Wayfinding Compass",
   description: "GPS outdoor compass or indoor text directions",
+  uses: ["HintSystem", "CompassPermission", "IndoorWayfinding", "GhostButton"],
 };

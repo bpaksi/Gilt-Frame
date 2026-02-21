@@ -51,6 +51,7 @@ export const showcase: ShowcaseDefinition<RewardRevealProps> = {
   category: "quest",
   label: "Reward Reveal",
   description: "Ceremony animation with reward text reveal",
+  uses: ["AmbientParticles", "GhostButton", "UppercaseLabel", "CeremonyAnimation"],
 };
 
 /* ─── Text Phase ──────────────────────────────────────────────────────────── */

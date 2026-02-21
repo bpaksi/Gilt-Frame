@@ -3,7 +3,7 @@
 import { useState, useCallback, useTransition, type ReactNode } from "react";
 import type { ShowcaseCategory } from "@/components/showcase";
 import type { ComponentConfig } from "@/config";
-import { getEntriesByCategory, getEntryById, type ShowcaseEntry } from "./showcaseRegistry";
+import { getEntriesByCategory, getEntryById, getUsedBy, type ShowcaseEntry } from "./showcaseRegistry";
 import { getPresets, type Preset } from "./presets";
 import GameViewport, { DEVICE_SIZES, type DeviceSize } from "./GameViewport";
 import ConfigEditor from "./ConfigEditor";
@@ -168,6 +168,20 @@ export default function ComponentGallery({
     });
   }, [originalConfig, ctx.stepProgressId, ctx.chapterId, ctx.stepIndex]);
 
+  // Navigate to any component by ID (switches category if needed)
+  const navigateTo = useCallback(
+    (id: string) => {
+      const target = getEntryById(id);
+      if (!target) return;
+      if (target.showcase.category !== category) setCategory(target.showcase.category);
+      handleSelectComponent(target);
+    },
+    [category, handleSelectComponent],
+  );
+
+  const usedByIds = entry ? getUsedBy(entry.id) : [];
+  const usesIds = entry?.showcase.uses ?? [];
+
   // Build props for the rendered component
   const componentProps = buildComponentProps(entry, config, ctx, setError);
 
@@ -211,6 +225,13 @@ export default function ComponentGallery({
           ))}
         </select>
 
+        <button
+          onClick={() => setMountKey((k) => k + 1)}
+          className="admin-btn admin-focus px-3 py-2 text-xs font-semibold tracking-wider uppercase bg-admin-surface hover:bg-admin-border text-admin-text-muted rounded-md transition-colors"
+        >
+          ↺ Refresh
+        </button>
+
         {componentPresets.length > 1 && (
           <select
             onChange={(e) => {
@@ -244,11 +265,15 @@ export default function ComponentGallery({
         </select>
       </div>
 
-      {/* Description */}
+      {/* Component info panel */}
       {entry && (
-        <p className="text-admin-text-faint text-xs italic">
-          {entry.showcase.description}
-        </p>
+        <div className="rounded-md bg-admin-surface border border-admin-border px-3 py-2">
+          <div className="flex items-baseline gap-3 flex-wrap">
+            <span className="font-mono text-admin-text text-sm font-semibold">{entry.id}</span>
+            <span className="font-mono text-admin-text-faint text-xs">{entry.filePath}</span>
+            <span className="text-admin-text-faint text-xs italic ml-auto">{entry.showcase.description}</span>
+          </div>
+        </div>
       )}
 
       {/* Main area: viewport + config editor side by side */}
@@ -264,9 +289,25 @@ export default function ComponentGallery({
                 </div>
               )}
             >
-              {entry && (
+              {entry && category !== "quest" ? (
+                <div
+                  style={{
+                    flex: 1,
+                    overflowY: "auto",
+                    padding: "24px 20px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    border: "1px dashed rgba(200, 165, 75, 0.3)",
+                    margin: "12px",
+                    borderRadius: "4px",
+                  }}
+                >
+                  <entry.Component {...componentProps} />
+                </div>
+              ) : entry ? (
                 <entry.Component {...componentProps} />
-              )}
+              ) : null}
             </ErrorBoundary>
           </GameViewport>
 
@@ -278,12 +319,46 @@ export default function ComponentGallery({
           )}
         </div>
 
-        {/* Config editor */}
-        <ConfigEditor
-          value={config}
-          onApply={handleApplyConfig}
-          onReset={handleReset}
-        />
+        {/* Config editor + relationships */}
+        <div className="flex flex-col gap-3 flex-1">
+          <ConfigEditor
+            value={config}
+            onApply={handleApplyConfig}
+            onReset={handleReset}
+          />
+          {(usesIds.length > 0 || usedByIds.length > 0) && (
+            <div className="flex flex-col gap-0.5">
+              {usesIds.length > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-admin-text-faint text-xs">Uses:</span>
+                  {usesIds.map((id) => (
+                    <button
+                      key={id}
+                      onClick={() => navigateTo(id)}
+                      className="admin-focus text-xs text-admin-blue hover:underline"
+                    >
+                      {id}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {usedByIds.length > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-admin-text-faint text-xs">Used by:</span>
+                  {usedByIds.map((id) => (
+                    <button
+                      key={id}
+                      onClick={() => navigateTo(id)}
+                      className="admin-focus text-xs text-admin-blue hover:underline"
+                    >
+                      {id}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

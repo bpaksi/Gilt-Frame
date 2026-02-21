@@ -403,5 +403,6 @@ export const showcase: ShowcaseDefinition<CeremonyAnimationProps> = {
   category: "game",
   label: "Ceremony Animation",
   description: "Orb ceremony with optional supernova prelude",
+  uses: ["TextButton"],
   defaults: { unlockText: "Press to Unlock", supernova: false },
 };

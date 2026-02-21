@@ -23,7 +23,9 @@ interface GameViewportProps {
  * Replicates the game layout container in a phone-portrait viewport.
  * `transform: scale(1)` creates a containing block for `position: fixed`
  * children (e.g. RewardReveal), keeping them inside the viewport frame.
- * `overflow: auto` handles components taller than the viewport (e.g. GiltFrame with 100dvh).
+ * `overflow: hidden` clips content at the phone edges (no visible scrollbar,
+ * matching real phone behavior). UI/Game components receive a scrollable inner
+ * container injected by ComponentGallery.
  */
 export default function GameViewport({ device, children }: GameViewportProps) {
   return (
@@ -33,7 +35,7 @@ export default function GameViewport({ device, children }: GameViewportProps) {
         height: device.height,
         borderRadius: 20,
         border: "2px solid #d0d0d0",
-        overflow: "auto",
+        overflow: "hidden",
         flexShrink: 0,
         // Replicate (game)/layout.tsx inline styles exactly
         background: "#0a0a0a",

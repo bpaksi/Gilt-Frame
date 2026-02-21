@@ -75,4 +75,5 @@ export const showcase: ShowcaseDefinition<IndoorWayfindingProps> = {
   category: "game",
   label: "Indoor Wayfinding",
   description: "Text-based indoor directions with arrival button",
+  uses: ["MarkerSVG", "HintSystem", "GhostButton"],
 };

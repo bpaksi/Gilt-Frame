@@ -59,5 +59,6 @@ export const showcase: ShowcaseDefinition<GiltFrameProps> = {
   category: "game",
   label: "Gilt Frame",
   description: "Layout wrapper with marker ceremony animation",
+  uses: ["AmbientParticles", "MarkerAnimation"],
   defaults: { children: null },
 };

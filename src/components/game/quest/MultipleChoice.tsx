@@ -199,4 +199,5 @@ export const showcase: ShowcaseDefinition<MultipleChoiceProps> = {
   category: "quest",
   label: "Multiple Choice",
   description: "Sequential multiple-choice questions with hints",
+  uses: ["HintSystem", "OptionButton", "WaveDivider"],
 };

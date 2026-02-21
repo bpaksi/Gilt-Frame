@@ -92,6 +92,7 @@ export const showcase: ShowcaseDefinition<HintSystemProps> = {
   category: "game",
   label: "Hint System",
   description: "Tiered hint reveal with progressive disclosure",
+  uses: ["TextButton"],
   defaults: {
     hints: [
       { tier: 1, hint: "Look for something gilded." },

@@ -34,6 +34,8 @@ import GuidedIdentification, { showcase as guidedIdentification } from "@/compon
 
 export type ShowcaseEntry = {
   id: string;
+  /** Canonical source file path for easy reference when discussing changes */
+  filePath: string;
   showcase: ShowcaseDefinition;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Component: ComponentType<any>;
@@ -41,34 +43,47 @@ export type ShowcaseEntry = {
 
 const ALL_ENTRIES: ShowcaseEntry[] = [
   // UI
-  { id: "GhostButton", showcase: ghostButton, Component: GhostButton },
-  { id: "TextButton", showcase: textButton, Component: TextButton },
-  { id: "OptionButton", showcase: optionButton, Component: OptionButton },
-  { id: "GoldText", showcase: goldText, Component: GoldText },
-  { id: "UppercaseLabel", showcase: uppercaseLabel, Component: UppercaseLabel },
-  { id: "WaveDivider", showcase: waveDivider, Component: WaveDivider },
-  { id: "EmptyState", showcase: emptyState, Component: EmptyState },
-  { id: "AmbientParticles", showcase: ambientParticles, Component: AmbientParticles },
-  { id: "MarkerSVG", showcase: markerSVG, Component: MarkerSVG },
-  { id: "Accordion", showcase: accordion, Component: Accordion },
+  { id: "GhostButton",      filePath: "src/components/ui/GhostButton.tsx",      showcase: ghostButton,      Component: GhostButton },
+  { id: "TextButton",       filePath: "src/components/ui/TextButton.tsx",        showcase: textButton,       Component: TextButton },
+  { id: "OptionButton",     filePath: "src/components/ui/OptionButton.tsx",      showcase: optionButton,     Component: OptionButton },
+  { id: "GoldText",         filePath: "src/components/ui/GoldText.tsx",          showcase: goldText,         Component: GoldText },
+  { id: "UppercaseLabel",   filePath: "src/components/ui/UppercaseLabel.tsx",    showcase: uppercaseLabel,   Component: UppercaseLabel },
+  { id: "WaveDivider",      filePath: "src/components/ui/WaveDivider.tsx",       showcase: waveDivider,      Component: WaveDivider },
+  { id: "EmptyState",       filePath: "src/components/ui/EmptyState.tsx",        showcase: emptyState,       Component: EmptyState },
+  { id: "AmbientParticles", filePath: "src/components/ui/AmbientParticles.tsx",  showcase: ambientParticles, Component: AmbientParticles },
+  { id: "MarkerSVG",        filePath: "src/components/ui/MarkerSVG.tsx",         showcase: markerSVG,        Component: MarkerSVG },
+  { id: "Accordion",        filePath: "src/components/ui/Accordion.tsx",         showcase: accordion,        Component: Accordion },
   // Game
-  { id: "GiltFrame", showcase: giltFrame, Component: GiltFrame },
-  { id: "WaitingState", showcase: waitingState, Component: WaitingState },
-  { id: "MarkerAnimation", showcase: markerAnimation, Component: MarkerAnimation },
-  { id: "HintSystem", showcase: hintSystem, Component: HintSystem },
-  { id: "TextReveal", showcase: textReveal, Component: TextReveal },
-  { id: "CompassPermission", showcase: compassPermission, Component: CompassPermission },
-  { id: "IndoorWayfinding", showcase: indoorWayfinding, Component: IndoorWayfinding },
-  { id: "CeremonyAnimation", showcase: ceremonyAnimation, Component: CeremonyAnimation },
+  { id: "GiltFrame",         filePath: "src/components/game/GiltFrame.tsx",          showcase: giltFrame,         Component: GiltFrame },
+  { id: "WaitingState",      filePath: "src/components/game/WaitingState.tsx",        showcase: waitingState,      Component: WaitingState },
+  { id: "MarkerAnimation",   filePath: "src/components/game/MarkerAnimation.tsx",     showcase: markerAnimation,   Component: MarkerAnimation },
+  { id: "HintSystem",        filePath: "src/components/game/HintSystem.tsx",          showcase: hintSystem,        Component: HintSystem },
+  { id: "TextReveal",        filePath: "src/components/game/TextReveal.tsx",          showcase: textReveal,        Component: TextReveal },
+  { id: "CompassPermission", filePath: "src/components/game/CompassPermission.tsx",   showcase: compassPermission, Component: CompassPermission },
+  { id: "IndoorWayfinding",  filePath: "src/components/game/IndoorWayfinding.tsx",    showcase: indoorWayfinding,  Component: IndoorWayfinding },
+  { id: "CeremonyAnimation", filePath: "src/components/game/CeremonyAnimation.tsx",   showcase: ceremonyAnimation, Component: CeremonyAnimation },
   // Quest
-  { id: "WayfindingCompass", showcase: wayfindingCompass, Component: WayfindingCompass },
-  { id: "MarkerButton", showcase: markerButton, Component: MarkerButton },
-  { id: "MultipleChoice", showcase: multipleChoice, Component: MultipleChoice },
-  { id: "CompassPuzzle", showcase: compassPuzzle, Component: CompassPuzzle },
-  { id: "RewardReveal", showcase: rewardReveal, Component: RewardReveal },
-  { id: "PassphrasePuzzle", showcase: passphrasePuzzle, Component: PassphrasePuzzle },
-  { id: "GuidedIdentification", showcase: guidedIdentification, Component: GuidedIdentification },
+  { id: "WayfindingCompass",    filePath: "src/components/game/quest/WayfindingCompass.tsx",    showcase: wayfindingCompass,    Component: WayfindingCompass },
+  { id: "MarkerButton",         filePath: "src/components/game/quest/MarkerButton.tsx",         showcase: markerButton,         Component: MarkerButton },
+  { id: "MultipleChoice",       filePath: "src/components/game/quest/MultipleChoice.tsx",       showcase: multipleChoice,       Component: MultipleChoice },
+  { id: "CompassPuzzle",        filePath: "src/components/game/quest/CompassPuzzle.tsx",        showcase: compassPuzzle,        Component: CompassPuzzle },
+  { id: "RewardReveal",         filePath: "src/components/game/quest/RewardReveal.tsx",         showcase: rewardReveal,         Component: RewardReveal },
+  { id: "PassphrasePuzzle",     filePath: "src/components/game/quest/PassphrasePuzzle.tsx",     showcase: passphrasePuzzle,     Component: PassphrasePuzzle },
+  { id: "GuidedIdentification", filePath: "src/components/game/quest/GuidedIdentification.tsx", showcase: guidedIdentification, Component: GuidedIdentification },
 ];
+
+/** Map of component ID → IDs of components that use it (computed from `uses` declarations) */
+const USED_BY_MAP: Map<string, string[]> = (() => {
+  const map = new Map<string, string[]>();
+  for (const entry of ALL_ENTRIES) {
+    for (const dep of entry.showcase.uses ?? []) {
+      const existing = map.get(dep) ?? [];
+      existing.push(entry.id);
+      map.set(dep, existing);
+    }
+  }
+  return map;
+})();
 
 export function getEntriesByCategory(category: ShowcaseCategory): ShowcaseEntry[] {
   return ALL_ENTRIES.filter((e) => e.showcase.category === category);
@@ -76,6 +91,11 @@ export function getEntriesByCategory(category: ShowcaseCategory): ShowcaseEntry[
 
 export function getEntryById(id: string): ShowcaseEntry | undefined {
   return ALL_ENTRIES.find((e) => e.id === id);
+}
+
+/** Returns IDs of gallery components that render this component internally */
+export function getUsedBy(id: string): string[] {
+  return USED_BY_MAP.get(id) ?? [];
 }
 
 export { ALL_ENTRIES };

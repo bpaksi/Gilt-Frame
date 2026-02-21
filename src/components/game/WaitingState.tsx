@@ -29,4 +29,5 @@ export const showcase: ShowcaseDefinition = {
   category: "game",
   label: "Waiting State",
   description: "Full-page waiting screen with marker animation",
+  uses: ["GiltFrame"],
 };

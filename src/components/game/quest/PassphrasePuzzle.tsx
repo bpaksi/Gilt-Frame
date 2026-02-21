@@ -136,4 +136,5 @@ export const showcase: ShowcaseDefinition<PassphrasePuzzleProps> = {
   category: "quest",
   label: "Passphrase Puzzle",
   description: "Text input puzzle for hidden acrostic passphrase",
+  uses: ["GiltFrame"],
 };

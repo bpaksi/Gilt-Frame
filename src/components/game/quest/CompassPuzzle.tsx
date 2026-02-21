@@ -448,4 +448,5 @@ export const showcase: ShowcaseDefinition<CompassPuzzleProps> = {
   category: "quest",
   label: "Compass Puzzle",
   description: "Device orientation puzzle — point at target bearing",
+  uses: ["CompassPermission", "MarkerSVG"],
 };
