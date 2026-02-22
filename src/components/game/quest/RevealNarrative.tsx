@@ -12,10 +12,9 @@ import UnlockAnimation from "../UnlockAnimation";
 interface RevealNarrativeProps {
   config: StoryRevealConfig;
   onAdvance: () => void;
-  chapterName?: string;
 }
 
-export default function RevealNarrative({ config, onAdvance, chapterName }: RevealNarrativeProps) {
+export default function RevealNarrative({ config, onAdvance }: RevealNarrativeProps) {
   const [phase, setPhase] = useState<"ceremony" | "text">(
     config.skip_ceremony ? "text" : "ceremony"
   );
@@ -42,7 +41,7 @@ export default function RevealNarrative({ config, onAdvance, chapterName }: Reve
           unlockText={config.unlock_text}
         />
       ) : (
-        <TextPhase config={config} onAdvance={onAdvance} chapterName={chapterName} continueText={config.continue_text} />
+        <TextPhase config={config} onAdvance={onAdvance} continueText={config.continue_text} />
       )}
     </div>
   );
@@ -58,6 +57,7 @@ export const showcase: ShowcaseDefinition<RevealNarrativeProps> = {
       primary: "You have uncovered the first thread. The mystery deepens.",
       secondary: "The Order watches. The Sparrow rises.",
       skip_ceremony: true,
+      chapter_name: "Gallery Preview",
     },
     onAdvance: () => {},
   },
@@ -68,12 +68,10 @@ export const showcase: ShowcaseDefinition<RevealNarrativeProps> = {
 function TextPhase({
   config,
   onAdvance,
-  chapterName,
   continueText = "Continue",
 }: {
   config: StoryRevealConfig;
   onAdvance: () => void;
-  chapterName?: string;
   continueText?: string;
 }) {
   const [showTitle, setShowTitle] = useState(false);
@@ -190,7 +188,7 @@ function TextPhase({
       `}</style>
 
       {/* Chapter title */}
-      {chapterName && (
+      {config.chapter_name && (
         <UppercaseLabel
           style={{
             opacity: showTitle ? 1 : 0,
@@ -201,7 +199,7 @@ function TextPhase({
             marginBottom: "16px",
           }}
         >
-          {chapterName}
+          {config.chapter_name}
         </UppercaseLabel>
       )}
 

@@ -56,7 +56,6 @@ export default function QuestRunner({ initialState }: QuestRunnerProps) {
           config={state.config}
           onAdvance={handleAdvance}
           chapterId={state.chapterId}
-          chapterName={state.chapterName}
           stepIndex={state.stepIndex}
           revealedHintTiers={state.revealedHintTiers}
         />

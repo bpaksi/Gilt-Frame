@@ -12,7 +12,6 @@ import {
   galleryCleanup,
   galleryRevealHint,
   galleryRecordAnswer,
-  galleryValidatePassphrase,
 } from "@/lib/actions/gallery";
 import { colors, fontFamily } from "@/components/ui/tokens";
 
@@ -490,22 +489,6 @@ function buildComponentProps(
         setError(e instanceof Error ? e.message : "Record answer failed");
       }
     };
-
-    if (entry.id === "PassphraseEntry") {
-      const passphrase = (config as { passphrase?: string }).passphrase ?? "";
-      base.validatePassphraseAction = async (input: string) => {
-        try {
-          return await galleryValidatePassphrase(input, passphrase);
-        } catch (e) {
-          setError(e instanceof Error ? e.message : "Validation failed");
-          return { success: false, error: "Validation failed" };
-        }
-      };
-    }
-
-    if (entry.id === "StoryReveal") {
-      base.chapterName = "Gallery Preview";
-    }
 
     return base;
   }

@@ -229,6 +229,32 @@ export async function advanceQuest(
     },
   });
 
+  // Passphrase step side effects: activity log + journey moment
+  if (
+    currentStep.type === "website" &&
+    (currentStep as { component?: string }).component === "PassphraseEntry"
+  ) {
+    supabase
+      .from("activity_log")
+      .insert({
+        track: trackInfo.track,
+        source: "player",
+        event_type: "passphrase_entered",
+        details: { chapter_id: chapterId, step_name: currentStep.name ?? null },
+      })
+      .then(() => {});
+    supabase
+      .from("moments")
+      .insert({
+        track: trackInfo.track,
+        chapter_id: chapterId,
+        moment_type: "passphrase",
+        narrative_text: "The acrostic revealed its truth. The Order heard.",
+        share_token: crypto.randomUUID(),
+      })
+      .then(() => {});
+  }
+
   // Auto-advance any consecutive auto-triggered messaging steps
   await autoAdvanceMessagingSteps(trackInfo.track, chapterId, stepIndex);
 

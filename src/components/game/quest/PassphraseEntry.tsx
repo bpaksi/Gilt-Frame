@@ -9,17 +9,10 @@ import type { ShowcaseDefinition } from "@/components/showcase";
 interface PassphraseEntryProps {
   config: PassphraseEntryConfig;
   onAdvance: () => void;
-  validatePassphraseAction?: (passphrase: string) => Promise<{ success: boolean; error?: string }>;
 }
 
-export default function PassphraseEntry({
-  config,
-  onAdvance,
-  validatePassphraseAction,
-}: PassphraseEntryProps) {
-  const [status, setStatus] = useState<
-    "idle" | "submitting" | "error" | "success"
-  >("idle");
+export default function PassphraseEntry({ config, onAdvance }: PassphraseEntryProps) {
+  const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [shaking, setShaking] = useState(false);
   const [inputReady, setInputReady] = useState(false);
@@ -31,39 +24,19 @@ export default function PassphraseEntry({
     }
   }, [inputReady]);
 
-  async function handleSubmit(passphrase: string) {
-    if (!passphrase.trim() || status === "submitting") return;
+  function handleSubmit(passphrase: string) {
+    if (!passphrase.trim() || status === "success") return;
 
-    setStatus("submitting");
-    setErrorMsg("");
+    const correct =
+      passphrase.trim().toUpperCase() === config.passphrase.toUpperCase();
 
-    let success: boolean;
-    let errorText: string | undefined;
-
-    if (validatePassphraseAction) {
-      const result = await validatePassphraseAction(passphrase);
-      success = result.success;
-      errorText = result.error;
-    } else {
-      const res = await fetch("/api/auth/passphrase", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ passphrase }),
-      });
-      success = res.ok;
-      if (!success) {
-        const data = await res.json();
-        errorText = data.error;
-      }
-    }
-
-    if (success) {
+    if (correct) {
       setStatus("success");
       setTimeout(() => onAdvance(), 800);
     } else {
       setStatus("error");
       setShaking(true);
-      setErrorMsg(errorText || "You have not been summoned.");
+      setErrorMsg("You have not been summoned.");
       setTimeout(() => setShaking(false), 400);
       setTimeout(() => {
         setErrorMsg("");
@@ -84,7 +57,7 @@ export default function PassphraseEntry({
         autoComplete="off"
         spellCheck={false}
         placeholder={config.placeholder ?? "Speak the words."}
-        disabled={status === "submitting" || status === "success"}
+        disabled={status === "success"}
         className={shaking ? "shake" : ""}
         style={{
           background: "transparent",
@@ -144,6 +117,5 @@ export const showcase: ShowcaseDefinition<PassphraseEntryProps> = {
       placeholder: "Speak the words.",
     },
     onAdvance: () => {},
-    validatePassphraseAction: async (p: string) => ({ success: p === "gilded" }),
   },
 };

@@ -75,6 +75,7 @@ export const gameConfig: GameConfig = {
           name: "The Reward",
           component: "RevealNarrative",
           config: {
+            chapter_name: "The Summons",
             primary:
               "You have spoken the words. The Sight stirs within you, Sparrow. What was lost is now reborn.",
             secondary: "The Order has heard you.",
@@ -237,6 +238,7 @@ export const gameConfig: GameConfig = {
           name: "The Reward",
           component: "RevealNarrative",
           config: {
+            chapter_name: "The Compass and the Sundial",
             primary:
               "The needle has shown you the way. Take flight, Sparrow — destiny awaits.",
             secondary: "Your first fragment has been placed in the vault.",
@@ -505,6 +507,7 @@ export const gameConfig: GameConfig = {
           name: "The Reward",
           component: "RevealNarrative",
           config: {
+            chapter_name: "The Gallery of Whispers",
             primary:
               "Mrs. Palmer did not collect alone. Her closest advisor was a fellow member of the Order \u2014 a painter who saw what others could not. You stood before her vision today. 1893. Two frames. One purpose.",
             secondary: "Your second fragment has been placed in the vault.",

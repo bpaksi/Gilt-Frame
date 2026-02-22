@@ -86,6 +86,8 @@ export type StoryRevealConfig = {
   unlock_text?: string;
   /** Label for the continue button on the text phase. Default "Continue". */
   continue_text?: string;
+  /** Optional chapter label shown above the primary text. */
+  chapter_name?: string;
 };
 
 /** Passphrase input puzzle — player enters hidden acrostic from letter. */

@@ -1,3 +1,6 @@
+// DEPRECATED: PassphraseEntry now validates against config.passphrase client-side.
+// Passphrase side effects (activity log, journey moment) moved to advanceQuest.
+// This route is no longer called by the game and can be removed once confirmed unused.
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
