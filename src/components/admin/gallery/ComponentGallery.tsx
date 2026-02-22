@@ -441,10 +441,12 @@ function buildComponentProps(
 
   // Registry of gallery-scoped implementations for "action" callbacks.
   // Each key matches a prop name declared as "action" in a component's showcase.callbacks.
+  // ctx.chapterId/stepIndex are captured so GAME-tier components receive a pre-bound closure
+  // matching the same (tier: number) => Promise<void> signature used in live gameplay.
   const actionRegistry: Record<string, unknown> = {
-    revealHintAction: async (chapterId: string, stepIndex: number, tier: number) => {
-      try { return await galleryRevealHint(chapterId, stepIndex, tier); }
-      catch { return null; }
+    onHintReveal: async (tier: number) => {
+      try { await galleryRevealHint(ctx.chapterId, ctx.stepIndex, tier); }
+      catch { /* swallow — gallery is best-effort */ }
     },
   };
 
@@ -456,35 +458,30 @@ function buildComponentProps(
 
   // ── Quest ──────────────────────────────────────────────────────────────────
   // Quest components have a universal contract: onAdvance signals completion.
-  // Action overrides (revealHintAction, recordAnswerAction, etc.) are injected
-  // by the gallery so DB writes stay scoped to the test track.
+  // onHintReveal and onAnswerRecord are pre-bound closures over ctx so the
+  // components never need to know chapterId/stepIndex directly.
   if (entry.showcase.category === "quest") {
     const base: Record<string, unknown> = {
       config,
       onAdvance: onDone,
-      chapterId: ctx.chapterId,
-      stepIndex: ctx.stepIndex,
       revealedHintTiers: [],
     };
 
-    base.revealHintAction = async (chapterId: string, stepIndex: number, tier: number) => {
+    base.onHintReveal = async (tier: number) => {
       try {
-        return await galleryRevealHint(chapterId, stepIndex, tier);
+        await galleryRevealHint(ctx.chapterId, ctx.stepIndex, tier);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Hint reveal failed");
-        return null;
       }
     };
 
-    base.recordAnswerAction = async (
-      chapterId: string,
-      stepIndex: number,
+    base.onAnswerRecord = async (
       questionIndex: number,
       selectedOption: string,
       correct: boolean,
     ) => {
       try {
-        await galleryRecordAnswer(chapterId, stepIndex, questionIndex, selectedOption, correct);
+        await galleryRecordAnswer(ctx.chapterId, ctx.stepIndex, questionIndex, selectedOption, correct);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Record answer failed");
       }

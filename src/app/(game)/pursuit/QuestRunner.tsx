@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { componentRegistry } from "@/components/game/quest/registry";
 import FadeTransition from "@/components/game/FadeTransition";
 import type { QuestState } from "@/lib/actions/quest";
-import { advanceQuest } from "@/lib/actions/quest";
+import { advanceQuest, recordAnswer, revealHint } from "@/lib/actions/quest";
 
 interface QuestRunnerProps {
   initialState: QuestState;
@@ -28,6 +28,18 @@ export default function QuestRunner({ initialState }: QuestRunnerProps) {
     setState(next);
     router.refresh();
   }, [state.chapterId, state.stepIndex, router]);
+
+  const onHintReveal = useCallback(
+    async (tier: number) => { await revealHint(state.chapterId!, state.stepIndex!, tier); },
+    [state.chapterId, state.stepIndex]
+  );
+
+  const onAnswerRecord = useCallback(
+    async (questionIndex: number, selectedOption: string, correct: boolean) => {
+      await recordAnswer(state.chapterId!, state.stepIndex!, questionIndex, selectedOption, correct);
+    },
+    [state.chapterId, state.stepIndex]
+  );
 
 
   if (state.status !== "active" || !state.component) {
@@ -55,9 +67,9 @@ export default function QuestRunner({ initialState }: QuestRunnerProps) {
         <Component
           config={state.config}
           onAdvance={handleAdvance}
-          chapterId={state.chapterId}
-          stepIndex={state.stepIndex}
           revealedHintTiers={state.revealedHintTiers}
+          onHintReveal={state.chapterId && state.stepIndex !== undefined ? onHintReveal : undefined}
+          onAnswerRecord={state.chapterId && state.stepIndex !== undefined ? onAnswerRecord : undefined}
         />
       </Suspense>
     </FadeTransition>

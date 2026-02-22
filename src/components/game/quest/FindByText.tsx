@@ -5,17 +5,14 @@ import TapToContinue from "../TapToContinue";
 import AnswerQuestion from "../AnswerQuestion";
 import HintSystem from "../HintSystem";
 import OrnateDivider from "@/components/ui/OrnateDivider";
-import { revealHint } from "@/lib/actions/quest";
 import type { FindByTextConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface FindByTextProps {
   config: FindByTextConfig;
   onAdvance: () => void;
-  chapterId?: string;
-  stepIndex?: number;
   revealedHintTiers?: number[];
-  revealHintAction?: (chapterId: string, stepIndex: number, tier: number) => Promise<{ hint: string } | null>;
+  onHintReveal?: (tier: number) => Promise<void>;
 }
 
 /** Shuffle array (Fisher–Yates) — returns new array. */
@@ -39,10 +36,8 @@ type Phase = "guidance" | "identification";
 export default function FindByText({
   config,
   onAdvance,
-  chapterId,
-  stepIndex,
   revealedHintTiers,
-  revealHintAction = revealHint,
+  onHintReveal,
 }: FindByTextProps) {
   const {
     guidance_text,
@@ -138,11 +133,7 @@ export default function FindByText({
             <HintSystem
               hints={hints}
               initialRevealedTiers={revealedHintTiers}
-              onHintReveal={
-                chapterId !== undefined && stepIndex !== undefined
-                  ? async (tier) => { await (revealHintAction ?? revealHint)(chapterId, stepIndex, tier); }
-                  : undefined
-              }
+              onHintReveal={onHintReveal}
             />
           </>
         )}

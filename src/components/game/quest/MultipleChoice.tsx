@@ -4,29 +4,23 @@ import { useState, useCallback, useMemo } from "react";
 import HintSystem from "../HintSystem";
 import AnswerQuestion from "../AnswerQuestion";
 import OrnateDivider from "@/components/ui/OrnateDivider";
-import { recordAnswer, revealHint } from "@/lib/actions/quest";
 import type { MultipleChoiceConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface MultipleChoiceProps {
   config: MultipleChoiceConfig;
   onAdvance: () => void;
-  chapterId?: string;
-  stepIndex?: number;
   revealedHintTiers?: number[];
-  recordAnswerAction?: (chapterId: string, stepIndex: number, questionIndex: number, selectedOption: string, correct: boolean) => Promise<void>;
-  revealHintAction?: (chapterId: string, stepIndex: number, tier: number) => Promise<{ hint: string } | null>;
+  onAnswerRecord?: (questionIndex: number, selectedOption: string, correct: boolean) => Promise<void>;
+  onHintReveal?: (tier: number) => Promise<void>;
 }
-
 
 export default function MultipleChoice({
   config,
   onAdvance,
-  chapterId,
-  stepIndex,
   revealedHintTiers,
-  recordAnswerAction = recordAnswer,
-  revealHintAction = revealHint,
+  onAnswerRecord,
+  onHintReveal,
 }: MultipleChoiceProps) {
   const { questions } = config;
   const [currentQ, setCurrentQ] = useState(0);
@@ -46,16 +40,8 @@ export default function MultipleChoice({
     (correct: boolean) => {
       if (transitioning) return;
 
-      // Record the answer (fired after QuizQuestion's visual feedback settles)
-      if (chapterId !== undefined && stepIndex !== undefined) {
-        (recordAnswerAction ?? recordAnswer)(
-          chapterId,
-          stepIndex,
-          currentQ,
-          question.options[question.correct], // always record which option was correct
-          correct
-        );
-      }
+      // Record the answer (fire-and-forget — does not affect control flow)
+      void onAnswerRecord?.(currentQ, question.options[question.correct], correct);
 
       if (correct) {
         if (currentQ === questions.length - 1) {
@@ -75,7 +61,7 @@ export default function MultipleChoice({
       }
       // Wrong: QuizQuestion already reset its own state; nothing to do here
     },
-    [transitioning, currentQ, questions.length, question, onAdvance, chapterId, stepIndex, recordAnswerAction]
+    [transitioning, currentQ, questions.length, question, onAdvance, onAnswerRecord]
   );
 
   return (
@@ -116,11 +102,7 @@ export default function MultipleChoice({
             hints={question.hints}
             tierOffset={hintTierOffset}
             initialRevealedTiers={revealedHintTiers}
-            onHintReveal={
-              chapterId !== undefined && stepIndex !== undefined
-                ? async (tier) => { await (revealHintAction ?? revealHint)(chapterId, stepIndex, tier); }
-                : undefined
-            }
+            onHintReveal={onHintReveal}
           />
         </>
       )}

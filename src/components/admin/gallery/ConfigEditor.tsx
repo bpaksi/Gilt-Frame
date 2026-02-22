@@ -2,6 +2,22 @@
 
 import { useState, useCallback } from "react";
 
+/** JSON.stringify that handles circular refs and non-serializable values (functions, React elements, DOM nodes). */
+function safeStringify(value: unknown): string {
+  const seen = new WeakSet();
+  return JSON.stringify(
+    value,
+    (_, val) => {
+      if (typeof val === "object" && val !== null) {
+        if (seen.has(val)) return "[Circular]";
+        seen.add(val);
+      }
+      return val;
+    },
+    2,
+  );
+}
+
 interface ConfigEditorProps {
   value: Record<string, unknown>;
   onApply: (config: Record<string, unknown>) => void;
@@ -9,14 +25,14 @@ interface ConfigEditorProps {
 }
 
 export default function ConfigEditor({ value, onApply, onReset }: ConfigEditorProps) {
-  const [text, setText] = useState(() => JSON.stringify(value, null, 2));
+  const [text, setText] = useState(() => safeStringify(value));
   const [error, setError] = useState<string | null>(null);
 
   // Sync when external value changes (e.g. component switch)
   const [prevValue, setPrevValue] = useState(value);
   if (value !== prevValue) {
     setPrevValue(value);
-    setText(JSON.stringify(value, null, 2));
+    setText(safeStringify(value));
     setError(null);
   }
 
@@ -31,7 +47,7 @@ export default function ConfigEditor({ value, onApply, onReset }: ConfigEditorPr
   }, [text, onApply]);
 
   const handleReset = useCallback(() => {
-    setText(JSON.stringify(value, null, 2));
+    setText(safeStringify(value));
     setError(null);
     onReset();
   }, [value, onReset]);

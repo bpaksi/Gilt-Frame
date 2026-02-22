@@ -77,7 +77,7 @@ export default function CompletionCountdown({
     if (!resolved) return;
     const timer = setTimeout(() => onCompleteRef.current(), resolutionDelay);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [resolved, resolutionDelay]);
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { useGeolocation } from "@/lib/hooks/useGeolocation";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
 import { thematicDistanceText } from "@/lib/geo";
@@ -8,7 +8,6 @@ import HintSystem from "../HintSystem";
 import CompassRose from "../CompassRose";
 import TapToContinue from "../TapToContinue";
 import GhostButton from "@/components/ui/GhostButton";
-import { revealHint } from "@/lib/actions/quest";
 import type { FindByGpsConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 import { colors, fontFamily } from "@/components/ui/tokens";
@@ -17,19 +16,15 @@ import type { NavigateFrameData } from "../CompassRose";
 interface FindByGpsProps {
   config: FindByGpsConfig;
   onAdvance: () => void;
-  chapterId?: string;
-  stepIndex?: number;
   revealedHintTiers?: number[];
-  revealHintAction?: (chapterId: string, stepIndex: number, tier: number) => Promise<{ hint: string } | null>;
+  onHintReveal?: (tier: number) => Promise<void>;
 }
 
 export default function FindByGps({
   config,
   onAdvance,
-  chapterId,
-  stepIndex,
   revealedHintTiers,
-  revealHintAction = revealHint,
+  onHintReveal,
 }: FindByGpsProps) {
   const hasCoords = config.target_lat !== undefined && config.target_lng !== undefined;
   const [phase, setPhase] = useState<"compass" | "marker">(hasCoords ? "compass" : "marker");
@@ -47,6 +42,18 @@ export default function FindByGps({
     await orientation.requestPermission();
     setNeedsPermission(false);
   }, [hasCoords, geo, orientation]);
+
+  // On desktop, no gesture is needed to start geolocation or listen for orientation events.
+  // Auto-bypass the permission gate so the compass is immediately visible in the gallery.
+  const { requestPermission: requestGeo } = geo;
+  const { requestPermission: requestOrientation } = orientation;
+  useEffect(() => {
+    if (!("ontouchstart" in window)) {
+      if (hasCoords) requestGeo();
+      requestOrientation().catch(() => {});
+      setNeedsPermission(false);
+    }
+  }, [hasCoords, requestGeo, requestOrientation]); // stable callbacks — effectively runs once
 
   // Called each frame by CompassRose — drives distance text, geofence, arrived button
   const handleFrame = useCallback(
@@ -178,11 +185,7 @@ export default function FindByGps({
           <HintSystem
             hints={config.hints}
             initialRevealedTiers={revealedHintTiers}
-            onHintReveal={
-              chapterId !== undefined && stepIndex !== undefined
-                ? async (tier) => { await (revealHintAction ?? revealHint)(chapterId, stepIndex, tier); }
-                : undefined
-            }
+            onHintReveal={onHintReveal}
           />
         )}
       </div>
@@ -219,8 +222,18 @@ export const showcase: ShowcaseDefinition<FindByGpsProps> = {
   uses: ["HintSystem", "CompassRose", "TapToContinue", "GhostButton"],
   defaults: {
     config: {
+      // Coordinates present so the gallery opens in compass phase (full mode).
+      // Remove them to preview lite mode (marker only).
+      target_lat: 40.7589,
+      target_lng: -73.9851,
+      wayfinding_text: "Follow the needle to where the old paths cross.",
+      geofence_radius: 30,
       instruction: "Tap the marker when you have found it.",
       title_lines: ["You have arrived.", "Something stirs nearby."],
+      hints: [
+        { tier: 1, text: "Stand with your back to the entrance and walk north." },
+        { tier: 2, text: "Look for the iron gate at the end of the stone path." },
+      ],
     },
     onAdvance: () => {},
   },
