@@ -5,8 +5,8 @@ import { lazy } from "react";
 const FindByGps = lazy(() => import("./FindByGps"));
 const MultipleChoice = lazy(() => import("./MultipleChoice"));
 
-const BearingPuzzle = lazy(() => import("./BearingPuzzle"));
-const StoryReveal = lazy(() => import("./StoryReveal"));
+const AlignBearing = lazy(() => import("./AlignBearing"));
+const RevealNarrative = lazy(() => import("./RevealNarrative"));
 const PassphraseEntry = lazy(() => import("./PassphraseEntry"));
 const FindByText = lazy(() => import("./FindByText"));
 
@@ -15,8 +15,8 @@ export const componentRegistry: Record<ComponentName, ComponentType<any>> = {
   FindByGps,
   MultipleChoice,
 
-  BearingPuzzle,
-  StoryReveal,
+  AlignBearing,
+  RevealNarrative,
   PassphraseEntry,
   FindByText,
 };

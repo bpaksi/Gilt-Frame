@@ -3,7 +3,7 @@
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
-interface TextRevealProps {
+interface RevealLinesProps {
   lines: string[];
   delayBetween?: number;
   baseDelay?: number;
@@ -12,13 +12,13 @@ interface TextRevealProps {
   lineStyle?: React.CSSProperties;
 }
 
-export default function TextReveal({
+export default function RevealLines({
   lines,
   delayBetween = 600,
   baseDelay = 0,
   style,
   lineStyle,
-}: TextRevealProps) {
+}: RevealLinesProps) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "16px", ...style }}>
       {lines.map((line, i) => (
@@ -45,9 +45,9 @@ export default function TextReveal({
   );
 }
 
-export const showcase: ShowcaseDefinition<TextRevealProps> = {
+export const showcase: ShowcaseDefinition<RevealLinesProps> = {
   category: "game",
-  label: "Text Reveal",
+  label: "Reveal Lines",
   description: "Staggered line-by-line text animation",
   defaults: {
     lines: ["The Sight stirs within you.", "What was lost is now reborn.", "The Order has heard you."],

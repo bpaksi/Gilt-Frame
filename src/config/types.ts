@@ -131,8 +131,8 @@ export type FindByTextConfig = {
 export type ComponentConfigMap = {
   FindByGps: FindByGpsConfig;
   MultipleChoice: MultipleChoiceConfig;
-  BearingPuzzle: BearingPuzzleConfig;
-  StoryReveal: StoryRevealConfig;
+  AlignBearing: BearingPuzzleConfig;
+  RevealNarrative: StoryRevealConfig;
   PassphraseEntry: PassphraseEntryConfig;
   FindByText: FindByTextConfig;
 };
@@ -146,8 +146,8 @@ export type ComponentConfig = ComponentConfigMap[ComponentName];
 export const COMPONENT_ADVANCE: Record<ComponentName, AdvanceCondition> = {
   FindByGps: "tap",
   MultipleChoice: "correct_answers",
-  BearingPuzzle: "compass_alignment",
-  StoryReveal: "tap",
+  AlignBearing: "compass_alignment",
+  RevealNarrative: "tap",
   PassphraseEntry: "passphrase",
   FindByText: "correct_answers",
 };

@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-interface StateFaderProps {
+interface FadeTransitionProps {
   stateKey: string;
   children: ReactNode;
 }
 
-export default function StateFader({ stateKey, children }: StateFaderProps) {
+export default function FadeTransition({ stateKey, children }: FadeTransitionProps) {
   const [displayed, setDisplayed] = useState({ key: stateKey, children });
   const [phase, setPhase] = useState<"in" | "out">("in");
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);

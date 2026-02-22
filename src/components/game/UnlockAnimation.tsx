@@ -11,17 +11,17 @@ import {
   SAND_DOTS,
 } from "./puzzleSolveAnimation";
 
-interface CeremonyAnimationProps {
+interface UnlockAnimationProps {
   onComplete: () => void;
   unlockText?: string;
   supernova?: boolean;
 }
 
-export default function CeremonyAnimation({
+export default function UnlockAnimation({
   onComplete,
   unlockText = "Press to Unlock",
   supernova = false,
-}: CeremonyAnimationProps) {
+}: UnlockAnimationProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const orbRef = useRef<SVGCircleElement>(null);
   const borderRef = useRef<SVGRectElement>(null);
@@ -400,9 +400,9 @@ export default function CeremonyAnimation({
   );
 }
 
-export const showcase: ShowcaseDefinition<CeremonyAnimationProps> = {
+export const showcase: ShowcaseDefinition<UnlockAnimationProps> = {
   category: "game",
-  label: "Ceremony Animation",
+  label: "Unlock Animation",
   description: "Orb ceremony with optional supernova prelude",
   uses: ["TextButton"],
   defaults: { unlockText: "Press to Unlock", supernova: false },

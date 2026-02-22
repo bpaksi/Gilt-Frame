@@ -1,21 +1,21 @@
 "use client";
 
-import GiltFrame from "./GiltFrame";
+import PageLayout from "./PageLayout";
 import GhostButton from "@/components/ui/GhostButton";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
-interface LandingPageProps {
+interface IntroPageProps {
   isReplay?: boolean;
   onComplete?: () => void;
 }
 
-export default function LandingPage({
+export default function IntroPage({
   isReplay = false,
   onComplete,
-}: LandingPageProps) {
+}: IntroPageProps) {
   return (
-    <GiltFrame>
+    <PageLayout>
       {isReplay ? (
         <GhostButton onClick={onComplete} style={{ fontSize: "14px", padding: "12px 32px" }}>
           Return to Journey
@@ -33,15 +33,15 @@ export default function LandingPage({
           You are not the one.
         </p>
       )}
-    </GiltFrame>
+    </PageLayout>
   );
 }
 
-export const showcase: ShowcaseDefinition<LandingPageProps> = {
+export const showcase: ShowcaseDefinition<IntroPageProps> = {
   category: "game",
-  label: "Landing Page",
+  label: "Intro Page",
   description: "Entry screen with marker ceremony and status message",
-  uses: ["GiltFrame", "GhostButton"],
+  uses: ["PageLayout", "GhostButton"],
   defaults: {},
   callbacks: { onComplete: "done" },
 };

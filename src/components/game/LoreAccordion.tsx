@@ -5,13 +5,13 @@ import EmptyState from "@/components/ui/EmptyState";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { DisplayLoreEntry } from "@/lib/lore";
 
-interface ScrollsOfKnowledgeProps {
+interface LoreAccordionProps {
   entries: DisplayLoreEntry[];
 }
 
-export default function ScrollsOfKnowledge({
+export default function LoreAccordion({
   entries,
-}: ScrollsOfKnowledgeProps) {
+}: LoreAccordionProps) {
   const unlockedEntries = entries.filter((e) => e.unlocked);
 
   if (unlockedEntries.length === 0) {

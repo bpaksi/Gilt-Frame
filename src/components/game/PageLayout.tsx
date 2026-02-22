@@ -2,20 +2,20 @@
 
 import { useState, useCallback } from "react";
 import { colors, fontFamily } from "@/components/ui/tokens";
-import MarkerAnimation from "./MarkerAnimation";
+import OrbAnimation from "./OrbAnimation";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
-interface GiltFrameProps {
+interface PageLayoutProps {
   children: React.ReactNode;
   delayMs?: number;
   onComplete?: () => void;
 }
 
-export default function GiltFrame({
+export default function PageLayout({
   children,
   delayMs = 800,
   onComplete,
-}: GiltFrameProps) {
+}: PageLayoutProps) {
   const [animationDone, setAnimationDone] = useState(false);
 
   const handleAnimationComplete = useCallback(() => {
@@ -37,7 +37,7 @@ export default function GiltFrame({
         padding: "40px 24px",
       }}
     >
-      <MarkerAnimation onComplete={handleAnimationComplete} delayMs={delayMs} />
+      <OrbAnimation onComplete={handleAnimationComplete} delayMs={delayMs} />
 
       <div
         style={{
@@ -53,11 +53,11 @@ export default function GiltFrame({
   );
 }
 
-export const showcase: ShowcaseDefinition<GiltFrameProps> = {
+export const showcase: ShowcaseDefinition<PageLayoutProps> = {
   category: "game",
-  label: "Gilt Frame",
+  label: "Page Layout",
   description: "Layout wrapper with marker ceremony animation",
-  uses: ["MarkerAnimation"],
+  uses: ["OrbAnimation"],
   defaults: {
     children: (
       <p

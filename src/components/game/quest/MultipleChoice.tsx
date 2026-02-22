@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 import HintSystem from "../HintSystem";
-import QuizQuestion from "../QuizQuestion";
+import AnswerQuestion from "../AnswerQuestion";
 import OrnateDivider from "@/components/ui/OrnateDivider";
 import { recordAnswer, revealHint } from "@/lib/actions/quest";
 import type { MultipleChoiceConfig } from "@/config";
@@ -91,7 +91,7 @@ export default function MultipleChoice({
         padding: "40px 24px",
       }}
     >
-      <QuizQuestion
+      <AnswerQuestion
         key={questionKey}
         question={question.question}
         options={question.options}
@@ -130,7 +130,7 @@ export const showcase: ShowcaseDefinition<MultipleChoiceProps> = {
   category: "quest",
   label: "Multiple Choice",
   description: "Sequential multiple-choice questions with hints",
-  uses: ["HintSystem", "QuizQuestion", "OrnateDivider"],
+  uses: ["HintSystem", "AnswerQuestion", "OrnateDivider"],
   defaults: {
     config: {
       questions: [

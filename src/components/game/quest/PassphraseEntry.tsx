@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import GiltFrame from "../GiltFrame";
+import PageLayout from "../PageLayout";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { PassphraseEntryConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
@@ -77,7 +77,7 @@ export default function PassphraseEntry({
   }
 
   return (
-    <GiltFrame onComplete={() => setInputReady(true)}>
+    <PageLayout onComplete={() => setInputReady(true)}>
       <input
         ref={inputRef}
         type="text"
@@ -129,7 +129,7 @@ export default function PassphraseEntry({
       >
         {errorMsg}
       </div>
-    </GiltFrame>
+    </PageLayout>
   );
 }
 
@@ -137,7 +137,7 @@ export const showcase: ShowcaseDefinition<PassphraseEntryProps> = {
   category: "quest",
   label: "Passphrase Entry",
   description: "Text input puzzle for hidden acrostic passphrase",
-  uses: ["GiltFrame"],
+  uses: ["PageLayout"],
   defaults: {
     config: {
       passphrase: "gilded",

@@ -1,6 +1,6 @@
 "use client";
 
-import MarkerTap from "./MarkerTap";
+import TapToContinue from "./TapToContinue";
 import HintSystem from "./HintSystem";
 import OrnateDivider from "@/components/ui/OrnateDivider";
 import type { ShowcaseDefinition } from "@/components/showcase";
@@ -11,7 +11,7 @@ type IndoorConfig = {
   hints?: string[];
 };
 
-interface IndoorWayfindingProps {
+interface FollowDirectionsProps {
   config: IndoorConfig;
   onComplete: () => void;
   chapterId?: string;
@@ -20,14 +20,14 @@ interface IndoorWayfindingProps {
   revealHintAction?: (chapterId: string, stepIndex: number, tier: number) => Promise<{ hint: string } | null>;
 }
 
-export default function IndoorWayfinding({
+export default function FollowDirections({
   config,
   onComplete,
   chapterId,
   stepIndex,
   revealedHintTiers,
   revealHintAction,
-}: IndoorWayfindingProps) {
+}: FollowDirectionsProps) {
   const lines = config.wayfinding_text?.split("\n").filter(Boolean) ?? [];
 
   return (
@@ -43,7 +43,7 @@ export default function IndoorWayfinding({
         padding: "40px 24px",
       }}
     >
-      <MarkerTap lines={lines} instruction={config.arrival_instruction} onComplete={onComplete} />
+      <TapToContinue lines={lines} instruction={config.arrival_instruction} onComplete={onComplete} />
 
       {config.hints && chapterId && stepIndex !== undefined && (
         <>
@@ -61,11 +61,11 @@ export default function IndoorWayfinding({
   );
 }
 
-export const showcase: ShowcaseDefinition<IndoorWayfindingProps> = {
+export const showcase: ShowcaseDefinition<FollowDirectionsProps> = {
   category: "game",
-  label: "Indoor Wayfinding",
-  description: "Text-based indoor directions with arrival tap via MarkerTap",
-  uses: ["MarkerTap", "OrnateDivider", "HintSystem"],
+  label: "Follow Directions",
+  description: "Text-based indoor directions with arrival tap via TapToContinue",
+  uses: ["TapToContinue", "OrnateDivider", "HintSystem"],
   defaults: {
     config: {
       wayfinding_text: "Proceed to the east gallery and locate the gilded frame.",

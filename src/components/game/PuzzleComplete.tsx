@@ -2,14 +2,14 @@
 
 import AmbientParticles from "@/components/ui/AmbientParticles";
 import { colors } from "@/components/ui/tokens";
-import CeremonyAnimation from "./CeremonyAnimation";
+import UnlockAnimation from "./UnlockAnimation";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
-interface PuzzleSolveProps {
+interface PuzzleCompleteProps {
   onComplete: () => void;
 }
 
-export default function PuzzleSolve({ onComplete }: PuzzleSolveProps) {
+export default function PuzzleComplete({ onComplete }: PuzzleCompleteProps) {
   return (
     <div
       style={{
@@ -24,16 +24,16 @@ export default function PuzzleSolve({ onComplete }: PuzzleSolveProps) {
       }}
     >
       <AmbientParticles />
-      <CeremonyAnimation onComplete={onComplete} />
+      <UnlockAnimation onComplete={onComplete} />
     </div>
   );
 }
 
-export const showcase: ShowcaseDefinition<PuzzleSolveProps> = {
+export const showcase: ShowcaseDefinition<PuzzleCompleteProps> = {
   category: "game",
-  label: "Puzzle Solve",
+  label: "Puzzle Complete",
   description: "Full-screen ceremony overlay triggered on step completion",
-  uses: ["AmbientParticles", "CeremonyAnimation"],
+  uses: ["AmbientParticles", "UnlockAnimation"],
   defaults: {},
   callbacks: { onComplete: "done" },
 };

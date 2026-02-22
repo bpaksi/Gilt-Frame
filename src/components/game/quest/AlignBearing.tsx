@@ -2,21 +2,21 @@
 
 import { useRef, useState, useCallback } from "react";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
-import MarkerTap from "../MarkerTap";
+import TapToContinue from "../TapToContinue";
 import CompassRose from "../CompassRose";
-import LockingCountdown from "../LockingCountdown";
+import CompletionCountdown from "../CompletionCountdown";
 import MarkerSVG from "@/components/ui/MarkerSVG";
 import { colors, colorBases, fontFamily } from "@/components/ui/tokens";
 import type { BearingPuzzleConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 import type { AlignFrameData } from "../CompassRose";
 
-interface BearingPuzzleProps {
+interface AlignBearingProps {
   config: BearingPuzzleConfig;
   onAdvance: () => void;
 }
 
-export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps) {
+export default function AlignBearing({ config, onAdvance }: AlignBearingProps) {
   const markerRef = useRef<HTMLDivElement>(null);
   const statusTextRef = useRef<HTMLDivElement>(null);
   const orientation = useDeviceOrientation();
@@ -71,7 +71,7 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
 
   if (phase === "locking") {
     return (
-      <LockingCountdown
+      <CompletionCountdown
         message={config.locking_message ?? "The compass yields its secret…"}
         resolution={config.resolution_message ?? "The way is found"}
         onComplete={onAdvance}
@@ -92,7 +92,7 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
           padding: "40px 24px",
         }}
       >
-        <MarkerTap
+        <TapToContinue
           lines={[config.permission_message ?? "The compass awaits your permission."]}
           instruction="Enable Compass"
           onComplete={handlePermission}
@@ -164,11 +164,11 @@ export default function BearingPuzzle({ config, onAdvance }: BearingPuzzleProps)
   );
 }
 
-export const showcase: ShowcaseDefinition<BearingPuzzleProps> = {
+export const showcase: ShowcaseDefinition<AlignBearingProps> = {
   category: "quest",
-  label: "Bearing Puzzle",
+  label: "Align Bearing",
   description: "Device orientation puzzle — point phone at target bearing and hold steady",
-  uses: ["MarkerTap", "CompassRose", "LockingCountdown", "MarkerSVG"],
+  uses: ["TapToContinue", "CompassRose", "CompletionCountdown", "MarkerSVG"],
   defaults: {
     config: {
       compass_target: 180,

@@ -6,7 +6,7 @@ import type { ShowcaseDefinition } from "@/components/showcase";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
-interface LockingCountdownProps {
+interface CompletionCountdownProps {
   /** Message shown above the countdown digits. */
   message: string;
   /** Text shown after the countdown completes, before onComplete fires. */
@@ -41,13 +41,13 @@ const STYLES = `
  * Counts from `from` down to 1, then shows `resolution` and fires `onComplete`.
  * Used after a puzzle is solved to create a dramatic pause before advancing.
  */
-export default function LockingCountdown({
+export default function CompletionCountdown({
   message,
   resolution,
   from = 5,
   resolutionDelay = 2000,
   onComplete,
-}: LockingCountdownProps) {
+}: CompletionCountdownProps) {
   const [count, setCount] = useState(from);
   const [resolved, setResolved] = useState(false);
 
@@ -140,9 +140,9 @@ export default function LockingCountdown({
 
 // ── Showcase ──────────────────────────────────────────────────────────────────
 
-export const showcase: ShowcaseDefinition<LockingCountdownProps> = {
+export const showcase: ShowcaseDefinition<CompletionCountdownProps> = {
   category: "game",
-  label: "Locking Countdown",
+  label: "Completion Countdown",
   description: "Animated countdown sequence with resolution message — shown after a puzzle is solved before advancing",
   defaults: {
     message: "The compass yields its secret…",

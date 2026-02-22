@@ -1,16 +1,16 @@
 "use client";
 
-import GiltFrame from "./GiltFrame";
+import PageLayout from "./PageLayout";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
-interface WaitingStateProps {
+interface WaitingScreenProps {
   message: string;
 }
 
-export default function WaitingState({ message }: WaitingStateProps) {
+export default function WaitingScreen({ message }: WaitingScreenProps) {
   return (
-    <GiltFrame>
+    <PageLayout>
       <p
         style={{
           color: colors.gold50,
@@ -26,15 +26,15 @@ export default function WaitingState({ message }: WaitingStateProps) {
       >
         {message}
       </p>
-    </GiltFrame>
+    </PageLayout>
   );
 }
 
-export const showcase: ShowcaseDefinition<WaitingStateProps> = {
+export const showcase: ShowcaseDefinition<WaitingScreenProps> = {
   category: "game",
-  label: "Waiting State",
+  label: "Waiting Screen",
   description: "Full-page waiting screen with marker animation",
-  uses: ["GiltFrame"],
+  uses: ["PageLayout"],
   defaults: {
     message: "The Order will contact you\nwhen ready.",
   },

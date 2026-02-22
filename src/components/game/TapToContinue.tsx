@@ -5,7 +5,7 @@ import MarkerSVG from "@/components/ui/MarkerSVG";
 import { colors, fontFamily, MIN_TAP_TARGET } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
-interface MarkerTapProps {
+interface TapToContinueProps {
   /** Lines of text staggered in above the marker. Omit or pass empty array for no header. */
   lines?: string[];
   /** Instruction text displayed below the marker. Omit for no instruction. */
@@ -28,7 +28,7 @@ interface MarkerTapProps {
  *
  * Used by FindByGps (marker phase) and FindByText (guidance phase).
  */
-export default function MarkerTap({
+export default function TapToContinue({
   lines = [],
   instruction,
   onComplete,
@@ -36,7 +36,7 @@ export default function MarkerTap({
   markerDelay,
   textDelay,
   tapDelay,
-}: MarkerTapProps) {
+}: TapToContinueProps) {
   const { lineVisibility, markerVisible, textVisible, tapReady } = useStaggeredReveal({
     lines,
     active,
@@ -136,9 +136,9 @@ export default function MarkerTap({
   );
 }
 
-export const showcase: ShowcaseDefinition<MarkerTapProps> = {
+export const showcase: ShowcaseDefinition<TapToContinueProps> = {
   category: "game",
-  label: "Marker Tap",
+  label: "Tap To Continue",
   description: "Canonical pause/confirmation tap target. Optional staggered header lines above marker, optional instruction text below. Replaces CompassPermission.",
   uses: ["MarkerSVG"],
   defaults: {

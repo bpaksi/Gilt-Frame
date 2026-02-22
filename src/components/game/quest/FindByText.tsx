@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import MarkerTap from "../MarkerTap";
-import QuizQuestion from "../QuizQuestion";
+import TapToContinue from "../TapToContinue";
+import AnswerQuestion from "../AnswerQuestion";
 import HintSystem from "../HintSystem";
 import OrnateDivider from "@/components/ui/OrnateDivider";
 import { revealHint } from "@/lib/actions/quest";
@@ -119,7 +119,7 @@ export default function FindByText({
           transition: "opacity 0.45s ease",
         }}
       >
-        <MarkerTap
+        <TapToContinue
           lines={guidanceLines}
           instruction={confirmation_instruction}
           onComplete={goToIdentification}
@@ -163,7 +163,7 @@ export default function FindByText({
         transition: "opacity 0.45s ease",
       }}
     >
-      <QuizQuestion
+      <AnswerQuestion
         question={question}
         options={options}
         correctIndex={correctIdx}
@@ -177,7 +177,7 @@ export const showcase: ShowcaseDefinition<FindByTextProps> = {
   category: "quest",
   label: "Find by Text",
   description: "Text-guided search leading to looping multiple-choice identification",
-  uses: ["MarkerTap", "QuizQuestion", "HintSystem", "OrnateDivider"],
+  uses: ["TapToContinue", "AnswerQuestion", "HintSystem", "OrnateDivider"],
   defaults: {
     config: {
       guidance_text: "In the east wing, seek the canvas that glows.\nLook for what time has gilded.",

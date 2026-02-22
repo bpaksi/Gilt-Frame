@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { DisplayLoreEntry } from "@/lib/lore";
 import { colors, fontFamily, MIN_TAP_TARGET } from "@/components/ui/tokens";
-import ScrollsOfKnowledge from "./ScrollsOfKnowledge";
+import LoreAccordion from "./LoreAccordion";
 import AskTheOracle from "./AskTheOracle";
 import OracleHistory from "./OracleHistory";
 import type { ShowcaseDefinition } from "@/components/showcase";
@@ -76,7 +76,7 @@ export default function OracleView({
       </div>
 
       {activeTab === "question" && <AskTheOracle onConversation={handleNewConversation} />}
-      {activeTab === "scrolls" && <ScrollsOfKnowledge entries={loreEntries} />}
+      {activeTab === "scrolls" && <LoreAccordion entries={loreEntries} />}
       {activeTab === "history" && <OracleHistory conversations={conversations} />}
     </div>
   );
@@ -86,6 +86,6 @@ export const showcase: ShowcaseDefinition<OracleViewProps> = {
   category: "game",
   label: "Oracle View",
   description: "Tabbed interface: Ask Oracle, Scrolls of Knowledge, History",
-  uses: ["AskTheOracle", "ScrollsOfKnowledge", "OracleHistory"],
+  uses: ["AskTheOracle", "LoreAccordion", "OracleHistory"],
   defaults: { loreEntries: [], conversations: [] },
 };

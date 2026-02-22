@@ -5,7 +5,7 @@ import OptionButton from "@/components/ui/OptionButton";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
-interface QuizQuestionProps {
+interface AnswerQuestionProps {
   question: string;
   options: string[];
   /** Index into `options` that is the correct answer. */
@@ -32,14 +32,14 @@ interface QuizQuestionProps {
  *
  * Used by MultipleChoice and FindByText.
  */
-export default function QuizQuestion({
+export default function AnswerQuestion({
   question,
   options,
   correctIndex,
   onResult,
   disabled = false,
   visible = true,
-}: QuizQuestionProps) {
+}: AnswerQuestionProps) {
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const shakeRef = useRef<HTMLDivElement>(null);
@@ -131,9 +131,9 @@ export default function QuizQuestion({
   );
 }
 
-export const showcase: ShowcaseDefinition<QuizQuestionProps> = {
+export const showcase: ShowcaseDefinition<AnswerQuestionProps> = {
   category: "game",
-  label: "Quiz Question",
+  label: "Answer Question",
   description: "Single question with option buttons, correct/wrong feedback, and shake on wrong answer",
   uses: ["OptionButton"],
   defaults: {

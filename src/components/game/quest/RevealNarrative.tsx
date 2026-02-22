@@ -7,15 +7,15 @@ import UppercaseLabel from "@/components/ui/UppercaseLabel";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { StoryRevealConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
-import CeremonyAnimation from "../CeremonyAnimation";
+import UnlockAnimation from "../UnlockAnimation";
 
-interface StoryRevealProps {
+interface RevealNarrativeProps {
   config: StoryRevealConfig;
   onAdvance: () => void;
   chapterName?: string;
 }
 
-export default function StoryReveal({ config, onAdvance, chapterName }: StoryRevealProps) {
+export default function RevealNarrative({ config, onAdvance, chapterName }: RevealNarrativeProps) {
   const [phase, setPhase] = useState<"ceremony" | "text">(
     config.skip_ceremony ? "text" : "ceremony"
   );
@@ -36,7 +36,7 @@ export default function StoryReveal({ config, onAdvance, chapterName }: StoryRev
       <AmbientParticles opacity={0.3} />
 
       {phase === "ceremony" ? (
-        <CeremonyAnimation
+        <UnlockAnimation
           supernova
           onComplete={() => setPhase("text")}
           unlockText={config.unlock_text}
@@ -48,11 +48,11 @@ export default function StoryReveal({ config, onAdvance, chapterName }: StoryRev
   );
 }
 
-export const showcase: ShowcaseDefinition<StoryRevealProps> = {
+export const showcase: ShowcaseDefinition<RevealNarrativeProps> = {
   category: "quest",
-  label: "Story Reveal",
+  label: "Reveal Narrative",
   description: "Ceremony animation with story text reveal and continue button",
-  uses: ["AmbientParticles", "GhostButton", "UppercaseLabel", "CeremonyAnimation"],
+  uses: ["AmbientParticles", "GhostButton", "UppercaseLabel", "UnlockAnimation"],
   defaults: {
     config: {
       primary: "You have uncovered the first thread. The mystery deepens.",

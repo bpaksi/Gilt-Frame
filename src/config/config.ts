@@ -73,7 +73,7 @@ export const gameConfig: GameConfig = {
           order: 3,
           type: "website",
           name: "The Reward",
-          component: "StoryReveal",
+          component: "RevealNarrative",
           config: {
             primary:
               "You have spoken the words. The Sight stirs within you, Sparrow. What was lost is now reborn.",
@@ -222,7 +222,7 @@ export const gameConfig: GameConfig = {
           order: 6,
           type: "website",
           name: "The Compass Puzzle",
-          component: "BearingPuzzle",
+          component: "AlignBearing",
           config: {
             compass_target: 255,
             compass_tolerance: 8,
@@ -235,7 +235,7 @@ export const gameConfig: GameConfig = {
           order: 7,
           type: "website",
           name: "The Reward",
-          component: "StoryReveal",
+          component: "RevealNarrative",
           config: {
             primary:
               "The needle has shown you the way. Take flight, Sparrow — destiny awaits.",
@@ -503,7 +503,7 @@ export const gameConfig: GameConfig = {
           order: 8,
           type: "website",
           name: "The Reward",
-          component: "StoryReveal",
+          component: "RevealNarrative",
           config: {
             primary:
               "Mrs. Palmer did not collect alone. Her closest advisor was a fellow member of the Order \u2014 a painter who saw what others could not. You stood before her vision today. 1893. Two frames. One purpose.",

@@ -1,6 +1,6 @@
 "use client";
 
-import TextReveal from "./TextReveal";
+import RevealLines from "./RevealLines";
 import MarkerSVG from "@/components/ui/MarkerSVG";
 import GhostButton from "@/components/ui/GhostButton";
 import UppercaseLabel from "@/components/ui/UppercaseLabel";
@@ -65,7 +65,7 @@ export default function MomentDetail({ moment, chapterName }: MomentDetailProps)
       </p>
 
       {/* Narrative */}
-      {lines.length > 0 && <TextReveal lines={lines} delayBetween={500} />}
+      {lines.length > 0 && <RevealLines lines={lines} delayBetween={500} />}
 
       {/* Share */}
       <GhostButton
@@ -87,7 +87,7 @@ export const showcase: ShowcaseDefinition<MomentDetailProps> = {
   category: "game",
   label: "Moment Detail",
   description: "Full narrative reveal for a journey moment with share action",
-  uses: ["TextReveal", "GhostButton", "UppercaseLabel", "MarkerSVG"],
+  uses: ["RevealLines", "GhostButton", "UppercaseLabel", "MarkerSVG"],
   defaults: {
     moment: {
       id: "demo-moment-1",

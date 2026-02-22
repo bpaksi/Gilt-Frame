@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { colors } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
-interface MarkerAnimationProps {
+interface OrbAnimationProps {
   onComplete: () => void;
   delayMs?: number;
 }
@@ -37,7 +37,7 @@ const TRAIL_COUNT = 5;
 const TRAIL_LAG = 0.015;
 const TRAIL_OPACITIES = [0.35, 0.25, 0.18, 0.12, 0.07];
 
-export default function MarkerAnimation({ onComplete, delayMs = 800 }: MarkerAnimationProps) {
+export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimationProps) {
   const orbRef = useRef<SVGCircleElement>(null);
   const orbPathRef = useRef<SVGPathElement>(null);
   const afterglowRef = useRef<SVGRectElement>(null);
@@ -325,9 +325,9 @@ export default function MarkerAnimation({ onComplete, delayMs = 800 }: MarkerAni
   );
 }
 
-export const showcase: ShowcaseDefinition<MarkerAnimationProps> = {
+export const showcase: ShowcaseDefinition<OrbAnimationProps> = {
   category: "game",
-  label: "Marker Animation",
+  label: "Orb Animation",
   description: "8-phase orb ceremony tracing the gilt frame border",
   defaults: {},
   callbacks: { onComplete: "done" },

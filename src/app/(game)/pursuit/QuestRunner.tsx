@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { componentRegistry } from "@/components/game/quest/registry";
-import StateFader from "@/components/game/StateFader";
+import FadeTransition from "@/components/game/FadeTransition";
 import type { QuestState } from "@/lib/actions/quest";
 import { advanceQuest } from "@/lib/actions/quest";
 
@@ -38,7 +38,7 @@ export default function QuestRunner({ initialState }: QuestRunnerProps) {
   if (!Component) return null;
 
   return (
-    <StateFader stateKey={`${state.chapterId}-${state.stepIndex}`}>
+    <FadeTransition stateKey={`${state.chapterId}-${state.stepIndex}`}>
       <Suspense
         fallback={
           <div
@@ -61,6 +61,6 @@ export default function QuestRunner({ initialState }: QuestRunnerProps) {
           revealedHintTiers={state.revealedHintTiers}
         />
       </Suspense>
-    </StateFader>
+    </FadeTransition>
   );
 }

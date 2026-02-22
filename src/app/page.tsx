@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import LandingPage from "../components/game/LandingPage";
+import IntroPage from "../components/game/IntroPage";
 
 export const metadata: Metadata = {
   title: "The Order of the Gilt Frame",
@@ -33,5 +33,5 @@ export default async function Home() {
     }
   }
 
-  return <LandingPage />;
+  return <IntroPage />;
 }
