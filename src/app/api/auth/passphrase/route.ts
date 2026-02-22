@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Verify device_token cookie is enrolled and not revoked
+  // Verify device_token cookie is enrolled
   const cookieStore = await cookies();
   const deviceTokenCookie = cookieStore.get("device_token");
 
@@ -45,7 +45,6 @@ export async function POST(request: NextRequest) {
     .from("device_enrollments")
     .select("id, track")
     .eq("device_token", deviceTokenCookie.value)
-    .eq("revoked", false)
     .single();
 
   if (!enrollment) {

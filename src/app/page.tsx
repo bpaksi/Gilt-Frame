@@ -18,16 +18,13 @@ export default async function Home() {
       .from("device_enrollments")
       .select("id")
       .eq("device_token", deviceTokenCookie.value)
-      .eq("revoked", false)
       .single();
 
     if (enrollment) {
-      // Fire-and-forget last_seen update
-      supabase
+      await supabase
         .from("device_enrollments")
         .update({ last_seen: new Date().toISOString() })
-        .eq("device_token", deviceTokenCookie.value)
-        .then(() => {});
+        .eq("device_token", deviceTokenCookie.value);
 
       redirect("/pursuit");
     }

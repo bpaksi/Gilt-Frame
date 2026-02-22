@@ -25,7 +25,7 @@ if (!url || !key) {
 }
 
 const res = await fetch(
-  `${url}/rest/v1/device_enrollments?track=eq.test&revoked=eq.false&select=device_token,created_at&order=created_at.desc&limit=1`,
+  `${url}/rest/v1/device_enrollments?track=eq.test&select=device_token,created_at&order=created_at.desc&limit=1`,
   { headers: { apikey: key, Authorization: `Bearer ${key}` } }
 );
 

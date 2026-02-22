@@ -18,7 +18,6 @@ export async function POST(request: Request) {
     .from("device_enrollments")
     .select("track")
     .eq("device_token", deviceTokenCookie.value)
-    .eq("revoked", false)
     .single();
 
   if (!enrollment) {

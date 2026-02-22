@@ -294,7 +294,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // ─── Main ────────────────────────────────────────────────────────────────────
 
 async function verifyTestTrack() {
-  const url = `${SUPABASE_URL}/rest/v1/device_enrollments?device_token=eq.${DEVICE_TOKEN}&revoked=eq.false&select=track`;
+  const url = `${SUPABASE_URL}/rest/v1/device_enrollments?device_token=eq.${DEVICE_TOKEN}&select=track`;
   const res = await fetch(url, {
     headers: {
       apikey: SUPABASE_SERVICE_KEY,

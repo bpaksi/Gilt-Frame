@@ -13,7 +13,7 @@ export default async function GameLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Verify the device_token cookie maps to a valid, non-revoked enrollment
+  // Verify the device_token cookie maps to a valid enrollment
   const trackInfo = await resolveTrack();
 
   if (!trackInfo) {
