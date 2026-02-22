@@ -23,7 +23,7 @@ export default function IntroPage({
       ) : (
         <p
           style={{
-            color: colors.gold35,
+            color: colors.gold,
             fontFamily,
             fontSize: "16px",
             fontStyle: "italic",
