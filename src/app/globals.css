@@ -81,6 +81,13 @@
   100% { opacity: 0; }
 }
 
+@keyframes supernovaFlash {
+  0%  { opacity: 0; }
+  6%  { opacity: 1; }
+  60% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20% { transform: translateX(-6px); }

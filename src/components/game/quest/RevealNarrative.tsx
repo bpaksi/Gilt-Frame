@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import AmbientParticles from "@/components/ui/AmbientParticles";
 import GhostButton from "@/components/ui/GhostButton";
 import UppercaseLabel from "@/components/ui/UppercaseLabel";
 import { colors, fontFamily } from "@/components/ui/tokens";
@@ -32,8 +31,6 @@ export default function RevealNarrative({ config, onAdvance }: RevealNarrativePr
         zIndex: 40,
       }}
     >
-      <AmbientParticles opacity={0.3} />
-
       {phase === "ceremony" ? (
         <UnlockAnimation
           supernova
@@ -51,7 +48,7 @@ export const showcase: ShowcaseDefinition<RevealNarrativeProps> = {
   category: "quest",
   label: "Reveal Narrative",
   description: "Ceremony animation with story text reveal and continue button",
-  uses: ["AmbientParticles", "GhostButton", "UppercaseLabel", "UnlockAnimation"],
+  uses: ["GhostButton", "UppercaseLabel", "UnlockAnimation"],
   defaults: {
     config: {
       primary: "You have uncovered the first thread. The mystery deepens.",

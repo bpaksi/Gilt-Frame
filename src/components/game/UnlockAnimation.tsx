@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import TextButton from "@/components/ui/TextButton";
 import { colors } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
+import TapToContinue from "./TapToContinue";
 import {
   easeInOut, easeOut, easeIn, clamp01, lerp, prog, pointOnBorder,
   TIMELINE, FRAME_X, FRAME_Y, FRAME_W, FRAME_H,
@@ -30,14 +30,15 @@ export default function UnlockAnimation({
   const curve1Ref = useRef<SVGPathElement>(null);
   const curve2Ref = useRef<SVGPathElement>(null);
   const dotRefs = useRef<(SVGCircleElement | null)[]>([]);
-  const [showUnlock, setShowUnlock] = useState(false);
+  const [showTapPhase, setShowTapPhase] = useState(false);
 
   useEffect(() => {
     let animStart: number | null = null;
     let rafId: number;
     let flashFired = false;
-    const PRELUDE = supernova ? 2000 : 0;
+    const PRELUDE = supernova ? 6000 : 0;
 
+    // Core ceremony gather particles (small radius, used after prelude)
     const particles: { sx: number; sy: number; delay: number }[] = [];
     for (let i = 0; i < 30; i++) {
       const angle = (i / 30) * Math.PI * 2;
@@ -46,6 +47,19 @@ export default function UnlockAnimation({
         sy: CENTER_Y + Math.sin(angle) * 200,
         delay: Math.random() * 800,
       });
+    }
+
+    // Supernova convergence particles — screen-edge ellipse, only used during prelude
+    const novaParticles: { sx: number; sy: number; delay: number }[] = [];
+    if (supernova) {
+      for (let i = 0; i < 40; i++) {
+        const angle = (i / 40) * Math.PI * 2;
+        novaParticles.push({
+          sx: CENTER_X + Math.cos(angle) * 400,
+          sy: CENTER_Y + Math.sin(angle) * 500,
+          delay: Math.random() * 300,
+        });
+      }
     }
 
     function animate(timestamp: number) {
@@ -66,72 +80,80 @@ export default function UnlockAnimation({
       svg.querySelectorAll(".nova-p,.gather-particle").forEach((el) => el.remove());
 
       // ═══ SUPERNOVA PRELUDE ═══════════════════════════════════════════════
+      // Timeline (elapsed ms):
+      //   0–800    CHARGE   — big orb builds on black screen
+      //   800–1100 COLLAPSE — orb rapidly fades → black
+      //  1100–1600 PAUSE    — hold on black
+      //  1600–1800 RAMP     — flash ramps to full white
+      //  1800–3800 WHITE    — full white holds (2s)
+      //  3800–5300 FADE     — white fades (1.5s); nova particles × (1-flashAlpha)
+      //  5300ms    FOCUS    — center dot glows briefly
+      //  5500–6000 SETTLE   — black before core ceremony
       if (supernova && elapsed < PRELUDE) {
-        // Ignite: orb grows bright at center (0-400ms)
-        if (elapsed < 400) {
-          const p = easeOut(elapsed / 400);
-          orb.setAttribute("r", String(2 + p * 20));
-          orb.setAttribute("cx", String(CENTER_X));
-          orb.setAttribute("cy", String(CENTER_Y));
+        orb.setAttribute("cx", String(CENTER_X));
+        orb.setAttribute("cy", String(CENTER_Y));
+
+        // ── Flash — JS-driven (200ms ramp / 2s hold / 1.5s fade) ──────────
+        // flashAlpha is the authoritative brightness value. Nova particle opacities
+        // are multiplied by (1 - flashAlpha) — mathematically zero during the white
+        // phase regardless of CSS stacking context or z-index.
+        let flashAlpha = 0;
+        if (elapsed >= 1600) {
+          const ft = elapsed - 1600;
+          if (ft < 200) flashAlpha = ft / 200;
+          else if (ft < 2200) flashAlpha = 1;
+          else flashAlpha = Math.max(0, 1 - (ft - 2200) / 1500);
+        }
+        if (flash) flash.style.opacity = String(flashAlpha);
+        if (elapsed >= 1600) flashFired = true; // prevent core screenFlash from re-firing
+
+        // ── Orb (mutually exclusive phases) ───────────────────────────────
+        if (elapsed < 800) {
+          // CHARGE: orb grows large on black screen
+          const p = easeOut(elapsed / 800);
+          orb.setAttribute("r", String(2 + p * 98));
           orb.style.opacity = String(p);
+        } else if (elapsed < 1100) {
+          // COLLAPSE: orb rapidly shrinks and fades → black
+          const fadeT = (elapsed - 800) / 300;
+          orb.setAttribute("r", String(lerp(100, 5, easeIn(fadeT))));
+          orb.style.opacity = String(1 - easeIn(fadeT));
+        } else if (elapsed < 5300) {
+          // HIDDEN: black pause → white flash → fading white
+          orb.style.opacity = "0";
+          orb.setAttribute("r", "5");
+        } else if (elapsed < 5800) {
+          // FOCUS: center dot builds as flash is fully gone
+          const buildT = clamp01((elapsed - 5300) / 250);
+          const dimT = clamp01((elapsed - 5550) / 250);
+          orb.setAttribute("r", String(2 + easeOut(buildT) * 10));
+          orb.style.opacity = String(Math.max(0, easeOut(buildT) - easeIn(dimT)) * 0.95);
+        } else {
+          orb.style.opacity = "0";
+          orb.setAttribute("r", "5");
         }
 
-        // Screen flash (200ms)
-        if (elapsed >= 200 && !flashFired && flash) {
-          flash.style.animation = "screenFlash 1.2s ease-out forwards";
-          flashFired = true;
-        }
-
-        // Burst: particles fly outward from center (100-1400ms)
-        if (elapsed >= 100 && elapsed < 1400) {
-          const burstT = (elapsed - 100) / 1300;
-          particles.forEach((p) => {
-            const stagger = clamp01(burstT - p.delay / 2000);
-            if (stagger <= 0) return;
-            const e = easeOut(stagger);
-            const x = lerp(CENTER_X, p.sx, e);
-            const y = lerp(CENTER_Y, p.sy, e);
-            const o = (1 - stagger) * 0.5;
-
+        // ── Nova particles: emerge from screen edges as white fades (3800–5300ms) ──
+        // Gated by (1 - flashAlpha) — opacity is zero while flash is white.
+        if (elapsed >= 3800 && elapsed < 5300) {
+          const inverseFlash = 1 - flashAlpha;
+          const convT = (elapsed - 3800) / 1500;
+          novaParticles.forEach((p) => {
+            const pProgress = clamp01(convT - p.delay / 1000);
+            const eased = easeIn(pProgress);
+            const x = lerp(p.sx, CENTER_X, eased);
+            const y = lerp(p.sy, CENTER_Y, eased);
+            const o = (1 - eased) * 0.9 * inverseFlash;
+            if (o <= 0.01) return;
             const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             c.setAttribute("cx", String(x));
             c.setAttribute("cy", String(y));
-            c.setAttribute("r", String(2 + (1 - stagger) * 2));
-            c.setAttribute("fill", colors.warmGlow60);
+            c.setAttribute("r", String(3 + (1 - eased) * 4));
+            c.setAttribute("fill", "rgba(255, 252, 230, 1)");
             c.setAttribute("class", "nova-p");
             c.style.opacity = String(o);
             svg.appendChild(c);
           });
-        }
-
-        // Shockwave ring (200-1200ms)
-        if (elapsed >= 200 && elapsed < 1200) {
-          const ringT = (elapsed - 200) / 1000;
-          const ringR = easeOut(ringT) * 160;
-          const ringO = (1 - ringT) * 0.35;
-          const ring = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          ring.setAttribute("cx", String(CENTER_X));
-          ring.setAttribute("cy", String(CENTER_Y));
-          ring.setAttribute("r", String(ringR));
-          ring.setAttribute("fill", "none");
-          ring.setAttribute("stroke", colors.warmGlow40);
-          ring.setAttribute("stroke-width", String(2.5 - ringT * 2));
-          ring.setAttribute("class", "nova-p");
-          ring.style.opacity = String(ringO);
-          svg.appendChild(ring);
-        }
-
-        // Fade supernova orb (400-1800ms)
-        if (elapsed >= 400 && elapsed < 1800) {
-          const fadeT = clamp01((elapsed - 400) / 1400);
-          orb.setAttribute("r", String(lerp(22, 5, easeIn(fadeT))));
-          orb.style.opacity = String(1 - easeIn(fadeT));
-        }
-
-        // Dark settle (1800-2000ms)
-        if (elapsed >= 1800) {
-          orb.style.opacity = "0";
-          orb.setAttribute("r", "5");
         }
       }
 
@@ -257,8 +279,8 @@ export default function UnlockAnimation({
         }
 
         // Phase: Unlock (11s+ core)
-        if (t >= TIMELINE.unlock.start && !showUnlock) {
-          setShowUnlock(true);
+        if (t >= TIMELINE.unlock.start && !showTapPhase) {
+          setShowTapPhase(true);
         }
 
         // Settle final state
@@ -286,11 +308,19 @@ export default function UnlockAnimation({
         style={{
           position: "fixed",
           inset: 0,
-          background:
-            `radial-gradient(ellipse at center, ${colors.flashWhite25} 0%, transparent 60%)`,
+          background: [
+            "radial-gradient(circle at center,",
+            "  #ffffff         0%,",    // blazing white core
+            "  #fffef0        25%,",    // still near-white
+            "  rgba(255,245,200,0.98) 50%,",  // warm gold
+            "  rgba(255,210,100,0.75) 70%,",  // amber halo
+            "  rgba(240,140, 20,0.35) 85%,",  // corona
+            "  transparent   100%",            // corners fade to black — circular shape reads
+            ")",
+          ].join(" "),
           opacity: 0,
           pointerEvents: "none",
-          zIndex: 5,
+          zIndex: 1000,
         }}
       />
 
@@ -299,7 +329,13 @@ export default function UnlockAnimation({
           ref={svgRef}
           viewBox="0 0 200 260"
           xmlns="http://www.w3.org/2000/svg"
-          style={{ width: "100%", height: "100%", overflow: "visible" }}
+          style={{
+            width: "100%",
+            height: "100%",
+            overflow: "visible",
+            opacity: showTapPhase ? 0 : 1,
+            transition: "opacity 1.2s ease",
+          }}
         >
           <defs>
             <filter id="puzzleOrbGlow" x="-500%" y="-500%" width="1100%" height="1100%">
@@ -378,24 +414,30 @@ export default function UnlockAnimation({
             />
           ))}
         </svg>
-      </div>
 
-      {/* Press to Unlock */}
-      {showUnlock && (
-        <TextButton
-          onClick={onComplete}
+        {/* TapToContinue — pre-mounted, invisible until showTapPhase triggers the stagger sequence */}
+        <div
           style={{
-            marginTop: "32px",
-            fontSize: "14px",
-            letterSpacing: "2px",
-            padding: "12px 24px",
-            opacity: 0,
-            animation: "pulse-soft 3s ease-in-out infinite, fade-in 0.8s ease forwards",
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            overflow: "visible",
+            pointerEvents: showTapPhase ? "auto" : "none",
           }}
         >
-          {unlockText}
-        </TextButton>
-      )}
+          <TapToContinue
+            active={showTapPhase}
+            instruction={unlockText}
+            onComplete={onComplete}
+            markerDelay={400}
+            textDelay={700}
+            tapDelay={900}
+          />
+        </div>
+      </div>
     </>
   );
 }
@@ -404,7 +446,7 @@ export const showcase: ShowcaseDefinition<UnlockAnimationProps> = {
   category: "game",
   label: "Unlock Animation",
   description: "Orb ceremony with optional supernova prelude",
-  uses: ["TextButton"],
+  uses: ["TapToContinue"],
   defaults: { unlockText: "Press to Unlock", supernova: false },
   callbacks: { onComplete: "done" },
 };
