@@ -169,6 +169,11 @@ export const showcase: ShowcaseDefinition<AlignBearingProps> = {
   label: "Align Bearing",
   description: "Device orientation puzzle — point phone at target bearing and hold steady",
   uses: ["TapToContinue", "CompassRose", "CompletionCountdown", "MarkerSVG"],
+  tips: [
+    "Tap the permission gate first — this mirrors the player flow.",
+    "Mouse position drives heading on desktop — sweep the cursor to simulate rotating the phone.",
+    "Hold the cursor near the target bearing (compass_target degrees from north) to trigger the hold timer.",
+  ],
   defaults: {
     config: {
       compass_target: 180,

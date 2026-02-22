@@ -27,12 +27,28 @@ export type AdvanceCondition =
 
 // ─── Component Config Types ─────────────────────────────────────────────────
 
-export type QuestionItem = {
+export type StaticQuestionItem = {
   question: string;
+  hints?: string[];
   options: string[];
   correct: number;
-  hints?: string[];
 };
+
+export type PoolQuestionItem = {
+  question: string;
+  hints?: string[];
+  correct_answer: string;
+  /** Pool of wrong-answer options. `num_distractors` are randomly drawn per attempt. */
+  answer_pool: string[];
+  /** Number of wrong options to show alongside the correct answer. Default 3. */
+  num_distractors?: number;
+};
+
+export type QuestionItem = StaticQuestionItem | PoolQuestionItem;
+
+export function isPoolQuestion(q: QuestionItem): q is PoolQuestionItem {
+  return "answer_pool" in q;
+}
 
 /**
  * GPS outdoor compass (full mode) OR tappable marker only (lite mode).
@@ -43,6 +59,13 @@ export type QuestionItem = {
  * Lite mode: no coordinates → Phase 1 skipped → tappable marker only
  * (narrative beat, no navigation).
  */
+/** A single distance threshold for the GPS compass distance text. */
+export type DistanceGate = {
+  /** Show this text when distance is above this many metres. */
+  above: number;
+  text: string;
+};
+
 export type FindByGpsConfig = {
   // Phase 1 — GPS navigation (optional; omit for lite mode)
   target_lat?: number;
@@ -51,6 +74,12 @@ export type FindByGpsConfig = {
   geofence_radius?: number;
   wayfinding_text?: string;
   hints?: string[];
+  /**
+   * Distance gates sorted descending by `above`. First gate where distance > above wins.
+   * The lowest `above` value acts as the catch-all (shown when player is close).
+   * Falls back to DEFAULT_DISTANCE_GATES when omitted.
+   */
+  distance_gates?: DistanceGate[];
   // Phase 2 — Marker tap (always present)
   title_lines?: string[];
   instruction: string;
@@ -97,33 +126,22 @@ export type PassphraseEntryConfig = {
 };
 
 /**
- * Two-phase find-and-confirm puzzle that loops until correct.
+ * Two-phase find-and-confirm puzzle.
  *
  * Phase 1 — GUIDANCE: Displays guidance_text (the initial clue). A "?" button
  * reveals progressive hints (tiered). Player reads, looks around, then taps
- * "I think I've found it" to enter Phase 2.
+ * the confirmation button to enter Phase 2.
  *
- * Phase 2 — IDENTIFICATION: Shows `question` with `num_distractors` randomly
- * selected wrong answers from `painting_pool` plus the `correct_answer`,
- * shuffled. If wrong → shake animation, auto-reveal next hint tier, return to
- * Phase 1. If correct → advance.
- *
- * The 3 distractors are re-randomized on each wrong attempt so the player
- * can't brute-force by elimination.
+ * Phase 2 — IDENTIFICATION: Delegates to MultipleChoice with the single
+ * pool question. Wrong answers re-shuffle distractors in place. Correct → advance.
  */
 export type FindByTextConfig = {
   /** The initial text clue shown at the top of the guidance phase. */
   guidance_text: string;
-  /** Progressive hints revealed on wrong attempts (and via "?" button). */
+  /** Progressive hints revealed via the "?" button in the guidance phase. */
   hints: string[];
-  /** The identification question, e.g. "What is the name of the painting you stand before?" */
-  question: string;
-  /** The correct painting name exactly as it should appear in the option. */
-  correct_answer: string;
-  /** Pool of wrong-answer painting names. 3 are randomly drawn per attempt. */
-  painting_pool: string[];
-  /** Number of wrong options to show alongside the correct answer. Default 3. */
-  num_distractors?: number;
+  /** The identification question, rendered by MultipleChoice as a pool question. */
+  question: PoolQuestionItem;
   /** Button label on the guidance phase marker. Default: "I think I've found it." */
   confirmation_instruction?: string;
 };

@@ -20,4 +20,6 @@ export type ShowcaseDefinition<Props = unknown> = {
    * Every function prop should appear here so the gallery can wire it automatically.
    */
   callbacks?: Record<string, ShowcaseCallback>;
+  /** Short testing tips shown in the gallery below the Uses/Used by section. */
+  tips?: string[];
 };

@@ -369,6 +369,14 @@ export default function ComponentGallery({
               )}
             </div>
           )}
+          {entry?.showcase.tips && entry.showcase.tips.length > 0 && (
+            <div className="rounded-md bg-admin-surface border border-admin-border px-3 py-2 flex flex-col gap-1">
+              <span className="text-admin-text-faint text-xs font-semibold uppercase tracking-wider">Testing tips</span>
+              {entry.showcase.tips.map((tip, i) => (
+                <span key={i} className="text-admin-text-muted text-xs leading-relaxed">· {tip}</span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

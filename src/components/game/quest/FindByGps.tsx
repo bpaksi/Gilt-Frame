@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback } from "react";
 import { useGeolocation } from "@/lib/hooks/useGeolocation";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
 import { thematicDistanceText } from "@/lib/geo";
@@ -43,23 +43,11 @@ export default function FindByGps({
     setNeedsPermission(false);
   }, [hasCoords, geo, orientation]);
 
-  // On desktop, no gesture is needed to start geolocation or listen for orientation events.
-  // Auto-bypass the permission gate so the compass is immediately visible in the gallery.
-  const { requestPermission: requestGeo } = geo;
-  const { requestPermission: requestOrientation } = orientation;
-  useEffect(() => {
-    if (!("ontouchstart" in window)) {
-      if (hasCoords) requestGeo();
-      requestOrientation().catch(() => {});
-      setNeedsPermission(false);
-    }
-  }, [hasCoords, requestGeo, requestOrientation]); // stable callbacks — effectively runs once
-
   // Called each frame by CompassRose — drives distance text, geofence, arrived button
   const handleFrame = useCallback(
     ({ distance }: NavigateFrameData) => {
       if (distance === null) return;
-      setDistanceText(thematicDistanceText(distance));
+      setDistanceText(thematicDistanceText(distance, config.distance_gates));
       if (config.geofence_radius && distance < config.geofence_radius && !geofenceTriggeredRef.current) {
         geofenceTriggeredRef.current = true;
         setPhase("marker");
@@ -68,7 +56,7 @@ export default function FindByGps({
         setShowArrived(true);
       }
     },
-    [config.geofence_radius],
+    [config.geofence_radius, config.distance_gates],
   );
 
   // ── Marker phase state ─────────────────────────────────────────────────────
@@ -220,10 +208,18 @@ export const showcase: ShowcaseDefinition<FindByGpsProps> = {
   label: "Find by GPS",
   description: "GPS compass (full mode) leading to tappable marker, or tappable marker only (lite mode, no coordinates).",
   uses: ["HintSystem", "CompassRose", "TapToContinue", "GhostButton"],
+  tips: [
+    "1. Tap 'Enable Location', then DevTools → More tools → Sensors → Location → Other…",
+    "2. Longitude: -73.9851 (keep fixed). Start far, decrease Latitude to walk toward target (40.7589):",
+    "   · Lat 40.7609 → 'The Marker is far. Keep searching.'  (>200m)",
+    "   · Lat 40.7600 → 'You draw closer. The Marker stirs.'  (>100m)",
+    "   · Lat 40.7594 → 'The Marker grows warm. You are near.'  (>50m)",
+    "   · Lat 40.7591 → 'The Marker burns bright. You have arrived.'  + geofence fires → marker phase",
+    "3. Edit distance_gates in the config editor to customise thresholds and text. 'above' is in metres.",
+    "Mouse position drives compass heading — move cursor around the rose.",
+  ],
   defaults: {
     config: {
-      // Coordinates present so the gallery opens in compass phase (full mode).
-      // Remove them to preview lite mode (marker only).
       target_lat: 40.7589,
       target_lng: -73.9851,
       wayfinding_text: "Follow the needle to where the old paths cross.",
@@ -231,8 +227,8 @@ export const showcase: ShowcaseDefinition<FindByGpsProps> = {
       instruction: "Tap the marker when you have found it.",
       title_lines: ["You have arrived.", "Something stirs nearby."],
       hints: [
-        { tier: 1, text: "Stand with your back to the entrance and walk north." },
-        { tier: 2, text: "Look for the iron gate at the end of the stone path." },
+        "Stand with your back to the entrance and walk north.",
+        "Look for the iron gate at the end of the stone path.",
       ],
     },
     onAdvance: () => {},

@@ -1,3 +1,5 @@
+import type { DistanceGate } from "@/config/types";
+
 const R = 6371e3; // Earth radius in meters
 
 export function haversineDistance(
@@ -31,9 +33,14 @@ export function bearingTo(
   return (toDeg(Math.atan2(y, x)) + 360) % 360;
 }
 
-export function thematicDistanceText(meters: number): string {
-  if (meters > 200) return "The Marker is far. Keep searching.";
-  if (meters > 100) return "You draw closer. The Marker stirs.";
-  if (meters > 50) return "The Marker grows warm. You are near.";
-  return "The Marker burns bright. You have arrived.";
+export const DEFAULT_DISTANCE_GATES: DistanceGate[] = [
+  { above: 200, text: "The Marker is far. Keep searching." },
+  { above: 100, text: "You draw closer. The Marker stirs." },
+  { above: 50,  text: "The Marker grows warm. You are near." },
+  { above: 0,   text: "The Marker burns bright. You have arrived." },
+];
+
+export function thematicDistanceText(meters: number, gates = DEFAULT_DISTANCE_GATES): string {
+  const sorted = [...gates].sort((a, b) => b.above - a.above);
+  return sorted.find((g) => meters > g.above)?.text ?? sorted[sorted.length - 1]?.text ?? "";
 }

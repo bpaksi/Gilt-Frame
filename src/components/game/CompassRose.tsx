@@ -330,6 +330,11 @@ export const showcase: ShowcaseDefinition<CompassRoseProps> = {
   category: "game",
   label: "Compass Rose",
   description: "Canvas compass — navigate mode shows GPS bearing arrow; align mode shows fixed needle with proximity/hold feedback",
+  tips: [
+    "Mouse position drives heading on desktop — move the cursor around the canvas to rotate the ring.",
+    "In navigate mode, the bearing arrow only appears when lat/lng and targetLat/targetLng are all set.",
+    "In align mode, sweep past the target bearing in both directions before the hold timer activates.",
+  ],
   defaults: {
     mode: "navigate",
   },
