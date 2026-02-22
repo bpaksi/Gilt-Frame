@@ -18,7 +18,7 @@ export const bob: Contact = {
   email: "",
 };
 
-export const sister: Contact = {
+export const eileen: Contact = {
   name: "",
   phone: "",
   email: "",
