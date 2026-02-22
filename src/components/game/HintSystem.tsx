@@ -7,13 +7,11 @@ import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface HintSystemProps {
   hints: string[];
-  chapterId: string;
-  stepIndex: number;
-  /** Offset added to the 1-based index when calling revealHintAction. Used by
+  /** Offset added to the 1-based index when calling onHintReveal. Used by
    *  MultipleChoice to keep tiers globally unique across questions. */
   tierOffset?: number;
   initialRevealedTiers?: number[];
-  revealHintAction?: (chapterId: string, stepIndex: number, tier: number) => Promise<{ hint: string } | null>;
+  onHintReveal?: (tier: number) => Promise<void>;
 }
 
 const EMPTY_TIERS: number[] = [];
@@ -62,11 +60,9 @@ function HintItem({ hint }: { hint: string }) {
 
 export default function HintSystem({
   hints,
-  chapterId,
-  stepIndex,
   tierOffset = 0,
   initialRevealedTiers = EMPTY_TIERS,
-  revealHintAction,
+  onHintReveal,
 }: HintSystemProps) {
   const [revealedTiers, setRevealedTiers] = useState<number[]>(initialRevealedTiers);
   const [loading, setLoading] = useState(false);
@@ -79,9 +75,9 @@ export default function HintSystem({
     if (allRevealed || loading) return;
     const tier = tierOffset + nextIndex + 1;
     setRevealedTiers((prev) => [...prev, tier]);
-    if (revealHintAction) {
+    if (onHintReveal) {
       setLoading(true);
-      await revealHintAction(chapterId, stepIndex, tier);
+      await onHintReveal(tier);
       setLoading(false);
     }
   };
@@ -142,8 +138,6 @@ export const showcase: ShowcaseDefinition<HintSystemProps> = {
       "Look for something gilded.",
       "The frame catches the afternoon light.",
     ],
-    chapterId: "gallery",
-    stepIndex: 0,
   },
-  callbacks: { revealHintAction: "noop" },
+  callbacks: { onHintReveal: "noop" },
 };

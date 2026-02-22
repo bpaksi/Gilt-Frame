@@ -102,7 +102,7 @@ export default function MultipleChoice({
       />
 
       {/* Scrollwork divider + per-question hints */}
-      {question.hints?.length && chapterId && stepIndex !== undefined && (
+      {question.hints?.length && (
         <>
           <OrnateDivider
             style={{
@@ -115,10 +115,12 @@ export default function MultipleChoice({
             key={currentQ}
             hints={question.hints}
             tierOffset={hintTierOffset}
-            chapterId={chapterId}
-            stepIndex={stepIndex}
             initialRevealedTiers={revealedHintTiers}
-            revealHintAction={revealHintAction}
+            onHintReveal={
+              chapterId !== undefined && stepIndex !== undefined
+                ? async (tier) => { await (revealHintAction ?? revealHint)(chapterId, stepIndex, tier); }
+                : undefined
+            }
           />
         </>
       )}

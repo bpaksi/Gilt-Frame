@@ -14,19 +14,15 @@ type IndoorConfig = {
 interface FollowDirectionsProps {
   config: IndoorConfig;
   onComplete: () => void;
-  chapterId?: string;
-  stepIndex?: number;
   revealedHintTiers?: number[];
-  revealHintAction?: (chapterId: string, stepIndex: number, tier: number) => Promise<{ hint: string } | null>;
+  onHintReveal?: (tier: number) => Promise<void>;
 }
 
 export default function FollowDirections({
   config,
   onComplete,
-  chapterId,
-  stepIndex,
   revealedHintTiers,
-  revealHintAction,
+  onHintReveal,
 }: FollowDirectionsProps) {
   const lines = config.wayfinding_text?.split("\n").filter(Boolean) ?? [];
 
@@ -45,15 +41,13 @@ export default function FollowDirections({
     >
       <TapToContinue lines={lines} instruction={config.arrival_instruction} onComplete={onComplete} />
 
-      {config.hints && chapterId && stepIndex !== undefined && (
+      {config.hints && (
         <>
           <OrnateDivider />
           <HintSystem
             hints={config.hints}
-            chapterId={chapterId}
-            stepIndex={stepIndex}
             initialRevealedTiers={revealedHintTiers}
-            revealHintAction={revealHintAction}
+            onHintReveal={onHintReveal}
           />
         </>
       )}
@@ -72,8 +66,6 @@ export const showcase: ShowcaseDefinition<FollowDirectionsProps> = {
       arrival_instruction: "Tap when you find it.",
       hints: ["Look for the gold leaf border.", "It hangs near the north window.", "Third painting from the left."],
     },
-    chapterId: "gallery",
-    stepIndex: 0,
   },
-  callbacks: { onComplete: "done", revealHintAction: "action" },
+  callbacks: { onComplete: "done", onHintReveal: "action" },
 };

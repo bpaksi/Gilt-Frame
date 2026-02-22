@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
@@ -51,6 +51,10 @@ export default function CompletionCountdown({
   const [count, setCount] = useState(from);
   const [resolved, setResolved] = useState(false);
 
+  // Always-current ref so the timeout never captures a stale callback
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => { onCompleteRef.current = onComplete; });
+
   // Countdown interval
   useEffect(() => {
     let current = from;
@@ -67,11 +71,14 @@ export default function CompletionCountdown({
   }, [from]);
 
   // Resolution → onComplete delay
+  // onComplete is intentionally omitted from deps — we read it via ref so the
+  // timer is never cancelled and rescheduled due to callback identity changes.
   useEffect(() => {
     if (!resolved) return;
-    const timer = setTimeout(onComplete, resolutionDelay);
+    const timer = setTimeout(() => onCompleteRef.current(), resolutionDelay);
     return () => clearTimeout(timer);
-  }, [resolved, resolutionDelay, onComplete]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolved, resolutionDelay]);
 
   return (
     <div

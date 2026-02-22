@@ -130,17 +130,19 @@ export default function FindByText({
         />
 
         {/* Hint system — always available, player-initiated */}
-        {hints.length > 0 && chapterId && stepIndex !== undefined && (
+        {hints.length > 0 && (
           <>
             <OrnateDivider
               style={{ opacity: 0.3, transition: "opacity 0.4s ease", margin: "-8px 0" }}
             />
             <HintSystem
               hints={hints}
-              chapterId={chapterId}
-              stepIndex={stepIndex}
               initialRevealedTiers={revealedHintTiers}
-              revealHintAction={revealHintAction}
+              onHintReveal={
+                chapterId !== undefined && stepIndex !== undefined
+                  ? async (tier) => { await (revealHintAction ?? revealHint)(chapterId, stepIndex, tier); }
+                  : undefined
+              }
             />
           </>
         )}

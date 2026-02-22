@@ -174,13 +174,15 @@ export default function FindByGps({
           </GhostButton>
         )}
 
-        {config.hints && chapterId && stepIndex !== undefined && (
+        {config.hints && (
           <HintSystem
             hints={config.hints}
-            chapterId={chapterId}
-            stepIndex={stepIndex}
             initialRevealedTiers={revealedHintTiers}
-            revealHintAction={revealHintAction}
+            onHintReveal={
+              chapterId !== undefined && stepIndex !== undefined
+                ? async (tier) => { await (revealHintAction ?? revealHint)(chapterId, stepIndex, tier); }
+                : undefined
+            }
           />
         )}
       </div>
