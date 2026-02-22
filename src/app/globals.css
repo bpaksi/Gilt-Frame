@@ -74,6 +74,16 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes hint-expand {
+  from { max-height: 0; }
+  to { max-height: 200px; }
+}
+
+@keyframes hint-fade-slide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 
 @keyframes screenFlash {
   0% { opacity: 0; }

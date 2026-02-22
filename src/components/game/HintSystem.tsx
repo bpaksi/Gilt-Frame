@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import TextButton from "@/components/ui/TextButton";
-import OrnateDivider from "@/components/ui/OrnateDivider";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
@@ -29,6 +28,7 @@ export default function HintSystem({
 }: HintSystemProps) {
   const [revealedTiers, setRevealedTiers] = useState<number[]>(initialRevealedTiers);
   const [loading, setLoading] = useState(false);
+  const [pressing, setPressing] = useState(false);
 
   // Compute the global tier for each hint (1-based + offset)
   const nextIndex = hints.findIndex((_, i) => !revealedTiers.includes(tierOffset + i + 1));
@@ -36,6 +36,11 @@ export default function HintSystem({
 
   const handleReveal = async () => {
     if (allRevealed || loading) return;
+
+    // Brief press-down animation on the button
+    setPressing(true);
+    setTimeout(() => setPressing(false), 180);
+
     const tier = tierOffset + nextIndex + 1;
     setRevealedTiers((prev) => [...prev, tier]);
     if (revealHintAction) {
@@ -46,8 +51,6 @@ export default function HintSystem({
   };
 
   if (hints.length === 0) return null;
-
-  const anyRevealed = revealedTiers.length > 0;
 
   return (
     <div
@@ -60,44 +63,55 @@ export default function HintSystem({
         maxWidth: "320px",
       }}
     >
-      {/* Request hint button — always on top */}
-      {!allRevealed && (
-        <TextButton
-          onClick={handleReveal}
-          disabled={loading}
-          style={{ cursor: loading ? "wait" : undefined }}
-        >
-          {loading ? "Revealing..." : "Request a Hint"}
-        </TextButton>
-      )}
-
-      {/* Divider appears once any hint is revealed, stays when button is gone */}
-      {anyRevealed && (
-        <OrnateDivider style={{ opacity: 0.3, margin: "-4px 0" }} />
-      )}
-
-      {/* Revealed hints */}
+      {/* Revealed hints — above the button, each expanding to push it down */}
       {hints.map((hint, i) => {
         const tier = tierOffset + i + 1;
         if (!revealedTiers.includes(tier)) return null;
         return (
-          <p
+          <div
             key={tier}
             style={{
-              color: colors.gold50,
-              fontFamily,
-              fontSize: "14px",
-              fontStyle: "italic",
-              textAlign: "center",
-              lineHeight: 1.6,
-              opacity: 0,
-              animation: "fade-in 0.6s ease forwards",
+              overflow: "hidden",
+              width: "100%",
+              animation: "hint-expand 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards",
             }}
           >
-            {hint}
-          </p>
+            <p
+              style={{
+                color: colors.gold50,
+                fontFamily,
+                fontSize: "14px",
+                fontStyle: "italic",
+                textAlign: "center",
+                lineHeight: 1.6,
+                margin: 0,
+                opacity: 0,
+                animation: "hint-fade-slide 0.4s 0.06s ease forwards",
+              }}
+            >
+              {hint}
+            </p>
+          </div>
         );
       })}
+
+      {/* Request hint button — always below hints */}
+      {!allRevealed && (
+        <div
+          style={{
+            transform: pressing ? "scale(0.93) translateY(3px)" : "scale(1) translateY(0)",
+            transition: "transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          }}
+        >
+          <TextButton
+            onClick={handleReveal}
+            disabled={loading}
+            style={{ cursor: loading ? "wait" : undefined }}
+          >
+            {loading ? "Revealing..." : "Request a Hint"}
+          </TextButton>
+        </div>
+      )}
     </div>
   );
 }
@@ -106,7 +120,7 @@ export const showcase: ShowcaseDefinition<HintSystemProps> = {
   category: "game",
   label: "Hint System",
   description: "Tiered hint reveal with progressive disclosure",
-  uses: ["TextButton", "OrnateDivider"],
+  uses: ["TextButton"],
   defaults: {
     hints: [
       "Look for something gilded.",
