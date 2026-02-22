@@ -226,7 +226,7 @@ export default function ComponentGallery({
           }}
           className="admin-input admin-focus bg-admin-card text-admin-text text-sm px-3 py-2 rounded-md border border-admin-border focus:outline-none"
         >
-          {entries.map((ent) => (
+          {[...entries].sort((a, b) => a.showcase.label.localeCompare(b.showcase.label)).map((ent) => (
             <option key={ent.id} value={ent.id}>
               {ent.showcase.label}
             </option>
@@ -518,22 +518,6 @@ function buildComponentProps(
   // Wire all declared callbacks from the showcase definition
   for (const [key, role] of Object.entries(entry.showcase.callbacks ?? {})) {
     props[key] = wire(role, key);
-  }
-
-  if (entry.showcase.category === "ui") {
-    // Accordion requires render function props that can't be expressed as config
-    if (entry.id === "Accordion") {
-      props.items = ["The Summons", "The Trial of Sight", "The Hidden Gallery"];
-      props.keyExtractor = (_: string, i: number) => String(i);
-      props.renderHeader = (item: string) => (
-        <span style={{ color: colors.gold80, fontFamily: fontFamily, fontSize: "15px", fontStyle: "italic" }}>
-          {item}
-        </span>
-      );
-      props.renderBody = (item: string) => (
-        <span>{item} — details of this chapter.</span>
-      );
-    }
   }
 
   return props;

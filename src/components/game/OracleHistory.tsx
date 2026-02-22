@@ -39,38 +39,34 @@ export default function OracleHistory({ conversations }: OracleHistoryProps) {
     );
   }
 
-  const reversed = [...conversations].reverse();
+  const items = [...conversations].reverse().map((conv) => ({
+    title: (
+      <>
+        <span
+          style={{
+            color: colors.gold70,
+            fontFamily,
+            fontSize: "15px",
+            fontStyle: "italic",
+          }}
+        >
+          {conv.question}
+        </span>
+        <span
+          style={{
+            color: colors.gold25,
+            fontFamily,
+            fontSize: "11px",
+            fontStyle: "italic",
+            flexShrink: 0,
+          }}
+        >
+          {relativeTime(conv.created_at)}
+        </span>
+      </>
+    ),
+    body: conv.response,
+  }));
 
-  return (
-    <Accordion
-      items={reversed}
-      keyExtractor={(_, i) => String(i)}
-      renderHeader={(conv) => (
-        <>
-          <span
-            style={{
-              color: colors.gold70,
-              fontFamily,
-              fontSize: "15px",
-              fontStyle: "italic",
-            }}
-          >
-            {conv.question}
-          </span>
-          <span
-            style={{
-              color: colors.gold25,
-              fontFamily,
-              fontSize: "11px",
-              fontStyle: "italic",
-              flexShrink: 0,
-            }}
-          >
-            {relativeTime(conv.created_at)}
-          </span>
-        </>
-      )}
-      renderBody={(conv) => <>{conv.response}</>}
-    />
-  );
+  return <Accordion items={items} />;
 }

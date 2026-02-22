@@ -24,23 +24,21 @@ export default function ScrollsOfKnowledge({
     );
   }
 
-  return (
-    <Accordion
-      items={unlockedEntries}
-      keyExtractor={(e) => e.id}
-      renderHeader={(e) => (
-        <span
-          style={{
-            color: colors.gold70,
-            fontFamily,
-            fontSize: "15px",
-            fontStyle: "italic",
-          }}
-        >
-          {e.title}
-        </span>
-      )}
-      renderBody={(e) => <>{e.content}</>}
-    />
-  );
+  const items = unlockedEntries.map((e) => ({
+    title: (
+      <span
+        style={{
+          color: colors.gold70,
+          fontFamily,
+          fontSize: "15px",
+          fontStyle: "italic",
+        }}
+      >
+        {e.title}
+      </span>
+    ),
+    body: e.content,
+  }));
+
+  return <Accordion items={items} />;
 }
