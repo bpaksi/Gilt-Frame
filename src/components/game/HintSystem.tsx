@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TextButton from "@/components/ui/TextButton";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
@@ -18,6 +18,48 @@ interface HintSystemProps {
 
 const EMPTY_TIERS: number[] = [];
 
+// Expands smoothly from zero height using the CSS grid-rows technique,
+// which correctly interpolates to auto height (unlike max-height).
+function HintItem({ hint }: { hint: string }) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setOpen(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  return (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateRows: open ? "1fr" : "0fr",
+        transition: "grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+        width: "100%",
+      }}
+    >
+      <div style={{ overflow: "hidden", minHeight: 0 }}>
+        <p
+          style={{
+            color: colors.gold50,
+            fontFamily,
+            fontSize: "14px",
+            fontStyle: "italic",
+            textAlign: "center",
+            lineHeight: 1.6,
+            margin: 0,
+            paddingBottom: "2px",
+            opacity: open ? 1 : 0,
+            transform: open ? "translateY(0)" : "translateY(-4px)",
+            transition: "opacity 0.4s 0.15s ease, transform 0.4s 0.15s ease",
+          }}
+        >
+          {hint}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function HintSystem({
   hints,
   chapterId,
@@ -28,19 +70,13 @@ export default function HintSystem({
 }: HintSystemProps) {
   const [revealedTiers, setRevealedTiers] = useState<number[]>(initialRevealedTiers);
   const [loading, setLoading] = useState(false);
-  const [pressing, setPressing] = useState(false);
+  const [btnPressed, setBtnPressed] = useState(false);
 
-  // Compute the global tier for each hint (1-based + offset)
   const nextIndex = hints.findIndex((_, i) => !revealedTiers.includes(tierOffset + i + 1));
   const allRevealed = nextIndex === -1;
 
   const handleReveal = async () => {
     if (allRevealed || loading) return;
-
-    // Brief press-down animation on the button
-    setPressing(true);
-    setTimeout(() => setPressing(false), 180);
-
     const tier = tierOffset + nextIndex + 1;
     setRevealedTiers((prev) => [...prev, tier]);
     if (revealHintAction) {
@@ -63,44 +99,24 @@ export default function HintSystem({
         maxWidth: "320px",
       }}
     >
-      {/* Revealed hints — above the button, each expanding to push it down */}
+      {/* Revealed hints — above the button */}
       {hints.map((hint, i) => {
         const tier = tierOffset + i + 1;
         if (!revealedTiers.includes(tier)) return null;
-        return (
-          <div
-            key={tier}
-            style={{
-              overflow: "hidden",
-              width: "100%",
-              animation: "hint-expand 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards",
-            }}
-          >
-            <p
-              style={{
-                color: colors.gold50,
-                fontFamily,
-                fontSize: "14px",
-                fontStyle: "italic",
-                textAlign: "center",
-                lineHeight: 1.6,
-                margin: 0,
-                opacity: 0,
-                animation: "hint-fade-slide 0.4s 0.06s ease forwards",
-              }}
-            >
-              {hint}
-            </p>
-          </div>
-        );
+        return <HintItem key={tier} hint={hint} />;
       })}
 
-      {/* Request hint button — always below hints */}
+      {/* Request hint button — below hints, with tactile press feel */}
       {!allRevealed && (
         <div
+          onPointerDown={() => setBtnPressed(true)}
+          onPointerUp={() => setBtnPressed(false)}
+          onPointerLeave={() => setBtnPressed(false)}
           style={{
-            transform: pressing ? "scale(0.93) translateY(3px)" : "scale(1) translateY(0)",
-            transition: "transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)",
+            transform: btnPressed ? "scale(0.96) translateY(2px)" : "scale(1) translateY(0px)",
+            transition: btnPressed
+              ? "transform 0.08s ease"
+              : "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
           }}
         >
           <TextButton
