@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import TrackToggle from "./TrackToggle";
 
 const NAV_LINKS = [
@@ -9,8 +10,20 @@ const NAV_LINKS = [
   { href: "/the-order/progress", label: "Progress", icon: "timeline" },
   { href: "/the-order/send-hint", label: "Send Hint", icon: "hint" },
   { href: "/the-order/gallery", label: "Gallery", icon: "gallery" },
+  { href: "/the-order/settings/enroll", label: "Devices", icon: "devices" },
   { href: "/the-order/settings", label: "Settings", icon: "settings" },
 ] as const;
+
+function isNavLinkActive(href: string, pathname: string): boolean {
+  if (href === "/the-order/settings") {
+    return (
+      pathname === href ||
+      (pathname.startsWith(href + "/") &&
+        !pathname.startsWith("/the-order/settings/enroll"))
+    );
+  }
+  return pathname === href || pathname.startsWith(href + "/");
+}
 
 function RadarIcon() {
   return (
@@ -58,6 +71,15 @@ function GalleryIcon() {
   );
 }
 
+function DevicesIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="5" y="2" width="14" height="20" rx="2" />
+      <circle cx="12" cy="18" r="1" />
+    </svg>
+  );
+}
+
 function SettingsIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -67,11 +89,22 @@ function SettingsIcon() {
   );
 }
 
+function SignOutIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" y1="12" x2="9" y2="12" />
+    </svg>
+  );
+}
+
 const ICON_MAP = {
   radar: RadarIcon,
   timeline: TimelineIcon,
   hint: HintIcon,
   gallery: GalleryIcon,
+  devices: DevicesIcon,
   settings: SettingsIcon,
 } as const;
 
@@ -81,6 +114,14 @@ export default function AdminSidebar({
   initialTrack: "test" | "live";
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [signingOut, setSigningOut] = useState(false);
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    await fetch("/api/auth/admin/logout", { method: "POST" });
+    router.push("/");
+  }
 
   return (
     <aside className="admin-sidebar hidden md:flex fixed left-0 top-0 bottom-0 w-56 bg-admin-blue flex-col z-50 shadow-[2px_0_8px_rgba(0,0,0,0.1)] overflow-y-auto">
@@ -98,8 +139,7 @@ export default function AdminSidebar({
 
       <nav className="flex-1 flex flex-col gap-0.5 px-3">
         {NAV_LINKS.map((link) => {
-          const isActive =
-            pathname === link.href || pathname.startsWith(link.href + "/");
+          const isActive = isNavLinkActive(link.href, pathname);
           const Icon = ICON_MAP[link.icon];
 
           return (
@@ -118,6 +158,23 @@ export default function AdminSidebar({
           );
         })}
       </nav>
+
+      <div className="mx-4 mt-2 mb-2 border-t border-white/10" />
+
+      <div className="px-3 pb-5">
+        <button
+          onClick={handleSignOut}
+          disabled={signingOut}
+          className={`admin-focus flex items-center gap-3 px-3 py-2.5 rounded-md text-[13px] font-medium w-full text-left transition-all duration-150 ${
+            signingOut
+              ? "text-white/30 cursor-not-allowed"
+              : "text-white/60 hover:bg-white/8 hover:text-white/90 cursor-pointer"
+          }`}
+        >
+          <SignOutIcon />
+          {signingOut ? "Signing out..." : "Sign Out"}
+        </button>
+      </div>
     </aside>
   );
 }

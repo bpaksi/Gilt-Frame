@@ -3,13 +3,10 @@ import { getAdminTrack } from "@/lib/admin/track";
 import { getPlayerState } from "@/lib/admin/actions";
 import { gameConfig } from "@/config";
 import ResetChapter from "@/components/admin/ResetChapter";
-import SignOutButton from "./SignOutButton";
 
 const LINKS = [
-  { href: "/the-order/settings/enroll", label: "Device Enrollment" },
   { href: "/the-order/settings/chapters", label: "Workflows" },
   { href: "/the-order/settings/oracle", label: "AI Chat Review" },
-  { href: "/the-order/settings/moments", label: "Snapshots" },
 ] as const;
 
 export default async function AdminSettingsPage() {
@@ -43,7 +40,6 @@ export default async function AdminSettingsPage() {
         chapterId={chapterId}
         chapterName={chapterName}
       />
-      <SignOutButton />
     </div>
   );
 }
