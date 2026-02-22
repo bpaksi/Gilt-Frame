@@ -86,6 +86,12 @@ export default function ComponentGallery({
           const newConfig = preset.config as unknown as Record<string, unknown>;
           setConfig(newConfig);
           setOriginalConfig(newConfig);
+          // Set selectedId synchronously with config so they're always in the same batch.
+          // This prevents an intermediate render where config has changed but selectedId
+          // still points to the old component, which could cause the new component to
+          // receive the wrong config if gallerySetup fails or async interleaving occurs.
+          setSelectedId(newEntry.id);
+          setIsDone(false);
 
           startTransition(async () => {
             try {
@@ -98,8 +104,6 @@ export default function ComponentGallery({
                 chapterId: preset.chapterId,
                 stepIndex: preset.stepIndex,
               });
-              setSelectedId(newEntry.id);
-              setIsDone(false);
               setMountKey((k) => k + 1);
             } catch (e) {
               setError(e instanceof Error ? e.message : "Setup failed");
@@ -107,6 +111,17 @@ export default function ComponentGallery({
           });
           return;
         }
+
+        // No presets — use showcase defaults.config (not the full defaults object,
+        // which also contains onAdvance etc. that buildComponentProps provides separately)
+        const showcaseDefaults = newEntry.showcase.defaults as Record<string, unknown> | undefined;
+        const configFromDefaults = (showcaseDefaults?.config ?? {}) as Record<string, unknown>;
+        setConfig(configFromDefaults);
+        setOriginalConfig(configFromDefaults);
+        setSelectedId(newEntry.id);
+        setIsDone(false);
+        setMountKey((k) => k + 1);
+        return;
       }
 
       // For UI/game components, use showcase defaults
