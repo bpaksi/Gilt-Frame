@@ -126,6 +126,20 @@ export const showcase: ShowcaseDefinition<Props> = {
 - The `ShowcaseDefinition` type is in `src/components/showcase.ts`.
 - **`uses` lists gallery component IDs that this component renders internally.** The admin gallery uses this to display "Uses / Used by" cross-references and to jump between related components. `uses` is optional but must be filled in for any component that renders other gallery-registered components. IDs must exactly match the `id` values in `showcaseRegistry.tsx`.
 
+### Exception: Internal sub-components
+
+A component may omit `showcase` and be excluded from `showcaseRegistry.tsx` if it meets **all** of the following:
+
+1. It is consumed by exactly one parent component.
+2. It is not independently composable in the game.
+3. Its parent's gallery entry adequately represents it.
+
+Document any such exception in the **Current Conformance Notes** table below.
+
+| Internal sub-component | Owned by | Reason |
+|---|---|---|
+| `OrbAnimation` | `PageLayout` | Pure animation engine; only ever used by `PageLayout`. Preview via `PageLayout` gallery entry. |
+
 ---
 
 ## Styling

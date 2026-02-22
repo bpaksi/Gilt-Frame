@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { colors } from "@/components/ui/tokens";
-import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface OrbAnimationProps {
   onComplete: () => void;
@@ -325,10 +324,3 @@ export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimation
   );
 }
 
-export const showcase: ShowcaseDefinition<OrbAnimationProps> = {
-  category: "game",
-  label: "Orb Animation",
-  description: "8-phase orb ceremony tracing the gilt frame border",
-  defaults: {},
-  callbacks: { onComplete: "done" },
-};

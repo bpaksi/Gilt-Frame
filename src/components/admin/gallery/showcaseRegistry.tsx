@@ -19,7 +19,6 @@ import WaitingScreen, { showcase as waitingScreen } from "@/components/game/Wait
 import TapToContinue, { showcase as tapToContinue } from "@/components/game/TapToContinue";
 import AnswerQuestion, { showcase as answerQuestion } from "@/components/game/AnswerQuestion";
 import CompassRose, { showcase as compassRose } from "@/components/game/CompassRose";
-import OrbAnimation, { showcase as orbAnimation } from "@/components/game/OrbAnimation";
 import HintSystem, { showcase as hintSystem } from "@/components/game/HintSystem";
 import RevealLines, { showcase as revealLines } from "@/components/game/RevealLines";
 import FollowDirections, { showcase as followDirections } from "@/components/game/FollowDirections";
@@ -61,7 +60,6 @@ const ALL_ENTRIES: ShowcaseEntry[] = [
   { id: "TapToContinue",       filePath: "src/components/game/TapToContinue.tsx",       showcase: tapToContinue,       Component: TapToContinue },
   { id: "AnswerQuestion",      filePath: "src/components/game/AnswerQuestion.tsx",      showcase: answerQuestion,      Component: AnswerQuestion },
   { id: "CompassRose",         filePath: "src/components/game/CompassRose.tsx",         showcase: compassRose,         Component: CompassRose },
-  { id: "OrbAnimation",        filePath: "src/components/game/OrbAnimation.tsx",        showcase: orbAnimation,        Component: OrbAnimation },
   { id: "HintSystem",          filePath: "src/components/game/HintSystem.tsx",          showcase: hintSystem,          Component: HintSystem },
   { id: "RevealLines",         filePath: "src/components/game/RevealLines.tsx",         showcase: revealLines,         Component: RevealLines },
   { id: "FollowDirections",    filePath: "src/components/game/FollowDirections.tsx",    showcase: followDirections,    Component: FollowDirections },
