@@ -321,7 +321,7 @@ export default function CompassRose(props: CompassRoseProps) {
       ref={canvasRef}
       width={size}
       height={size}
-      style={{ width: cssSize, height: cssSize }}
+      style={{ width: cssSize, aspectRatio: "1" }}
     />
   );
 }
