@@ -8,5 +8,7 @@ export async function POST() {
   const supabase = await createAdminAuthClient(response.cookies);
   await supabase.auth.signOut();
 
+  response.cookies.delete("admin_session");
+
   return response;
 }

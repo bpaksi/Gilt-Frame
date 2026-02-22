@@ -47,14 +47,18 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (data.user.email !== process.env.ADMIN_EMAIL) {
-    limiter.record(ip);
-    return NextResponse.json({ error: "Access denied." }, { status: 403 });
-  }
-
   limiter.clear(ip);
 
   // Session cookies (access + refresh token) are set automatically by the
   // @supabase/ssr client via the setAll cookie handler above.
+  // admin_session is a presence marker checked by the protected layout.
+  response.cookies.set("admin_session", "1", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+  });
+
   return response;
 }
