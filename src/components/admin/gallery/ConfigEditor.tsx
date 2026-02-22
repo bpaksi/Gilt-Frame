@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 /** JSON.stringify that handles circular refs and non-serializable values (functions, React elements, DOM nodes). */
 function safeStringify(value: unknown): string {
@@ -27,6 +27,14 @@ interface ConfigEditorProps {
 export default function ConfigEditor({ value, onApply, onReset }: ConfigEditorProps) {
   const [text, setText] = useState(() => safeStringify(value));
   const [error, setError] = useState<string | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [text]);
 
   // Sync when external value changes (e.g. component switch)
   const [prevValue, setPrevValue] = useState(value);
@@ -58,10 +66,11 @@ export default function ConfigEditor({ value, onApply, onReset }: ConfigEditorPr
         Config (JSON)
       </div>
       <textarea
+        ref={textareaRef}
         value={text}
         onChange={(e) => setText(e.target.value)}
         spellCheck={false}
-        className="admin-input admin-focus flex-1 min-h-[200px] bg-admin-card text-admin-text font-mono text-xs p-3 rounded-md border border-admin-border focus:outline-none resize-y"
+        className="admin-input admin-focus w-full min-h-[120px] bg-admin-card text-admin-text font-mono text-xs p-3 rounded-md border border-admin-border focus:outline-none resize-none overflow-hidden"
       />
       {error && (
         <div className="text-admin-red text-xs font-mono px-1">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useTransition, type ReactNode } from "react";
+import { useState, useCallback, useTransition, useRef, type ReactNode } from "react";
 import type { ShowcaseCategory } from "@/components/showcase";
 import type { ComponentConfig } from "@/config";
 import { getEntriesByCategory, getEntryById, getUsedBy, type ShowcaseEntry } from "./showcaseRegistry";
@@ -277,7 +277,7 @@ export default function ComponentGallery({
         <div className="rounded-md bg-admin-surface border border-admin-border px-3 py-2">
           <div className="flex items-baseline gap-3 flex-wrap">
             <span className="font-mono text-admin-text text-sm font-semibold">{entry.id}</span>
-            <span className="font-mono text-admin-text-faint text-xs">{entry.filePath}</span>
+            <CopyFilePath filePath={entry.filePath} />
             <span className="text-admin-text-faint text-xs italic ml-auto">{entry.showcase.description}</span>
           </div>
         </div>
@@ -372,6 +372,38 @@ export default function ComponentGallery({
         </div>
       </div>
     </div>
+  );
+}
+
+// ── Copy File Path ────────────────────────────────────────────────────────────
+
+function CopyFilePath({ filePath }: { filePath: string }) {
+  const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(filePath).then(() => {
+      setCopied(true);
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => setCopied(false), 1500);
+    });
+  }, [filePath]);
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="admin-focus flex items-center gap-1.5 group relative"
+    >
+      <span className="font-mono text-admin-text-faint text-xs group-hover:text-admin-text transition-colors">
+        {filePath}
+      </span>
+      <span className="text-admin-text-faint text-xs transition-colors">
+        {copied ? "✓" : "⎘"}
+      </span>
+      <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-admin-blue px-2 py-0.5 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
+        {copied ? "Copied!" : "Copy path"}
+      </span>
+    </button>
   );
 }
 
