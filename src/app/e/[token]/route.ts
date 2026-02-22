@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { UAParser } from "ua-parser-js";
 
 const invalidHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -46,7 +47,6 @@ export async function GET(
     .from("device_enrollments")
     .select("*")
     .eq("token", token)
-    .eq("revoked", false)
     .is("device_token", null)
     .single();
 
@@ -60,12 +60,28 @@ export async function GET(
   const deviceToken = crypto.randomUUID();
   const userAgent = request.headers.get("user-agent") ?? "";
 
+  const ua = new UAParser(userAgent);
+  // Serialize to plain JSON (IBrowser/IOS/etc. carry methods not compatible with Json type)
+  const device_details = JSON.parse(
+    JSON.stringify({
+      browser: ua.getBrowser(),
+      os: ua.getOS(),
+      device: ua.getDevice(),
+      engine: ua.getEngine(),
+    })
+  );
+  const device_name = ua.getDevice().model ?? ua.getOS().name ?? "Unknown";
+  const device_type = ua.getDevice().type ?? "desktop";
+
   await supabase
     .from("device_enrollments")
     .update({
       device_token: deviceToken,
       enrolled_at: new Date().toISOString(),
       user_agent: userAgent,
+      device_details,
+      device_name,
+      device_type,
     })
     .eq("id", enrollment.id);
 

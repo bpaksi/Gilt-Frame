@@ -88,33 +88,39 @@ export type Database = {
       device_enrollments: {
         Row: {
           created_at: string
+          device_details: Json | null
+          device_name: string | null
           device_token: string | null
+          device_type: string | null
           enrolled_at: string | null
           id: string
           last_seen: string | null
-          revoked: boolean
           token: string
           track: Database["public"]["Enums"]["track_type"]
           user_agent: string | null
         }
         Insert: {
           created_at?: string
+          device_details?: Json | null
+          device_name?: string | null
           device_token?: string | null
+          device_type?: string | null
           enrolled_at?: string | null
           id?: string
           last_seen?: string | null
-          revoked?: boolean
           token: string
           track: Database["public"]["Enums"]["track_type"]
           user_agent?: string | null
         }
         Update: {
           created_at?: string
+          device_details?: Json | null
+          device_name?: string | null
           device_token?: string | null
+          device_type?: string | null
           enrolled_at?: string | null
           id?: string
           last_seen?: string | null
-          revoked?: boolean
           token?: string
           track?: Database["public"]["Enums"]["track_type"]
           user_agent?: string | null

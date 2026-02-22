@@ -17,7 +17,6 @@ export async function resolveTrack(): Promise<TrackInfo | null> {
     .from("device_enrollments")
     .select("track")
     .eq("device_token", deviceTokenCookie.value)
-    .eq("revoked", false)
     .single();
 
   if (!enrollment) return null;

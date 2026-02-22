@@ -15,7 +15,7 @@ export async function DELETE(
 
   const { error } = await supabase
     .from("device_enrollments")
-    .update({ revoked: true })
+    .delete()
     .eq("id", id);
 
   if (error) {

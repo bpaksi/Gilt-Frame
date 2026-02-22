@@ -39,8 +39,7 @@ export async function POST(request: NextRequest) {
   const { count, error: countError } = await supabase
     .from("device_enrollments")
     .select("*", { count: "exact", head: true })
-    .eq("track", track)
-    .eq("revoked", false);
+    .eq("track", track);
 
   if (countError) {
     return NextResponse.json({ error: countError.message }, { status: 500 });

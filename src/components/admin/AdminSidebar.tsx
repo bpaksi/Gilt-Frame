@@ -10,18 +10,11 @@ const NAV_LINKS = [
   { href: "/the-order/progress", label: "Progress", icon: "timeline" },
   { href: "/the-order/send-hint", label: "Send Hint", icon: "hint" },
   { href: "/the-order/gallery", label: "Gallery", icon: "gallery" },
-  { href: "/the-order/settings/enroll", label: "Devices", icon: "devices" },
+  { href: "/the-order/devices", label: "Devices", icon: "devices" },
   { href: "/the-order/settings", label: "Settings", icon: "settings" },
 ] as const;
 
 function isNavLinkActive(href: string, pathname: string): boolean {
-  if (href === "/the-order/settings") {
-    return (
-      pathname === href ||
-      (pathname.startsWith(href + "/") &&
-        !pathname.startsWith("/the-order/settings/enroll"))
-    );
-  }
   return pathname === href || pathname.startsWith(href + "/");
 }
 

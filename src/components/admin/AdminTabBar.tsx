@@ -7,18 +7,11 @@ const TABS = [
   { label: "Current", href: "/the-order/current", icon: "radar" },
   { label: "Progress", href: "/the-order/progress", icon: "timeline" },
   { label: "Gallery", href: "/the-order/gallery", icon: "gallery" },
-  { label: "Devices", href: "/the-order/settings/enroll", icon: "devices" },
+  { label: "Devices", href: "/the-order/devices", icon: "devices" },
   { label: "Settings", href: "/the-order/settings", icon: "settings" },
 ] as const;
 
 function isTabActive(href: string, pathname: string): boolean {
-  if (href === "/the-order/settings") {
-    return (
-      pathname === href ||
-      (pathname.startsWith(href + "/") &&
-        !pathname.startsWith("/the-order/settings/enroll"))
-    );
-  }
   return pathname === href || pathname.startsWith(href + "/");
 }
 
