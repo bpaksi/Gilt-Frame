@@ -26,7 +26,6 @@ export default function MultipleChoice({
   const [currentQ, setCurrentQ] = useState(0);
   const [transitioning, setTransitioning] = useState(false);
   const [questionsVisible, setQuestionsVisible] = useState(true);
-  const [questionKey, setQuestionKey] = useState(0);
 
   const question = questions[currentQ];
 
@@ -36,33 +35,26 @@ export default function MultipleChoice({
     [questions, currentQ]
   );
 
-  const handleResult = useCallback(
-    (correct: boolean) => {
-      if (transitioning) return;
+  const handleCorrect = useCallback(() => {
+    if (transitioning) return;
+    void onAnswerRecord?.(currentQ, questions[currentQ].correct_answer, true);
 
-      // Record the answer (fire-and-forget — does not affect control flow)
-      void onAnswerRecord?.(currentQ, question.options[question.correct], correct);
+    if (currentQ === questions.length - 1) {
+      setTimeout(onAdvance, 400);
+    } else {
+      setTransitioning(true);
+      setQuestionsVisible(false);
+      setTimeout(() => {
+        setCurrentQ((q) => q + 1);
+        setQuestionsVisible(true);
+        setTransitioning(false);
+      }, 850);
+    }
+  }, [transitioning, currentQ, questions, onAdvance, onAnswerRecord]);
 
-      if (correct) {
-        if (currentQ === questions.length - 1) {
-          // Last question — advance after a brief pause
-          setTimeout(onAdvance, 400);
-        } else {
-          // Transition to next question: fade out → swap → fade in
-          setTransitioning(true);
-          setQuestionsVisible(false);
-          setTimeout(() => {
-            setCurrentQ((prev) => prev + 1);
-            setQuestionKey((k) => k + 1);
-            setQuestionsVisible(true);
-            setTransitioning(false);
-          }, 850);
-        }
-      }
-      // Wrong: QuizQuestion already reset its own state; nothing to do here
-    },
-    [transitioning, currentQ, questions.length, question, onAdvance, onAnswerRecord]
-  );
+  const handleWrong = useCallback(() => {
+    void onAnswerRecord?.(currentQ, questions[currentQ].correct_answer, false);
+  }, [currentQ, questions, onAnswerRecord]);
 
   return (
     <div
@@ -78,11 +70,13 @@ export default function MultipleChoice({
       }}
     >
       <AnswerQuestion
-        key={questionKey}
+        key={currentQ}
         question={question.question}
-        options={question.options}
-        correctIndex={question.correct}
-        onResult={handleResult}
+        correct_answer={question.correct_answer}
+        answer_pool={question.answer_pool}
+        num_distractors={question.num_distractors}
+        onCorrect={handleCorrect}
+        onWrong={handleWrong}
         disabled={transitioning}
         visible={questionsVisible}
       />
@@ -113,18 +107,37 @@ export default function MultipleChoice({
 export const showcase: ShowcaseDefinition<MultipleChoiceProps> = {
   category: "quest",
   label: "Multiple Choice",
-  description: "Sequential multiple-choice questions with hints",
+  description:
+    "Sequential questions with hints. Distractors are randomly drawn from a pool and re-shuffled on wrong answers.",
   uses: ["HintSystem", "AnswerQuestion", "OrnateDivider"],
   defaults: {
     config: {
       questions: [
         {
           question: "Who founded the Order of the Gilt Frame?",
-          options: ["A scholar", "A painter", "A merchant", "A knight"],
-          correct: 1,
+          correct_answer: "A painter",
+          answer_pool: ["A scholar", "A merchant", "A knight"],
+          hints: [
+            "The founder worked with their hands.",
+            "Think of what hangs in the halls.",
+          ],
+        },
+        {
+          question: "Which painting is described as 'light given memory'?",
+          correct_answer: "The Golden Hour",
+          answer_pool: [
+            "The Silver Mist",
+            "The Amber Tide",
+            "The Copper Dawn",
+            "The Violet Dusk",
+          ],
         },
       ],
     },
     onAdvance: () => {},
   },
+  tips: [
+    "Wrong answers fade only the options out, reshuffle from the pool, and fade back in.",
+    "Correct answer on the last question triggers onAdvance after a brief pause.",
+  ],
 };

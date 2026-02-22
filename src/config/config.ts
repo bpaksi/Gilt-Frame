@@ -186,8 +186,8 @@ export const gameConfig: GameConfig = {
               {
                 question:
                   "Four guardians encircle the dial. What form do they take?",
-                options: ["Seraphim", "Warriors", "Maidens", "Beasts"],
-                correct: 2,
+                correct_answer: "Maidens",
+                answer_pool: ["Seraphim", "Warriors", "Beasts"],
                 hints: [
                   "Stand at the dial and look closely at the figures around its edge.",
                   "They are not warriors, nor angels. They are gentler than that.",
@@ -195,13 +195,12 @@ export const gameConfig: GameConfig = {
               },
               {
                 question: "What truth does the dial keep?",
-                options: [
+                correct_answer: "The early bird gets the worm",
+                answer_pool: [
                   "Time waits for no one",
-                  "The early bird gets the worm",
                   "All things must pass",
                   "The sun also rises",
                 ],
-                correct: 1,
                 hints: [
                   "The truth is written on the dial itself. Read what it says.",
                   "Look for the inscription. It speaks of a familiar proverb.",
@@ -400,21 +399,16 @@ export const gameConfig: GameConfig = {
             questions: [
               {
                 question: "What does she hold?",
-                options: [
-                  "A folded fan",
-                  "An ivory gavel",
-                  "A small book",
-                  "A bouquet of flowers",
-                ],
-                correct: 1,
+                correct_answer: "An ivory gavel",
+                answer_pool: ["A folded fan", "A small book", "A bouquet of flowers"],
                 // Palmer held the gavel she used to preside over the Board of
                 // Lady Managers at the 1893 World's Columbian Exposition.
               },
               {
                 question:
                   "The artist inscribed this canvas at the lower left. What city appears in the inscription?",
-                options: ["Stockholm", "Paris", "Chicago", "New York"],
-                correct: 2,
+                correct_answer: "Chicago",
+                answer_pool: ["Stockholm", "Paris", "New York"],
                 // Inscription reads "Zorn / Chicago 1893". Callbacks to Ch1's
                 // 255° bearing pointing from Kellogg Manor toward Chicago.
               },
@@ -479,26 +473,24 @@ export const gameConfig: GameConfig = {
               {
                 question:
                   "From what vantage does the artist compose this scene?",
-                options: [
+                correct_answer: "From above, looking down",
+                answer_pool: [
                   "From below, looking up",
                   "At eye level, facing the figures",
-                  "From above, looking down",
                   "From behind, over the woman's shoulder",
                 ],
-                correct: 2,
                 // The overhead/bird's-eye perspective is THE defining feature
                 // of The Child's Bath, inspired by Japanese ukiyo-e prints.
               },
               {
                 question:
                   "What artistic tradition inspired this painting's flattened perspective and bold patterns?",
-                options: [
+                correct_answer: "Japanese woodblock prints",
+                answer_pool: [
                   "Italian Renaissance fresco",
-                  "Japanese woodblock prints",
                   "Dutch Golden Age still life",
                   "Spanish Baroque portraiture",
                 ],
-                correct: 1,
                 // Cassatt visited the 1890 ukiyo-e exhibition at the École des
                 // Beaux-Arts in Paris. The Child's Bath is a direct culmination
                 // of that influence. Christine would know this as a Cassatt fan.

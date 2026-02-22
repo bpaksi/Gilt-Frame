@@ -27,13 +27,6 @@ export type AdvanceCondition =
 
 // ─── Component Config Types ─────────────────────────────────────────────────
 
-export type StaticQuestionItem = {
-  question: string;
-  hints?: string[];
-  options: string[];
-  correct: number;
-};
-
 export type PoolQuestionItem = {
   question: string;
   hints?: string[];
@@ -44,11 +37,7 @@ export type PoolQuestionItem = {
   num_distractors?: number;
 };
 
-export type QuestionItem = StaticQuestionItem | PoolQuestionItem;
-
-export function isPoolQuestion(q: QuestionItem): q is PoolQuestionItem {
-  return "answer_pool" in q;
-}
+export type QuestionItem = PoolQuestionItem;
 
 /**
  * GPS outdoor compass (full mode) OR tappable marker only (lite mode).

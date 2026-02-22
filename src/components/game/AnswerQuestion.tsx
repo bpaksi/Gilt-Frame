@@ -5,68 +5,92 @@ import OptionButton from "@/components/ui/OptionButton";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
+// ── Pool helpers ──────────────────────────────────────────────────────────────
+
+function shuffle<T>(arr: T[]): T[] {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+function drawOptions(correctAnswer: string, pool: string[], n: number): string[] {
+  const distractors = shuffle(pool.filter((p) => p !== correctAnswer)).slice(0, n);
+  return shuffle([correctAnswer, ...distractors]);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 interface AnswerQuestionProps {
   question: string;
-  options: string[];
-  /** Index into `options` that is the correct answer. */
-  correctIndex: number;
-  /**
-   * Called after visual feedback settles:
-   * - correct=true fires after ~800ms (correct state shown)
-   * - correct=false fires after ~800ms (shake + wrong state shown, internal state reset)
-   */
-  onResult: (correct: boolean) => void;
+  correct_answer: string;
+  answer_pool: string[];
+  num_distractors?: number;
+  /** Called after correct feedback settles (~800ms). */
+  onCorrect: () => void;
+  /** Called after wrong feedback + reshuffle settles (~800ms). */
+  onWrong?: () => void;
   /** Prevents selection. Use during inter-question transitions. */
   disabled?: boolean;
   /**
    * Controls overall opacity — lets the parent fade the question in/out during
-   * transitions without unmounting (which would lose shake mid-animation).
+   * transitions without unmounting.
    */
   visible?: boolean;
 }
 
 /**
  * GAME component: renders a single quiz question with option buttons.
- * Handles selection state, correct/wrong visual feedback, and shake animation.
- * Calls `onResult` after feedback settles so the parent can drive next steps.
+ * Draws distractors from `answer_pool` on mount. On wrong answer, only the
+ * options container fades out, reshuffles, and fades back in — the question
+ * text stays visible throughout.
  *
- * Used by MultipleChoice and FindByText.
+ * Used by MultipleChoice (FindByText delegates to MultipleChoice).
  */
 export default function AnswerQuestion({
   question,
-  options,
-  correctIndex,
-  onResult,
+  correct_answer,
+  answer_pool,
+  num_distractors = 3,
+  onCorrect,
+  onWrong,
   disabled = false,
   visible = true,
 }: AnswerQuestionProps) {
+  const [options, setOptions] = useState(() => drawOptions(correct_answer, answer_pool, num_distractors));
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [optionsVisible, setOptionsVisible] = useState(true);
   const shakeRef = useRef<HTMLDivElement>(null);
 
   function handleSelect(optionIdx: number) {
     if (disabled || selectedIdx !== null) return;
 
-    const correct = optionIdx === correctIndex;
+    const correct = options[optionIdx] === correct_answer;
     setSelectedIdx(optionIdx);
     setIsCorrect(correct);
 
     if (correct) {
-      setTimeout(() => onResult(true), 800);
+      setTimeout(() => onCorrect(), 800);
     } else {
-      // Trigger shake animation (rAF ensures the browser commits one frame
-      // without the class before re-adding it, reliably restarting the animation)
+      // Shake, then fade options out, reshuffle, fade back in
       if (shakeRef.current) {
         const el = shakeRef.current;
         el.classList.remove("shake");
         requestAnimationFrame(() => el.classList.add("shake"));
       }
-      // Reset visual state, then report
       setTimeout(() => {
-        setSelectedIdx(null);
-        setIsCorrect(null);
-        onResult(false);
-      }, 800);
+        setOptionsVisible(false);
+        setTimeout(() => {
+          setOptions(drawOptions(correct_answer, answer_pool, num_distractors));
+          setSelectedIdx(null);
+          setIsCorrect(null);
+          setOptionsVisible(true);
+          onWrong?.();
+        }, 400);
+      }, 400);
     }
   }
 
@@ -105,6 +129,8 @@ export default function AnswerQuestion({
           gap: "12px",
           width: "100%",
           maxWidth: "340px",
+          opacity: optionsVisible ? 1 : 0,
+          transition: "opacity 0.35s ease",
         }}
       >
         {options.map((option, i) => {
@@ -134,13 +160,14 @@ export default function AnswerQuestion({
 export const showcase: ShowcaseDefinition<AnswerQuestionProps> = {
   category: "game",
   label: "Answer Question",
-  description: "Single question with option buttons, correct/wrong feedback, and shake on wrong answer",
+  description:
+    "Single question with option buttons. Wrong answers fade the options out, reshuffle the pool, and fade back in. Correct answer shows feedback then fires onResult.",
   uses: ["OptionButton"],
   defaults: {
     question: "Who founded the Order of the Gilt Frame?",
-    options: ["A scholar", "A painter", "A merchant", "A knight"],
-    correctIndex: 1,
+    correct_answer: "A painter",
+    answer_pool: ["A scholar", "A merchant", "A knight", "A cartographer", "A navigator"],
     visible: true,
   },
-  callbacks: { onResult: "noop" },
+  callbacks: { onCorrect: "done", onWrong: "noop" },
 };

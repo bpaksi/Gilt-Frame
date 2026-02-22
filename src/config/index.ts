@@ -30,4 +30,5 @@ export type {
   PassphraseEntryConfig,
   FindByTextConfig,
   QuestionItem,
+  PoolQuestionItem,
 } from "./types";
