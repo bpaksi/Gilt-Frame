@@ -35,14 +35,14 @@ export default function HintSystem({
   const allRevealed = nextIndex === -1;
 
   const handleReveal = async () => {
-    if (allRevealed || loading || !revealHintAction) return;
-    setLoading(true);
+    if (allRevealed || loading) return;
     const tier = tierOffset + nextIndex + 1;
-    const result = await revealHintAction(chapterId, stepIndex, tier);
-    if (result) {
-      setRevealedTiers((prev) => [...prev, tier]);
+    setRevealedTiers((prev) => [...prev, tier]);
+    if (revealHintAction) {
+      setLoading(true);
+      await revealHintAction(chapterId, stepIndex, tier);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (hints.length === 0) return null;
@@ -64,7 +64,7 @@ export default function HintSystem({
       {!allRevealed && (
         <TextButton
           onClick={handleReveal}
-          disabled={loading || !revealHintAction}
+          disabled={loading}
           style={{ cursor: loading ? "wait" : undefined }}
         >
           {loading ? "Revealing..." : "Request a Hint"}
@@ -115,5 +115,5 @@ export const showcase: ShowcaseDefinition<HintSystemProps> = {
     chapterId: "gallery",
     stepIndex: 0,
   },
-  callbacks: { revealHintAction: "action" },
+  callbacks: { revealHintAction: "noop" },
 };
