@@ -1,13 +1,13 @@
 "use client";
 
-import MarkerSVG from "@/components/ui/MarkerSVG";
+import MarkerTap from "./MarkerTap";
 import HintSystem from "./HintSystem";
-import GhostButton from "@/components/ui/GhostButton";
-import { colors, fontFamily } from "@/components/ui/tokens";
+import OrnateDivider from "@/components/ui/OrnateDivider";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
 type IndoorConfig = {
   wayfinding_text?: string;
+  arrival_instruction?: string;
   hints?: string[];
 };
 
@@ -28,6 +28,8 @@ export default function IndoorWayfinding({
   revealedHintTiers,
   revealHintAction,
 }: IndoorWayfindingProps) {
+  const lines = config.wayfinding_text?.split("\n").filter(Boolean) ?? [];
+
   return (
     <div
       style={{
@@ -41,36 +43,19 @@ export default function IndoorWayfinding({
         padding: "40px 24px",
       }}
     >
-      <MarkerSVG size={48} variant="gold" animated />
-
-      {config.wayfinding_text && (
-        <p
-          style={{
-            color: colors.gold90,
-            fontFamily,
-            fontSize: "18px",
-            fontStyle: "italic",
-            textAlign: "center",
-            lineHeight: 1.8,
-            maxWidth: "320px",
-          }}
-        >
-          {config.wayfinding_text}
-        </p>
-      )}
-
-      <GhostButton onClick={onComplete}>
-        I have arrived
-      </GhostButton>
+      <MarkerTap lines={lines} instruction={config.arrival_instruction} onComplete={onComplete} />
 
       {config.hints && chapterId && stepIndex !== undefined && (
-        <HintSystem
-          hints={config.hints}
-          chapterId={chapterId}
-          stepIndex={stepIndex}
-          initialRevealedTiers={revealedHintTiers}
-          revealHintAction={revealHintAction}
-        />
+        <>
+          <OrnateDivider />
+          <HintSystem
+            hints={config.hints}
+            chapterId={chapterId}
+            stepIndex={stepIndex}
+            initialRevealedTiers={revealedHintTiers}
+            revealHintAction={revealHintAction}
+          />
+        </>
       )}
     </div>
   );
@@ -79,10 +64,14 @@ export default function IndoorWayfinding({
 export const showcase: ShowcaseDefinition<IndoorWayfindingProps> = {
   category: "game",
   label: "Indoor Wayfinding",
-  description: "Text-based indoor directions with arrival button",
-  uses: ["MarkerSVG", "HintSystem", "GhostButton"],
+  description: "Text-based indoor directions with arrival tap via MarkerTap",
+  uses: ["MarkerTap", "OrnateDivider", "HintSystem"],
   defaults: {
-    config: { wayfinding_text: "Proceed to the east gallery and locate the gilded frame." },
+    config: {
+      wayfinding_text: "Proceed to the east gallery and locate the gilded frame.",
+      arrival_instruction: "Tap when you find it.",
+      hints: ["Look for the gold leaf border.", "It hangs near the north window.", "Third painting from the left."],
+    },
     chapterId: "gallery",
     stepIndex: 0,
   },
