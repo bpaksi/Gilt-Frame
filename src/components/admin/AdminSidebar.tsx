@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: "/the-order/send-hint", label: "Send Hint", icon: "hint" },
   { href: "/the-order/gallery", label: "Gallery", icon: "gallery" },
   { href: "/the-order/devices", label: "Devices", icon: "devices" },
+  { href: "/the-order/testing", label: "Testing", icon: "testing" },
   { href: "/the-order/settings", label: "Settings", icon: "settings" },
 ] as const;
 
@@ -73,6 +74,15 @@ function DevicesIcon() {
   );
 }
 
+function TestingIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M9 3h6v8l3 9H6l3-9V3z" />
+      <path d="M7 14h10" />
+    </svg>
+  );
+}
+
 function SettingsIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -98,6 +108,7 @@ const ICON_MAP = {
   hint: HintIcon,
   gallery: GalleryIcon,
   devices: DevicesIcon,
+  testing: TestingIcon,
   settings: SettingsIcon,
 } as const;
 

@@ -8,6 +8,7 @@ const TABS = [
   { label: "Progress", href: "/the-order/progress", icon: "timeline" },
   { label: "Gallery", href: "/the-order/gallery", icon: "gallery" },
   { label: "Devices", href: "/the-order/devices", icon: "devices" },
+  { label: "Testing", href: "/the-order/testing", icon: "testing" },
   { label: "Settings", href: "/the-order/settings", icon: "settings" },
 ] as const;
 
@@ -60,6 +61,15 @@ function DevicesIcon({ color }: { color: string }) {
   );
 }
 
+function TestingIcon({ color }: { color: string }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5">
+      <path d="M9 3h6v8l3 9H6l3-9V3z" />
+      <path d="M7 14h10" />
+    </svg>
+  );
+}
+
 function SettingsIcon({ color }: { color: string }) {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5">
@@ -94,6 +104,7 @@ export default function AdminTabBar() {
               {tab.icon === "timeline" && <TimelineIcon color={color} />}
               {tab.icon === "gallery" && <GalleryIcon color={color} />}
               {tab.icon === "devices" && <DevicesIcon color={color} />}
+              {tab.icon === "testing" && <TestingIcon color={color} />}
               {tab.icon === "settings" && <SettingsIcon color={color} />}
             </span>
             <span

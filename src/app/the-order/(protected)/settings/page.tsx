@@ -1,22 +1,11 @@
 import Link from "next/link";
-import { getAdminTrack } from "@/lib/admin/track";
-import { getPlayerState } from "@/lib/admin/actions";
-import { gameConfig } from "@/config";
-import ResetChapter from "@/components/admin/ResetChapter";
 
 const LINKS = [
   { href: "/the-order/settings/chapters", label: "Workflows" },
   { href: "/the-order/settings/oracle", label: "AI Chat Review" },
 ] as const;
 
-export default async function AdminSettingsPage() {
-  const track = await getAdminTrack();
-  const state = await getPlayerState(track);
-
-  const firstChapterId = Object.keys(gameConfig.chapters)[0];
-  const chapterId = state.chapterId ?? firstChapterId;
-  const chapter = gameConfig.chapters[chapterId];
-  const chapterName = state.chapterName ?? chapter?.name ?? chapterId;
+export default function AdminSettingsPage() {
   return (
     <div className="p-4 max-w-xl">
       <div className="text-[11px] font-semibold tracking-[1.5px] uppercase text-admin-text-muted mb-4">
@@ -34,12 +23,6 @@ export default async function AdminSettingsPage() {
           </Link>
         ))}
       </nav>
-      <div className="h-px bg-admin-border my-6" />
-      <ResetChapter
-        track={track}
-        chapterId={chapterId}
-        chapterName={chapterName}
-      />
     </div>
   );
 }

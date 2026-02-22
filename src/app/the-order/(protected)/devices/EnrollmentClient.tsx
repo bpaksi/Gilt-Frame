@@ -12,12 +12,6 @@ function enrollmentUrl(token: string): string {
   return `${window.location.origin}/e/${token}`;
 }
 
-function StatusBadge({ enrollment }: { enrollment: Enrollment }) {
-  if (enrollment.enrolled_at) {
-    return <span className="text-xs font-medium text-admin-green">Active</span>;
-  }
-  return <span className="text-xs font-medium text-admin-orange">Pending</span>;
-}
 
 export default function EnrollmentClient({
   initialEnrollments,
@@ -135,7 +129,7 @@ export default function EnrollmentClient({
           <table className="w-full border-collapse text-[13px]">
             <thead>
               <tr>
-                {["Track", "Status", "Device", "Type", "Enrolled", "Last Seen", "Agent", ""].map(
+                {["Track", "Device", "Type", "Enrolled", "Last Seen", ""].map(
                   (h) => (
                     <th
                       key={h}
@@ -154,9 +148,6 @@ export default function EnrollmentClient({
                     className="border-b border-admin-border-light last:border-b-0 hover:bg-gray-50 transition-colors"
                   >
                     <td className="py-2.5 px-3 font-medium">{e.track}</td>
-                    <td className="py-2.5 px-3">
-                      <StatusBadge enrollment={e} />
-                    </td>
                     <td className="py-2.5 px-3 text-admin-text-muted">
                       {e.device_name ?? "\u2014"}
                     </td>
@@ -166,18 +157,12 @@ export default function EnrollmentClient({
                     <td className="py-2.5 px-3">
                       {e.enrolled_at
                         ? new Date(e.enrolled_at).toLocaleDateString()
-                        : "\u2014"}
+                        : <span className="text-admin-text-faint italic">Pending…</span>}
                     </td>
                     <td className="py-2.5 px-3">
                       {e.last_seen
                         ? new Date(e.last_seen).toLocaleDateString()
                         : "\u2014"}
-                    </td>
-                    <td
-                      className="py-2.5 px-3 max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap text-admin-text-muted"
-                      title={e.user_agent ?? ""}
-                    >
-                      {e.user_agent ? e.user_agent.slice(0, 30) + "\u2026" : "\u2014"}
                     </td>
                     <td className="py-2.5 px-3 whitespace-nowrap">
                       <div className="flex gap-2">
@@ -240,8 +225,10 @@ export default function EnrollmentClient({
                   <span className="text-xs font-semibold uppercase tracking-[1px] text-admin-text-faint">
                     {e.track}
                   </span>
-                  <span className="ml-2">
-                    <StatusBadge enrollment={e} />
+                  <span className="ml-2 text-xs font-medium">
+                    {e.enrolled_at
+                      ? <span className="text-admin-green">{new Date(e.enrolled_at).toLocaleDateString()}</span>
+                      : <span className="text-admin-text-faint italic">Pending…</span>}
                   </span>
                   {e.device_name && (
                     <div className="text-[11px] text-admin-text-muted mt-0.5">
@@ -273,23 +260,11 @@ export default function EnrollmentClient({
               </div>
               <div className="text-[11px] text-admin-text-muted space-y-0.5">
                 <div>
-                  Enrolled:{" "}
-                  {e.enrolled_at
-                    ? new Date(e.enrolled_at).toLocaleDateString()
-                    : "\u2014"}
-                </div>
-                <div>
                   Last seen:{" "}
                   {e.last_seen
                     ? new Date(e.last_seen).toLocaleDateString()
                     : "\u2014"}
                 </div>
-                {e.user_agent && (
-                  <div className="truncate">
-                    {e.user_agent.slice(0, 50)}
-                    {e.user_agent.length > 50 ? "\u2026" : ""}
-                  </div>
-                )}
               </div>
               {expandedId === e.id && !e.enrolled_at && (
                 <div className="mt-3 pt-3 border-t border-admin-border-light">
