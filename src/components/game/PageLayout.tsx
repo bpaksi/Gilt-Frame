@@ -26,7 +26,7 @@ export default function PageLayout({
   return (
     <div
       style={{
-        minHeight: "100dvh",
+        minHeight: "100%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

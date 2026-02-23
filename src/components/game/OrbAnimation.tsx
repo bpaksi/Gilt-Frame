@@ -216,7 +216,7 @@ export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimation
         }}
       />
 
-      <div style={{ position: "relative", width: "200px", height: "260px" }}>
+      <div style={{ position: "relative", width: "min(200px, 30svh)", height: "min(260px, 39svh)" }}>
         <svg
           viewBox="0 0 200 260"
           xmlns="http://www.w3.org/2000/svg"
