@@ -205,10 +205,15 @@ export async function sendStep(
   });
 
   // Mark step_progress as completed
-  await supabase
+  const { error: spError } = await supabase
     .from("step_progress")
     .update({ completed_at: new Date().toISOString() })
     .eq("id", sp.id);
+
+  if (spError) {
+    console.error("[sendStep] Failed to set step_progress.completed_at:", spError);
+    return { success: false, error: `Step progress update failed: ${spError.message}` };
+  }
 
   return {
     success: messageStatus === "sent",

@@ -83,10 +83,15 @@ export async function POST(request: NextRequest) {
   }
 
   // Mark as completed
-  await supabase
+  const { error: spError } = await supabase
     .from("step_progress")
     .update({ completed_at: new Date().toISOString() })
     .eq("id", spId);
+
+  if (spError) {
+    console.error("[complete-step] Failed to set step_progress.completed_at:", spError);
+    return NextResponse.json({ error: `Step progress update failed: ${spError.message}` }, { status: 500 });
+  }
 
   const currentStep = orderedSteps[stepIndex];
 
