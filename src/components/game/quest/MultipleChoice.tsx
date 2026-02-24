@@ -52,9 +52,9 @@ export default function MultipleChoice({
     }
   }, [transitioning, currentQ, questions, onAdvance, onAnswerRecord]);
 
-  const handleWrong = useCallback(() => {
-    void onAnswerRecord?.(currentQ, questions[currentQ].correct_answer, false);
-  }, [currentQ, questions, onAnswerRecord]);
+  const handleWrong = useCallback((selected: string) => {
+    void onAnswerRecord?.(currentQ, selected, false);
+  }, [currentQ, onAnswerRecord]);
 
   return (
     <div

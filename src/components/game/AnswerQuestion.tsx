@@ -30,8 +30,8 @@ interface AnswerQuestionProps {
   num_distractors?: number;
   /** Called after correct feedback settles (~800ms). */
   onCorrect: () => void;
-  /** Called after wrong feedback + reshuffle settles (~800ms). */
-  onWrong?: () => void;
+  /** Called after wrong feedback + reshuffle settles (~800ms). Receives the selected wrong answer. */
+  onWrong?: (selected: string) => void;
   /** Prevents selection. Use during inter-question transitions. */
   disabled?: boolean;
   /**
@@ -68,7 +68,8 @@ export default function AnswerQuestion({
   function handleSelect(optionIdx: number) {
     if (disabled || selectedIdx !== null) return;
 
-    const correct = options[optionIdx] === correct_answer;
+    const selectedOption = options[optionIdx];
+    const correct = selectedOption === correct_answer;
     setSelectedIdx(optionIdx);
     setIsCorrect(correct);
 
@@ -88,7 +89,7 @@ export default function AnswerQuestion({
           setSelectedIdx(null);
           setIsCorrect(null);
           setOptionsVisible(true);
-          onWrong?.();
+          onWrong?.(selectedOption);
         }, 400);
       }, 400);
     }

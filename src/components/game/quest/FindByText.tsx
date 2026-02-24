@@ -13,6 +13,7 @@ interface FindByTextProps {
   onAdvance: () => void;
   revealedHintTiers?: number[];
   onHintReveal?: (tier: number) => Promise<void>;
+  onAnswerRecord?: (questionIndex: number, selectedOption: string, correct: boolean) => Promise<void>;
 }
 
 type Phase = "guidance" | "identification";
@@ -22,6 +23,7 @@ export default function FindByText({
   onAdvance,
   revealedHintTiers,
   onHintReveal,
+  onAnswerRecord,
 }: FindByTextProps) {
   const { guidance_text, hints, question, confirmation_instruction = "I think I've found it." } =
     config;
@@ -96,6 +98,7 @@ export default function FindByText({
       <MultipleChoice
         config={{ questions: [question] }}
         onAdvance={onAdvance}
+        onAnswerRecord={onAnswerRecord}
       />
     </div>
   );
