@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>The Order of the Gilt Frame — Second Summons</title>
+<title>The Order of the Gilt Frame — Summons</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cinzel+Decorative:wght@400;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=MedievalSharp&display=swap" rel="stylesheet">
@@ -35,8 +35,8 @@
 
   body {
     font-family: 'EB Garamond', 'Georgia', serif;
-    font-size: 11.5pt;
-    line-height: 1.72;
+    font-size: 10pt;
+    line-height: 1.6;
     color: var(--ink-brown);
     width: 8.5in;
     height: 11in;
@@ -48,14 +48,14 @@
 
   .content {
     position: relative;
-    padding: 0.7in 1.05in 0.65in 1.05in;
+    padding: 0.55in 0.95in 0.5in 0.95in;
     height: 100%;
   }
 
   /* ── Marker / Hero Image ── */
   .marker-wrap {
     text-align: center;
-    margin: 0 0 10pt 0;
+    margin: 0 0 6pt 0;
   }
 
   .marker-wrap svg {
@@ -77,32 +77,32 @@
   /* ── Flourish Dividers ── */
   .flourish {
     text-align: center;
-    margin: 6pt 0 18pt 0;
+    margin: 4pt 0 10pt 0;
     line-height: 1;
   }
 
   .flourish-bottom {
     text-align: center;
-    margin: 16pt 0 10pt 0;
+    margin: 10pt 0 6pt 0;
     line-height: 1;
   }
 
   /* ── Greeting ── */
   .greeting {
     font-family: 'EB Garamond', serif;
-    font-size: 12.5pt;
+    font-size: 11pt;
     font-style: italic;
     font-weight: 500;
     color: var(--ink-brown);
-    margin: 0 0 14pt 0;
+    margin: 0 0 8pt 0;
     letter-spacing: 0.5pt;
   }
 
   /* ── Drop Cap Paragraph ── */
   .drop-cap-para {
-    margin: 0 0 11pt 0;
-    line-height: 1.72;
-    min-height: 58pt;
+    margin: 0 0 7pt 0;
+    line-height: 1.6;
+    min-height: 50pt;
     position: relative;
   }
 
@@ -136,8 +136,8 @@
 
   /* ── Body Paragraphs ── */
   .body-para {
-    margin: 0 0 10pt 0;
-    line-height: 1.72;
+    margin: 0 0 6pt 0;
+    line-height: 1.6;
     clear: both;
     text-align: justify;
     hyphens: auto;
@@ -146,7 +146,7 @@
   /* ── Acrostic Letters ── */
   .acrostic {
     font-family: 'Cinzel Decorative', serif;
-    font-size: 15.5pt;
+    font-size: 13pt;
     font-weight: 700;
     color: var(--gold-deep);
     line-height: 1;
@@ -159,15 +159,15 @@
   /* ── Closing Line ── */
   .closing-line {
     font-style: italic;
-    margin: 0 0 10pt 0;
-    line-height: 1.72;
+    margin: 0 0 6pt 0;
+    line-height: 1.6;
     clear: both;
     text-align: justify;
   }
 
   /* ── Signature Block ── */
   .sig-block {
-    margin-top: 18pt;
+    margin-top: 10pt;
     clear: both;
   }
 
@@ -200,7 +200,7 @@
   /* ── Small ornament between paragraphs ── */
   .para-ornament {
     text-align: center;
-    margin: 3pt 0;
+    margin: 2pt 0;
     line-height: 1;
     opacity: 0.35;
   }
@@ -244,53 +244,51 @@
     <svg width="340" height="20" viewBox="0 0 340 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <line x1="20" y1="10" x2="148" y2="10" stroke="#C9A84C" stroke-width="0.5"/>
       <line x1="192" y1="10" x2="320" y2="10" stroke="#C9A84C" stroke-width="0.5"/>
+      <!-- Center diamond -->
       <path d="M170 3 L177 10 L170 17 L163 10 Z" fill="none" stroke="#A67C2E" stroke-width="1"/>
       <path d="M170 6 L174 10 L170 14 L166 10 Z" fill="#C9A84C" opacity="0.5"/>
+      <!-- Small diamonds flanking -->
       <path d="M148 8 L152 10 L148 12 L144 10 Z" fill="#C9A84C" opacity="0.4"/>
       <path d="M192 8 L196 10 L192 12 L188 10 Z" fill="#C9A84C" opacity="0.4"/>
+      <!-- Curls -->
       <path d="M20 10 Q14 4 8 10 Q14 16 20 10" stroke="#C9A84C" stroke-width="0.5" fill="none"/>
       <path d="M320 10 Q326 4 332 10 Q326 16 320 10" stroke="#C9A84C" stroke-width="0.5" fill="none"/>
     </svg>
   </div>
 
   <!-- Greeting -->
-  <p class="greeting">Sparrow,</p>
+  <p class="greeting">Candidate,</p>
 
   <!-- Drop cap paragraph -->
   <p class="drop-cap-para">
     <span class="illuminated-cap">
       <svg width="62" height="62" viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Ornate background panel -->
         <rect x="1" y="1" width="60" height="60" rx="2" fill="none" stroke="#A67C2E" stroke-width="1.2"/>
         <rect x="3.5" y="3.5" width="55" height="55" rx="1" fill="none" stroke="#C9A84C" stroke-width="0.4"/>
+        <!-- Corner fleurons -->
         <circle cx="7" cy="7" r="1.5" fill="#C9A84C" opacity="0.5"/>
         <circle cx="55" cy="7" r="1.5" fill="#C9A84C" opacity="0.5"/>
         <circle cx="7" cy="55" r="1.5" fill="#C9A84C" opacity="0.5"/>
         <circle cx="55" cy="55" r="1.5" fill="#C9A84C" opacity="0.5"/>
+        <!-- Decorative vine left -->
         <path d="M7 15 Q10 20 7 28 Q10 32 7 38 Q10 42 7 47" stroke="#C9A84C" stroke-width="0.5" fill="none" opacity="0.4"/>
+        <!-- Decorative vine right -->
         <path d="M55 15 Q52 20 55 28 Q52 32 55 38 Q52 42 55 47" stroke="#C9A84C" stroke-width="0.5" fill="none" opacity="0.4"/>
+        <!-- Top decorative arc -->
         <path d="M15 5 Q31 9 47 5" stroke="#C9A84C" stroke-width="0.4" fill="none" opacity="0.4"/>
+        <!-- Bottom decorative arc -->
         <path d="M15 57 Q31 53 47 57" stroke="#C9A84C" stroke-width="0.4" fill="none" opacity="0.4"/>
       </svg>
-      <span class="illuminated-letter">T</span>
-    </span>he Council has received your first fragment. The compass has spoken, and the bearing is true.</p>
+      <span class="illuminated-letter">I</span>
+    </span>n the years before this letter arrived, the Order had already made its determination. You were not sought, the records found you.</p>
 
-  <!-- Body paragraphs with acrostic: THE SIGHT -->
-  <p class="body-para"><span class="acrostic">H</span>er city lies where the bearing points. She was not royalty, yet she was called an empress. You will know her palace when you see it. The Order built no walls there, but we have filled them.</p>
+  <!-- Body paragraphs with acrostic -->
+  <p class="body-para"><span class="acrostic">S</span>een, and noted. The Council does not act on instinct. What drew our attention was the quality of your noticing, you perceive what others walk past, and feel the weight of doors that have not been opened.</p>
 
-  <p class="body-para"><span class="acrostic">E</span>ven now, she waits behind a gilt frame. The Order placed her where she could be found by those who know how to look.</p>
+  <p class="body-para"><span class="acrostic">E</span>very gift the Order knows carries its price. The Sight has been given to others before you, and those who received it did not emerge unchanged. Those who see most deeply are the first to draw attention, and attention, in the circles surrounding the Order's work, carries a cost.</p>
 
-  <div class="para-ornament">
-    <svg width="32" height="8" viewBox="0 0 32 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0 4 Q8 0 16 4 Q24 8 32 4" stroke="#A67C2E" stroke-width="0.6" fill="none"/>
-      <circle cx="16" cy="4" r="1.2" fill="#C9A84C"/>
-    </svg>
-  </div>
-
-  <p class="body-para"><span class="acrostic">S</span>eek her, Sparrow. The Order does not summon you to admire.</p>
-
-  <p class="body-para"><span class="acrostic">I</span>t will not be enough to find her. You must see what others have missed. The Order will know whether you did.</p>
-
-  <p class="body-para"><span class="acrostic">G</span>o with care. You will not be the only one looking. Others before you have paid dearly for what they saw.</p>
+  <p class="body-para"><span class="acrostic">E</span>nclosed within these words is more than a summons. Read more carefully than you have ever read. The answer to the first threshold is already in your hands.</p>
 
   <div class="para-ornament">
     <svg width="32" height="8" viewBox="0 0 32 8" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -299,9 +297,26 @@
     </svg>
   </div>
 
-  <p class="body-para"><span class="acrostic">H</span>ow you are called to the next trial is not your concern. When the time comes, you will know.</p>
+  <p class="body-para"><span class="acrostic">C</span>onsider this moment carefully. This is not an invitation you can set aside. The Order does not send letters to those it is uncertain about. You have already been marked.</p>
 
-  <p class="closing-line"><span class="acrostic">T</span>he frames do not wait forever, Sparrow. Neither does the light that falls on them.</p>
+  <p class="body-para"><span class="acrostic">L</span>etters like this one have been sent before. The Order does not speak of all those who received them. Some names appear frequently in our records. Others appear only once.</p>
+
+  <p class="body-para"><span class="acrostic">E</span>ach threshold you cross was marked by a hand that came before yours. Before you, others carried this same weight. Later chapters of the Order's history are written in shadow. In those gaps, there are names the Order does not speak aloud. No record of their ending exists in any document the Order will share with you. Do not read too much into this silence, and yet, do not read too little.</p>
+
+  <div class="para-ornament">
+    <svg width="32" height="8" viewBox="0 0 32 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 4 Q8 0 16 4 Q24 8 32 4" stroke="#A67C2E" stroke-width="0.6" fill="none"/>
+      <circle cx="16" cy="4" r="1.2" fill="#C9A84C"/>
+    </svg>
+  </div>
+
+  <p class="body-para"><span class="acrostic">A</span> proof of sight is required. Look within what you already hold. The answer to the first door has been here from the beginning. See it, and step through.</p>
+
+  <p class="body-para"><span class="acrostic">R</span>efuse, and understand that the letter changes nothing of your situation. The Order found you, and the Order is not the only fellowship with eyes on those who see. No refusal has ever made someone unseen.</p>
+
+  <p class="body-para"><span class="acrostic">L</span>ong have the frames watched. Long have they been hunted. The Order endures not because it is powerful, but because it is careful. You are being asked to be careful now.</p>
+
+  <p class="closing-line"><span class="acrostic">Y</span>ou have been chosen, Sparrow. Carry that word gently. It is the highest honor the Order bestows, and the highest cost. These two things have always been the same.</p>
 
   <!-- Bottom flourish -->
   <div class="flourish-bottom">
