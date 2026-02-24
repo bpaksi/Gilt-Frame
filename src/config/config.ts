@@ -39,10 +39,10 @@ export const gameConfig: GameConfig = {
             to: "player",
             _trigger_note:
               "Mail the letter from a non-local post office. No return address.",
-            body: "Sealed letter with hidden acrostic passphrase. Includes website URL.",
+            body: "Sealed letter with hidden acrostic passphrase (I SEE CLEARLY) and secondary hidden word (BLIND). No URL — delivered via SMS.",
             _signature: "— The Registrar",
             _content_notes:
-              "Letter must contain the acrostic 'SEE TRULY' hidden in the first letters of key sentences. Include giltframe.org URL. Wax seal optional but encouraged.",
+              "Letter encodes the acrostic 'I SEE CLEARLY' — first letter of each paragraph including the illuminated drop cap. Physical template: src/config/letters/Prologue_Summons_Letter_v2.html/.pdf. URL intentionally excluded — delivered via SMS (prologue_magic_link). The Registrar is ceremonial and does not reference the website.",
           },
         },
         prologue_magic_link: {
@@ -66,7 +66,7 @@ export const gameConfig: GameConfig = {
 
           config: {
             placeholder: "Speak the words.",
-            passphrase: "SEE TRULY",
+            passphrase: "I SEE CLEARLY",
           },
         },
         prologue_reward: {
@@ -77,7 +77,7 @@ export const gameConfig: GameConfig = {
           config: {
             chapter_name: "The Summons",
             primary:
-              "You have spoken the words. The Sight stirs within you, Sparrow. What was lost is now reborn.",
+              "You have spoken the words. The Sight stirs within you, Sparrow. What was hidden is now seen.",
             secondary: "The Order has heard you.",
           },
         },
@@ -90,9 +90,9 @@ export const gameConfig: GameConfig = {
           config: {
             to: "player",
             _trigger_note:
-              "Auto-send 3 hours after she enters the site and completes the passphrase. SMS with Marker image.",
+              "Auto-sends next morning (4:30am EST) after passphrase is completed. delay_mornings: 1.",
             body: "The Order has noted your acceptance. Prepare yourself. The first trial is near.",
-            image: "assets/prologue-sms-marker.png",
+            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
           },
         },
       },
@@ -132,7 +132,7 @@ export const gameConfig: GameConfig = {
             to: "player",
             _trigger_note:
               "Send morning of March 3 while at/near Kellogg Manor for anniversary. MMS with coordinates and Marker image.",
-            body: "A Marker has been placed. 42.406256, -85.402025. Your first trial begins now. giltframe.org",
+            body: "The Order has marked a site at 42.406256, -85.402025. Your first trial begins now. giltframe.org",
             image: "https://giltframe.org/marker/marker-v3-gold-512.png",
           },
         },
@@ -170,8 +170,8 @@ export const gameConfig: GameConfig = {
             distance_gates: [
               { above: 200, text: "The Marker is far. Keep searching." },
               { above: 100, text: "You draw closer. The Marker stirs." },
-              { above: 50,  text: "The Marker grows warm. You are near." },
-              { above: 0,   text: "The Marker burns bright. You have arrived." },
+              { above: 50, text: "The Marker grows warm. You are near." },
+              { above: 0, text: "The Marker burns bright. You have arrived." },
             ],
             instruction: "The timekeeper stands before me",
           },
@@ -187,7 +187,7 @@ export const gameConfig: GameConfig = {
                 question:
                   "Four guardians encircle the dial. What form do they take?",
                 correct_answer: "Maidens",
-                answer_pool: ["Seraphim", "Warriors", "Beasts"],
+                answer_pool: ["Seraphim", "Warriors", "Beasts", "Cherubs", "Nymphs"],
                 hints: [
                   "Stand at the dial and look closely at the figures around its edge.",
                   "They are not warriors, nor angels. They are gentler than that.",
@@ -200,6 +200,8 @@ export const gameConfig: GameConfig = {
                   "Time waits for no one",
                   "All things must pass",
                   "The sun also rises",
+                  "Make hay while the sun shines",
+                  "He who hesitates is lost",
                 ],
                 hints: [
                   "The truth is written on the dial itself. Read what it says.",
@@ -245,7 +247,7 @@ export const gameConfig: GameConfig = {
           config: {
             chapter_name: "The Compass and the Sundial",
             primary:
-              "The needle has shown you the way. Take flight, Sparrow — destiny awaits.",
+              "The needle has shown you the way. Take flight, Sparrow — the Timekeeper knows where it leads.",
             secondary: "Your first fragment has been placed in the vault.",
           },
         },
@@ -273,9 +275,25 @@ export const gameConfig: GameConfig = {
       location: "Art Institute of Chicago",
       window: "Mar 10-24, 2026",
       steps: {
+        // Post-Ch1 narrative beat. The Order reveals it didn't know the bearing
+        // until Christine activated the timekeeper. Names Kellogg for the first
+        // time. First explicit antagonist whisper. "A summons will follow by post."
+        ch2_timekeeper_email: {
+          order: 0,
+          type: "email",
+          name: "The Timekeeper Speaks",
+          trigger: "manual",
+          config: {
+            to: "player",
+            _trigger_note:
+              "Send ~March 10-12, roughly 1 week after Ch1 completion. Must fire before the mid-gap email and before the physical Ch2 summons letter is mailed.",
+            subject: "The Timekeeper Speaks",
+            template: "ch2-timekeeper",
+          },
+        },
         // Subtly references the 255° bearing from Ch1 without naming Chicago.
         ch2_mid_gap_email: {
-          order: 0,
+          order: 1,
           type: "email",
           name: "Mid-Gap: A Bearing Worth Remembering",
           trigger: "manual",
@@ -288,7 +306,7 @@ export const gameConfig: GameConfig = {
           },
         },
         ch2_pre_trip_letter: {
-          order: 1,
+          order: 2,
           type: "letter",
           name: "The Pre-Trip Letter",
           trigger: "manual",
@@ -303,7 +321,7 @@ export const gameConfig: GameConfig = {
           },
         },
         ch2_tickler: {
-          order: 2,
+          order: 3,
           type: "sms",
           name: "The Summons",
           trigger: "manual",
@@ -320,7 +338,7 @@ export const gameConfig: GameConfig = {
           },
         },
         ch2_museum_proximity: {
-          order: 3,
+          order: 4,
           type: "sms",
           name: "The Arrival",
           trigger: "manual",
@@ -356,7 +374,7 @@ export const gameConfig: GameConfig = {
         //
         // Painting pool: real works confirmed on display in Gallery 273.
         ch2_find_portrait: {
-          order: 4,
+          order: 5,
           type: "website",
           name: "The Portrait",
           component: "FindByText",
@@ -391,7 +409,7 @@ export const gameConfig: GameConfig = {
         // 255° bearing from Ch1 — she confirmed the bearing points to Chicago,
         // and now she reads "Zorn / Chicago 1893" inscribed on the canvas.
         ch2_zorn_questions: {
-          order: 5,
+          order: 6,
           type: "website",
           name: "The Patron's Trial",
           component: "MultipleChoice",
@@ -400,7 +418,17 @@ export const gameConfig: GameConfig = {
               {
                 question: "What does she hold?",
                 correct_answer: "An ivory gavel",
-                answer_pool: ["A folded fan", "A small book", "A bouquet of flowers"],
+                answer_pool: [
+                  "A folded fan",
+                  "A small book",
+                  "A bouquet of flowers",
+                  "A pair of gloves",
+                  "A string of pearls",
+                ],
+                hints: [
+                  "Look at her hands. She carries something that speaks to her authority.",
+                  "She presided over the Board of Lady Managers at the 1893 World's Fair. What would a presiding officer hold?",
+                ],
                 // Palmer held the gavel she used to preside over the Board of
                 // Lady Managers at the 1893 World's Columbian Exposition.
               },
@@ -408,7 +436,11 @@ export const gameConfig: GameConfig = {
                 question:
                   "The artist inscribed this canvas at the lower left. What city appears in the inscription?",
                 correct_answer: "Chicago",
-                answer_pool: ["Stockholm", "Paris", "New York"],
+                answer_pool: ["Stockholm", "Paris", "New York", "London", "Boston"],
+                hints: [
+                  "Look to the lower left corner of the canvas. The artist signed his work there.",
+                  "The inscription names where this portrait was painted — and where the 255° bearing led you.",
+                ],
                 // Inscription reads "Zorn / Chicago 1893". Callbacks to Ch1's
                 // 255° bearing pointing from Kellogg Manor toward Chicago.
               },
@@ -430,7 +462,7 @@ export const gameConfig: GameConfig = {
         //   Q-alt1: "What is the woman reading?" → "A newspaper"
         //   Q-alt2: "What does the setting reveal?" → "A private garden"
         ch2_find_cassatt: {
-          order: 6,
+          order: 7,
           type: "website",
           name: "The Advisor's Trail",
           component: "FindByText",
@@ -464,7 +496,7 @@ export const gameConfig: GameConfig = {
         // Q4 rewards Christine's deep Cassatt knowledge (Japanese woodblock
         // influence — she would know this from years of study).
         ch2_cassatt_questions: {
-          order: 7,
+          order: 8,
           type: "website",
           name: "The Advisor's Trial",
           component: "MultipleChoice",
@@ -478,6 +510,12 @@ export const gameConfig: GameConfig = {
                   "From below, looking up",
                   "At eye level, facing the figures",
                   "From behind, over the woman's shoulder",
+                  "From the side, in profile",
+                  "Through a doorway, at a distance",
+                ],
+                hints: [
+                  "Step back from the painting. Notice where your eye sits relative to the figures — above them, below them, or level?",
+                  "The artist painted as a bird would see — from the air, looking earthward.",
                 ],
                 // The overhead/bird's-eye perspective is THE defining feature
                 // of The Child's Bath, inspired by Japanese ukiyo-e prints.
@@ -490,6 +528,12 @@ export const gameConfig: GameConfig = {
                   "Italian Renaissance fresco",
                   "Dutch Golden Age still life",
                   "Spanish Baroque portraiture",
+                  "French Impressionist landscape",
+                  "American Realist painting",
+                ],
+                hints: [
+                  "The flattened shapes, bold outlines, and cropped composition echo an Eastern tradition Cassatt encountered in Paris in 1890.",
+                  "She attended an exhibition of prints at the École des Beaux-Arts. That encounter changed everything.",
                 ],
                 // Cassatt visited the 1890 ukiyo-e exhibition at the École des
                 // Beaux-Arts in Paris. The Child's Bath is a direct culmination
@@ -504,7 +548,7 @@ export const gameConfig: GameConfig = {
         // fellow member of the Order" without naming her — the debrief email
         // will reveal more. Threads to Crystal Bridges / Alice Walton / Degas.
         ch2_reward: {
-          order: 8,
+          order: 9,
           type: "website",
           name: "The Reward",
           component: "RevealNarrative",
@@ -516,7 +560,7 @@ export const gameConfig: GameConfig = {
           },
         },
         ch2_post_solve: {
-          order: 9,
+          order: 10,
           type: "sms",
           name: "Post-Solve Confirmation",
           trigger: "auto",
@@ -541,7 +585,7 @@ export const gameConfig: GameConfig = {
         // converge" (Crystal Bridges, Arkansas). (5) Hint at Alice Walton as
         // a modern patron who "saw what others could not."
         ch2_debrief_email: {
-          order: 10,
+          order: 11,
           type: "email",
           name: "The Debrief",
           trigger: "manual",
@@ -554,7 +598,7 @@ export const gameConfig: GameConfig = {
           },
         },
         ch2_sister_release: {
-          order: 11,
+          order: 12,
           type: "sms",
           name: "Companion Release",
           trigger: "auto",
@@ -574,41 +618,6 @@ export const gameConfig: GameConfig = {
       name: "The Keeper's Archive",
       location: "Kalamazoo / KIA / Kellogg Manor",
       window: "Late Mar - Mid Apr, 2026",
-      steps: {},
-    },
-
-    ch4: {
-      name: "The Southern Vault",
-      location: "Crystal Bridges Museum, Bentonville AR",
-      window: "Mid Apr - Early May, 2026",
-      steps: {},
-    },
-
-    ch5: {
-      name: "The Windmill Key",
-      location: "Kellogg Manor (windmill)",
-      window: "May - Early Jun, 2026",
-      steps: {},
-    },
-
-    ch6: {
-      name: "The Living Gallery",
-      location: "Shedd Aquarium, Chicago",
-      window: "Early Jun - Jun 14, 2026",
-      steps: {},
-    },
-
-    ch7: {
-      name: "The Dunes Passage",
-      location: "Sleeping Bear Dunes, MI",
-      window: "Late Jun - Mid Jul, 2026",
-      steps: {},
-    },
-
-    ch8: {
-      name: "The Final Frame",
-      location: "Kellogg Manor gazebo (by boat)",
-      window: "Late Jul - Aug, 2026",
       steps: {},
     },
   },
