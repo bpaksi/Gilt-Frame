@@ -250,9 +250,16 @@ The following known deviations exist in the codebase as of the time this documen
 | Issue | Affected Components |
 |---|---|
 | Hardcoded `rgba(200, 165, 75, ...)` instead of token | All quest components, most game components |
-| `HintSystem` (GAME tier) imports `revealHint` directly | `game/HintSystem.tsx` — should only accept `revealHintAction` prop with no fallback, or be moved to `game/quest/` |
 | `QuestStateMachine` missing showcase export | `game/quest/QuestStateMachine.tsx` |
 | `PuzzleSolve`, `StateFader`, `OracleView`, `AskTheOracle`, `OracleHistory`, `ScrollsOfKnowledge`, `LandingPage`, `JourneyTimeline`, `MomentCard`, `MomentDetail` missing showcase | Various `game/*.tsx` |
+
+**Remediated:**
+
+| Issue | Resolution |
+|---|---|
+| `HintSystem` (GAME tier) imported `revealHint` directly | Fixed — `HintSystem` now accepts only `onHintReveal` prop; no action imports. |
+| `MultipleChoice` recorded wrong answers with `correct_answer` instead of the selected option | Fixed — `AnswerQuestion.onWrong` now passes the selected string; `MultipleChoice.handleWrong` uses it. |
+| `FindByText` did not forward `onAnswerRecord` to its inner `MultipleChoice` | Fixed — `onAnswerRecord` added to `FindByTextProps` and forwarded. |
 
 ---
 
