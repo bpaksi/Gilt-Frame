@@ -32,11 +32,9 @@ export default function CurrentStepAction({
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
-  const [delayMornings, setDelayMornings] = useState<number | null>(null);
 
   const isLetter = step.type === "letter";
   const isOffline = step.type !== "website";
-  const supportsDelay = step.type === "sms" || step.type === "email";
 
   const alreadySent =
     messageProgress?.status === "sent" ||
@@ -50,22 +48,6 @@ export default function CurrentStepAction({
     setError("");
 
     try {
-      if (delayMornings) {
-        const res = await adminFetch("/api/admin/schedule", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ track, chapterId, stepId: step.id, delayMornings }),
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          setError(data.error ?? "Schedule failed.");
-          return;
-        }
-        setDone(true);
-        setTimeout(() => router.refresh(), 1200);
-        return;
-      }
-
       const sendRes = await adminFetch("/api/admin/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -170,7 +152,7 @@ export default function CurrentStepAction({
   }
 
   // Offline steps
-  const actionLabel = isLetter ? "RECEIVED" : delayMornings ? "SEND" : "SEND NOW";
+  const actionLabel = isLetter ? "RECEIVED" : "SEND NOW";
 
   return (
     <div className="admin-card px-4 py-3.5 mb-4">
@@ -218,22 +200,6 @@ export default function CurrentStepAction({
         </div>
       ) : (
         <div className="mt-3">
-          {supportsDelay && (
-            <select
-              value={delayMornings ?? ""}
-              onChange={(e) =>
-                setDelayMornings(e.target.value ? Number(e.target.value) : null)
-              }
-              className="admin-input admin-focus w-full h-9 px-2 border border-admin-border rounded-md text-xs font-inherit bg-admin-card text-admin-text mb-2 transition-colors"
-            >
-              <option value="">No delay</option>
-              <option value="1">Next morning (4:30am)</option>
-              <option value="2">2 mornings</option>
-              <option value="3">3 mornings</option>
-              <option value="4">4 mornings</option>
-              <option value="5">5 mornings</option>
-            </select>
-          )}
           <button
             onClick={handleSend}
             disabled={sending}
