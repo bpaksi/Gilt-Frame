@@ -152,7 +152,7 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
     >
       <p
         style={{
-          color: colors.gold50,
+          color: colors.gold60,
           fontFamily,
           fontSize: "13px",
           fontStyle: "italic",
@@ -168,7 +168,7 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           <p
             style={{
-              color: colors.gold50,
+              color: colors.gold60,
               fontFamily,
               fontSize: "14px",
               fontStyle: "italic",
@@ -197,7 +197,7 @@ export default function AskTheOracle({ onConversation }: AskTheOracleProps) {
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           <p
             style={{
-              color: colors.gold50,
+              color: colors.gold60,
               fontFamily,
               fontSize: "14px",
               fontStyle: "italic",

@@ -38,7 +38,7 @@ function HintItem({ hint }: { hint: string }) {
       <div style={{ overflow: "hidden", minHeight: 0 }}>
         <p
           style={{
-            color: colors.gold50,
+            color: colors.gold60,
             fontFamily,
             fontSize: "14px",
             fontStyle: "italic",

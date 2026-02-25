@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { colors } from "@/components/ui/tokens";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { colors, fontFamily } from "@/components/ui/tokens";
 
 interface OrbAnimationProps {
   onComplete: () => void;
@@ -36,6 +36,8 @@ const TRAIL_COUNT = 5;
 const TRAIL_LAG = 0.015;
 const TRAIL_OPACITIES = [0.35, 0.25, 0.18, 0.12, 0.07];
 
+const SKIP_SHOW_MS = 4000;
+
 export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimationProps) {
   const orbRef = useRef<SVGCircleElement>(null);
   const orbPathRef = useRef<SVGPathElement>(null);
@@ -47,6 +49,37 @@ export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimation
   const trailRefs = useRef<(SVGCircleElement | null)[]>([]);
   const dotRefs = useRef<(SVGCircleElement | null)[]>([]);
   const completedRef = useRef(false);
+  const rafIdRef = useRef<number>(0);
+  const [showSkip, setShowSkip] = useState(false);
+
+  const handleSkip = useCallback(() => {
+    if (completedRef.current) return;
+    completedRef.current = true;
+    cancelAnimationFrame(rafIdRef.current);
+    setShowSkip(false);
+
+    // Settle SVG into the Marker's final form
+    const orb = orbRef.current;
+    const afterglow = afterglowRef.current;
+    const markerBorder = markerBorderRef.current;
+    const curve1 = curve1Ref.current;
+    const curve2 = curve2Ref.current;
+
+    if (orb) orb.style.opacity = "0";
+    trailRefs.current.forEach((t) => { if (t) t.style.opacity = "0"; });
+    if (afterglow) afterglow.style.opacity = "0.8";
+    if (markerBorder) markerBorder.style.opacity = "0.25";
+    if (curve1) curve1.style.opacity = "1";
+    if (curve2) curve2.style.opacity = "1";
+    dotRefs.current.forEach((d) => { if (d) d.style.opacity = "1"; });
+
+    onComplete();
+  }, [onComplete]);
+
+  useEffect(() => {
+    const skipTimer = setTimeout(() => setShowSkip(true), delayMs + SKIP_SHOW_MS);
+    return () => clearTimeout(skipTimer);
+  }, [delayMs]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -71,7 +104,6 @@ export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimation
       const pathLength = safeOrbPath.getTotalLength();
       let animStart: number | null = null;
       let flashFired = false;
-      let rafId: number;
 
       function setOrbPos(x: number, y: number) {
         safeOrb.setAttribute("cx", String(x));
@@ -191,12 +223,12 @@ export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimation
         }
 
         if (elapsed < TIMELINE.fieldsIn.end + 1000) {
-          rafId = requestAnimationFrame(animate);
+          rafIdRef.current = requestAnimationFrame(animate);
         }
       }
 
-      rafId = requestAnimationFrame(animate);
-      return () => cancelAnimationFrame(rafId);
+      rafIdRef.current = requestAnimationFrame(animate);
+      return () => cancelAnimationFrame(rafIdRef.current);
     }, delayMs);
 
     return () => clearTimeout(timer);
@@ -216,7 +248,10 @@ export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimation
         }}
       />
 
-      <div style={{ position: "relative", width: "min(200px, 30svh)", height: "min(260px, 39svh)" }}>
+      <div
+        onClick={handleSkip}
+        style={{ position: "relative", width: "min(200px, 30svh)", height: "min(260px, 39svh)", cursor: "pointer" }}
+      >
         <svg
           viewBox="0 0 200 260"
           xmlns="http://www.w3.org/2000/svg"
@@ -318,6 +353,24 @@ export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimation
             />
           ))}
         </svg>
+        {showSkip && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: "-32px",
+              left: 0,
+              right: 0,
+              textAlign: "center",
+              color: colors.gold30,
+              fontSize: "11px",
+              fontFamily,
+              letterSpacing: "1px",
+              animation: "fade-in 0.8s ease forwards",
+            }}
+          >
+            tap to skip
+          </div>
+        )}
       </div>
 
     </>

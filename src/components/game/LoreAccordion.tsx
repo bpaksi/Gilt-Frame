@@ -16,7 +16,7 @@ export default function LoreAccordion({
 
   if (unlockedEntries.length === 0) {
     return (
-      <EmptyState style={{ color: colors.gold35, fontSize: "14px", letterSpacing: undefined, padding: "40px 0" }}>
+      <EmptyState style={{ color: colors.gold45, fontSize: "14px", letterSpacing: undefined, padding: "40px 0" }}>
         No scrolls have been revealed yet.
         <br />
         Continue your journey, Sparrow.

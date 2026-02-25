@@ -6,6 +6,7 @@ import { adminFetch } from "@/lib/admin/fetch";
 import { COMPONENT_ADVANCE, type StepWithId } from "@/config";
 import type { MessageProgressRow } from "@/lib/admin/actions";
 import HintPush from "./HintPush";
+import { useLiveConfirm } from "./useLiveConfirm";
 
 type Props = {
   step: StepWithId;
@@ -32,6 +33,7 @@ export default function CurrentStepAction({
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
+  const { confirmPending, gate } = useLiveConfirm();
 
   const isLetter = step.type === "letter";
   const isOffline = step.type !== "website";
@@ -187,29 +189,33 @@ export default function CurrentStepAction({
             </span>
           </div>
           <button
-            onClick={handleSend}
+            onClick={() => gate(handleSend)}
             disabled={sending}
             className={`admin-btn admin-focus w-full h-9 rounded-md text-[13px] font-bold tracking-[0.5px] text-white border-none font-inherit transition-colors duration-150 ${
-              isLetter
-                ? sending ? "bg-admin-green-disabled cursor-not-allowed" : "bg-admin-green hover:brightness-110 cursor-pointer"
-                : sending ? "bg-admin-blue-disabled cursor-not-allowed" : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
+              confirmPending
+                ? "bg-red-600 hover:bg-red-700 cursor-pointer animate-pulse"
+                : isLetter
+                  ? sending ? "bg-admin-green-disabled cursor-not-allowed" : "bg-admin-green hover:brightness-110 cursor-pointer"
+                  : sending ? "bg-admin-blue-disabled cursor-not-allowed" : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
             }`}
           >
-            {sending ? "Processing..." : "SEND NOW"}
+            {confirmPending ? "CONFIRM SEND" : sending ? "Processing..." : "SEND NOW"}
           </button>
         </div>
       ) : (
         <div className="mt-3">
           <button
-            onClick={handleSend}
+            onClick={() => gate(handleSend)}
             disabled={sending}
             className={`admin-btn admin-focus w-full h-9 rounded-md text-[13px] font-bold tracking-[0.5px] text-white border-none font-inherit transition-colors duration-150 ${
-              isLetter
-                ? sending ? "bg-admin-green-disabled cursor-not-allowed" : "bg-admin-green hover:brightness-110 cursor-pointer"
-                : sending ? "bg-admin-blue-disabled cursor-not-allowed" : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
+              confirmPending
+                ? "bg-red-600 hover:bg-red-700 cursor-pointer animate-pulse"
+                : isLetter
+                  ? sending ? "bg-admin-green-disabled cursor-not-allowed" : "bg-admin-green hover:brightness-110 cursor-pointer"
+                  : sending ? "bg-admin-blue-disabled cursor-not-allowed" : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
             }`}
           >
-            {sending ? "Processing..." : actionLabel}
+            {confirmPending ? "CONFIRM SEND" : sending ? "Processing..." : actionLabel}
           </button>
         </div>
       )}

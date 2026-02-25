@@ -26,7 +26,7 @@ const tabStyle = (active: boolean): React.CSSProperties => ({
   border: "none",
   borderBottom: active ? `1px solid ${colors.gold45}` : "1px solid transparent",
   padding: "0 0 8px 0",
-  color: active ? colors.gold70 : colors.gold50,
+  color: active ? colors.gold70 : colors.gold60,
   fontFamily,
   fontSize: "13px",
   fontStyle: "italic",

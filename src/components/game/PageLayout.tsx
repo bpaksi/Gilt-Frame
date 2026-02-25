@@ -62,7 +62,7 @@ export const showcase: ShowcaseDefinition<PageLayoutProps> = {
     children: (
       <p
         style={{
-          color: colors.gold50,
+          color: colors.gold60,
           fontFamily,
           fontSize: "16px",
           fontStyle: "italic",

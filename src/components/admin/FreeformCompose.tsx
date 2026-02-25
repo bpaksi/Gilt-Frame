@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { adminFetch } from "@/lib/admin/fetch";
+import { useLiveConfirm } from "./useLiveConfirm";
 
 const SIGNATURES: { label: string; value: string }[] = [
   { label: "The Registrar", value: "\n\n\u2014 The Registrar" },
@@ -23,6 +24,7 @@ export default function FreeformCompose({
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const { confirmPending, gate } = useLiveConfirm();
 
   async function handleSend() {
     if (!body.trim() || sending) return;
@@ -126,15 +128,17 @@ export default function FreeformCompose({
 
       <div className="flex items-center gap-2 mt-2">
         <button
-          onClick={handleSend}
+          onClick={() => gate(handleSend)}
           disabled={!body.trim() || sending}
           className={`admin-btn admin-focus h-8 px-4 text-white border-none rounded text-xs font-semibold font-inherit transition-colors duration-150 ${
-            !body.trim() || sending
-              ? "bg-admin-blue-disabled cursor-not-allowed"
-              : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
+            confirmPending
+              ? "bg-red-600 hover:bg-red-700 cursor-pointer animate-pulse"
+              : !body.trim() || sending
+                ? "bg-admin-blue-disabled cursor-not-allowed"
+                : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
           }`}
         >
-          {sending ? "Sending..." : "SEND"}
+          {confirmPending ? "CONFIRM SEND" : sending ? "Sending..." : "SEND"}
         </button>
         {result && (
           <span className="text-xs text-admin-green">{result}</span>

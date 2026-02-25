@@ -52,7 +52,7 @@ export default function AlignBearing({ config, onAdvance }: AlignBearingProps) {
         } else if (hasRotatedEnough) {
           textEl.textContent = "closer...";
           textEl.style.opacity = String(0.3 + proximity * 0.5);
-          textEl.style.color = colors.gold50;
+          textEl.style.color = colors.gold60;
           textEl.style.transform = "none";
         } else {
           textEl.textContent = "";

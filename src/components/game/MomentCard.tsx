@@ -51,7 +51,7 @@ export default function MomentCard({ moment, chapterName }: MomentCardProps) {
         </UppercaseLabel>
         <p
           style={{
-            color: colors.gold50,
+            color: colors.gold60,
             fontFamily,
             fontSize: "11px",
           }}

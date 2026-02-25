@@ -56,7 +56,7 @@ export default function MomentDetail({ moment, chapterName }: MomentDetailProps)
       {/* Date */}
       <p
         style={{
-          color: colors.gold50,
+          color: colors.gold60,
           fontFamily,
           fontSize: "12px",
         }}

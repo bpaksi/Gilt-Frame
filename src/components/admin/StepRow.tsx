@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { adminFetch } from "@/lib/admin/fetch";
 import type { StepWithId } from "@/config";
+import { useLiveConfirm } from "./useLiveConfirm";
 
 export type StepState = "delivered" | "sent" | "ready" | "active" | "locked" | "scheduled";
 
@@ -32,6 +33,7 @@ export default function StepRow({
     stepState === "sent" ? "sent" : stepState === "delivered" ? "delivered" : null
   );
   const [error, setError] = useState("");
+  const { confirmPending, gate } = useLiveConfirm();
 
   // Swipe state
   const [swipeOffset, setSwipeOffset] = useState(0);
@@ -293,15 +295,17 @@ export default function StepRow({
 
         {showSendButton && (
           <button
-            onClick={handleSend}
+            onClick={() => gate(handleSend)}
             disabled={sending}
             className={`admin-btn admin-focus h-7 px-3 text-white border-none rounded text-[11px] font-semibold tracking-[0.5px] shrink-0 transition-colors duration-150 ${
-              sending
-                ? "bg-admin-blue-disabled cursor-not-allowed"
-                : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
+              confirmPending
+                ? "bg-red-600 hover:bg-red-700 cursor-pointer animate-pulse"
+                : sending
+                  ? "bg-admin-blue-disabled cursor-not-allowed"
+                  : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
             }`}
           >
-            {sending ? "..." : "SEND"}
+            {confirmPending ? "CONFIRM" : sending ? "..." : "SEND"}
           </button>
         )}
 

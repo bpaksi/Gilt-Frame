@@ -31,7 +31,7 @@ interface OracleHistoryProps {
 export default function OracleHistory({ conversations }: OracleHistoryProps) {
   if (conversations.length === 0) {
     return (
-      <EmptyState style={{ color: colors.gold35, fontSize: "14px", letterSpacing: undefined, padding: "40px 0" }}>
+      <EmptyState style={{ color: colors.gold45, fontSize: "14px", letterSpacing: undefined, padding: "40px 0" }}>
         No questions have been asked yet.
         <br />
         The Oracle awaits.
@@ -54,7 +54,7 @@ export default function OracleHistory({ conversations }: OracleHistoryProps) {
         </span>
         <span
           style={{
-            color: colors.gold25,
+            color: colors.gold35,
             fontFamily,
             fontSize: "11px",
             fontStyle: "italic",

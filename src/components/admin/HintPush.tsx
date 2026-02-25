@@ -6,6 +6,7 @@ import {
   gameConfig,
   getOrderedSteps,
 } from "@/config";
+import { useLiveConfirm } from "./useLiveConfirm";
 
 export default function HintPush({
   track,
@@ -21,6 +22,7 @@ export default function HintPush({
   const [pushing, setPushing] = useState(false);
   const [lastPushed, setLastPushed] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const { confirmPending, gate } = useLiveConfirm();
 
   const chapter = gameConfig.chapters[chapterId];
   if (!chapter) return null;
@@ -77,15 +79,17 @@ export default function HintPush({
             Next: Tier {nextTier}
           </div>
           <button
-            onClick={handlePush}
+            onClick={() => gate(handlePush)}
             disabled={pushing}
             className={`admin-btn admin-focus h-7 px-3 text-white border-none rounded text-[11px] font-semibold transition-colors duration-150 ${
-              pushing
-                ? "bg-[#f0a830] cursor-not-allowed"
-                : "bg-admin-orange hover:brightness-110 cursor-pointer"
+              confirmPending
+                ? "bg-red-600 hover:bg-red-700 cursor-pointer animate-pulse"
+                : pushing
+                  ? "bg-[#f0a830] cursor-not-allowed"
+                  : "bg-admin-orange hover:brightness-110 cursor-pointer"
             }`}
           >
-            {pushing ? "..." : "PUSH ALERT"}
+            {confirmPending ? "CONFIRM" : pushing ? "..." : "PUSH ALERT"}
           </button>
         </div>
       ) : (
