@@ -32,8 +32,8 @@ export async function POST(request: NextRequest) {
 
   const supabase = createAdminClient();
 
-  // Verify chapter is active
-  const { data: cp } = await supabase
+  // Find or create an active chapter_progress row
+  let { data: cp } = await supabase
     .from("chapter_progress")
     .select("id, current_step_id")
     .eq("track", track)
@@ -42,10 +42,35 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!cp) {
-    return NextResponse.json(
-      { error: "Chapter is not active." },
-      { status: 400 }
-    );
+    // Check if a completed row already exists (reactivate it)
+    const { data: existing } = await supabase
+      .from("chapter_progress")
+      .select("id")
+      .eq("track", track)
+      .eq("chapter_id", chapterId)
+      .single();
+
+    if (existing) {
+      await supabase
+        .from("chapter_progress")
+        .update({ completed_at: null, current_step_id: stepId })
+        .eq("id", existing.id);
+      cp = { id: existing.id, current_step_id: stepId };
+    } else {
+      const { data: created, error: insertErr } = await supabase
+        .from("chapter_progress")
+        .insert({ track, chapter_id: chapterId, current_step_id: stepId })
+        .select("id, current_step_id")
+        .single();
+
+      if (insertErr || !created) {
+        return NextResponse.json(
+          { error: "Failed to activate chapter." },
+          { status: 500 }
+        );
+      }
+      cp = created;
+    }
   }
 
   // Verify this is actually the current step via pointer

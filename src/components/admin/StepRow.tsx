@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { adminFetch } from "@/lib/admin/fetch";
 import type { StepWithId } from "@/config";
 import { useLiveConfirm } from "./useLiveConfirm";
@@ -25,6 +26,7 @@ export default function StepRow({
   messageId?: string;
   readOnly?: boolean;
 }) {
+  const router = useRouter();
   const [sending, setSending] = useState(false);
   const [marking, setMarking] = useState(false);
   const [completing, setCompleting] = useState(false);
@@ -170,6 +172,7 @@ export default function StepRow({
         setCompleted(true);
         setSwiped(false);
         setSwipeOffset(0);
+        setTimeout(() => router.refresh(), 600);
       }
     } catch {
       setError("Network error.");
@@ -277,9 +280,7 @@ export default function StepRow({
             <span className={`${isCompleted ? "text-admin-text-faint" : isCurrent ? "text-admin-text-dark font-semibold" : "text-admin-text font-medium"}`}>
               {step.name}
             </span>
-            <span className="text-[10px] text-admin-text-faint uppercase tracking-[0.5px]">
-              {step.type}
-            </span>
+            <TypeBadge type={step.type} />
             {hasCompanion && (
               <span className="text-[9px] bg-blue-50 text-admin-blue px-1.5 py-px rounded-sm font-semibold">
                 +auto
@@ -346,5 +347,23 @@ export default function StepRow({
         )}
       </div>
     </div>
+  );
+}
+
+const TYPE_STYLE: Record<string, { bg: string; text: string }> = {
+  sms: { bg: "bg-blue-100", text: "text-blue-700" },
+  email: { bg: "bg-purple-100", text: "text-purple-700" },
+  letter: { bg: "bg-amber-100", text: "text-amber-700" },
+  website: { bg: "bg-emerald-100", text: "text-emerald-700" },
+};
+
+function TypeBadge({ type }: { type: string }) {
+  const style = TYPE_STYLE[type] ?? { bg: "bg-gray-100", text: "text-gray-600" };
+  return (
+    <span
+      className={`text-[9px] font-bold uppercase tracking-[0.5px] px-1.5 py-px rounded-sm ${style.bg} ${style.text}`}
+    >
+      {type}
+    </span>
   );
 }
