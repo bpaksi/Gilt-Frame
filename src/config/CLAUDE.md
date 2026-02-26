@@ -82,6 +82,8 @@ Two modes determined by whether coordinates are present:
 | `distance_gates` | no | `Array<{above: number, text: string}>` sorted descending by `above`. First gate where distance > `above` wins. Falls back to `DEFAULT_DISTANCE_GATES` when omitted. |
 | `hints` | no | Progressive hints shown via HintSystem during the compass phase. |
 | `title_lines` | no | Lines of text shown above the tap marker in Phase 2. |
+| `enable_label` | no | Label for the location permission button. Default: `"Enable Location"` |
+| `arrived_label` | no | Label for the manual arrival button (shown when no geofence). Default: `"I have arrived"` |
 
 ---
 
@@ -119,6 +121,9 @@ Player rotates their phone to point at the target bearing and holds steady. Perm
 | `locking_message` | no | Shown above the countdown after solving. Default: `"The compass yields its secret…"` |
 | `resolution_message` | no | Shown after the countdown completes. Default: `"The way is found"` |
 | `permission_message` | no | Shown on the orientation permission screen. Default: `"The compass awaits your permission."` |
+| `hold_label` | no | Label shown when on-target and holding steady. Default: `"hold..."` |
+| `approach_label` | no | Label shown when approaching the target. Default: `"closer..."` |
+| `enable_label` | no | Label for the compass permission button. Default: `"Enable Compass"` |
 
 ---
 
@@ -145,6 +150,7 @@ Text input rendered inside PageLayout's orb ceremony. Comparison is case-insensi
 |---|:---:|---|
 | `passphrase` | **yes** | The correct passphrase. Compared case-insensitively. |
 | `placeholder` | no | Input placeholder text. Default: `"Speak the words."` |
+| `error_message` | no | Error message shown on wrong passphrase. Default: `"You have not been summoned."` |
 
 ---
 

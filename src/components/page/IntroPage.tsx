@@ -1,6 +1,6 @@
 "use client";
 
-import PageLayout from "./PageLayout";
+import PageLayout from "@/components/game/ui/PageLayout";
 import GhostButton from "@/components/ui/GhostButton";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
@@ -15,7 +15,7 @@ export default function IntroPage({
   onComplete,
 }: IntroPageProps) {
   return (
-    <PageLayout>
+    <PageLayout skipLabel="tap to skip">
       {isReplay ? (
         <GhostButton onClick={onComplete} style={{ fontSize: "14px", padding: "12px 32px" }}>
           Return to Journey

@@ -1,22 +1,28 @@
 # CLAUDE.md — Game Component Architecture
 
-**These rules are architectural law.** Every component in `src/components/game/` must conform. Deviations require explicit, documented justification. When in doubt: ask before building, not after.
+**These rules are architectural law.** Every component in `src/components/game/` and `src/components/page/` must conform. Deviations require explicit, documented justification. When in doubt: ask before building, not after.
 
 ---
 
-## Three-Tier Architecture
+## Four-Tier Architecture
 
-All game components live in one of three tiers. The tier determines what a component may import, what state it may hold, and what API shape it must expose.
+Components live in one of four tiers. The tier determines what a component may import, what state it may hold, and what API shape it must expose.
 
 ```
 ┌──────────────────────────────────────────────┐
+│  PAGE  (components/page/)                    │
+│  Page-level compositions. Own their strings. │
+│  Compose GAME UI + UI primitives.            │
+├──────────────────────────────────────────────┤
 │  QUEST  (game/quest/)                        │
 │  Orchestrates a full step. Owns progression. │
-│  May call DB actions. Composes GAME + UI.    │
+│  May call DB actions. Composes GAME UI + UI. │
+│  Can hardcode defaults for config fields.    │
 ├──────────────────────────────────────────────┤
-│  GAME  (game/*.tsx)                          │
-│  Game mechanics, animation, user interaction │
-│  No DB access. No hardcoded text or config.  │
+│  GAME UI  (game/ui/)                         │
+│  Reusable game building blocks.              │
+│  No DB access. NO hardcoded strings/defaults.│
+│  All text via required props.                │
 ├──────────────────────────────────────────────┤
 │  UI  (components/ui/)                        │
 │  Atomic primitives. Fully generic.           │
@@ -24,27 +30,35 @@ All game components live in one of three tiers. The tier determines what a compo
 └──────────────────────────────────────────────┘
 ```
 
-**Data flows downward only.** QUEST reads from config and passes props to GAME. GAME passes props to UI. Nothing reaches up.
+**Data flows downward only.** PAGE and QUEST read from config and pass props to GAME UI. GAME UI passes props to UI. Nothing reaches up.
+
+### String rules
+
+- **GAME UI** (`game/ui/`): Zero hardcoded strings. No defaults. All text via required props.
+- **QUEST** (`game/quest/`): Can have defaults for config fields. Reusable components get optional config fields.
+- **PAGE** (`components/page/`): Own their strings — they are the callers that pass text down.
 
 ---
 
 ## Tier Permissions Matrix
 
-| Capability | UI | GAME | QUEST |
-|---|:---:|:---:|:---:|
-| Import from `src/components/ui/` | ✓ | ✓ | ✓ |
-| Import from `src/components/game/` | — | ✓ | ✓ |
-| Import from `@/lib/hooks/` | — | ✓ | ✓ |
-| Import from `@/lib/geo` | — | ✓ | ✓ |
-| Import from `@/lib/actions/` (DB/CRUD) | — | — | ✓ |
-| Import from `@/config` | — | — | ✓ |
-| Hold local UI state (animations, focus) | ✓ | ✓ | ✓ |
-| Hold game phase state | — | ✓ | ✓ |
-| Trigger advancement (`onAdvance()`) | — | ✓ | ✓ |
-| Write to database | — | — | ✓ |
-| Hardcode narrative text | — | — | — |
-| Hardcode colors / sizes | — | — | — |
-| Export `showcase` | ✓ | ✓ | ✓ |
+| Capability | UI | GAME UI | QUEST | PAGE |
+|---|:---:|:---:|:---:|:---:|
+| Import from `src/components/ui/` | ✓ | ✓ | ✓ | ✓ |
+| Import from `src/components/game/ui/` | — | ✓ | ✓ | ✓ |
+| Import from `src/components/page/` | — | — | — | ✓ |
+| Import from `@/lib/hooks/` | — | ✓ | ✓ | ✓ |
+| Import from `@/lib/geo` | — | ✓ | ✓ | ✓ |
+| Import from `@/lib/actions/` (DB/CRUD) | — | — | ✓ | — |
+| Import from `@/config` | — | — | ✓ | — |
+| Hold local UI state (animations, focus) | ✓ | ✓ | ✓ | ✓ |
+| Hold game phase state | — | ✓ | ✓ | ✓ |
+| Trigger advancement (`onAdvance()`) | — | ✓ | ✓ | — |
+| Write to database | — | — | ✓ | — |
+| Hardcode narrative text | — | — | defaults OK | ✓ |
+| Hardcode string defaults | — | — | ✓ | ✓ |
+| Hardcode colors / sizes | — | — | — | — |
+| Export `showcase` | ✓ | ✓ | ✓ | optional |
 
 ---
 
@@ -177,26 +191,26 @@ style={{ color: "rgba(200, 165, 75, 0.9)" }}
 
 These must never appear in new code. Flag them in review.
 
-### 1. Direct action import in a GAME component
+### 1. Direct action import in a GAME UI component
 
 ```typescript
-// ✗ GAME tier importing from @/lib/actions/
-import { revealHint } from "@/lib/actions/quest";  // NOT allowed in game/*.tsx
+// ✗ GAME UI tier importing from @/lib/actions/
+import { revealHint } from "@/lib/actions/quest";  // NOT allowed in game/ui/*.tsx
 ```
 
-`revealHint` belongs in QUEST components (`game/quest/`). GAME components receive callables as props.
+`revealHint` belongs in QUEST components (`game/quest/`). GAME UI components receive callables as props.
 
-### 2. Hardcoded narrative text
+### 2. Hardcoded narrative text in GAME UI
 
 ```typescript
-// ✗ Text baked into a GAME component
+// ✗ Text baked into a GAME UI component
 <p>Walk toward the painting until you feel the pull.</p>
 
-// ✓ Text comes from config
-<p>{config.instruction}</p>
+// ✓ Text comes from required props
+<p>{instruction}</p>
 ```
 
-GAME components must accept all displayed text via `config` or props.
+GAME UI components must accept all displayed text via required props. No defaults allowed.
 
 ### 3. Hardcoded colors or sizes
 
@@ -229,7 +243,7 @@ function handleSuccess() {
 
 ### 6. Upward imports between tiers
 
-UI components must not import from `game/`. GAME components must not import from `game/quest/`. Data and callbacks only flow downward.
+UI components must not import from `game/`. GAME UI components must not import from `game/quest/` or `page/`. PAGE components must not import from `game/quest/`. Data and callbacks only flow downward.
 
 ### 7. Config shape defined inline
 
@@ -249,41 +263,49 @@ The following known deviations exist in the codebase as of the time this documen
 
 | Issue | Affected Components |
 |---|---|
-| Hardcoded `rgba(200, 165, 75, ...)` instead of token | All quest components, most game components |
-| `QuestStateMachine` missing showcase export | `game/quest/QuestStateMachine.tsx` |
-| `PuzzleSolve`, `StateFader`, `OracleView`, `AskTheOracle`, `OracleHistory`, `ScrollsOfKnowledge`, `LandingPage`, `JourneyTimeline`, `MomentCard`, `MomentDetail` missing showcase | Various `game/*.tsx` |
+| Hardcoded `rgba(200, 165, 75, ...)` instead of token | All quest components, most game/ui components |
 
 **Remediated:**
 
 | Issue | Resolution |
 |---|---|
-| `HintSystem` (GAME tier) imported `revealHint` directly | Fixed — `HintSystem` now accepts only `onHintReveal` prop; no action imports. |
+| `HintSystem` (GAME UI tier) imported `revealHint` directly | Fixed — `HintSystem` now accepts only `onHintReveal` prop; no action imports. |
 | `MultipleChoice` recorded wrong answers with `correct_answer` instead of the selected option | Fixed — `AnswerQuestion.onWrong` now passes the selected string; `MultipleChoice.handleWrong` uses it. |
 | `FindByText` did not forward `onAnswerRecord` to its inner `MultipleChoice` | Fixed — `onAnswerRecord` added to `FindByTextProps` and forwarded. |
+| GAME UI components had hardcoded strings | Fixed — `HintSystem`, `OrbAnimation`, `UnlockAnimation`, `PageLayout`, `FollowDirections` now require all text via props. |
+| Page compositions mixed with game building blocks | Fixed — moved to `components/page/` tier (IntroPage, WaitingScreen, OracleView, JourneyTimeline, MomentCard, MomentDetail, AskTheOracle, LoreAccordion, OracleHistory). |
+| Quest hardcoded strings without config override | Fixed — added optional config fields: `BearingPuzzleConfig.{hold_label, approach_label, enable_label}`, `FindByGpsConfig.{enable_label, arrived_label}`, `PassphraseEntryConfig.error_message`. |
 
 ---
 
 ## Quick Reference
 
 ```
-game/quest/   → QUEST tier: orchestration, DB access allowed, config-driven
-game/*.tsx    → GAME tier: mechanics/animation, no DB, props-only
-components/ui/→ UI tier: atomic, no game semantics, no hardcoded anything
+components/page/  → PAGE tier: page-level compositions, own their strings
+game/quest/       → QUEST tier: orchestration, DB access, config-driven, defaults OK
+game/ui/          → GAME UI tier: reusable building blocks, NO strings, NO defaults
+components/ui/    → UI tier: atomic, no game semantics, no hardcoded anything
 
-All three tiers:
-  ✓ export showcase: ShowcaseDefinition<Props>
-  ✓ set showcase.uses to list any other gallery components rendered internally
+All tiers:
   ✓ use tokens from @/components/ui/tokens
-  ✓ receive all text/config via props, never hardcode
+  ✓ receive all text/config via props, never hardcode (GAME UI: required props only)
 
-QUEST only:
-  ✓ import from @/lib/actions/
-  ✓ accept optional action override props (recordAnswerAction?, revealHintAction?, ...)
-  ✓ call onAdvance() exactly once on step completion
-
-GAME only:
+GAME UI:
+  ✓ export showcase: ShowcaseDefinition<Props>
   ✓ import from @/lib/hooks/, @/lib/geo
   ✓ compose UI components
   ✗ never import from @/lib/actions/
-  ✗ never hardcode narrative text
+  ✗ never hardcode strings — all text via required props
+
+QUEST:
+  ✓ export showcase: ShowcaseDefinition<Props>
+  ✓ import from @/lib/actions/
+  ✓ accept optional action override props (recordAnswerAction?, revealHintAction?, ...)
+  ✓ call onAdvance() exactly once on step completion
+  ✓ may hardcode defaults for config fields (config.x ?? "default")
+
+PAGE:
+  ✓ compose GAME UI + UI components
+  ✓ own their narrative strings (pass down as props)
+  ✗ never import from game/quest/ or @/lib/actions/
 ```

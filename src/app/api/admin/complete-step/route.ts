@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
   if (!track || !chapterId || !stepId) {
     return NextResponse.json(
       { error: "track, chapterId, and stepId are required." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       if (insertErr || !created) {
         return NextResponse.json(
           { error: "Failed to activate chapter." },
-          { status: 500 }
+          { status: 500 },
         );
       }
       cp = created;
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
   if (cp.current_step_id !== stepId) {
     return NextResponse.json(
       { error: "Step is not the current active step." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -112,18 +112,26 @@ export async function POST(request: NextRequest) {
     .eq("id", spId);
 
   if (spError) {
-    console.error("[complete-step] Failed to set step_progress.completed_at:", spError);
-    return NextResponse.json({ error: `Step progress update failed: ${spError.message}` }, { status: 500 });
+    console.error(
+      "[complete-step] Failed to set step_progress.completed_at:",
+      spError,
+    );
+    return NextResponse.json(
+      { error: `Step progress update failed: ${spError.message}` },
+      { status: 500 },
+    );
   }
 
-  const currentStep = orderedSteps[stepIndex];
-
-  await logAdminAction("complete_step", {
-    chapter_id: chapterId,
-    step_id: stepId,
-    step_name: formatStepKey(stepId),
-    step_index: stepIndex,
-  }, track);
+  await logAdminAction(
+    "complete_step",
+    {
+      chapter_id: chapterId,
+      step_id: stepId,
+      step_name: formatStepKey(stepId),
+      step_index: stepIndex,
+    },
+    track,
+  );
 
   // Auto-advance any consecutive auto-triggered messaging steps + handle chapter completion
   await autoAdvanceMessagingSteps(track, chapterId, stepIndex);

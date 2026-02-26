@@ -14,6 +14,8 @@ type IndoorConfig = {
 interface FollowDirectionsProps {
   config: IndoorConfig;
   onComplete: () => void;
+  hintRequestLabel: string;
+  hintLoadingLabel: string;
   revealedHintTiers?: number[];
   onHintReveal?: (tier: number) => Promise<void>;
 }
@@ -21,6 +23,8 @@ interface FollowDirectionsProps {
 export default function FollowDirections({
   config,
   onComplete,
+  hintRequestLabel,
+  hintLoadingLabel,
   revealedHintTiers,
   onHintReveal,
 }: FollowDirectionsProps) {
@@ -46,6 +50,8 @@ export default function FollowDirections({
           <OrnateDivider />
           <HintSystem
             hints={config.hints}
+            requestLabel={hintRequestLabel}
+            loadingLabel={hintLoadingLabel}
             initialRevealedTiers={revealedHintTiers}
             onHintReveal={onHintReveal}
           />
@@ -66,6 +72,8 @@ export const showcase: ShowcaseDefinition<FollowDirectionsProps> = {
       arrival_instruction: "Tap when you find it.",
       hints: ["Look for the gold leaf border.", "It hangs near the north window.", "Third painting from the left."],
     },
+    hintRequestLabel: "Request a Hint",
+    hintLoadingLabel: "Revealing...",
   },
   callbacks: { onComplete: "done", onHintReveal: "action" },
 };

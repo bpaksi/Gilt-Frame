@@ -1,6 +1,6 @@
 "use client";
 
-import PageLayout from "./PageLayout";
+import PageLayout from "@/components/game/ui/PageLayout";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
@@ -10,7 +10,7 @@ interface WaitingScreenProps {
 
 export default function WaitingScreen({ message }: WaitingScreenProps) {
   return (
-    <PageLayout>
+    <PageLayout skipLabel="tap to skip">
       <p
         style={{
           color: colors.gold60,

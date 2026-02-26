@@ -2,14 +2,14 @@
 
 import { useRef, useState, useCallback } from "react";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
-import TapToContinue from "../TapToContinue";
-import CompassRose from "../CompassRose";
-import CompletionCountdown from "../CompletionCountdown";
+import TapToContinue from "../ui/TapToContinue";
+import CompassRose from "../ui/CompassRose";
+import CompletionCountdown from "../ui/CompletionCountdown";
 import MarkerSVG from "@/components/ui/MarkerSVG";
 import { colors, colorBases, fontFamily } from "@/components/ui/tokens";
 import type { BearingPuzzleConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
-import type { AlignFrameData } from "../CompassRose";
+import type { AlignFrameData } from "../ui/CompassRose";
 
 interface AlignBearingProps {
   config: BearingPuzzleConfig;
@@ -45,12 +45,12 @@ export default function AlignBearing({ config, onAdvance }: AlignBearingProps) {
       }
       if (textEl) {
         if (isOnTarget && hasRotatedEnough) {
-          textEl.textContent = "hold...";
+          textEl.textContent = config.hold_label ?? "hold...";
           textEl.style.opacity = "0.8";
           textEl.style.color = colors.goldBright90;
           textEl.style.transform = `translate(${shakeX}px, ${shakeY}px)`;
         } else if (hasRotatedEnough) {
-          textEl.textContent = "closer...";
+          textEl.textContent = config.approach_label ?? "closer...";
           textEl.style.opacity = String(0.3 + proximity * 0.5);
           textEl.style.color = colors.gold60;
           textEl.style.transform = "none";
@@ -60,7 +60,7 @@ export default function AlignBearing({ config, onAdvance }: AlignBearingProps) {
         }
       }
     },
-    [],
+    [config.hold_label, config.approach_label],
   );
 
   // Phase driven by CompassRose.onComplete
@@ -94,7 +94,7 @@ export default function AlignBearing({ config, onAdvance }: AlignBearingProps) {
       >
         <TapToContinue
           lines={config.permission_lines ?? [config.permission_message ?? "The compass awaits your permission."]}
-          instruction="Enable Compass"
+          instruction={config.enable_label ?? "Enable Compass"}
           onComplete={handlePermission}
           markerDelay={config.permission_lines ? undefined : 0}
           textDelay={config.permission_lines ? undefined : 0}

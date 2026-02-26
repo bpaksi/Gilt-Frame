@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import PageLayout from "../PageLayout";
-import HintSystem from "../HintSystem";
+import PageLayout from "../ui/PageLayout";
+import HintSystem from "../ui/HintSystem";
 import OrnateDivider from "@/components/ui/OrnateDivider";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { PassphraseEntryConfig } from "@/config";
@@ -45,7 +45,7 @@ export default function PassphraseEntry({
     } else {
       setStatus("error");
       setShaking(true);
-      setErrorMsg("You have not been summoned.");
+      setErrorMsg(config.error_message ?? "You have not been summoned.");
       setTimeout(() => setShaking(false), 400);
       setTimeout(() => {
         setErrorMsg("");
@@ -61,7 +61,7 @@ export default function PassphraseEntry({
   const hints = config.hints ?? [];
 
   return (
-    <PageLayout onComplete={() => setInputReady(true)}>
+    <PageLayout skipLabel="tap to skip" onComplete={() => setInputReady(true)}>
       <input
         ref={inputRef}
         type="text"
@@ -125,6 +125,8 @@ export default function PassphraseEntry({
           />
           <HintSystem
             hints={hints}
+            requestLabel="Request a Hint"
+            loadingLabel="Revealing..."
             initialRevealedTiers={revealedHintTiers}
             onHintReveal={onHintReveal}
           />

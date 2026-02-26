@@ -14,16 +14,16 @@ import MarkerSVG, { showcase as markerSVG } from "@/components/ui/MarkerSVG";
 import Accordion, { showcase as accordion } from "@/components/ui/Accordion";
 
 // ── Game Building Blocks ─────────────────────────────────────────────────────
-import PageLayout, { showcase as pageLayout } from "@/components/game/PageLayout";
-import WaitingScreen, { showcase as waitingScreen } from "@/components/game/WaitingScreen";
-import TapToContinue, { showcase as tapToContinue } from "@/components/game/TapToContinue";
-import AnswerQuestion, { showcase as answerQuestion } from "@/components/game/AnswerQuestion";
-import CompassRose, { showcase as compassRose } from "@/components/game/CompassRose";
-import HintSystem, { showcase as hintSystem } from "@/components/game/HintSystem";
-import RevealLines, { showcase as revealLines } from "@/components/game/RevealLines";
-import FollowDirections, { showcase as followDirections } from "@/components/game/FollowDirections";
-import UnlockAnimation, { showcase as unlockAnimation } from "@/components/game/UnlockAnimation";
-import CompletionCountdown, { showcase as completionCountdown } from "@/components/game/CompletionCountdown";
+import PageLayout, { showcase as pageLayout } from "@/components/game/ui/PageLayout";
+import WaitingScreen, { showcase as waitingScreen } from "@/components/page/WaitingScreen";
+import TapToContinue, { showcase as tapToContinue } from "@/components/game/ui/TapToContinue";
+import AnswerQuestion, { showcase as answerQuestion } from "@/components/game/ui/AnswerQuestion";
+import CompassRose, { showcase as compassRose } from "@/components/game/ui/CompassRose";
+import HintSystem, { showcase as hintSystem } from "@/components/game/ui/HintSystem";
+import RevealLines, { showcase as revealLines } from "@/components/game/ui/RevealLines";
+import FollowDirections, { showcase as followDirections } from "@/components/game/ui/FollowDirections";
+import UnlockAnimation, { showcase as unlockAnimation } from "@/components/game/ui/UnlockAnimation";
+import CompletionCountdown, { showcase as completionCountdown } from "@/components/game/ui/CompletionCountdown";
 
 // ── Quest Components ─────────────────────────────────────────────────────────
 import FindByGps, { showcase as findByGps } from "@/components/game/quest/FindByGps";
@@ -54,17 +54,18 @@ const ALL_ENTRIES: ShowcaseEntry[] = [
   { id: "AmbientParticles", filePath: "src/components/ui/AmbientParticles.tsx",  showcase: ambientParticles, Component: AmbientParticles },
   { id: "MarkerSVG",        filePath: "src/components/ui/MarkerSVG.tsx",         showcase: markerSVG,        Component: MarkerSVG },
   { id: "Accordion",        filePath: "src/components/ui/Accordion.tsx",         showcase: accordion,        Component: Accordion },
-  // Game
-  { id: "PageLayout",          filePath: "src/components/game/PageLayout.tsx",          showcase: pageLayout,          Component: PageLayout },
-  { id: "WaitingScreen",       filePath: "src/components/game/WaitingScreen.tsx",       showcase: waitingScreen,       Component: WaitingScreen },
-  { id: "TapToContinue",       filePath: "src/components/game/TapToContinue.tsx",       showcase: tapToContinue,       Component: TapToContinue },
-  { id: "AnswerQuestion",      filePath: "src/components/game/AnswerQuestion.tsx",      showcase: answerQuestion,      Component: AnswerQuestion },
-  { id: "CompassRose",         filePath: "src/components/game/CompassRose.tsx",         showcase: compassRose,         Component: CompassRose },
-  { id: "HintSystem",          filePath: "src/components/game/HintSystem.tsx",          showcase: hintSystem,          Component: HintSystem },
-  { id: "RevealLines",         filePath: "src/components/game/RevealLines.tsx",         showcase: revealLines,         Component: RevealLines },
-  { id: "FollowDirections",    filePath: "src/components/game/FollowDirections.tsx",    showcase: followDirections,    Component: FollowDirections },
-  { id: "UnlockAnimation",     filePath: "src/components/game/UnlockAnimation.tsx",     showcase: unlockAnimation,     Component: UnlockAnimation },
-  { id: "CompletionCountdown", filePath: "src/components/game/CompletionCountdown.tsx", showcase: completionCountdown, Component: CompletionCountdown },
+  // Game UI
+  { id: "PageLayout",          filePath: "src/components/game/ui/PageLayout.tsx",          showcase: pageLayout,          Component: PageLayout },
+  { id: "TapToContinue",       filePath: "src/components/game/ui/TapToContinue.tsx",       showcase: tapToContinue,       Component: TapToContinue },
+  { id: "AnswerQuestion",      filePath: "src/components/game/ui/AnswerQuestion.tsx",      showcase: answerQuestion,      Component: AnswerQuestion },
+  { id: "CompassRose",         filePath: "src/components/game/ui/CompassRose.tsx",         showcase: compassRose,         Component: CompassRose },
+  { id: "HintSystem",          filePath: "src/components/game/ui/HintSystem.tsx",          showcase: hintSystem,          Component: HintSystem },
+  { id: "RevealLines",         filePath: "src/components/game/ui/RevealLines.tsx",         showcase: revealLines,         Component: RevealLines },
+  { id: "FollowDirections",    filePath: "src/components/game/ui/FollowDirections.tsx",    showcase: followDirections,    Component: FollowDirections },
+  { id: "UnlockAnimation",     filePath: "src/components/game/ui/UnlockAnimation.tsx",     showcase: unlockAnimation,     Component: UnlockAnimation },
+  { id: "CompletionCountdown", filePath: "src/components/game/ui/CompletionCountdown.tsx", showcase: completionCountdown, Component: CompletionCountdown },
+  // Page
+  { id: "WaitingScreen",       filePath: "src/components/page/WaitingScreen.tsx",          showcase: waitingScreen,       Component: WaitingScreen },
   // Quest
   { id: "FindByGps",       filePath: "src/components/game/quest/FindByGps.tsx",       showcase: findByGps,       Component: FindByGps },
   { id: "MultipleChoice",  filePath: "src/components/game/quest/MultipleChoice.tsx",  showcase: multipleChoice,  Component: MultipleChoice },

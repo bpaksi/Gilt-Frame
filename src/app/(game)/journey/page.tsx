@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { resolveTrack } from "@/lib/track";
 import { getMoments } from "@/lib/actions/moments";
 import { gameConfig } from "@/config";
-import JourneyTimeline from "@/components/game/JourneyTimeline";
+import JourneyTimeline from "@/components/page/JourneyTimeline";
 import EmptyState from "@/components/ui/EmptyState";
 
 export const metadata: Metadata = {

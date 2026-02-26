@@ -13,13 +13,13 @@ import {
 
 interface UnlockAnimationProps {
   onComplete: () => void;
-  unlockText?: string;
+  unlockText: string;
   supernova?: boolean;
 }
 
 export default function UnlockAnimation({
   onComplete,
-  unlockText = "Press to Unlock",
+  unlockText,
   supernova = false,
 }: UnlockAnimationProps) {
   const svgRef = useRef<SVGSVGElement>(null);

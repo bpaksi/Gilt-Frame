@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { resolveTrack } from "@/lib/track";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getAllLore } from "@/lib/lore";
-import OracleView from "@/components/game/OracleView";
+import OracleView from "@/components/page/OracleView";
 import EmptyState from "@/components/ui/EmptyState";
 
 export const metadata: Metadata = {

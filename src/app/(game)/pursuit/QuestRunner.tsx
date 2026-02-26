@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { componentRegistry } from "@/components/game/quest/registry";
-import FadeTransition from "@/components/game/FadeTransition";
+import FadeTransition from "@/components/game/ui/FadeTransition";
 import type { QuestState } from "@/lib/actions/quest";
 import { advanceQuest, recordAnswer, revealHint } from "@/lib/actions/quest";
 

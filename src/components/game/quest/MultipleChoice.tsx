@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import HintSystem from "../HintSystem";
-import AnswerQuestion from "../AnswerQuestion";
+import HintSystem from "../ui/HintSystem";
+import AnswerQuestion from "../ui/AnswerQuestion";
 import OrnateDivider from "@/components/ui/OrnateDivider";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { MultipleChoiceConfig } from "@/config";
@@ -111,6 +111,8 @@ export default function MultipleChoice({
           <HintSystem
             key={currentQ}
             hints={question.hints}
+            requestLabel="Request a Hint"
+            loadingLabel="Revealing..."
             tierOffset={hintTierOffset}
             initialRevealedTiers={revealedHintTiers}
             onHintReveal={onHintReveal}

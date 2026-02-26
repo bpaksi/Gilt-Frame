@@ -1,6 +1,6 @@
 "use client";
 
-import RevealLines from "./RevealLines";
+import RevealLines from "@/components/game/ui/RevealLines";
 import MarkerSVG from "@/components/ui/MarkerSVG";
 import GhostButton from "@/components/ui/GhostButton";
 import UppercaseLabel from "@/components/ui/UppercaseLabel";

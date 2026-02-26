@@ -6,7 +6,7 @@ import UppercaseLabel from "@/components/ui/UppercaseLabel";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { StoryRevealConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
-import UnlockAnimation from "../UnlockAnimation";
+import UnlockAnimation from "../ui/UnlockAnimation";
 
 interface RevealNarrativeProps {
   config: StoryRevealConfig;
@@ -35,7 +35,7 @@ export default function RevealNarrative({ config, onAdvance }: RevealNarrativePr
         <UnlockAnimation
           supernova
           onComplete={() => setPhase("text")}
-          unlockText={config.unlock_text}
+          unlockText={config.unlock_text ?? "Press to Unlock"}
         />
       ) : (
         <TextPhase config={config} onAdvance={onAdvance} continueText={config.continue_text} />

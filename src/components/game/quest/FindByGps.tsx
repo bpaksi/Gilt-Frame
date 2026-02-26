@@ -4,15 +4,15 @@ import { useRef, useState, useCallback } from "react";
 import { useGeolocation } from "@/lib/hooks/useGeolocation";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
 import { thematicDistanceText } from "@/lib/geo";
-import HintSystem from "../HintSystem";
-import CompassRose from "../CompassRose";
-import TapToContinue from "../TapToContinue";
+import HintSystem from "../ui/HintSystem";
+import CompassRose from "../ui/CompassRose";
+import TapToContinue from "../ui/TapToContinue";
 import GhostButton from "@/components/ui/GhostButton";
 import MultipleChoice from "./MultipleChoice";
 import type { FindByGpsConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 import { colors, fontFamily } from "@/components/ui/tokens";
-import type { NavigateFrameData } from "../CompassRose";
+import type { NavigateFrameData } from "../ui/CompassRose";
 
 interface FindByGpsProps {
   config: FindByGpsConfig;
@@ -120,7 +120,7 @@ export default function FindByGps({
         >
           <TapToContinue
             lines={config.wayfinding_text ? [config.wayfinding_text] : []}
-            instruction="Enable Location"
+            instruction={config.enable_label ?? "Enable Location"}
             onComplete={handlePermission}
             markerDelay={0}
             textDelay={0}
@@ -191,13 +191,15 @@ export default function FindByGps({
             onClick={() => setPhase("marker")}
             style={{ opacity: 0, animation: "fade-in 0.8s ease forwards" }}
           >
-            I have arrived
+            {config.arrived_label ?? "I have arrived"}
           </GhostButton>
         )}
 
         {config.hints && (
           <HintSystem
             hints={config.hints}
+            requestLabel="Request a Hint"
+            loadingLabel="Revealing..."
             initialRevealedTiers={revealedHintTiers}
             onHintReveal={onHintReveal}
           />

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import WaitingScreen from "@/components/game/WaitingScreen";
+import WaitingScreen from "@/components/page/WaitingScreen";
 import QuestRunner from "./QuestRunner";
 import { getQuestState } from "@/lib/actions/quest";
 

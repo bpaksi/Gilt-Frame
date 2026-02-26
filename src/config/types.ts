@@ -79,6 +79,10 @@ export type FindByGpsConfig = {
   identification_instruction?: string;
   /** Text for the "go back to compass" button on the identification phase. */
   retreat_instruction?: string;
+  /** Label for the location permission button. Default: "Enable Location" */
+  enable_label?: string;
+  /** Label for the manual arrival button (shown when no geofence). Default: "I have arrived" */
+  arrived_label?: string;
 };
 
 /** Sequential multiple-choice questions. */
@@ -103,6 +107,12 @@ export type BearingPuzzleConfig = {
   permission_message?: string;
   /** Staggered lines shown above the marker on the permission screen. Overrides permission_message when set. */
   permission_lines?: string[];
+  /** Label shown when on-target and holding steady. Default: "hold..." */
+  hold_label?: string;
+  /** Label shown when approaching the target. Default: "closer..." */
+  approach_label?: string;
+  /** Label for the compass permission button. Default: "Enable Compass" */
+  enable_label?: string;
 };
 
 /** Ceremony animation + reward text with unlock/continue buttons. */
@@ -124,6 +134,8 @@ export type PassphraseEntryConfig = {
   placeholder?: string;
   passphrase: string;
   hints?: string[];
+  /** Error message shown on wrong passphrase. Default: "You have not been summoned." */
+  error_message?: string;
 };
 
 /**

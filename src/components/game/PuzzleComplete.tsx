@@ -2,7 +2,7 @@
 
 import AmbientParticles from "@/components/ui/AmbientParticles";
 import { colors } from "@/components/ui/tokens";
-import UnlockAnimation from "./UnlockAnimation";
+import UnlockAnimation from "./ui/UnlockAnimation";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface PuzzleCompleteProps {
@@ -24,7 +24,7 @@ export default function PuzzleComplete({ onComplete }: PuzzleCompleteProps) {
       }}
     >
       <AmbientParticles />
-      <UnlockAnimation onComplete={onComplete} />
+      <UnlockAnimation onComplete={onComplete} unlockText="Press to Unlock" />
     </div>
   );
 }

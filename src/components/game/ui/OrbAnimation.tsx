@@ -5,6 +5,7 @@ import { colors, fontFamily } from "@/components/ui/tokens";
 
 interface OrbAnimationProps {
   onComplete: () => void;
+  skipLabel: string;
   delayMs?: number;
 }
 
@@ -42,7 +43,7 @@ const TRAIL_OPACITIES = [0.35, 0.25, 0.18, 0.12, 0.07];
 
 const SKIP_SHOW_MS = 4000;
 
-export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimationProps) {
+export default function OrbAnimation({ onComplete, skipLabel, delayMs = 800 }: OrbAnimationProps) {
   const orbRef = useRef<SVGCircleElement>(null);
   const orbPathRef = useRef<SVGPathElement>(null);
   const afterglowRef = useRef<SVGRectElement>(null);
@@ -375,7 +376,7 @@ export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimation
               animation: "fade-in 0.8s ease forwards",
             }}
           >
-            tap to skip
+            {skipLabel}
           </div>
         )}
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import IntroPage from "../../../../components/game/IntroPage";
+import IntroPage from "@/components/page/IntroPage";
 
 export default function BeginningClient() {
   const router = useRouter();

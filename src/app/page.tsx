@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import IntroPage from "../components/game/IntroPage";
+import IntroPage from "@/components/page/IntroPage";
 
 export const metadata: Metadata = {
   title: "The Order of the Gilt Frame",

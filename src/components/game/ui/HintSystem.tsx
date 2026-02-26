@@ -7,6 +7,8 @@ import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface HintSystemProps {
   hints: string[];
+  requestLabel: string;
+  loadingLabel: string;
   /** Offset added to the 1-based index when calling onHintReveal. Used by
    *  MultipleChoice to keep tiers globally unique across questions. */
   tierOffset?: number;
@@ -60,6 +62,8 @@ function HintItem({ hint }: { hint: string }) {
 
 export default function HintSystem({
   hints,
+  requestLabel,
+  loadingLabel,
   tierOffset = 0,
   initialRevealedTiers = EMPTY_TIERS,
   onHintReveal,
@@ -120,7 +124,7 @@ export default function HintSystem({
             disabled={loading}
             style={{ cursor: loading ? "wait" : undefined }}
           >
-            {loading ? "Revealing..." : "Request a Hint"}
+            {loading ? loadingLabel : requestLabel}
           </TextButton>
         </div>
       )}
@@ -138,6 +142,8 @@ export const showcase: ShowcaseDefinition<HintSystemProps> = {
       "Look for something gilded.",
       "The frame catches the afternoon light.",
     ],
+    requestLabel: "Request a Hint",
+    loadingLabel: "Revealing...",
   },
   callbacks: { onHintReveal: "noop" },
 };

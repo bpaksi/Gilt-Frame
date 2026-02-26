@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { resolveTrack } from "@/lib/track";
 import { getMomentById } from "@/lib/actions/moments";
 import { gameConfig } from "@/config";
-import MomentDetail from "@/components/game/MomentDetail";
+import MomentDetail from "@/components/page/MomentDetail";
 
 export const metadata: Metadata = {
   title: "Moment | The Order of the Gilt Frame",

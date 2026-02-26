@@ -7,12 +7,14 @@ import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface PageLayoutProps {
   children: React.ReactNode;
+  skipLabel: string;
   delayMs?: number;
   onComplete?: () => void;
 }
 
 export default function PageLayout({
   children,
+  skipLabel,
   delayMs = 800,
   onComplete,
 }: PageLayoutProps) {
@@ -37,7 +39,7 @@ export default function PageLayout({
         padding: "40px 24px",
       }}
     >
-      <OrbAnimation onComplete={handleAnimationComplete} delayMs={delayMs} />
+      <OrbAnimation onComplete={handleAnimationComplete} skipLabel={skipLabel} delayMs={delayMs} />
 
       <div
         style={{
@@ -59,6 +61,7 @@ export const showcase: ShowcaseDefinition<PageLayoutProps> = {
   description: "Layout wrapper with marker ceremony animation",
   uses: ["OrbAnimation"],
   defaults: {
+    skipLabel: "tap to skip",
     children: (
       <p
         style={{

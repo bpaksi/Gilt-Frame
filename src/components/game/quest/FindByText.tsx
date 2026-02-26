@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import TapToContinue from "../TapToContinue";
+import TapToContinue from "../ui/TapToContinue";
 import MultipleChoice from "./MultipleChoice";
-import HintSystem from "../HintSystem";
+import HintSystem from "../ui/HintSystem";
 import OrnateDivider from "@/components/ui/OrnateDivider";
 import type { FindByTextConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
@@ -76,6 +76,8 @@ export default function FindByText({
             />
             <HintSystem
               hints={hints}
+              requestLabel="Request a Hint"
+              loadingLabel="Revealing..."
               initialRevealedTiers={revealedHintTiers}
               onHintReveal={onHintReveal}
             />
