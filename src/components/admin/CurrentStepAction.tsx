@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { adminFetch } from "@/lib/admin/fetch";
 import { COMPONENT_ADVANCE, type StepWithId } from "@/config";
 import type { MessageProgressRow } from "@/lib/admin/actions";
-import HintPush from "./HintPush";
 import { useLiveConfirm } from "./useLiveConfirm";
 
 type Props = {
@@ -15,7 +14,6 @@ type Props = {
   stepIndex: number;
   messageProgress: MessageProgressRow | null;
   scheduledAt: string | null;
-  revealedTiers: number[];
   location: string | null;
 };
 
@@ -26,7 +24,6 @@ export default function CurrentStepAction({
   stepIndex,
   messageProgress,
   scheduledAt,
-  revealedTiers,
   location,
 }: Props) {
   const router = useRouter();
@@ -140,14 +137,6 @@ export default function CurrentStepAction({
           <span className="text-[13px] text-orange-800 font-medium">
             Waiting for player...
           </span>
-        </div>
-        <div className="mt-3">
-          <HintPush
-            track={track}
-            chapterId={chapterId}
-            stepIndex={stepIndex}
-            revealedTiers={revealedTiers}
-          />
         </div>
       </div>
     );

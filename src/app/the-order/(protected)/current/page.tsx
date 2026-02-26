@@ -39,8 +39,6 @@ export default async function AdminCurrentPage() {
   let currentStep = null;
   let currentStepProgress = null;
   let currentStepScheduledAt: string | null = null;
-  let revealedTiers: number[] = [];
-
   if (chapterId) {
     const chapter = gameConfig.chapters[chapterId];
     if (chapter) {
@@ -74,32 +72,6 @@ export default async function AdminCurrentPage() {
         }
       }
 
-      if (currentStep?.type === "website") {
-        const supabase = createAdminClient();
-        const { data: cp } = await supabase
-          .from("chapter_progress")
-          .select("id")
-          .eq("track", track)
-          .eq("chapter_id", chapterId)
-          .single();
-
-        if (cp) {
-          const { data: sp } = await supabase
-            .from("step_progress")
-            .select("id")
-            .eq("chapter_progress_id", cp.id)
-            .eq("step_id", currentStep.id)
-            .single();
-
-          if (sp) {
-            const { data: hintViews } = await supabase
-              .from("hint_views")
-              .select("hint_tier")
-              .eq("step_progress_id", sp.id);
-            revealedTiers = (hintViews ?? []).map((h) => h.hint_tier);
-          }
-        }
-      }
     }
   }
 
@@ -142,7 +114,6 @@ export default async function AdminCurrentPage() {
           stepIndex={stepIndex}
           messageProgress={currentStepProgress}
           scheduledAt={currentStepScheduledAt}
-          revealedTiers={revealedTiers}
           location={chapter?.location ?? null}
         />
       )}

@@ -40,7 +40,6 @@ function eventIcon(type: string): string {
     case "answer_submitted":
       return "\u2714";
     case "hint_requested":
-    case "hint_pushed":
       return "\uD83D\uDCA1";
     case "oracle_question":
       return "\uD83D\uDD2E";
@@ -69,7 +68,6 @@ const EVENT_DISPLAY_NAMES: Record<string, string> = {
   chapter_activated: "workflow activated",
   moment_created: "snapshot created",
   hint_requested: "alert requested",
-  hint_pushed: "alert pushed",
   passphrase_entered: "passphrase entered",
   send_step: "message sent",
   send_ad_hoc: "ad-hoc message sent",
