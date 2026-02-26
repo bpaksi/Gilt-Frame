@@ -17,7 +17,9 @@
     "db:types": "supabase gen types typescript --local > src/lib/supabase/types.ts",
     "contacts:env": "tsx scripts/contacts-to-env.ts",
     "oracle:test": "node src/scripts/oracle-stress-test.mjs",
-    "oracle:token": "node src/scripts/get-test-token.mjs"
+    "oracle:token": "node src/scripts/get-test-token.mjs",
+    "tunnel": "ngrok http 3501",
+    "dev:tunnel": "until curl -s http://localhost:4040/api/tunnels | grep -q public_url; do echo 'Waiting for ngrok...'; sleep 1; done && NEXT_PUBLIC_SITE_URL=$(curl -s http://localhost:4040/api/tunnels | grep -o 'https://[^\"]*\\.ngrok-free\\.[a-z]*') next dev --port 3501"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",
@@ -39,6 +41,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "ngrok": "5.0.0-beta.2",
     "supabase": "latest",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
@@ -47,6 +50,7 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild",
+      "ngrok",
       "sharp",
       "supabase",
       "unrs-resolver"
