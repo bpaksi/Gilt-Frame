@@ -61,6 +61,14 @@ for (const [chapterId, chapter] of Object.entries(gameConfig.chapters)) {
       }
     }
 
+    // Check delay_minutes and delay_hours are not both set
+    if (step.delay_minutes && step.delay_hours) {
+      console.error(
+        `[ERROR] ${chapterId}.${step.id}: both delay_minutes and delay_hours are set (use one or the other)`
+      );
+      errors++;
+    }
+
     // Check companion_message.to resolves in both tracks
     if (step.config.companion_message) {
       const compTo = step.config.companion_message.to;

@@ -1,10 +1,4 @@
 {
   "framework": "nextjs",
-  "regions": ["iad1"],
-  "crons": [
-    {
-      "path": "/api/cron/send-scheduled",
-      "schedule": "0 10 * * *"
-    }
-  ]
+  "regions": ["iad1"]
 }

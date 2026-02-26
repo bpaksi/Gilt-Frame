@@ -83,7 +83,7 @@ export const gameConfig: GameConfig = {
           config: {
             chapter_name: "The Summons",
             primary:
-              "The acrostic yielded its secret. I SEE CLEARLY — and so the Order sees you. The Sight stirs within you, Sparrow. What was hidden in plain letters is now spoken aloud.",
+              "The hidden message yielded its secret, and so the Order sees you. The Sight stirs within you, Sparrow. What was concealed in plain letters is now spoken aloud.",
             secondary: "The Order has heard you.",
           },
         },
@@ -92,11 +92,11 @@ export const gameConfig: GameConfig = {
           type: "sms",
           name: "Acceptance Confirmed",
           trigger: "auto",
-          delay_mornings: 1,
+          delay_minutes: 5,
           config: {
             to: "player",
             _trigger_note:
-              "Auto-sends next morning (4:30am EST) after passphrase is completed. delay_mornings: 1.",
+              "Auto-sends 5 minutes after passphrase is completed via QStash delayed delivery.",
             body: "The Order has noted your acceptance. Prepare yourself. The first trial is near.",
             image: "https://giltframe.org/marker/marker-v3-gold-512.png",
           },

@@ -30,13 +30,14 @@ Recipients are resolved directly from the track — no chapter-level indirection
 
 ## Config Pattern
 
-All step types (messaging and website) use a `config: { ... }` wrapper for type-specific properties. Step-level properties (`order`, `type`, `name`, `trigger`, `delay_hours`) sit outside config.
+All step types (messaging and website) use a `config: { ... }` wrapper for type-specific properties. Step-level properties (`order`, `type`, `name`, `trigger`, `delay_minutes`, `delay_hours`) sit outside config.
 
 ```typescript
 // Messaging step
 { order: 1, type: "sms", name: "...", trigger: "manual", config: { to, body, ... } }
 
-// Messaging step with delay (scheduling)
+// Messaging step with delay (QStash delayed delivery)
+{ order: 4, type: "sms", name: "...", trigger: "auto", delay_minutes: 5, config: { to, body, ... } }
 { order: 4, type: "sms", name: "...", trigger: "auto", delay_hours: 3, config: { to, body, ... } }
 
 // Website step

@@ -6,6 +6,7 @@ import {
   gameConfig,
   getOrderedSteps,
   COMPONENT_ADVANCE,
+  type Step,
   type ComponentName,
   type ComponentConfig,
   type AdvanceCondition,
@@ -128,10 +129,21 @@ export async function getQuestState(): Promise<QuestState> {
   };
 }
 
+/** Convert delay_minutes or delay_hours on a messaging step to seconds. Returns 0 for no delay. */
+function getDelaySeconds(step: Step): number {
+  if (step.type === "website") return 0;
+  if (step.delay_minutes) return step.delay_minutes * 60;
+  if (step.delay_hours) return step.delay_hours * 3600;
+  return 0;
+}
+
 /**
  * Starting from fromIndex + 1, send/schedule consecutive auto-triggered messaging
  * steps and advance the current_step_id pointer. Stops at the first manual or
- * website step. If all steps are exhausted, marks the chapter as complete
+ * website step. Also stops when hitting a delayed step — the quest "pauses" on
+ * that step until QStash fires the webhook, which resumes the chain.
+ *
+ * If all steps are exhausted, marks the chapter as complete
  * (sets current_step_id = NULL, completed_at = now()).
  */
 export async function autoAdvanceMessagingSteps(
@@ -151,12 +163,23 @@ export async function autoAdvanceMessagingSteps(
     if (step.type === "website") break;
     if (step.trigger !== "auto") break;
 
-    const delayMornings = step.delay_mornings;
-    if (delayMornings && delayMornings > 0) {
-      await scheduleStep(track, chapterId, step.id, delayMornings);
-    } else {
-      await sendStep(track, chapterId, step.id);
+    const delaySeconds = getDelaySeconds(step);
+    if (delaySeconds > 0) {
+      // Schedule the delayed step and STOP — pointer stays before this step.
+      // The QStash webhook will call sendStep() then resume autoAdvance.
+      await scheduleStep(track, chapterId, step.id, delaySeconds);
+
+      // Point current_step_id to the scheduled step (quest is "paused" here)
+      await supabase
+        .from("chapter_progress")
+        .update({ current_step_id: step.id })
+        .eq("track", track)
+        .eq("chapter_id", chapterId)
+        .is("completed_at", null);
+      return;
     }
+
+    await sendStep(track, chapterId, step.id);
     lastProcessedIndex = i;
   }
 

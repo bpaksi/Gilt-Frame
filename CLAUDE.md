@@ -50,6 +50,7 @@ The Order of the Gilt Frame is an immersive, location-based interactive narrativ
 | Twilio        | SMS/MMS delivery | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`                         |
 | Resend        | Email delivery   | `RESEND_API_KEY`                                                                         |
 | Google Gemini | Oracle Q&A       | `GEMINI_API_KEY`                                                                         |
+| Upstash QStash| Delayed delivery | `QSTASH_TOKEN`, `QSTASH_CURRENT_SIGNING_KEY`, `QSTASH_NEXT_SIGNING_KEY`                 |
 
 ## Reference Documents
 
@@ -89,7 +90,9 @@ supabase server session helper | src/lib/supabase/server-auth.ts
 DB types (auto-gen) | src/lib/supabase/types.ts
 email templates (HTML + text) | src/config/email/
 email template loader | src/lib/messaging/email-templates.ts
-messaging (SMS/MMS/email) | src/lib/messaging/send.ts
+messaging (SMS/MMS/email, scheduling) | src/lib/messaging/send.ts
+QStash delayed delivery client | src/lib/messaging/qstash.ts
+QStash webhook (delayed step callback) | src/app/api/webhooks/qstash/route.ts
 twilio client | src/lib/messaging/twilio.ts
 resend client | src/lib/messaging/resend.ts
 oracle system prompt | src/lib/oracle-prompt.ts
@@ -115,7 +118,7 @@ device management, enrollment, QR | src/app/the-order/(protected)/devices/
 testing page, email preview | src/app/the-order/(protected)/testing/
 enrollment handler | src/app/e/[token]/route.ts
 OG image generation | src/app/api/og/[token]/route.tsx
-scheduled message cron | src/app/api/cron/send-scheduled/route.ts
+delayed message delivery | src/lib/messaging/qstash.ts, src/app/api/webhooks/qstash/route.ts
 DB migrations | supabase/migrations/
 seed data | supabase/seed.sql
 env vars | .env.example
