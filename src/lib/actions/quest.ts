@@ -25,16 +25,21 @@ export type QuestState = {
   revealedHintTiers?: number[];
 };
 
-export async function getCurrentStepIndex(
-  supabase: SupabaseClient,
-  chapterProgressId: string,
+/**
+ * Pure config lookup: given a chapter ID and a current_step_id pointer,
+ * return the index into the ordered steps array. Returns 0 if the pointer
+ * is null (chapter just started) or the ID isn't found.
+ */
+export async function getStepIndexFromId(
+  chapterId: string,
+  currentStepId: string | null,
 ): Promise<number> {
-  const { count } = await supabase
-    .from("step_progress")
-    .select("*", { count: "exact", head: true })
-    .eq("chapter_progress_id", chapterProgressId)
-    .not("completed_at", "is", null);
-  return count ?? 0;
+  if (!currentStepId) return 0;
+  const chapter = gameConfig.chapters[chapterId];
+  if (!chapter) return 0;
+  const orderedSteps = getOrderedSteps(chapter);
+  const idx = orderedSteps.findIndex((s) => s.id === currentStepId);
+  return idx >= 0 ? idx : 0;
 }
 
 /**
@@ -86,7 +91,7 @@ export async function getQuestState(): Promise<QuestState> {
   if (!chapter) return { status: "waiting" };
 
   const orderedSteps = getOrderedSteps(chapter);
-  const stepIndex = await getCurrentStepIndex(supabase, progress.id);
+  const stepIndex = await getStepIndexFromId(progress.chapter_id, progress.current_step_id);
   const currentStep = orderedSteps[stepIndex];
 
   if (!currentStep || currentStep.type !== "website") {
@@ -124,9 +129,10 @@ export async function getQuestState(): Promise<QuestState> {
 }
 
 /**
- * Starting from fromIndex + 1, send consecutive auto-triggered messaging steps.
- * Stops at the first manual step or website step. If all chapter steps are
- * completed after the loop, marks the chapter as complete.
+ * Starting from fromIndex + 1, send/schedule consecutive auto-triggered messaging
+ * steps and advance the current_step_id pointer. Stops at the first manual or
+ * website step. If all steps are exhausted, marks the chapter as complete
+ * (sets current_step_id = NULL, completed_at = now()).
  */
 export async function autoAdvanceMessagingSteps(
   track: "test" | "live",
@@ -138,6 +144,7 @@ export async function autoAdvanceMessagingSteps(
 
   const orderedSteps = getOrderedSteps(chapter);
   const supabase = createAdminClient();
+  let lastProcessedIndex = fromIndex;
 
   for (let i = fromIndex + 1; i < orderedSteps.length; i++) {
     const step = orderedSteps[i];
@@ -150,28 +157,27 @@ export async function autoAdvanceMessagingSteps(
     } else {
       await sendStep(track, chapterId, step.id);
     }
+    lastProcessedIndex = i;
   }
 
-  // Check if all steps are now completed — if so, complete the chapter
-  const { data: cp } = await supabase
-    .from("chapter_progress")
-    .select("id")
-    .eq("track", track)
-    .eq("chapter_id", chapterId)
-    .single();
-
-  if (!cp) return;
-
-  const { count } = await supabase
-    .from("step_progress")
-    .select("*", { count: "exact", head: true })
-    .eq("chapter_progress_id", cp.id)
-    .not("completed_at", "is", null);
-
-  if ((count ?? 0) >= orderedSteps.length) {
+  // Advance pointer: next step after last processed, or complete the chapter
+  const nextIndex = lastProcessedIndex + 1;
+  if (nextIndex >= orderedSteps.length) {
+    // All steps done — complete the chapter
     await supabase
       .from("chapter_progress")
-      .update({ completed_at: new Date().toISOString() })
+      .update({
+        current_step_id: null,
+        completed_at: new Date().toISOString(),
+      })
+      .eq("track", track)
+      .eq("chapter_id", chapterId)
+      .is("completed_at", null);
+  } else {
+    // Point to the next step
+    await supabase
+      .from("chapter_progress")
+      .update({ current_step_id: orderedSteps[nextIndex].id })
       .eq("track", track)
       .eq("chapter_id", chapterId)
       .is("completed_at", null);
@@ -198,8 +204,8 @@ export async function advanceQuest(
 
   if (!progress) return getQuestState();
 
-  // Verify current step matches via step_progress count
-  const currentIndex = await getCurrentStepIndex(supabase, progress.id);
+  // Verify current step matches via pointer
+  const currentIndex = await getStepIndexFromId(chapterId, progress.current_step_id);
   if (currentIndex !== stepIndex) {
     return getQuestState();
   }
@@ -395,7 +401,7 @@ export async function pollChapterProgress(
   // Verify chapter is active
   const { data: progress } = await supabase
     .from("chapter_progress")
-    .select("id")
+    .select("id, current_step_id")
     .eq("track", trackInfo.track)
     .eq("chapter_id", chapterId)
     .is("completed_at", null)
@@ -403,6 +409,6 @@ export async function pollChapterProgress(
 
   if (!progress) return null;
 
-  const stepIndex = await getCurrentStepIndex(supabase, progress.id);
+  const stepIndex = await getStepIndexFromId(chapterId, progress.current_step_id);
   return { stepIndex };
 }

@@ -65,7 +65,7 @@ export async function sendStep(
   if (!cp) {
     const { data: created } = await supabase
       .from("chapter_progress")
-      .insert({ track, chapter_id: chapterId })
+      .insert({ track, chapter_id: chapterId, current_step_id: stepId })
       .select("id")
       .single();
     cp = created;
@@ -273,7 +273,7 @@ export async function scheduleStep(
   if (!cp) {
     const { data: created } = await supabase
       .from("chapter_progress")
-      .insert({ track, chapter_id: chapterId })
+      .insert({ track, chapter_id: chapterId, current_step_id: stepId })
       .select("id")
       .single();
     cp = created;

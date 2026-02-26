@@ -3,7 +3,6 @@ import { verifyAdminSession } from "@/lib/admin/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logAdminAction } from "@/lib/admin/log";
 import { gameConfig, getOrderedSteps } from "@/config";
-import { getCurrentStepIndex } from "@/lib/actions/quest";
 import { autoAdvanceMessagingSteps } from "@/lib/actions/quest";
 
 export async function POST(request: NextRequest) {
@@ -36,7 +35,7 @@ export async function POST(request: NextRequest) {
   // Verify chapter is active
   const { data: cp } = await supabase
     .from("chapter_progress")
-    .select("id")
+    .select("id, current_step_id")
     .eq("track", track)
     .eq("chapter_id", chapterId)
     .is("completed_at", null)
@@ -49,9 +48,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Verify this is actually the current step
-  const currentIndex = await getCurrentStepIndex(supabase, cp.id);
-  if (currentIndex !== stepIndex) {
+  // Verify this is actually the current step via pointer
+  if (cp.current_step_id !== stepId) {
     return NextResponse.json(
       { error: "Step is not the current active step." },
       { status: 400 }
@@ -102,24 +100,8 @@ export async function POST(request: NextRequest) {
     step_index: stepIndex,
   }, track);
 
-  // Auto-advance any consecutive auto-triggered messaging steps
+  // Auto-advance any consecutive auto-triggered messaging steps + handle chapter completion
   await autoAdvanceMessagingSteps(track, chapterId, stepIndex);
-
-  // Check if all steps are now completed — if so, complete the chapter
-  const { count } = await supabase
-    .from("step_progress")
-    .select("*", { count: "exact", head: true })
-    .eq("chapter_progress_id", cp.id)
-    .not("completed_at", "is", null);
-
-  if ((count ?? 0) >= orderedSteps.length) {
-    await supabase
-      .from("chapter_progress")
-      .update({ completed_at: new Date().toISOString() })
-      .eq("track", track)
-      .eq("chapter_id", chapterId)
-      .is("completed_at", null);
-  }
 
   return NextResponse.json({ success: true });
 }

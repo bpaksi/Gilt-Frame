@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendStep } from "@/lib/messaging/send";
+import { gameConfig, getOrderedSteps } from "@/config";
+import { autoAdvanceMessagingSteps } from "@/lib/actions/quest";
 
 export async function GET(request: Request) {
   // Verify cron secret to prevent unauthorized invocations
@@ -48,6 +50,16 @@ export async function GET(request: Request) {
 
     if (result.success) {
       sent++;
+
+      // Advance pointer + handle any subsequent auto steps / chapter completion
+      const chapter = gameConfig.chapters[cp.chapter_id];
+      if (chapter) {
+        const orderedSteps = getOrderedSteps(chapter);
+        const stepIndex = orderedSteps.findIndex((s) => s.id === row.step_id);
+        if (stepIndex >= 0) {
+          await autoAdvanceMessagingSteps(track, cp.chapter_id, stepIndex);
+        }
+      }
     } else {
       errors.push(`${row.step_id}: ${result.error}`);
     }

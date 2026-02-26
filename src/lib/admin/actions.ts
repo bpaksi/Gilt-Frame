@@ -2,7 +2,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { gameConfig, getOrderedSteps } from "@/config";
-import { getCurrentStepIndex } from "@/lib/actions/quest";
+import { getStepIndexFromId } from "@/lib/actions/quest";
 
 export type PlayerState = {
   track: "test" | "live";
@@ -44,7 +44,7 @@ export async function getPlayerState(
 
   const chapter = gameConfig.chapters[progress.chapter_id];
   const orderedSteps = chapter ? getOrderedSteps(chapter) : [];
-  const stepIndex = await getCurrentStepIndex(supabase, progress.id);
+  const stepIndex = await getStepIndexFromId(progress.chapter_id, progress.current_step_id);
   const currentStep = orderedSteps[stepIndex];
 
   // Get last event for this track
@@ -204,6 +204,7 @@ export type ChapterProgressRow = {
   chapter_id: string;
   started_at: string;
   completed_at: string | null;
+  current_step_id: string | null;
 };
 
 export async function getAllChapterProgress(
@@ -338,11 +339,14 @@ export async function activateChapter(
     .eq("chapter_id", chapterId)
     .single();
 
+  const orderedSteps = getOrderedSteps(chapter);
+  const firstStepId = orderedSteps[0]?.id ?? null;
+
   if (existing) {
-    // Reactivate: clear completed_at; cascade-delete step_progress children
+    // Reactivate: clear completed_at, set pointer to first step; cascade-delete step_progress children
     await supabase
       .from("chapter_progress")
-      .update({ completed_at: null })
+      .update({ completed_at: null, current_step_id: firstStepId })
       .eq("track", track)
       .eq("chapter_id", chapterId);
 
@@ -355,6 +359,7 @@ export async function activateChapter(
     await supabase.from("chapter_progress").insert({
       track,
       chapter_id: chapterId,
+      current_step_id: firstStepId,
     });
   }
 
