@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { gameConfig } from "@/config";
 import { getUnlockedLore } from "@/lib/lore";
-import { buildOracleSystemPrompt } from "@/lib/oracle-prompt";
+import { buildOracleSystemPrompt, PRIORITY_OVERRIDES } from "@/lib/oracle-prompt";
 
 export async function POST(request: Request) {
   // Resolve track from cookie
@@ -91,6 +91,50 @@ export async function POST(request: Request) {
     gameConfig.chapters,
     unlockedLore
   );
+
+  // Check for priority overrides (hand-written scripted responses)
+  const completedSet = new Set(completedChapters);
+  const matchedOverride = PRIORITY_OVERRIDES.find(
+    (o) =>
+      o.requiredChapters.every((ch) => completedSet.has(ch)) &&
+      o.triggers.some((t) => t.test(question as string))
+  );
+
+  if (matchedOverride) {
+    // Stream the scripted response as SSE (same format as normal)
+    const encoder = new TextEncoder();
+    const scriptedStream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({ text: matchedOverride.response })}\n\n`
+          )
+        );
+        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+        controller.close();
+
+        // Persist to oracle_conversations with scripted model marker
+        supabase
+          .from("oracle_conversations")
+          .insert({
+            question: (question as string).trim(),
+            response: matchedOverride.response,
+            gemini_model: "scripted",
+            tokens_used: null,
+            track,
+          })
+          .then(() => {});
+      },
+    });
+
+    return new Response(scriptedStream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+      },
+    });
+  }
 
   // Call Perplexity API
   const perplexityKey = process.env.PERPLEXITY_API_KEY;
