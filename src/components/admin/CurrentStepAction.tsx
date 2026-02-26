@@ -21,7 +21,6 @@ export default function CurrentStepAction({
   step,
   track,
   chapterId,
-  stepIndex,
   messageProgress,
   scheduledAt,
   location,
@@ -184,11 +183,19 @@ export default function CurrentStepAction({
               confirmPending
                 ? "bg-red-600 hover:bg-red-700 cursor-pointer animate-pulse"
                 : isLetter
-                  ? sending ? "bg-admin-green-disabled cursor-not-allowed" : "bg-admin-green hover:brightness-110 cursor-pointer"
-                  : sending ? "bg-admin-blue-disabled cursor-not-allowed" : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
+                  ? sending
+                    ? "bg-admin-green-disabled cursor-not-allowed"
+                    : "bg-admin-green hover:brightness-110 cursor-pointer"
+                  : sending
+                    ? "bg-admin-blue-disabled cursor-not-allowed"
+                    : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
             }`}
           >
-            {confirmPending ? "CONFIRM SEND" : sending ? "Processing..." : "SEND NOW"}
+            {confirmPending
+              ? "CONFIRM SEND"
+              : sending
+                ? "Processing..."
+                : "SEND NOW"}
           </button>
         </div>
       ) : (
@@ -200,20 +207,24 @@ export default function CurrentStepAction({
               confirmPending
                 ? "bg-red-600 hover:bg-red-700 cursor-pointer animate-pulse"
                 : isLetter
-                  ? sending ? "bg-admin-green-disabled cursor-not-allowed" : "bg-admin-green hover:brightness-110 cursor-pointer"
-                  : sending ? "bg-admin-blue-disabled cursor-not-allowed" : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
+                  ? sending
+                    ? "bg-admin-green-disabled cursor-not-allowed"
+                    : "bg-admin-green hover:brightness-110 cursor-pointer"
+                  : sending
+                    ? "bg-admin-blue-disabled cursor-not-allowed"
+                    : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
             }`}
           >
-            {confirmPending ? "CONFIRM SEND" : sending ? "Processing..." : actionLabel}
+            {confirmPending
+              ? "CONFIRM SEND"
+              : sending
+                ? "Processing..."
+                : actionLabel}
           </button>
         </div>
       )}
 
-      {error && (
-        <div className="text-xs text-admin-red mt-2">
-          {error}
-        </div>
-      )}
+      {error && <div className="text-xs text-admin-red mt-2">{error}</div>}
     </div>
   );
 }

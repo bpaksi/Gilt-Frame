@@ -130,8 +130,12 @@ export async function getQuestState(): Promise<QuestState> {
 }
 
 /** Convert delay_minutes or delay_hours on a messaging step to seconds. Returns 0 for no delay. */
-function getDelaySeconds(step: Step): number {
+function getDelaySeconds(step: Step, track: "test" | "live"): number {
   if (step.type === "website") return 0;
+  const hasDelay = step.delay_minutes || step.delay_hours;
+  if (!hasDelay) return 0;
+  // Collapse all delays to 1 minute on the test track for faster iteration
+  if (track === "test") return 60;
   if (step.delay_minutes) return step.delay_minutes * 60;
   if (step.delay_hours) return step.delay_hours * 3600;
   return 0;
@@ -163,7 +167,7 @@ export async function autoAdvanceMessagingSteps(
     if (step.type === "website") break;
     if (step.trigger !== "auto") break;
 
-    const delaySeconds = getDelaySeconds(step);
+    const delaySeconds = getDelaySeconds(step, track);
     if (delaySeconds > 0) {
       // Schedule the delayed step and STOP — pointer stays before this step.
       // The QStash webhook will call sendStep() then resume autoAdvance.

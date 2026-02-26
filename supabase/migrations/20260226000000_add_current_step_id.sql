@@ -27,7 +27,7 @@ BEGIN
   END IF;
 
   INSERT INTO public.chapter_progress (track, chapter_id, completed_at, current_step_id)
-  VALUES (p_track, p_chapter_id, now(), NULL)
+  VALUES (p_track::public.track_type, p_chapter_id, now(), NULL)
   ON CONFLICT (track, chapter_id)
   DO UPDATE SET completed_at = now(), current_step_id = NULL
   RETURNING id INTO v_cp_id;

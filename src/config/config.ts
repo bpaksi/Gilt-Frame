@@ -49,7 +49,8 @@ export const gameConfig: GameConfig = {
           order: 1,
           type: "sms",
           name: "The Marker Arrives",
-          trigger: "manual",
+          trigger: "auto",
+          delay_minutes: 5,
           config: {
             to: "player",
             _trigger_note:
@@ -194,7 +195,13 @@ export const gameConfig: GameConfig = {
                 question:
                   "Four guardians encircle the dial. What form do they take?",
                 correct_answer: "Maidens",
-                answer_pool: ["Seraphim", "Warriors", "Beasts", "Cherubs", "Nymphs"],
+                answer_pool: [
+                  "Seraphim",
+                  "Warriors",
+                  "Beasts",
+                  "Cherubs",
+                  "Nymphs",
+                ],
                 hints: [
                   "Stand at the dial and look closely at the figures around its edge.",
                   "They are not warriors, nor angels. They are gentler than that.",
@@ -444,7 +451,13 @@ export const gameConfig: GameConfig = {
                 question:
                   "The artist inscribed this canvas at the lower left. What city appears in the inscription?",
                 correct_answer: "Chicago",
-                answer_pool: ["Stockholm", "Paris", "New York", "London", "Boston"],
+                answer_pool: [
+                  "Stockholm",
+                  "Paris",
+                  "New York",
+                  "London",
+                  "Boston",
+                ],
                 hints: [
                   "Look to the lower left corner of the canvas. The artist signed his work there.",
                   "The inscription names where this portrait was painted — and where the 255° bearing led you.",

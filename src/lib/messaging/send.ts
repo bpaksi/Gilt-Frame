@@ -101,7 +101,7 @@ export async function sendStep(
 
   console.log("[sendStep] Sending", {
     type: step.type,
-    to: recipient.phone || recipient.email,
+    to: step.type === "email" ? recipient.email : recipient.phone,
     slot: step.config.to,
     stepId,
   });
@@ -144,6 +144,7 @@ export async function sendStep(
     if (!result.success) {
       messageStatus = "failed";
       error = result.error;
+      console.error("[sendStep] Email failed", { stepId, to: recipient.email, error });
     }
   } else if (step.type === "letter") {
     // Letters are physical — mark as sent (admin records mailing manually)

@@ -27,8 +27,11 @@ export async function sendEmail(
   const data = await res.json();
 
   if (!res.ok) {
-    return { success: false, error: data.message ?? `Resend error ${res.status}` };
+    const error = data.message ?? `Resend error ${res.status}`;
+    console.error("[Resend] HTTP error:", { status: res.status, error });
+    return { success: false, error };
   }
 
+  console.log("[Resend] Sent:", { id: data.id, to });
   return { success: true, id: data.id };
 }

@@ -34,8 +34,13 @@ function parseResult(res: Response, data: Record<string, unknown>): TwilioResult
 export async function sendSms(to: string, body: string, mediaUrl?: string): Promise<TwilioResult> {
   const e164To = toE164(to);
   if (DRY_RUN) {
-    const redactedDryTo = e164To.replace(/\d{4}$/, "****");
-    console.log("[DRY RUN] SMS", { to: redactedDryTo, from: TWILIO_FROM_NUMBER, body, ...(mediaUrl && { mediaUrl }) });
+    console.log(
+      `\n📱 [DRY RUN] SMS → ${e164To}\n` +
+      `   From: ${TWILIO_FROM_NUMBER}\n` +
+      `   Body: ${body}` +
+      (mediaUrl ? `\n   Media: ${mediaUrl}` : "") +
+      "\n",
+    );
     return { success: true, sid: "dry-run" };
   }
   const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
