@@ -1,6 +1,6 @@
 "use client";
 
-import { gameConfig, getOrderedSteps } from "@/config";
+import { gameConfig, getOrderedSteps, formatStepKey } from "@/config";
 
 export default function ChapterEditor() {
   const chapters = Object.entries(gameConfig.chapters);
@@ -37,7 +37,7 @@ export default function ChapterEditor() {
                     <span className="text-admin-text-faint w-5 text-right text-[10px] tabular-nums">
                       {step.order}
                     </span>
-                    <span className="font-medium">{step.name}</span>
+                    <span className="font-medium">{formatStepKey(step.id)}</span>
                     <span className="text-[10px] text-admin-text-faint uppercase tracking-[0.5px]">
                       {step.type}
                     </span>

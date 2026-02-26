@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminFetch } from "@/lib/admin/fetch";
-import { COMPONENT_ADVANCE, type StepWithId } from "@/config";
+import { COMPONENT_ADVANCE, formatStepKey, type StepWithId } from "@/config";
 import type { MessageProgressRow } from "@/lib/admin/actions";
 import { useLiveConfirm } from "./useLiveConfirm";
 
@@ -129,7 +129,7 @@ export default function CurrentStepAction({
   if (step.type === "website") {
     return (
       <div className="admin-card px-4 py-3.5 mb-4">
-        <StepHeader name={step.name} type={step.type} />
+        <StepHeader name={formatStepKey(step.id)} type={step.type} />
         {renderDetails()}
         <div className="flex items-center gap-2 mt-3 py-2.5 px-3 bg-amber-50 rounded-md border border-orange-200">
           <span className="w-2 h-2 rounded-full bg-admin-orange animate-admin-pulse" />
@@ -146,7 +146,7 @@ export default function CurrentStepAction({
 
   return (
     <div className="admin-card px-4 py-3.5 mb-4">
-      <StepHeader name={step.name} type={step.type} />
+      <StepHeader name={formatStepKey(step.id)} type={step.type} />
       {location && <Detail label="Location" value={location} />}
       {renderDetails()}
 
@@ -231,14 +231,29 @@ export default function CurrentStepAction({
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
+const TYPE_BADGE: Record<string, { bg: string; text: string; icon: string }> = {
+  sms: { bg: "bg-blue-100", text: "text-blue-700", icon: "💬" },
+  email: { bg: "bg-purple-100", text: "text-purple-700", icon: "✉️" },
+  letter: { bg: "bg-amber-100", text: "text-amber-700", icon: "📜" },
+  website: { bg: "bg-emerald-100", text: "text-emerald-700", icon: "🌐" },
+};
+
 function StepHeader({ name, type }: { name: string; type: string }) {
+  const badge = TYPE_BADGE[type] ?? {
+    bg: "bg-gray-100",
+    text: "text-gray-600",
+    icon: "",
+  };
   return (
-    <div className="flex items-center gap-2 mb-2.5">
+    <div className="flex items-center gap-2.5 mb-2.5">
+      <span
+        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[12px] font-bold uppercase tracking-[0.5px] ${badge.bg} ${badge.text}`}
+      >
+        <span className="text-[13px]">{badge.icon}</span>
+        {type}
+      </span>
       <span className="text-[15px] font-semibold text-admin-text-dark">
         {name}
-      </span>
-      <span className="text-[10px] text-admin-text-faint uppercase tracking-[0.5px]">
-        {type}
       </span>
     </div>
   );

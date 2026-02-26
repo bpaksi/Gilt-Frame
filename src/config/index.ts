@@ -1,4 +1,4 @@
-export { gameConfig, getOrderedSteps } from "./config";
+export { gameConfig, getOrderedSteps, formatStepKey } from "./config";
 export type { StepWithId } from "./config";
 export { COMPONENT_ADVANCE } from "./types";
 export type {

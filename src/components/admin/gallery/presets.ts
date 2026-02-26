@@ -1,4 +1,4 @@
-import { gameConfig, getOrderedSteps, type ComponentName, type ComponentConfig } from "@/config";
+import { gameConfig, getOrderedSteps, formatStepKey, type ComponentName, type ComponentConfig } from "@/config";
 
 export type Preset = {
   label: string;
@@ -19,7 +19,7 @@ export function getPresets(): Preset[] {
     steps.forEach((step, index) => {
       if (step.type === "website") {
         presets.push({
-          label: `${chapter.name} — ${step.name}`,
+          label: `${chapter.name} — ${formatStepKey(step.id)}`,
           chapterId,
           stepIndex: index,
           component: step.component,

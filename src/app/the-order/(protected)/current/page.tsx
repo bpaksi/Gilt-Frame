@@ -6,7 +6,7 @@ import {
   getAllChapterProgress,
 } from "@/lib/admin/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { gameConfig, getOrderedSteps } from "@/config";
+import { gameConfig, getOrderedSteps, formatStepKey } from "@/config";
 import PlayerStateCard from "@/components/admin/PlayerStateCard";
 import CurrentStepAction from "@/components/admin/CurrentStepAction";
 
@@ -95,7 +95,7 @@ export default async function AdminCurrentPage() {
       chapterId,
       chapterName: chapter?.name ?? chapterId,
       location: chapter?.location ?? null,
-      stepName: currentStep?.name ?? null,
+      stepName: currentStep ? formatStepKey(currentStep.id) : null,
       status: "pending",
       lastActivity: lastEvent?.created_at ?? null,
     };

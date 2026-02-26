@@ -30,10 +30,9 @@ export const gameConfig: GameConfig = {
       location: null,
       window: "Mar 1-3, 2026",
       steps: {
-        prologue_letter: {
+        prologue_summons_letter: {
           order: 0,
           type: "letter",
-          name: "The Summons Letter",
           trigger: "manual",
           config: {
             to: "player",
@@ -45,10 +44,9 @@ export const gameConfig: GameConfig = {
               "Letter encodes the acrostic 'I SEE CLEARLY' — first letter of each paragraph including the illuminated drop cap. Physical template: src/config/letters/Ch0-Summons.html/.pdf. URL intentionally excluded — delivered via SMS (prologue_magic_link). The Registrar is ceremonial. TONE: seduction before warning. The letter flatters Christine's perception, describes the Order's mission (hiding work in galleries and gardens), and contains ONE glancing danger reference ('survived fire, neglect, and those who would see it destroyed'). Heavy threat material was moved to Ch1 briefing email where it lands with greater force.",
           },
         },
-        prologue_magic_link: {
+        prologue_marker_arrives: {
           order: 1,
           type: "sms",
-          name: "The Marker Arrives",
           trigger: "auto",
           delay_minutes: 5,
           config: {
@@ -62,7 +60,6 @@ export const gameConfig: GameConfig = {
         prologue_passphrase: {
           order: 2,
           type: "website",
-          name: "The Passphrase",
           component: "PassphraseEntry",
 
           config: {
@@ -79,7 +76,6 @@ export const gameConfig: GameConfig = {
         prologue_reward: {
           order: 3,
           type: "website",
-          name: "The Reward",
           component: "RevealNarrative",
           config: {
             chapter_name: "The Summons",
@@ -91,7 +87,6 @@ export const gameConfig: GameConfig = {
         prologue_acceptance: {
           order: 4,
           type: "sms",
-          name: "Acceptance Confirmed",
           trigger: "auto",
           delay_minutes: 5,
           config: {
@@ -118,7 +113,6 @@ export const gameConfig: GameConfig = {
         ch1_briefing: {
           order: 0,
           type: "email",
-          name: "The Keeper's Legacy",
           trigger: "manual",
           config: {
             to: "player",
@@ -130,10 +124,9 @@ export const gameConfig: GameConfig = {
         },
         // Coordinates are the PIN location (~125m NNE of sundial), not the sundial itself.
         // The app's wayfinding compass guides her the remaining distance.
-        ch1_initiation: {
+        ch1_summons: {
           order: 1,
           type: "sms",
-          name: "The Summons",
           trigger: "manual",
           config: {
             to: "player",
@@ -143,10 +136,9 @@ export const gameConfig: GameConfig = {
             image: "https://giltframe.org/marker/marker-v3-gold-512.png",
           },
         },
-        ch1_arrived: {
+        ch1_arrival: {
           order: 2,
           type: "sms",
-          name: "The Arrival",
           trigger: "manual",
           config: {
             to: "player",
@@ -167,7 +159,6 @@ export const gameConfig: GameConfig = {
         ch1_wayfinding: {
           order: 3,
           type: "website",
-          name: "The Wayfinding",
           component: "FindByGps",
           config: {
             target_lat: 42.405278,
@@ -181,15 +172,8 @@ export const gameConfig: GameConfig = {
               { above: 0, text: "The Marker burns bright. You have arrived." },
             ],
             instruction: "The timekeeper stands before me",
-          },
-        },
-        ch1_confirmation: {
-          order: 4,
-          type: "website",
-          name: "The Confirmation",
-          component: "MultipleChoice",
-          config: {
-            instruction: "View the timekeeper before you",
+            identification_instruction: "View the timekeeper before you",
+            retreat_instruction: "That's not it — keep searching",
             questions: [
               {
                 question:
@@ -225,38 +209,26 @@ export const gameConfig: GameConfig = {
             ],
           },
         },
-        ch1_sparrow_moment: {
-          order: 5,
-          type: "website",
-          name: "The Sparrow Moment",
-          component: "FindByGps",
-          config: {
-            title_lines: [
-              "This bird casts its shadow over time.",
-              "So will you, Sparrow, cast yours.",
-            ],
-            instruction:
-              "Lay your device upon the face of the dial. Turn slowly.",
-          },
-        },
         // compass_bearing: 255° W — confirmed from recon compass photo at sundial
         ch1_compass_puzzle: {
-          order: 6,
+          order: 4,
           type: "website",
-          name: "The Compass Puzzle",
           component: "AlignBearing",
           config: {
             compass_target: 255,
             compass_tolerance: 8,
             min_rotation: 45,
             hold_seconds: 1.5,
-            instruction: "Find the way, fledgling.",
+            permission_lines: [
+              "This bird casts its shadow over time.",
+              "So will you, Sparrow, cast yours.",
+            ],
+            instruction: "Lay your device upon the face of the dial.",
           },
         },
         ch1_reward: {
-          order: 7,
+          order: 5,
           type: "website",
-          name: "The Reward",
           component: "RevealNarrative",
           config: {
             chapter_name: "The Compass and the Sundial",
@@ -266,9 +238,8 @@ export const gameConfig: GameConfig = {
           },
         },
         ch1_post_solve: {
-          order: 8,
+          order: 6,
           type: "sms",
-          name: "Post-Solve Confirmation",
           trigger: "auto",
           config: {
             to: "player",
@@ -292,10 +263,9 @@ export const gameConfig: GameConfig = {
         // Post-Ch1 narrative beat. The Order reveals it didn't know the bearing
         // until Christine activated the timekeeper. Names Kellogg for the first
         // time. First explicit antagonist whisper. "A summons will follow by post."
-        ch2_timekeeper_email: {
+        ch2_timekeeper_speaks: {
           order: 0,
           type: "email",
-          name: "The Timekeeper Speaks",
           trigger: "manual",
           config: {
             to: "player",
@@ -306,10 +276,9 @@ export const gameConfig: GameConfig = {
           },
         },
         // Subtly references the 255° bearing from Ch1 without naming Chicago.
-        ch2_mid_gap_email: {
+        ch2_mid_gap: {
           order: 1,
           type: "email",
-          name: "Mid-Gap: A Bearing Worth Remembering",
           trigger: "manual",
           config: {
             to: "player",
@@ -322,7 +291,6 @@ export const gameConfig: GameConfig = {
         ch2_pre_trip_letter: {
           order: 2,
           type: "letter",
-          name: "The Pre-Trip Letter",
           trigger: "manual",
           config: {
             to: "player",
@@ -334,10 +302,9 @@ export const gameConfig: GameConfig = {
               "The pre-trip letter should: (1) Reference the World's Columbian Exposition of 1893 obliquely, calling it 'the great Fair' or 'the White City.' (2) Allude to a woman of influence who 'saw what others could not' and 'shaped the Order's collection in an age of transformation.' (3) Hint that her likeness endures 'within a palace of art beside the lake.' (4) NOT name Palmer, Zorn, the Art Institute, or Gallery 273. Christine must discover those through the puzzle. (5) Tone: reverent, archival, the Registrar at their most ceremonial.",
           },
         },
-        ch2_tickler: {
+        ch2_summons: {
           order: 3,
           type: "sms",
-          name: "The Summons",
           trigger: "manual",
           config: {
             to: "player",
@@ -351,10 +318,9 @@ export const gameConfig: GameConfig = {
             },
           },
         },
-        ch2_museum_proximity: {
+        ch2_arrival: {
           order: 4,
           type: "sms",
-          name: "The Arrival",
           trigger: "manual",
           config: {
             to: "player",
@@ -387,10 +353,9 @@ export const gameConfig: GameConfig = {
         //   Correct → advance to observation questions.
         //
         // Painting pool: real works confirmed on display in Gallery 273.
-        ch2_find_portrait: {
+        ch2_portrait: {
           order: 5,
           type: "website",
-          name: "The Portrait",
           component: "FindByText",
           config: {
             guidance_text:
@@ -423,10 +388,9 @@ export const gameConfig: GameConfig = {
         // actually looking at it. Q1 proves observation. Q2 ties back to the
         // 255° bearing from Ch1 — she confirmed the bearing points to Chicago,
         // and now she reads "Zorn / Chicago 1893" inscribed on the canvas.
-        ch2_zorn_questions: {
+        ch2_patrons_trial: {
           order: 6,
           type: "website",
-          name: "The Patron's Trial",
           component: "MultipleChoice",
           config: {
             questions: [
@@ -482,10 +446,9 @@ export const gameConfig: GameConfig = {
         //   correct_answer: "On a Balcony — Mary Cassatt"
         //   Q-alt1: "What is the woman reading?" → "A newspaper"
         //   Q-alt2: "What does the setting reveal?" → "A private garden"
-        ch2_find_cassatt: {
+        ch2_advisors_trail: {
           order: 7,
           type: "website",
-          name: "The Advisor's Trail",
           component: "FindByText",
           config: {
             guidance_text:
@@ -517,10 +480,9 @@ export const gameConfig: GameConfig = {
         // Q3 is observational (the famous overhead perspective).
         // Q4 rewards Christine's deep Cassatt knowledge (Japanese woodblock
         // influence — she would know this from years of study).
-        ch2_cassatt_questions: {
+        ch2_advisors_trial: {
           order: 8,
           type: "website",
-          name: "The Advisor's Trial",
           component: "MultipleChoice",
           config: {
             questions: [
@@ -573,7 +535,6 @@ export const gameConfig: GameConfig = {
         ch2_reward: {
           order: 9,
           type: "website",
-          name: "The Reward",
           component: "RevealNarrative",
           config: {
             chapter_name: "The Gallery of Whispers",
@@ -585,7 +546,6 @@ export const gameConfig: GameConfig = {
         ch2_post_solve: {
           order: 10,
           type: "sms",
-          name: "Post-Solve Confirmation",
           trigger: "manual",
           config: {
             to: "player",
@@ -608,10 +568,9 @@ export const gameConfig: GameConfig = {
         // built into the hills of a distant state, where art and nature
         // converge" (Crystal Bridges, Arkansas). (5) Hint at Alice Walton as
         // a modern patron who "saw what others could not."
-        ch2_debrief_email: {
+        ch2_debrief: {
           order: 11,
           type: "email",
-          name: "The Debrief",
           trigger: "manual",
           config: {
             to: "player",
@@ -621,10 +580,9 @@ export const gameConfig: GameConfig = {
             template: "ch2-debrief",
           },
         },
-        ch2_sister_release: {
+        ch2_companion_release: {
           order: 12,
           type: "sms",
-          name: "Companion Release",
           trigger: "auto",
           config: {
             to: "companion2",
@@ -648,6 +606,20 @@ export const gameConfig: GameConfig = {
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+
+/**
+ * Derive a display label from a step key.
+ * Strips the chapter prefix (prologue_ or ch\d+_), splits on _, title-cases.
+ *   formatStepKey("ch1_briefing")            → "Briefing"
+ *   formatStepKey("prologue_marker_arrives")  → "Marker Arrives"
+ */
+export function formatStepKey(key: string): string {
+  const stripped = key.replace(/^(?:prologue|ch\d+)_/, "");
+  return stripped
+    .split("_")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
 
 export type StepWithId = Step & { id: string };
 

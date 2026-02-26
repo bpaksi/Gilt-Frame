@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
       track,
       source: "player",
       event_type: "passphrase_entered",
-      details: { chapter_id: "prologue", step_name: "The Passphrase" },
+      details: { chapter_id: "prologue", step_name: "Passphrase" },
     })
     .then(() => {});
 

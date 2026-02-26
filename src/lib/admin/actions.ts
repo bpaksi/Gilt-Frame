@@ -1,7 +1,7 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { gameConfig, getOrderedSteps } from "@/config";
+import { gameConfig, getOrderedSteps, formatStepKey } from "@/config";
 import { getStepIndexFromId } from "@/lib/actions/quest";
 
 export type PlayerState = {
@@ -62,7 +62,7 @@ export async function getPlayerState(
     chapterName: chapter?.name ?? progress.chapter_id,
     location: chapter?.location ?? null,
     stepIndex,
-    stepName: currentStep?.name ?? null,
+    stepName: currentStep ? formatStepKey(currentStep.id) : null,
     status: "active",
     lastActivity: lastEvent?.created_at ?? progress.started_at,
     lastActionSummary: lastEvent

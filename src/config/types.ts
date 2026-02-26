@@ -72,6 +72,13 @@ export type FindByGpsConfig = {
   // Phase 2 — Marker tap (always present)
   title_lines?: string[];
   instruction: string;
+  // Phase 3 — Identification questions (optional; omit to skip)
+  /** Questions shown after the marker tap. Includes a "go back" button to return to compass. */
+  questions?: QuestionItem[];
+  /** Instruction text shown above the identification questions. */
+  identification_instruction?: string;
+  /** Text for the "go back to compass" button on the identification phase. */
+  retreat_instruction?: string;
 };
 
 /** Sequential multiple-choice questions. */
@@ -94,6 +101,8 @@ export type BearingPuzzleConfig = {
   resolution_message?: string;
   /** Shown on the orientation permission screen. Default: "The compass awaits your permission." */
   permission_message?: string;
+  /** Staggered lines shown above the marker on the permission screen. Overrides permission_message when set. */
+  permission_lines?: string[];
 };
 
 /** Ceremony animation + reward text with unlock/continue buttons. */
@@ -204,7 +213,6 @@ export type SmsStepConfig = {
 export type LetterStep = {
   order: number;
   type: "letter";
-  name: string;
   trigger: Trigger;
   /** Delay in minutes before sending. Mutually exclusive with delay_hours. */
   delay_minutes?: number;
@@ -216,7 +224,6 @@ export type LetterStep = {
 export type EmailStep = {
   order: number;
   type: "email";
-  name: string;
   trigger: Trigger;
   /** Delay in minutes before sending. Mutually exclusive with delay_hours. */
   delay_minutes?: number;
@@ -228,7 +235,6 @@ export type EmailStep = {
 export type SmsStep = {
   order: number;
   type: "sms";
-  name: string;
   trigger: Trigger;
   /** Delay in minutes before sending. Mutually exclusive with delay_hours. */
   delay_minutes?: number;
@@ -242,7 +248,6 @@ export type WebsiteStep = {
   [K in ComponentName]: {
     order: number;
     type: "website";
-    name: string;
     component: K;
     config: ComponentConfigMap[K];
   };

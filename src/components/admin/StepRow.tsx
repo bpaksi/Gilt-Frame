@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { adminFetch } from "@/lib/admin/fetch";
-import type { StepWithId } from "@/config";
+import { formatStepKey, type StepWithId } from "@/config";
 import { useLiveConfirm } from "./useLiveConfirm";
 
 export type StepState = "delivered" | "sent" | "ready" | "active" | "locked" | "scheduled";
@@ -278,7 +278,7 @@ export default function StepRow({
         <div className="flex-1 min-w-0">
           <div className="text-[13px] font-medium flex items-center gap-1.5 flex-wrap">
             <span className={`${isCompleted ? "text-admin-text-faint" : isCurrent ? "text-admin-text-dark font-semibold" : "text-admin-text font-medium"}`}>
-              {step.name}
+              {formatStepKey(step.id)}
             </span>
             <TypeBadge type={step.type} />
             {hasCompanion && (

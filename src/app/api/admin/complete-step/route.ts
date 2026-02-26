@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminSession } from "@/lib/admin/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logAdminAction } from "@/lib/admin/log";
-import { gameConfig, getOrderedSteps } from "@/config";
+import { gameConfig, getOrderedSteps, formatStepKey } from "@/config";
 import { autoAdvanceMessagingSteps } from "@/lib/actions/quest";
 
 export async function POST(request: NextRequest) {
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
   await logAdminAction("complete_step", {
     chapter_id: chapterId,
     step_id: stepId,
-    step_name: currentStep.name,
+    step_name: formatStepKey(stepId),
     step_index: stepIndex,
   }, track);
 

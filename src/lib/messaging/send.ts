@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import {
   gameConfig,
   getOrderedSteps,
+  formatStepKey,
   type SmsStep,
   type EmailStep,
   type LetterStep,
@@ -130,7 +131,7 @@ export async function sendStep(
           details: {
             chapter_id: chapterId,
             step_id: stepId,
-            step_name: step.name,
+            step_name: formatStepKey(stepId),
             sms_error: result.error,
           },
         });
@@ -192,7 +193,7 @@ export async function sendStep(
     details: {
       chapter_id: chapterId,
       step_id: stepId,
-      step_name: step.name,
+      step_name: formatStepKey(stepId),
       step_type: step.type,
       status: messageStatus,
       to: recipient.phone ?? recipient.email,
@@ -289,7 +290,7 @@ export async function scheduleStep(
     details: {
       chapter_id: chapterId,
       step_id: stepId,
-      step_name: matchedStep.name,
+      step_name: formatStepKey(stepId),
       step_type: matchedStep.type,
       delay_seconds: delaySeconds,
       scheduled_at: scheduledAt,

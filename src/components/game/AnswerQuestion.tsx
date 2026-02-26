@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import OptionButton from "@/components/ui/OptionButton";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
@@ -59,10 +59,19 @@ export default function AnswerQuestion({
   disabled = false,
   visible = true,
 }: AnswerQuestionProps) {
-  const [options, setOptions] = useState(() => drawOptions(correct_answer, answer_pool, num_distractors));
+  // Draw a deterministic initial set for SSR, then shuffle on the client
+  const [options, setOptions] = useState(() => [correct_answer, ...answer_pool.filter((p) => p !== correct_answer).slice(0, num_distractors)]);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [optionsVisible, setOptionsVisible] = useState(true);
+  const shuffledRef = useRef(false);
+
+  useEffect(() => {
+    if (!shuffledRef.current) {
+      shuffledRef.current = true;
+      setOptions(drawOptions(correct_answer, answer_pool, num_distractors));
+    }
+  }, [correct_answer, answer_pool, num_distractors]);
   const shakeRef = useRef<HTMLDivElement>(null);
 
   function handleSelect(optionIdx: number) {

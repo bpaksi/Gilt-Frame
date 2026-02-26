@@ -8,6 +8,7 @@ import HintSystem from "../HintSystem";
 import CompassRose from "../CompassRose";
 import TapToContinue from "../TapToContinue";
 import GhostButton from "@/components/ui/GhostButton";
+import MultipleChoice from "./MultipleChoice";
 import type { FindByGpsConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 import { colors, fontFamily } from "@/components/ui/tokens";
@@ -18,6 +19,7 @@ interface FindByGpsProps {
   onAdvance: () => void;
   revealedHintTiers?: number[];
   onHintReveal?: (tier: number) => Promise<void>;
+  onAnswerRecord?: (questionIndex: number, selectedOption: string, correct: boolean) => Promise<void>;
 }
 
 export default function FindByGps({
@@ -25,9 +27,12 @@ export default function FindByGps({
   onAdvance,
   revealedHintTiers,
   onHintReveal,
+  onAnswerRecord,
 }: FindByGpsProps) {
   const hasCoords = config.target_lat !== undefined && config.target_lng !== undefined;
-  const [phase, setPhase] = useState<"compass" | "marker">(hasCoords ? "compass" : "marker");
+  const hasQuestions = config.questions && config.questions.length > 0;
+  const [phase, setPhase] = useState<"compass" | "marker" | "identification">(hasCoords ? "compass" : "marker");
+  const [fadeState, setFadeState] = useState<"in" | "out">("in");
 
   // ── Compass phase state ────────────────────────────────────────────────────
   const geo = useGeolocation();
@@ -50,7 +55,7 @@ export default function FindByGps({
       setDistanceText(thematicDistanceText(distance, config.distance_gates));
       if (config.geofence_radius && distance < config.geofence_radius && !geofenceTriggeredRef.current) {
         geofenceTriggeredRef.current = true;
-        setPhase("marker");
+        setShowArrived(true);
       }
       if (!config.geofence_radius && distance < 50) {
         setShowArrived(true);
@@ -77,8 +82,26 @@ export default function FindByGps({
         .requestPermission()
         .catch(() => {});
     }
-    onAdvance();
+
+    if (hasQuestions) {
+      fadeTo("identification");
+    } else {
+      onAdvance();
+    }
   };
+
+  // ── Phase transitions with fade ────────────────────────────────────────────
+  const fadeTo = useCallback((target: "compass" | "marker" | "identification") => {
+    setFadeState("out");
+    setTimeout(() => {
+      setPhase(target);
+      setFadeState("in");
+    }, 450);
+  }, []);
+
+  const handleRetreat = useCallback(() => {
+    fadeTo("compass");
+  }, [fadeTo]);
 
   // ── Render: compass phase ──────────────────────────────────────────────────
   if (phase === "compass") {
@@ -96,6 +119,7 @@ export default function FindByGps({
           }}
         >
           <TapToContinue
+            lines={config.wayfinding_text ? [config.wayfinding_text] : []}
             instruction="Enable Location"
             onComplete={handlePermission}
             markerDelay={0}
@@ -117,6 +141,8 @@ export default function FindByGps({
           flex: 1,
           gap: "24px",
           padding: "20px",
+          opacity: fadeState === "in" ? 1 : 0,
+          transition: "opacity 0.45s ease",
         }}
       >
         {config.wayfinding_text && (
@@ -180,6 +206,41 @@ export default function FindByGps({
     );
   }
 
+  // ── Render: identification phase ───────────────────────────────────────────
+  if (phase === "identification" && hasQuestions) {
+    return (
+      <div
+        style={{
+          minHeight: "100%",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          opacity: fadeState === "in" ? 1 : 0,
+          transition: "opacity 0.45s ease",
+        }}
+      >
+        <MultipleChoice
+          config={{
+            instruction: config.identification_instruction,
+            questions: config.questions!,
+          }}
+          onAdvance={onAdvance}
+          onAnswerRecord={onAnswerRecord}
+          onHintReveal={onHintReveal}
+          revealedHintTiers={revealedHintTiers}
+        />
+
+        {config.retreat_instruction && (
+          <div style={{ display: "flex", justifyContent: "center", padding: "0 24px 40px" }}>
+            <GhostButton onClick={handleRetreat}>
+              {config.retreat_instruction}
+            </GhostButton>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   // ── Render: marker phase ───────────────────────────────────────────────────
   return (
     <div
@@ -206,8 +267,8 @@ export default function FindByGps({
 export const showcase: ShowcaseDefinition<FindByGpsProps> = {
   category: "quest",
   label: "Find by GPS",
-  description: "GPS compass (full mode) leading to tappable marker, or tappable marker only (lite mode, no coordinates).",
-  uses: ["HintSystem", "CompassRose", "TapToContinue", "GhostButton"],
+  description: "GPS compass (full mode) leading to tappable marker, optional identification questions with retreat to compass. Lite mode: marker only (no coordinates).",
+  uses: ["HintSystem", "CompassRose", "TapToContinue", "GhostButton", "MultipleChoice"],
   tips: [
     "1. Tap 'Enable Location', then DevTools → More tools → Sensors → Location → Other…",
     "2. Longitude: -73.9851 (keep fixed). Start far, decrease Latitude to walk toward target (40.7589):",
@@ -230,6 +291,16 @@ export const showcase: ShowcaseDefinition<FindByGpsProps> = {
         "Stand with your back to the entrance and walk north.",
         "Look for the iron gate at the end of the stone path.",
       ],
+      questions: [
+        {
+          question: "What is inscribed on the stone?",
+          correct_answer: "Tempus fugit",
+          answer_pool: ["Carpe diem", "Memento mori", "Sic transit gloria"],
+          hints: ["Look at the base of the monument."],
+        },
+      ],
+      identification_instruction: "Examine what stands before you",
+      retreat_instruction: "That's not it — keep searching",
     },
     onAdvance: () => {},
   },

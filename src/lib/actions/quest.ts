@@ -5,6 +5,7 @@ import { resolveTrack } from "@/lib/track";
 import {
   gameConfig,
   getOrderedSteps,
+  formatStepKey,
   COMPONENT_ADVANCE,
   type Step,
   type ComponentName,
@@ -258,7 +259,7 @@ export async function advanceQuest(
     details: {
       chapter_id: chapterId,
       step_id: currentStep.id,
-      step_name: currentStep?.name ?? null,
+      step_name: formatStepKey(currentStep.id),
     },
   });
 
@@ -273,7 +274,7 @@ export async function advanceQuest(
         track: trackInfo.track,
         source: "player",
         event_type: "passphrase_entered",
-        details: { chapter_id: chapterId, step_name: currentStep.name ?? null },
+        details: { chapter_id: chapterId, step_name: formatStepKey(currentStep.id) },
       })
       .then(() => {});
     supabase

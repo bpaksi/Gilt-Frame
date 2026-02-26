@@ -93,12 +93,12 @@ export default function AlignBearing({ config, onAdvance }: AlignBearingProps) {
         }}
       >
         <TapToContinue
-          lines={[config.permission_message ?? "The compass awaits your permission."]}
+          lines={config.permission_lines ?? [config.permission_message ?? "The compass awaits your permission."]}
           instruction="Enable Compass"
           onComplete={handlePermission}
-          markerDelay={0}
-          textDelay={0}
-          tapDelay={0}
+          markerDelay={config.permission_lines ? undefined : 0}
+          textDelay={config.permission_lines ? undefined : 0}
+          tapDelay={config.permission_lines ? undefined : 0}
         />
       </div>
     );
