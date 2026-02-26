@@ -65,6 +65,7 @@ export type Database = {
         Row: {
           chapter_id: string
           completed_at: string | null
+          current_step_id: string | null
           id: string
           started_at: string
           track: Database["public"]["Enums"]["track_type"]
@@ -72,6 +73,7 @@ export type Database = {
         Insert: {
           chapter_id: string
           completed_at?: string | null
+          current_step_id?: string | null
           id?: string
           started_at?: string
           track: Database["public"]["Enums"]["track_type"]
@@ -79,6 +81,7 @@ export type Database = {
         Update: {
           chapter_id?: string
           completed_at?: string | null
+          current_step_id?: string | null
           id?: string
           started_at?: string
           track?: Database["public"]["Enums"]["track_type"]
