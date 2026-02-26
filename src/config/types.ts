@@ -76,6 +76,8 @@ export type FindByGpsConfig = {
 
 /** Sequential multiple-choice questions. */
 export type MultipleChoiceConfig = {
+  /** Optional narrative instruction shown above the questions. */
+  instruction?: string;
   questions: QuestionItem[];
 };
 
@@ -112,6 +114,7 @@ export type StoryRevealConfig = {
 export type PassphraseEntryConfig = {
   placeholder?: string;
   passphrase: string;
+  hints?: string[];
 };
 
 /**

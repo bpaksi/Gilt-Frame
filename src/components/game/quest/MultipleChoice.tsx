@@ -4,6 +4,7 @@ import { useState, useCallback, useMemo } from "react";
 import HintSystem from "../HintSystem";
 import AnswerQuestion from "../AnswerQuestion";
 import OrnateDivider from "@/components/ui/OrnateDivider";
+import { colors, fontFamily } from "@/components/ui/tokens";
 import type { MultipleChoiceConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
@@ -69,6 +70,21 @@ export default function MultipleChoice({
         padding: "40px 24px",
       }}
     >
+      {config.instruction && (
+        <div
+          style={{
+            color: colors.gold55,
+            fontFamily,
+            fontSize: "17px",
+            fontStyle: "italic",
+            textAlign: "center",
+            letterSpacing: "2px",
+          }}
+        >
+          {config.instruction}
+        </div>
+      )}
+
       <AnswerQuestion
         key={currentQ}
         question={question.question}
@@ -86,9 +102,10 @@ export default function MultipleChoice({
         <>
           <OrnateDivider
             style={{
+              display: "block",
               opacity: questionsVisible ? 0.3 : 0,
               transition: "opacity 0.4s ease",
-              margin: "-12px 0",
+              margin: "-12px auto",
             }}
           />
           <HintSystem

@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import PageLayout from "../PageLayout";
+import HintSystem from "../HintSystem";
+import OrnateDivider from "@/components/ui/OrnateDivider";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { PassphraseEntryConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
@@ -9,9 +11,16 @@ import type { ShowcaseDefinition } from "@/components/showcase";
 interface PassphraseEntryProps {
   config: PassphraseEntryConfig;
   onAdvance: () => void;
+  revealedHintTiers?: number[];
+  onHintReveal?: (tier: number) => Promise<void>;
 }
 
-export default function PassphraseEntry({ config, onAdvance }: PassphraseEntryProps) {
+export default function PassphraseEntry({
+  config,
+  onAdvance,
+  revealedHintTiers,
+  onHintReveal,
+}: PassphraseEntryProps) {
   const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [shaking, setShaking] = useState(false);
@@ -48,6 +57,8 @@ export default function PassphraseEntry({ config, onAdvance }: PassphraseEntryPr
       }
     }
   }
+
+  const hints = config.hints ?? [];
 
   return (
     <PageLayout onComplete={() => setInputReady(true)}>
@@ -102,6 +113,23 @@ export default function PassphraseEntry({ config, onAdvance }: PassphraseEntryPr
       >
         {errorMsg}
       </div>
+
+      {hints.length > 0 && (
+        <>
+          <OrnateDivider
+            style={{
+              display: "block",
+              opacity: 0.3,
+              margin: "8px auto",
+            }}
+          />
+          <HintSystem
+            hints={hints}
+            initialRevealedTiers={revealedHintTiers}
+            onHintReveal={onHintReveal}
+          />
+        </>
+      )}
     </PageLayout>
   );
 }
@@ -109,12 +137,16 @@ export default function PassphraseEntry({ config, onAdvance }: PassphraseEntryPr
 export const showcase: ShowcaseDefinition<PassphraseEntryProps> = {
   category: "quest",
   label: "Passphrase Entry",
-  description: "Text input puzzle for hidden acrostic passphrase",
-  uses: ["PageLayout"],
+  description: "Text input puzzle for hidden acrostic passphrase with progressive hints",
+  uses: ["PageLayout", "HintSystem", "OrnateDivider"],
   defaults: {
     config: {
       passphrase: "gilded",
       placeholder: "Speak the words.",
+      hints: [
+        "The answer hides in plain sight within the letter.",
+        "Read the first word of each paragraph carefully.",
+      ],
     },
     onAdvance: () => {},
   },

@@ -40,6 +40,8 @@ export const colors = {
   warmGlow40: "rgba(255, 248, 220, 0.4)",
   orbWhite90: "rgba(255, 253, 240, 0.9)",
   flashWhite25: "rgba(255, 251, 230, 0.25)",
+  flashWhite60: "rgba(255, 251, 230, 0.6)",
+  flashWhite: "rgba(255, 255, 255, 0.95)",
 } as const;
 
 // ── Color bases (RGB only) ───────────────────────────────────────────────

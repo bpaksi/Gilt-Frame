@@ -17,15 +17,19 @@ function prog(elapsed: number, phase: { start: number; end: number }) {
   return clamp01((elapsed - phase.start) / (phase.end - phase.start));
 }
 
+// Flash fires at elapsed 0 and takes ~1s to fade. Orb ignites after 1800ms
+// blackout gap so the dot never appears while the flash is still visible.
+const FLASH_BLACKOUT = 1800;
+
 const TIMELINE = {
-  ignite:       { start: 0,     end: 1200 },
-  borderFade:   { start: 800,   end: 2200 },
-  moveToCorner: { start: 2000,  end: 3500 },
-  loopBorder:   { start: 3500,  end: 9500 },
-  moveToCenter: { start: 9500,  end: 10700 },
-  fadeOutOrb:   { start: 10700, end: 12200 },
-  hourglassIn:  { start: 11700, end: 13500 },
-  fieldsIn:     { start: 13500, end: 15500 },
+  ignite:       { start: FLASH_BLACKOUT,        end: FLASH_BLACKOUT + 1200 },
+  borderFade:   { start: FLASH_BLACKOUT + 800,  end: FLASH_BLACKOUT + 2200 },
+  moveToCorner: { start: FLASH_BLACKOUT + 2000, end: FLASH_BLACKOUT + 3500 },
+  loopBorder:   { start: FLASH_BLACKOUT + 3500, end: FLASH_BLACKOUT + 9500 },
+  moveToCenter: { start: FLASH_BLACKOUT + 9500, end: FLASH_BLACKOUT + 10700 },
+  fadeOutOrb:   { start: FLASH_BLACKOUT + 10700, end: FLASH_BLACKOUT + 12200 },
+  hourglassIn:  { start: FLASH_BLACKOUT + 11700, end: FLASH_BLACKOUT + 13500 },
+  fieldsIn:     { start: FLASH_BLACKOUT + 13500, end: FLASH_BLACKOUT + 15500 },
 };
 
 const CENTER_X = 100;
@@ -114,12 +118,14 @@ export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimation
         if (!animStart) animStart = timestamp;
         const elapsed = timestamp - animStart;
 
-        // Phase 1: Star fades in at center
-        const igniteP = prog(elapsed, TIMELINE.ignite);
-        if (igniteP > 0 && !flashFired && flash) {
+        // Flash fires immediately, independent of orb ignition
+        if (!flashFired && flash) {
           flash.style.animation = "screenFlash 1s ease-out forwards";
           flashFired = true;
         }
+
+        // Phase 1: Orb fades in at center (after blackout gap)
+        const igniteP = prog(elapsed, TIMELINE.ignite);
 
         if (elapsed < TIMELINE.moveToCorner.start) {
           safeOrb.style.opacity = String(easeOut(igniteP));
@@ -211,6 +217,7 @@ export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimation
         const fieldsP = prog(elapsed, TIMELINE.fieldsIn);
         if (fieldsP > 0 && !completedRef.current) {
           completedRef.current = true;
+          setShowSkip(false);
           onComplete();
         }
 
@@ -241,7 +248,7 @@ export default function OrbAnimation({ onComplete, delayMs = 800 }: OrbAnimation
         style={{
           position: "fixed",
           inset: 0,
-          background: `radial-gradient(ellipse at center, ${colors.flashWhite25} 0%, transparent 60%)`,
+          background: `radial-gradient(ellipse at center, ${colors.flashWhite} 0%, ${colors.flashWhite60} 30%, ${colors.flashWhite25} 60%, transparent 100%)`,
           opacity: 0,
           pointerEvents: "none",
           zIndex: 5,
