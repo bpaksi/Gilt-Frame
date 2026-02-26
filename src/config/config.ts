@@ -39,10 +39,10 @@ export const gameConfig: GameConfig = {
             to: "player",
             _trigger_note:
               "Mail the letter from a non-local post office. No return address.",
-            body: "Sealed letter with hidden acrostic passphrase (I SEE CLEARLY) and secondary hidden word (BLIND). No URL — delivered via SMS.",
+            body: "Sealed letter with hidden acrostic passphrase (I SEE CLEARLY). Tone: flattering and formal, an honor bestowed. One glancing reference to danger. No URL — delivered via SMS.",
             _signature: "— The Registrar",
             _content_notes:
-              "Letter encodes the acrostic 'I SEE CLEARLY' — first letter of each paragraph including the illuminated drop cap. Physical template: src/config/letters/Prologue_Summons_Letter_v2.html/.pdf. URL intentionally excluded — delivered via SMS (prologue_magic_link). The Registrar is ceremonial and does not reference the website.",
+              "Letter encodes the acrostic 'I SEE CLEARLY' — first letter of each paragraph including the illuminated drop cap. Physical template: src/config/letters/Ch0-Summons.html/.pdf. URL intentionally excluded — delivered via SMS (prologue_magic_link). The Registrar is ceremonial. TONE: seduction before warning. The letter flatters Christine's perception, describes the Order's mission (hiding work in galleries and gardens), and contains ONE glancing danger reference ('survived fire, neglect, and those who would see it destroyed'). Heavy threat material was moved to Ch1 briefing email where it lands with greater force.",
           },
         },
         prologue_magic_link: {
@@ -67,6 +67,12 @@ export const gameConfig: GameConfig = {
           config: {
             placeholder: "Speak the words.",
             passphrase: "I SEE CLEARLY",
+            hints: [
+              "The letter holds more than its words suggest. Look at its structure.",
+              "Each paragraph begins with purpose. Read only the beginnings.",
+              "This is your last chance to see it for yourself. The next hint reveals the method.",
+              "Take the first letter of each paragraph. What do they spell?",
+            ],
           },
         },
         prologue_reward: {
@@ -77,7 +83,7 @@ export const gameConfig: GameConfig = {
           config: {
             chapter_name: "The Summons",
             primary:
-              "You have spoken the words. The Sight stirs within you, Sparrow. What was hidden is now seen.",
+              "The acrostic yielded its secret. I SEE CLEARLY — and so the Order sees you. The Sight stirs within you, Sparrow. What was hidden in plain letters is now spoken aloud.",
             secondary: "The Order has heard you.",
           },
         },
@@ -182,6 +188,7 @@ export const gameConfig: GameConfig = {
           name: "The Confirmation",
           component: "MultipleChoice",
           config: {
+            instruction: "View the timekeeper before you",
             questions: [
               {
                 question:
@@ -247,7 +254,7 @@ export const gameConfig: GameConfig = {
           config: {
             chapter_name: "The Compass and the Sundial",
             primary:
-              "The needle has shown you the way. Take flight, Sparrow — the Timekeeper knows where it leads.",
+              "Four maidens guarded the dial. You read the proverb they kept. The needle turned to 255 degrees — a bearing the Keeper built into this estate. Take flight, Sparrow. The Timekeeper knows where it leads.",
             secondary: "Your first fragment has been placed in the vault.",
           },
         },
@@ -286,7 +293,7 @@ export const gameConfig: GameConfig = {
           config: {
             to: "player",
             _trigger_note:
-              "Send ~March 10-12, roughly 1 week after Ch1 completion. Must fire before the mid-gap email and before the physical Ch2 summons letter is mailed.",
+              "Send ~3-5 days after Ch1 completion (~March 6-8). This is the big lore reveal (names Kellogg, first antagonist whisper). Must fire BEFORE the mid-gap email and BEFORE the physical Ch2 summons letter is mailed.",
             subject: "The Timekeeper Speaks",
             template: "ch2-timekeeper",
           },
@@ -300,7 +307,7 @@ export const gameConfig: GameConfig = {
           config: {
             to: "player",
             _trigger_note:
-              "Send ~March 10-14, roughly midway between Ch1 completion and Ch2 activation. Purpose: maintain engagement during the 3-week gap.",
+              "Send ~10-14 days after Ch1 completion (~March 13-17). Must fire AFTER the timekeeper email. Purpose: short engagement touchpoint during the 3-week gap. Keep this very brief — the timekeeper email already carried the heavy lore.",
             subject: "A Bearing Worth Remembering",
             template: "ch2-mid-gap",
           },
@@ -385,6 +392,7 @@ export const gameConfig: GameConfig = {
               "She held the highest authority a woman could claim at the Fair.",
               "Her name shaped Chicago society. Look for a portrait, not a scene.",
               "The Palmer name endures. She stands tall, regal, commanding.",
+              "Look carefully — the next hint will name the painting and the artist.",
               "Anders Zorn painted Mrs. Potter Palmer in 1893. Find her.",
             ],
             question: {
@@ -473,6 +481,7 @@ export const gameConfig: GameConfig = {
               "The advisor was a painter — an American woman living abroad.",
               "Her work depicts quiet domestic scenes — mothers, children, daily ritual.",
               "This painting was created in the same year as the portrait you just found. 1893.",
+              "Look carefully — the next hint will name the painting and the artist.",
               "Mary Cassatt painted The Child's Bath. Find it.",
             ],
             question: {
@@ -515,6 +524,7 @@ export const gameConfig: GameConfig = {
                 ],
                 hints: [
                   "Step back from the painting. Notice where your eye sits relative to the figures — above them, below them, or level?",
+                  "Trust your eye. The next hint will tell you what the artist intended.",
                   "The artist painted as a bird would see — from the air, looking earthward.",
                 ],
                 // The overhead/bird's-eye perspective is THE defining feature
@@ -555,7 +565,7 @@ export const gameConfig: GameConfig = {
           config: {
             chapter_name: "The Gallery of Whispers",
             primary:
-              "Mrs. Palmer did not collect alone. Her closest advisor was a fellow member of the Order \u2014 a painter who saw what others could not. You stood before her vision today. 1893. Two frames. One purpose.",
+              "Mrs. Palmer did not collect alone. Her closest advisor was a fellow member of the Order \u2014 a painter who saw what others could not. You stood beneath the bird\u2019s gaze and saw as she once saw: from above, looking down. 1893. Two frames. One purpose.",
             secondary: "Your second fragment has been placed in the vault.",
           },
         },
@@ -563,10 +573,11 @@ export const gameConfig: GameConfig = {
           order: 10,
           type: "sms",
           name: "Post-Solve Confirmation",
-          trigger: "auto",
+          trigger: "manual",
           config: {
             to: "player",
-            _trigger_note: "Auto-send after StoryReveal completes.",
+            _trigger_note:
+              "Send evening of museum day or next morning — NOT immediately after the reward screen. The website reward already confirms completion; an instant SMS on top of it makes the Order feel like a marketing platform. Delay gives breathing room.",
             body: "You see what others have not. Your Chronicle has been updated. The Council is watching with growing interest.",
             image: "https://giltframe.org/marker/marker-v3-gold-512.png",
             companion_message: {
