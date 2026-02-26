@@ -152,7 +152,7 @@ export const showcase: ShowcaseDefinition<CompletionCountdownProps> = {
   label: "Completion Countdown",
   description: "Animated countdown sequence with resolution message — shown after a puzzle is solved before advancing",
   defaults: {
-    message: "The compass yields its secret…",
+    message: "Plotting the course…",
     resolution: "The way is found",
     from: 5,
   },

@@ -72,7 +72,7 @@ export default function AlignBearing({ config, onAdvance }: AlignBearingProps) {
   if (phase === "locking") {
     return (
       <CompletionCountdown
-        message={config.locking_message ?? "The compass yields its secret…"}
+        message={config.locking_message ?? "Plotting the course…"}
         resolution={config.resolution_message ?? "The way is found"}
         onComplete={onAdvance}
       />

@@ -95,7 +95,7 @@ export type BearingPuzzleConfig = {
   min_rotation?: number;
   hold_seconds?: number;
   instruction?: string;
-  /** Shown above the countdown after solving. Default: "The compass yields its secret…" */
+  /** Shown above the countdown after solving. Default: "Plotting the course…" */
   locking_message?: string;
   /** Shown after the countdown completes. Default: "The way is found" */
   resolution_message?: string;
