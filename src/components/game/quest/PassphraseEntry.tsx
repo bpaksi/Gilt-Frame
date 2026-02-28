@@ -97,6 +97,11 @@ export default function PassphraseEntry({
         onInput={(e) => {
           setHasText((e.target as HTMLInputElement).value.length > 0);
         }}
+        onFocus={(e) => {
+          setTimeout(() => {
+            e.target.scrollIntoView({ behavior: "smooth", block: "center" });
+          }, 300);
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             handleSubmit((e.target as HTMLInputElement).value);
