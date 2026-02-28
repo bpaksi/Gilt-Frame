@@ -11,6 +11,7 @@ type Subscriber = () => void;
 let heading: number | null = null;
 let error: string | null = null;
 let permissionGranted = false;
+let debugSource: string = "none";
 const subscribers = new Set<Subscriber>();
 let listenerCount = 0;
 
@@ -28,6 +29,9 @@ function handleOrientationEvent(e: DeviceOrientationEvent) {
   const webkit = (e as DeviceOrientationEvent & { webkitCompassHeading?: number })
     .webkitCompassHeading;
   heading = webkit ?? (e.alpha !== null ? (360 - e.alpha) % 360 : null);
+  debugSource = webkit != null
+    ? `webkit:${webkit.toFixed(0)}`
+    : `alpha:${e.alpha?.toFixed(0) ?? "null"}`;
   error = null;
   permissionGranted = true;
   notify();
@@ -49,6 +53,7 @@ interface OrientationState {
   heading: number | null;
   error: string | null;
   permissionGranted: boolean;
+  debugSource: string;
 }
 
 export function useDeviceOrientation() {
@@ -56,11 +61,12 @@ export function useDeviceOrientation() {
     heading,
     error,
     permissionGranted,
+    debugSource,
   });
 
   // Subscribe to module-level state changes; ref-count the global listener.
   useEffect(() => {
-    const sub = () => setState({ heading, error, permissionGranted });
+    const sub = () => setState({ heading, error, permissionGranted, debugSource });
     subscribers.add(sub);
 
     if (listenerCount === 0) addGlobalListener();
