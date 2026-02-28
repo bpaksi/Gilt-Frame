@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { useGeolocation } from "@/lib/hooks/useGeolocation";
 import { useDeviceOrientation } from "@/lib/hooks/useDeviceOrientation";
 import { thematicDistanceText } from "@/lib/geo";
@@ -46,6 +46,31 @@ export default function FindByGps({
 
   const [debugDistanceFt, setDebugDistanceFt] = useState<number | null>(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
+
+  // Auto-skip permission screen if permissions are already granted (e.g. page refresh)
+  const autoCheckedRef = useRef(false);
+  const geoRequestPermission = geo.requestPermission;
+  const orientationRequestPermission = orientation.requestPermission;
+
+  useEffect(() => {
+    if (autoCheckedRef.current || !hasCoords) return;
+    autoCheckedRef.current = true;
+
+    navigator.permissions?.query({ name: "geolocation" }).then(async (result) => {
+      if (result.state !== "granted") return;
+
+      // Geo already granted — start watcher silently (no browser prompt)
+      const geoOk = await geoRequestPermission();
+      if (!geoOk) return;
+
+      // Try orientation — succeeds silently if already granted,
+      // fails on iOS if it needs a user gesture (button stays visible)
+      const orientationOk = await orientationRequestPermission();
+      if (!orientationOk) return;
+
+      setNeedsPermission(false);
+    }).catch(() => {});
+  }, [hasCoords, geoRequestPermission, orientationRequestPermission]);
 
   const handlePermission = useCallback(async () => {
     setPermissionDenied(false);
