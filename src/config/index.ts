@@ -31,4 +31,8 @@ export type {
   FindByTextConfig,
   QuestionItem,
   PoolQuestionItem,
+  SealConfig,
+  QAReplay,
+  MomentMetadata,
+  MomentType,
 } from "./types";

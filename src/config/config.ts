@@ -30,7 +30,6 @@ export const gameConfig: GameConfig = {
       location: null,
       window: "Mar 1-3, 2026",
       seal: {
-        image: "/seals/seal-prologue-256.png",
         name: "Seal of Recognition",
         description: "The Order has seen you.",
       },
@@ -115,7 +114,6 @@ export const gameConfig: GameConfig = {
       location: "Kellogg Manor, Michigan",
       window: "Mar 3, 2026 (anniversary)",
       seal: {
-        image: "/seals/seal-ch1-256.png",
         name: "Keeper's Seal",
         description: "The timekeeper's bearing is set.",
       },
@@ -272,7 +270,6 @@ export const gameConfig: GameConfig = {
       location: "Art Institute of Chicago",
       window: "Mar 10-24, 2026",
       seal: {
-        image: "/seals/seal-ch2-256.png",
         name: "Curator's Seal",
         description: "The whispers have been heard.",
       },
@@ -618,7 +615,6 @@ export const gameConfig: GameConfig = {
       location: "Kalamazoo / KIA / Kellogg Manor",
       window: "Late Mar - Mid Apr, 2026",
       seal: {
-        image: "/seals/seal-ch3-256.png",
         name: "Archivist's Seal",
         description: "The archive reveals its secrets.",
       },

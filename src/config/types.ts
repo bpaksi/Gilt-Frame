@@ -273,8 +273,6 @@ export type Step = LetterStep | EmailStep | SmsStep | WebsiteStep;
 
 /** Per-chapter seal configuration — the visual milestone earned on completion. */
 export type SealConfig = {
-  /** Path to seal image, e.g. "/seals/seal-ch1-256.png" */
-  image: string;
   /** Display name, e.g. "Keeper's Seal" */
   name: string;
   /** Flavor text shown when earned */
