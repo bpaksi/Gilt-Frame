@@ -23,8 +23,15 @@ export default function AlignBearing({ config, onAdvance }: AlignBearingProps) {
   const [needsPermission, setNeedsPermission] = useState(true);
   const [phase, setPhase] = useState<"compass" | "locking">("compass");
 
+  const [permissionDenied, setPermissionDenied] = useState(false);
+
   const handlePermission = useCallback(async () => {
-    await orientation.requestPermission();
+    setPermissionDenied(false);
+    const ok = await orientation.requestPermission();
+    if (!ok) {
+      setPermissionDenied(true);
+      return;
+    }
     setNeedsPermission(false);
   }, [orientation]);
 
@@ -90,16 +97,33 @@ export default function AlignBearing({ config, onAdvance }: AlignBearingProps) {
           minHeight: "100%",
           flex: 1,
           padding: "40px 24px",
+          gap: "20px",
         }}
       >
         <TapToContinue
           lines={config.permission_lines ?? [config.permission_message ?? "The compass awaits your permission."]}
-          instruction={config.enable_label ?? "Enable Compass"}
+          instruction={permissionDenied ? "Try Again" : (config.enable_label ?? "Enable Compass")}
           onComplete={handlePermission}
           markerDelay={config.permission_lines ? undefined : 0}
           textDelay={config.permission_lines ? undefined : 0}
           tapDelay={config.permission_lines ? undefined : 0}
         />
+        {permissionDenied && (
+          <p
+            style={{
+              color: colors.gold50,
+              fontFamily: fontFamily,
+              fontSize: "14px",
+              fontStyle: "italic",
+              textAlign: "center",
+              letterSpacing: "1px",
+              lineHeight: "1.6",
+              maxWidth: "280px",
+            }}
+          >
+            Permission was denied. Tap above to try again, or reload the page if the prompt doesn&apos;t appear.
+          </p>
+        )}
       </div>
     );
   }
