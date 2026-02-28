@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { feedGpsCourse } from "./useDeviceOrientation";
 
 interface GeoState {
   lat: number | null;
@@ -35,6 +36,7 @@ export function useGeolocation() {
           error: null,
           permissionGranted: true,
         });
+        feedGpsCourse(pos.coords.heading, pos.coords.speed);
       },
       (err) => {
         setState((s) => ({ ...s, error: err.message, permissionGranted: false }));
@@ -68,6 +70,7 @@ export function useGeolocation() {
             error: null,
             permissionGranted: true,
           });
+          feedGpsCourse(pos.coords.heading, pos.coords.speed);
           startWatching();
           resolve(true);
         },
