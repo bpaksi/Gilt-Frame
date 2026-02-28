@@ -64,10 +64,16 @@ export function useDeviceOrientation() {
         setState((s) => ({ ...s, error: "Permission request failed" }));
         return false;
       }
+
+      // iOS requires the listener to be (re-)registered after permission is
+      // granted — listeners added before the grant never receive events.
+      // EventTarget deduplicates identical listeners, so this is safe even
+      // if the useEffect already registered one.
+      window.addEventListener("deviceorientation", handleOrientation, true);
     }
 
     return true;
-  }, []);
+  }, [handleOrientation]);
 
   return { ...state, requestPermission };
 }
