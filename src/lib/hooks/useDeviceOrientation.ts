@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 interface OrientationState {
   heading: number | null;
@@ -14,7 +14,6 @@ export function useDeviceOrientation() {
     error: null,
     permissionGranted: false,
   });
-  const listenerRef = useRef<((e: DeviceOrientationEvent) => void) | null>(null);
 
   const handleOrientation = useCallback((e: DeviceOrientationEvent) => {
     // iOS provides webkitCompassHeading directly
@@ -29,9 +28,19 @@ export function useDeviceOrientation() {
     });
   }, []);
 
+  // Always listen for orientation events. On non-iOS browsers events flow
+  // immediately; on iOS 13+ they only start after requestPermission()
+  // grants access, but registering the listener early is harmless and
+  // means ALL hook instances receive data once any one of them obtains
+  // permission.
+  useEffect(() => {
+    window.addEventListener("deviceorientation", handleOrientation, true);
+    return () => window.removeEventListener("deviceorientation", handleOrientation, true);
+  }, [handleOrientation]);
+
+  // Request iOS 13+ permission from a user gesture.
   // Returns true if permission was granted, false if denied/error.
   const requestPermission = useCallback(async (): Promise<boolean> => {
-    // iOS 13+ requires permission request from user gesture
     if (
       typeof DeviceOrientationEvent !== "undefined" &&
       "requestPermission" in DeviceOrientationEvent
@@ -52,17 +61,7 @@ export function useDeviceOrientation() {
       }
     }
 
-    listenerRef.current = handleOrientation;
-    window.addEventListener("deviceorientation", handleOrientation, true);
     return true;
-  }, [handleOrientation]);
-
-  useEffect(() => {
-    return () => {
-      if (listenerRef.current) {
-        window.removeEventListener("deviceorientation", listenerRef.current, true);
-      }
-    };
   }, []);
 
   return { ...state, requestPermission };
