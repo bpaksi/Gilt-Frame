@@ -150,7 +150,8 @@ Text input rendered inside PageLayout's orb ceremony. Comparison is case-insensi
 |---|:---:|---|
 | `passphrase` | **yes** | The correct passphrase. Compared case-insensitively. |
 | `placeholder` | no | Input placeholder text. Default: `"Speak the words."` |
-| `error_message` | no | Error message shown on wrong passphrase. Default: `"You have not been summoned."` |
+| `error_message` | no | Error message shown on wrong passphrase. Default: `"The Order does not recognize these words."` |
+| `submit_label` | no | Label for the submit button (appears once text is entered). Default: `"Submit to the Order"` |
 
 ---
 

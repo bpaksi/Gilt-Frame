@@ -29,6 +29,11 @@ export const gameConfig: GameConfig = {
       name: "The Summons",
       location: null,
       window: "Mar 1-3, 2026",
+      seal: {
+        image: "/seals/seal-prologue-256.png",
+        name: "Seal of Recognition",
+        description: "The Order has seen you.",
+      },
       steps: {
         prologue_summons_letter: {
           order: 0,
@@ -65,6 +70,8 @@ export const gameConfig: GameConfig = {
           config: {
             placeholder: "Speak the words.",
             passphrase: "I SEE CLEARLY",
+            error_message: "The Order does not recognize these words.",
+            submit_label: "Submit to the Order",
             hints: [
               "The letter holds more than its words suggest. Look at its structure.",
               "Each paragraph begins with purpose. Read only the beginnings.",
@@ -107,6 +114,11 @@ export const gameConfig: GameConfig = {
       name: "The Compass and the Sundial",
       location: "Kellogg Manor, Michigan",
       window: "Mar 3, 2026 (anniversary)",
+      seal: {
+        image: "/seals/seal-ch1-256.png",
+        name: "Keeper's Seal",
+        description: "The timekeeper's bearing is set.",
+      },
       steps: {
         // Narrative email introducing the Keeper lore and website instruments.
         // Sent ~1 day before the SMS with coordinates.
@@ -259,6 +271,11 @@ export const gameConfig: GameConfig = {
       name: "The Gallery of Whispers",
       location: "Art Institute of Chicago",
       window: "Mar 10-24, 2026",
+      seal: {
+        image: "/seals/seal-ch2-256.png",
+        name: "Curator's Seal",
+        description: "The whispers have been heard.",
+      },
       steps: {
         // Post-Ch1 narrative beat. The Order reveals it didn't know the bearing
         // until Christine activated the timekeeper. Names Kellogg for the first
@@ -600,6 +617,11 @@ export const gameConfig: GameConfig = {
       name: "The Keeper's Archive",
       location: "Kalamazoo / KIA / Kellogg Manor",
       window: "Late Mar - Mid Apr, 2026",
+      seal: {
+        image: "/seals/seal-ch3-256.png",
+        name: "Archivist's Seal",
+        description: "The archive reveals its secrets.",
+      },
       steps: {},
     },
   },

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import PageLayout from "../ui/PageLayout";
 import HintSystem from "../ui/HintSystem";
 import OrnateDivider from "@/components/ui/OrnateDivider";
-import { colors, fontFamily } from "@/components/ui/tokens";
+import { colors, fontFamily, MIN_TAP_TARGET } from "@/components/ui/tokens";
 import type { PassphraseEntryConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
@@ -25,6 +25,7 @@ export default function PassphraseEntry({
   const [errorMsg, setErrorMsg] = useState("");
   const [shaking, setShaking] = useState(false);
   const [inputReady, setInputReady] = useState(false);
+  const [hasText, setHasText] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -45,7 +46,10 @@ export default function PassphraseEntry({
     } else {
       setStatus("error");
       setShaking(true);
-      setErrorMsg(config.error_message ?? "You have not been summoned.");
+      setHasText(false);
+      setErrorMsg(
+        config.error_message ?? "The Order does not recognize these words."
+      );
       setTimeout(() => setShaking(false), 400);
       setTimeout(() => {
         setErrorMsg("");
@@ -58,7 +62,9 @@ export default function PassphraseEntry({
     }
   }
 
+  const submitLabel = config.submit_label ?? "Submit to the Order";
   const hints = config.hints ?? [];
+  const showButton = hasText && status !== "success" && status !== "error";
 
   return (
     <PageLayout skipLabel="tap to skip" onComplete={() => setInputReady(true)}>
@@ -74,9 +80,7 @@ export default function PassphraseEntry({
           background: "transparent",
           border: "none",
           borderBottom: `1px solid ${
-            status === "error"
-              ? colors.gold50
-              : colors.gold40
+            status === "error" ? colors.gold50 : colors.gold40
           }`,
           color: colors.gold,
           fontFamily: fontFamily,
@@ -90,28 +94,68 @@ export default function PassphraseEntry({
           outline: "none",
           transition: "border-color 0.4s ease",
         }}
+        onInput={(e) => {
+          setHasText((e.target as HTMLInputElement).value.length > 0);
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             handleSubmit((e.target as HTMLInputElement).value);
           }
         }}
       />
+
+      {/* Submit button / error message occupy the same space */}
       <div
         style={{
-          color: colors.gold55,
-          fontFamily: fontFamily,
-          fontSize: "14px",
-          fontStyle: "italic",
+          minHeight: MIN_TAP_TARGET,
           marginTop: "20px",
-          minHeight: "40px",
-          opacity: errorMsg ? 1 : 0,
-          transition: "opacity 0.6s ease",
-          maxWidth: "300px",
-          margin: "20px auto 0",
-          lineHeight: "1.6",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        {errorMsg}
+        {errorMsg ? (
+          <div
+            style={{
+              color: colors.gold55,
+              fontFamily: fontFamily,
+              fontSize: "14px",
+              fontStyle: "italic",
+              maxWidth: "300px",
+              lineHeight: "1.6",
+              textAlign: "center",
+              animation: "fadeIn 0.4s ease",
+            }}
+          >
+            {errorMsg}
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              if (inputRef.current) {
+                handleSubmit(inputRef.current.value);
+              }
+            }}
+            style={{
+              background: "transparent",
+              border: `1px solid ${colors.gold30}`,
+              color: colors.gold70,
+              fontFamily: fontFamily,
+              fontSize: "14px",
+              fontStyle: "italic",
+              letterSpacing: "1.5px",
+              padding: "10px 28px",
+              minHeight: MIN_TAP_TARGET,
+              cursor: "pointer",
+              transition: "opacity 0.4s ease, border-color 0.3s ease",
+              opacity: showButton ? 1 : 0,
+              pointerEvents: showButton ? "auto" : "none",
+            }}
+          >
+            {submitLabel}
+          </button>
+        )}
       </div>
 
       {hints.length > 0 && (
@@ -139,12 +183,15 @@ export default function PassphraseEntry({
 export const showcase: ShowcaseDefinition<PassphraseEntryProps> = {
   category: "quest",
   label: "Passphrase Entry",
-  description: "Text input puzzle for hidden acrostic passphrase with progressive hints",
+  description:
+    "Text input puzzle for hidden acrostic passphrase with progressive hints",
   uses: ["PageLayout", "HintSystem", "OrnateDivider"],
   defaults: {
     config: {
       passphrase: "gilded",
       placeholder: "Speak the words.",
+      error_message: "The Order does not recognize these words.",
+      submit_label: "Submit to the Order",
       hints: [
         "The answer hides in plain sight within the letter.",
         "Read the first word of each paragraph carefully.",

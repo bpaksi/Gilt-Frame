@@ -134,8 +134,10 @@ export type PassphraseEntryConfig = {
   placeholder?: string;
   passphrase: string;
   hints?: string[];
-  /** Error message shown on wrong passphrase. Default: "You have not been summoned." */
+  /** Error message shown on wrong passphrase. Default: "The Order does not recognize these words." */
   error_message?: string;
+  /** Label for the submit button shown once text is entered. Default: "Submit to the Order" */
+  submit_label?: string;
 };
 
 /**
@@ -267,12 +269,56 @@ export type WebsiteStep = {
 
 export type Step = LetterStep | EmailStep | SmsStep | WebsiteStep;
 
+// ─── Seal & Moment Types ────────────────────────────────────────────────────
+
+/** Per-chapter seal configuration — the visual milestone earned on completion. */
+export type SealConfig = {
+  /** Path to seal image, e.g. "/seals/seal-ch1-256.png" */
+  image: string;
+  /** Display name, e.g. "Keeper's Seal" */
+  name: string;
+  /** Flavor text shown when earned */
+  description?: string;
+};
+
+/** Replay record for a single Q&A interaction. */
+export type QAReplay = {
+  question: string;
+  selected: string;
+  correct_answer: string;
+  correct: boolean;
+};
+
+/** Discriminated union of type-specific data stored in moments.metadata JSONB. */
+export type MomentMetadata =
+  | { type: "passphrase"; hints_used: number[] }
+  | { type: "narrative_revealed"; primary: string; secondary?: string | null; chapter_name?: string }
+  | { type: "gps_arrival"; duration_seconds: number; questions?: QAReplay[] }
+  | { type: "bearing_aligned"; target_bearing: number; duration_seconds: number }
+  | { type: "questions_answered"; questions: QAReplay[]; duration_seconds: number }
+  | { type: "find_confirmed"; guidance_text: string; question: QAReplay; duration_seconds: number }
+  | { type: "chapter_complete"; chapter_name: string }
+  | { type: "chapter_start"; chapter_name: string };
+
+/** All valid moment_type enum values (mirrors the Postgres enum). */
+export type MomentType =
+  | "passphrase"
+  | "narrative_revealed"
+  | "gps_arrival"
+  | "bearing_aligned"
+  | "questions_answered"
+  | "find_confirmed"
+  | "quest_complete"
+  | "chapter_start"
+  | "chapter_complete";
+
 // ─── Chapter and Top-Level Config ───────────────────────────────────────────
 
 export type Chapter = {
   name: string;
   location: string | null;
   window: string;
+  seal?: SealConfig;
   steps: Record<string, Step>;
 };
 
