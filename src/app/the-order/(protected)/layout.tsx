@@ -21,7 +21,10 @@ export default async function ProtectedAdminLayout({
   }
 
   if (!(await verifyAdminSession())) {
-    redirect("/the-order"); // Cookie exists but expired → back to login
+    // Clear stale marker so subsequent visits take the fast notFound() path
+    // instead of repeatedly hitting Supabase with an invalid refresh token.
+    cookieStore.delete("admin_session");
+    redirect("/the-order");
   }
 
   const track = await getAdminTrack();
