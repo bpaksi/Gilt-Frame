@@ -206,10 +206,12 @@ export type Database = {
           chapter_id: string | null
           created_at: string
           id: string
+          metadata: Json | null
           moment_type: Database["public"]["Enums"]["moment_type"]
           narrative_text: string | null
           quest_id: string | null
           share_token: string
+          step_id: string | null
           track: Database["public"]["Enums"]["track_type"]
         }
         Insert: {
@@ -217,10 +219,12 @@ export type Database = {
           chapter_id?: string | null
           created_at?: string
           id?: string
+          metadata?: Json | null
           moment_type: Database["public"]["Enums"]["moment_type"]
           narrative_text?: string | null
           quest_id?: string | null
           share_token?: string
+          step_id?: string | null
           track?: Database["public"]["Enums"]["track_type"]
         }
         Update: {
@@ -228,10 +232,12 @@ export type Database = {
           chapter_id?: string | null
           created_at?: string
           id?: string
+          metadata?: Json | null
           moment_type?: Database["public"]["Enums"]["moment_type"]
           narrative_text?: string | null
           quest_id?: string | null
           share_token?: string
+          step_id?: string | null
           track?: Database["public"]["Enums"]["track_type"]
         }
         Relationships: []
@@ -363,6 +369,11 @@ export type Database = {
         | "chapter_start"
         | "chapter_complete"
         | "passphrase"
+        | "narrative_revealed"
+        | "gps_arrival"
+        | "bearing_aligned"
+        | "questions_answered"
+        | "find_confirmed"
       track_type: "test" | "live"
     }
     CompositeTypes: {
@@ -501,6 +512,11 @@ export const Constants = {
         "chapter_start",
         "chapter_complete",
         "passphrase",
+        "narrative_revealed",
+        "gps_arrival",
+        "bearing_aligned",
+        "questions_answered",
+        "find_confirmed",
       ],
       track_type: ["test", "live"],
     },
