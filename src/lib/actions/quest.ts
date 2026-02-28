@@ -8,11 +8,25 @@ import {
   formatStepKey,
   COMPONENT_ADVANCE,
   type Step,
+  type WebsiteStep,
   type ComponentName,
   type ComponentConfig,
   type AdvanceCondition,
+  type StoryRevealConfig,
+  type BearingPuzzleConfig,
+  type FindByGpsConfig,
+  type MultipleChoiceConfig,
+  type FindByTextConfig,
+  type MomentMetadata,
+  type MomentType,
 } from "@/config";
 import { sendStep, scheduleStep } from "@/lib/messaging/send";
+import {
+  createMoment,
+  gatherQAMetadata,
+  gatherStepDuration,
+  gatherHintUsage,
+} from "@/lib/actions/moments";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type QuestState = {
@@ -201,6 +215,17 @@ export async function autoAdvanceMessagingSteps(
       .eq("track", track)
       .eq("chapter_id", chapterId)
       .is("completed_at", null);
+
+    // Create chapter completion moment (seal earned)
+    const chapterName = chapter.name;
+    await createMoment({
+      track,
+      chapterId,
+      stepId: null,
+      momentType: "chapter_complete",
+      narrativeText: `${chapterName} — complete. The seal has been placed.`,
+      metadata: { type: "chapter_complete", chapter_name: chapterName },
+    });
   } else {
     // Point to the next step
     await supabase
@@ -263,30 +288,34 @@ export async function advanceQuest(
     },
   });
 
-  // Passphrase step side effects: activity log + journey moment
-  if (
-    currentStep.type === "website" &&
-    (currentStep as { component?: string }).component === "PassphraseEntry"
-  ) {
-    supabase
-      .from("activity_log")
-      .insert({
-        track: trackInfo.track,
-        source: "player",
-        event_type: "passphrase_entered",
-        details: { chapter_id: chapterId, step_name: formatStepKey(currentStep.id) },
-      })
-      .then(() => {});
-    supabase
-      .from("moments")
-      .insert({
-        track: trackInfo.track,
-        chapter_id: chapterId,
-        moment_type: "passphrase",
-        narrative_text: "The acrostic revealed its truth. The Order heard.",
-        share_token: crypto.randomUUID(),
-      })
-      .then(() => {});
+  // Create a journey moment for every website step completion
+  if (currentStep.type === "website") {
+    const ws = currentStep as WebsiteStep;
+
+    // Passphrase-specific activity log (keep for backward compat)
+    if (ws.component === "PassphraseEntry") {
+      supabase
+        .from("activity_log")
+        .insert({
+          track: trackInfo.track,
+          source: "player",
+          event_type: "passphrase_entered",
+          details: { chapter_id: chapterId, step_name: formatStepKey(currentStep.id) },
+        })
+        .then(() => {});
+    }
+
+    // Create moment with rich metadata for the vault
+    await createMomentForStep(
+      supabase,
+      trackInfo.track,
+      chapterId,
+      currentStep.id,
+      ws.component,
+      ws.config,
+      chapter.name,
+      spId,
+    );
   }
 
   // Auto-advance any consecutive auto-triggered messaging steps
@@ -416,6 +445,129 @@ export async function revealHint(
   });
 
   return { hint: hintText };
+}
+
+// ─── Moment Creation per Component ───────────────────────────────────────────
+
+/** Component → moment_type mapping. */
+const COMPONENT_MOMENT_TYPE: Record<ComponentName, MomentType> = {
+  PassphraseEntry: "passphrase",
+  FindByGps: "gps_arrival",
+  AlignBearing: "bearing_aligned",
+  MultipleChoice: "questions_answered",
+  FindByText: "find_confirmed",
+  RevealNarrative: "narrative_revealed",
+};
+
+/**
+ * Create a journey moment with rich metadata for the completed step.
+ * Gathers Q&A answers, durations, and hint usage from existing DB records.
+ */
+async function createMomentForStep(
+  supabase: SupabaseClient,
+  track: "test" | "live",
+  chapterId: string,
+  stepId: string,
+  component: ComponentName,
+  config: ComponentConfig,
+  chapterName: string,
+  stepProgressId: string,
+): Promise<void> {
+  const momentType = COMPONENT_MOMENT_TYPE[component];
+  let narrativeText: string;
+  let metadata: MomentMetadata;
+
+  switch (component) {
+    case "PassphraseEntry": {
+      const hintsUsed = await gatherHintUsage(supabase, stepProgressId);
+      narrativeText = "The acrostic revealed its truth. The Order heard.";
+      metadata = { type: "passphrase", hints_used: hintsUsed };
+      break;
+    }
+
+    case "RevealNarrative": {
+      const cfg = config as StoryRevealConfig;
+      narrativeText = cfg.primary;
+      metadata = {
+        type: "narrative_revealed",
+        primary: cfg.primary,
+        secondary: cfg.secondary ?? null,
+        chapter_name: cfg.chapter_name ?? chapterName,
+      };
+      break;
+    }
+
+    case "FindByGps": {
+      const cfg = config as FindByGpsConfig;
+      const duration = await gatherStepDuration(supabase, stepProgressId);
+      const questions = cfg.questions
+        ? await gatherQAMetadata(supabase, stepProgressId, cfg.questions)
+        : undefined;
+      narrativeText = cfg.wayfinding_text ?? "The Marker guided the way.";
+      metadata = {
+        type: "gps_arrival",
+        duration_seconds: duration,
+        questions: questions?.length ? questions : undefined,
+      };
+      break;
+    }
+
+    case "AlignBearing": {
+      const cfg = config as BearingPuzzleConfig;
+      const duration = await gatherStepDuration(supabase, stepProgressId);
+      narrativeText = cfg.instruction ?? "The compass aligned.";
+      metadata = {
+        type: "bearing_aligned",
+        target_bearing: cfg.compass_target,
+        duration_seconds: duration,
+      };
+      break;
+    }
+
+    case "MultipleChoice": {
+      const cfg = config as MultipleChoiceConfig;
+      const duration = await gatherStepDuration(supabase, stepProgressId);
+      const questions = await gatherQAMetadata(supabase, stepProgressId, cfg.questions);
+      narrativeText = cfg.instruction ?? "The questions were answered.";
+      metadata = {
+        type: "questions_answered",
+        questions,
+        duration_seconds: duration,
+      };
+      break;
+    }
+
+    case "FindByText": {
+      const cfg = config as FindByTextConfig;
+      const duration = await gatherStepDuration(supabase, stepProgressId);
+      const questionArr = await gatherQAMetadata(supabase, stepProgressId, [cfg.question]);
+      narrativeText = cfg.guidance_text.split("\n")[0] ?? "The search succeeded.";
+      metadata = {
+        type: "find_confirmed",
+        guidance_text: cfg.guidance_text,
+        question: questionArr[0] ?? {
+          question: cfg.question.question,
+          selected: cfg.question.correct_answer,
+          correct_answer: cfg.question.correct_answer,
+          correct: true,
+        },
+        duration_seconds: duration,
+      };
+      break;
+    }
+
+    default:
+      return;
+  }
+
+  await createMoment({
+    track,
+    chapterId,
+    stepId,
+    momentType,
+    narrativeText,
+    metadata,
+  });
 }
 
 export async function pollChapterProgress(
