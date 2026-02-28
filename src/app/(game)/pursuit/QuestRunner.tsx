@@ -67,6 +67,7 @@ export default function QuestRunner({ initialState }: QuestRunnerProps) {
         <Component
           config={state.config}
           onAdvance={handleAdvance}
+          track={state.track}
           revealedHintTiers={state.revealedHintTiers}
           onHintReveal={state.chapterId && state.stepIndex !== undefined ? onHintReveal : undefined}
           onAnswerRecord={state.chapterId && state.stepIndex !== undefined ? onAnswerRecord : undefined}

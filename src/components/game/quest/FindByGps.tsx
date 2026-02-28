@@ -17,6 +17,7 @@ import type { NavigateFrameData } from "../ui/CompassRose";
 interface FindByGpsProps {
   config: FindByGpsConfig;
   onAdvance: () => void;
+  track?: "test" | "live";
   revealedHintTiers?: number[];
   onHintReveal?: (tier: number) => Promise<void>;
   onAnswerRecord?: (questionIndex: number, selectedOption: string, correct: boolean) => Promise<void>;
@@ -25,6 +26,7 @@ interface FindByGpsProps {
 export default function FindByGps({
   config,
   onAdvance,
+  track,
   revealedHintTiers,
   onHintReveal,
   onAnswerRecord,
@@ -42,6 +44,7 @@ export default function FindByGps({
   const [showArrived, setShowArrived] = useState(false);
   const geofenceTriggeredRef = useRef(false);
 
+  const [debugDistanceFt, setDebugDistanceFt] = useState<number | null>(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
 
   const handlePermission = useCallback(async () => {
@@ -70,6 +73,7 @@ export default function FindByGps({
     ({ distance }: NavigateFrameData) => {
       if (distance === null) return;
       setDistanceText(thematicDistanceText(distance, config.distance_gates));
+      if (track === "test") setDebugDistanceFt(Math.round(distance * 3.28084));
       if (config.geofence_radius && distance < config.geofence_radius && !geofenceTriggeredRef.current) {
         geofenceTriggeredRef.current = true;
         setShowArrived(true);
@@ -78,7 +82,7 @@ export default function FindByGps({
         setShowArrived(true);
       }
     },
-    [config.geofence_radius, config.distance_gates],
+    [config.geofence_radius, config.distance_gates, track],
   );
 
   // ── Marker phase state ─────────────────────────────────────────────────────
@@ -204,6 +208,25 @@ export default function FindByGps({
           targetLng={config.target_lng}
           onFrame={handleFrame}
         />
+
+        {track === "test" && (
+          <p
+            style={{
+              color: colors.gold40,
+              fontFamily: "monospace",
+              fontSize: "13px",
+              textAlign: "center",
+              letterSpacing: "1px",
+              lineHeight: "1.6",
+              margin: "-12px 0 0",
+            }}
+          >
+            {debugDistanceFt !== null && <>{debugDistanceFt.toLocaleString()} ft<br /></>}
+            hdg: {orientation.heading !== null ? orientation.heading.toFixed(1) : "null"}°
+            {" · "}
+            {orientation.permissionGranted ? "granted" : "no-perm"}
+          </p>
+        )}
 
         {distanceText && (
           <p
