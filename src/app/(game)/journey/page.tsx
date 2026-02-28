@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { resolveTrack } from "@/lib/track";
 import { getMoments } from "@/lib/actions/moments";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { gameConfig } from "@/config";
-import JourneyTimeline from "@/components/page/JourneyTimeline";
+import JourneyVault from "@/components/page/JourneyVault";
+import type { VaultChapter } from "@/components/page/JourneyVault";
 import EmptyState from "@/components/ui/EmptyState";
 
 export const metadata: Metadata = {
@@ -22,9 +24,36 @@ export default async function JourneyPage() {
 
   const moments = await getMoments(trackInfo.track);
 
-  const chapterNames: Record<string, string> = Object.fromEntries(
-    Object.entries(gameConfig.chapters).map(([id, ch]) => [id, ch.name])
-  );
+  // Fetch chapter progress to determine active/completed status
+  const supabase = createAdminClient();
+  const { data: progress } = await supabase
+    .from("chapter_progress")
+    .select("chapter_id, completed_at")
+    .eq("track", trackInfo.track);
 
-  return <JourneyTimeline moments={moments} chapterNames={chapterNames} />;
+  // Build vault data: only include chapters that have progress (future ones hidden)
+  const chapters: VaultChapter[] = [];
+  for (const [id, ch] of Object.entries(gameConfig.chapters)) {
+    const cp = progress?.find((p) => p.chapter_id === id);
+    if (!cp) continue;
+    chapters.push({
+      id,
+      name: ch.name,
+      location: ch.location,
+      seal: ch.seal,
+      isCompleted: !!cp.completed_at,
+      isActive: !cp.completed_at,
+      moments: moments.filter((m) => m.chapter_id === id),
+    });
+  }
+
+  if (chapters.length === 0) {
+    return (
+      <EmptyState centered>
+        Your journey has not yet begun.
+      </EmptyState>
+    );
+  }
+
+  return <JourneyVault chapters={chapters} />;
 }
