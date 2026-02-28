@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import TabBar, { type TabConfig } from "../../components/ui/TabBar";
 import { resolveTrack } from "@/lib/track";
+import { getQuestState } from "@/lib/actions/quest";
 
 const GAME_TABS: TabConfig[] = [
   { label: "Pursuit", href: "/pursuit", icon: "marker" },
@@ -20,6 +22,23 @@ export default async function GameLayout({
     redirect("/");
   }
 
+  const questState = await getQuestState();
+  const isActive = questState.status === "active";
+
+  // When a website step is active, force all game routes to /pursuit
+  if (isActive) {
+    const headerList = await headers();
+    const pathname = headerList.get("x-pathname") ?? "";
+    if (!pathname.startsWith("/pursuit")) {
+      redirect("/pursuit");
+    }
+  }
+
+  const showNav = !isActive;
+  const tabs = showNav
+    ? GAME_TABS.filter((t) => t.label !== "Pursuit")
+    : [];
+
   return (
     <div
       style={{
@@ -27,13 +46,15 @@ export default async function GameLayout({
         background: "#0a0a0a",
         display: "flex",
         flexDirection: "column",
-        paddingBottom: "calc(60px + env(safe-area-inset-bottom))",
+        paddingBottom: showNav
+          ? "calc(60px + env(safe-area-inset-bottom))"
+          : "0",
       }}
     >
       <main style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         {children}
       </main>
-      <TabBar tabs={GAME_TABS} />
+      {showNav && <TabBar tabs={tabs} />}
     </div>
   );
 }
