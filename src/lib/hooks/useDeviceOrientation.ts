@@ -28,14 +28,19 @@ export function useDeviceOrientation() {
     });
   }, []);
 
-  // Always listen for orientation events. On non-iOS browsers events flow
-  // immediately; on iOS 13+ they only start after requestPermission()
-  // grants access, but registering the listener early is harmless and
-  // means ALL hook instances receive data once any one of them obtains
-  // permission.
+  // Always listen for orientation events.
+  // - Android: use 'deviceorientationabsolute' which gives north-relative alpha.
+  // - iOS: use 'deviceorientation' which provides webkitCompassHeading.
+  //   Events only fire after requestPermission() grants access on iOS 13+,
+  //   but registering the listener early is harmless and means ALL hook
+  //   instances receive data once any one of them obtains permission.
   useEffect(() => {
-    window.addEventListener("deviceorientation", handleOrientation, true);
-    return () => window.removeEventListener("deviceorientation", handleOrientation, true);
+    const event =
+      "ondeviceorientationabsolute" in window
+        ? "deviceorientationabsolute"
+        : "deviceorientation";
+    window.addEventListener(event, handleOrientation as EventListener, true);
+    return () => window.removeEventListener(event, handleOrientation as EventListener, true);
   }, [handleOrientation]);
 
   // Request iOS 13+ permission from a user gesture.
