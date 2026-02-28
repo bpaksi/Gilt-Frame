@@ -42,9 +42,26 @@ export default function FindByGps({
   const [showArrived, setShowArrived] = useState(false);
   const geofenceTriggeredRef = useRef(false);
 
+  const [permissionDenied, setPermissionDenied] = useState(false);
+
   const handlePermission = useCallback(async () => {
-    if (hasCoords) geo.requestPermission();
-    await orientation.requestPermission();
+    setPermissionDenied(false);
+
+    // Request in series — one system dialog at a time
+    if (hasCoords) {
+      const geoOk = await geo.requestPermission();
+      if (!geoOk) {
+        setPermissionDenied(true);
+        return;
+      }
+    }
+
+    const orientationOk = await orientation.requestPermission();
+    if (!orientationOk) {
+      setPermissionDenied(true);
+      return;
+    }
+
     setNeedsPermission(false);
   }, [hasCoords, geo, orientation]);
 
@@ -116,16 +133,33 @@ export default function FindByGps({
             minHeight: "100%",
             flex: 1,
             padding: "40px 24px",
+            gap: "20px",
           }}
         >
           <TapToContinue
             lines={config.wayfinding_text ? [config.wayfinding_text] : []}
-            instruction={config.enable_label ?? "Enable Location"}
+            instruction={permissionDenied ? "Try Again" : (config.enable_label ?? "Enable Location")}
             onComplete={handlePermission}
             markerDelay={0}
             textDelay={0}
             tapDelay={0}
           />
+          {permissionDenied && (
+            <p
+              style={{
+                color: colors.gold50,
+                fontFamily: fontFamily,
+                fontSize: "14px",
+                fontStyle: "italic",
+                textAlign: "center",
+                letterSpacing: "1px",
+                lineHeight: "1.6",
+                maxWidth: "280px",
+              }}
+            >
+              Permission was denied. Tap above to try again, or reload the page if the prompt doesn&apos;t appear.
+            </p>
+          )}
         </div>
       );
     }

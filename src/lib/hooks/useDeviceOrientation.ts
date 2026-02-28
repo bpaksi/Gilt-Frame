@@ -29,7 +29,8 @@ export function useDeviceOrientation() {
     });
   }, []);
 
-  const requestPermission = useCallback(async () => {
+  // Returns true if permission was granted, false if denied/error.
+  const requestPermission = useCallback(async (): Promise<boolean> => {
     // iOS 13+ requires permission request from user gesture
     if (
       typeof DeviceOrientationEvent !== "undefined" &&
@@ -43,16 +44,17 @@ export function useDeviceOrientation() {
         ).requestPermission();
         if (result !== "granted") {
           setState((s) => ({ ...s, error: "Permission denied" }));
-          return;
+          return false;
         }
       } catch {
         setState((s) => ({ ...s, error: "Permission request failed" }));
-        return;
+        return false;
       }
     }
 
     listenerRef.current = handleOrientation;
     window.addEventListener("deviceorientation", handleOrientation, true);
+    return true;
   }, [handleOrientation]);
 
   useEffect(() => {

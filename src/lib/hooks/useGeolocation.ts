@@ -47,9 +47,37 @@ export function useGeolocation() {
     );
   }, []);
 
-  // Request permission from user gesture (needed for iOS)
-  const requestPermission = useCallback(() => {
-    startWatching();
+  // Request permission from user gesture (needed for iOS).
+  // Returns true if permission was granted, false if denied/error.
+  const requestPermission = useCallback((): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        setState((s) => ({ ...s, error: "Geolocation not supported" }));
+        resolve(false);
+        return;
+      }
+
+      // Use getCurrentPosition to trigger the permission prompt and
+      // wait for the result before starting the continuous watch.
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setState({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            accuracy: pos.coords.accuracy,
+            error: null,
+            permissionGranted: true,
+          });
+          startWatching();
+          resolve(true);
+        },
+        (err) => {
+          setState((s) => ({ ...s, error: err.message, permissionGranted: false }));
+          resolve(false);
+        },
+        { enableHighAccuracy: true, timeout: 15000 },
+      );
+    });
   }, [startWatching]);
 
   useEffect(() => {
