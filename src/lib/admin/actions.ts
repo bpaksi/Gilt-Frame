@@ -21,12 +21,14 @@ export async function getPlayerState(
 ): Promise<PlayerState> {
   const supabase = createAdminClient();
 
-  const { data: progress } = await supabase
+  const { data: progressRows } = await supabase
     .from("chapter_progress")
     .select("*")
     .eq("track", track)
     .is("completed_at", null)
-    .single();
+    .order("started_at", { ascending: false })
+    .limit(1);
+  const progress = progressRows?.[0] ?? null;
 
   if (!progress) {
     return {
