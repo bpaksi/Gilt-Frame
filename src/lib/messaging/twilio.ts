@@ -1,12 +1,22 @@
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID!;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN!;
-const TWILIO_FROM_NUMBER = process.env.TWILIO_PHONE_NUMBER!;
+export const TWILIO_FROM_NUMBER = process.env.TWILIO_PHONE_NUMBER!;
 const DRY_RUN = process.env.TWILIO_DRY_RUN === "true";
 
 type TwilioResult = { success: boolean; sid?: string; error?: string };
 
+/** Redact last 4 digits of a phone number for logging. */
+export function redactPhone(phone: string): string {
+  return phone.replace(/\d{4}$/, "****");
+}
+
+/** Returns true if `phone` is a valid US E.164 number (+1 followed by 10 digits). */
+export function isValidUSE164(phone: string): boolean {
+  return /^\+1\d{10}$/.test(phone);
+}
+
 /** Strip non-digits, ensure +1 prefix for US numbers. */
-function toE164(phone: string): string {
+export function toE164(phone: string): string {
   const digits = phone.replace(/\D/g, "");
   if (digits.startsWith("1") && digits.length === 11) return `+${digits}`;
   if (digits.length === 10) return `+1${digits}`;
@@ -26,7 +36,7 @@ function parseResult(res: Response, data: Record<string, unknown>): TwilioResult
     return { success: false, sid: data.sid as string, error };
   }
 
-  const redactedTo = typeof data.to === "string" ? data.to.replace(/\d{4}$/, "****") : "unknown";
+  const redactedTo = typeof data.to === "string" ? redactPhone(data.to) : "unknown";
   console.log("[Twilio] Sent:", { sid: data.sid, status: data.status, to: redactedTo });
   return { success: true, sid: data.sid as string };
 }

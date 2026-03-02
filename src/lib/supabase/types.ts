@@ -310,6 +310,92 @@ export type Database = {
           },
         ]
       }
+      sms_conversations: {
+        Row: {
+          body: string
+          created_at: string
+          direction: Database["public"]["Enums"]["sms_direction"]
+          from: string
+          id: string
+          keyword_type: Database["public"]["Enums"]["sms_keyword_type"]
+          subscriber_id: string | null
+          to: string
+          twilio_sid: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          direction: Database["public"]["Enums"]["sms_direction"]
+          from: string
+          id?: string
+          keyword_type?: Database["public"]["Enums"]["sms_keyword_type"]
+          subscriber_id?: string | null
+          to: string
+          twilio_sid?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          direction?: Database["public"]["Enums"]["sms_direction"]
+          from?: string
+          id?: string
+          keyword_type?: Database["public"]["Enums"]["sms_keyword_type"]
+          subscriber_id?: string | null
+          to?: string
+          twilio_sid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_conversations_subscriber_id_fkey"
+            columns: ["subscriber_id"]
+            isOneToOne: false
+            referencedRelation: "sms_subscribers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sms_subscribers: {
+        Row: {
+          consent_ip: string | null
+          consent_timestamp: string
+          consent_ua: string | null
+          created_at: string
+          id: string
+          name: string | null
+          opted_out_at: string | null
+          phone: string
+          resubscribed_at: string | null
+          status: Database["public"]["Enums"]["sms_subscriber_status"]
+          updated_at: string
+        }
+        Insert: {
+          consent_ip?: string | null
+          consent_timestamp?: string
+          consent_ua?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          opted_out_at?: string | null
+          phone: string
+          resubscribed_at?: string | null
+          status?: Database["public"]["Enums"]["sms_subscriber_status"]
+          updated_at?: string
+        }
+        Update: {
+          consent_ip?: string | null
+          consent_timestamp?: string
+          consent_ua?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          opted_out_at?: string | null
+          phone?: string
+          resubscribed_at?: string | null
+          status?: Database["public"]["Enums"]["sms_subscriber_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       step_progress: {
         Row: {
           chapter_progress_id: string
@@ -364,6 +450,9 @@ export type Database = {
     Enums: {
       activity_source: "player" | "admin" | "system"
       message_status: "pending" | "scheduled" | "sent" | "delivered" | "failed"
+      sms_direction: "inbound" | "outbound"
+      sms_keyword_type: "stop" | "start" | "help" | "info" | "none"
+      sms_subscriber_status: "active" | "opted_out"
       moment_type:
         | "quest_complete"
         | "chapter_start"
@@ -507,6 +596,9 @@ export const Constants = {
     Enums: {
       activity_source: ["player", "admin", "system"],
       message_status: ["pending", "scheduled", "sent", "delivered", "failed"],
+      sms_direction: ["inbound", "outbound"],
+      sms_keyword_type: ["stop", "start", "help", "info", "none"],
+      sms_subscriber_status: ["active", "opted_out"],
       moment_type: [
         "quest_complete",
         "chapter_start",
