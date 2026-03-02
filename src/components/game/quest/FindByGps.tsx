@@ -48,7 +48,8 @@ export default function FindByGps({
   const [permissionDenied, setPermissionDenied] = useState(false);
   const [gateMessage, setGateMessage] = useState<string | null>(null);
   const [gateVisible, setGateVisible] = useState(false);
-  const prevGateTextRef = useRef<string>("");
+  const prevGateTextRef = useRef<string | null>(null); // null = not yet initialized
+  const minDistanceRef = useRef<number>(Infinity);
   const gateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => () => { if (gateTimeoutRef.current) clearTimeout(gateTimeoutRef.current); }, []);
@@ -107,13 +108,23 @@ export default function FindByGps({
       setDistanceText(newText);
       if (track === "test") setDebugDistanceFt(Math.round(distance * 3.28084));
 
-      // Show full-screen gate message when the distance zone changes
-      if (newText && newText !== prevGateTextRef.current) {
+      // Gate message overlay: trigger only when genuinely closer (not GPS noise or initial fix).
+      // 5m hysteresis prevents oscillation at zone boundaries.
+      const HYSTERESIS_M = 5;
+      if (prevGateTextRef.current === null) {
+        // First reading — silently initialize without showing any overlay
+        prevGateTextRef.current = newText;
+        minDistanceRef.current = distance;
+      } else if (distance < minDistanceRef.current - HYSTERESIS_M && newText !== prevGateTextRef.current) {
+        // Player moved meaningfully closer AND crossed a zone boundary
+        minDistanceRef.current = distance;
         prevGateTextRef.current = newText;
         if (gateTimeoutRef.current) clearTimeout(gateTimeoutRef.current);
         setGateMessage(newText);
         setGateVisible(true);
         gateTimeoutRef.current = setTimeout(() => setGateVisible(false), 3000);
+      } else if (distance < minDistanceRef.current) {
+        minDistanceRef.current = distance;
       }
 
       if (config.geofence_radius && distance < config.geofence_radius && !geofenceTriggeredRef.current) {
