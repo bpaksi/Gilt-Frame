@@ -11,7 +11,7 @@ export default async function CurrentPage() {
   const questState = await getQuestState();
 
   if (questState.status !== "active") {
-    return <WaitingScreen message={"The Order will contact you\nwhen ready."} />;
+    return <WaitingScreen message={"The Order will contact you\nwhen ready."} pollInterval={5000} />;
   }
 
   return <QuestRunner initialState={questState} />;

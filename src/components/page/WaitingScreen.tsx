@@ -1,14 +1,25 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import PageLayout from "@/components/game/ui/PageLayout";
 import { colors, fontFamily } from "@/components/ui/tokens";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
 interface WaitingScreenProps {
   message: string;
+  pollInterval?: number; // ms — if set, refresh the page on this interval
 }
 
-export default function WaitingScreen({ message }: WaitingScreenProps) {
+export default function WaitingScreen({ message, pollInterval }: WaitingScreenProps) {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!pollInterval) return;
+    const id = setInterval(() => router.refresh(), pollInterval);
+    return () => clearInterval(id);
+  }, [pollInterval, router]);
+
   return (
     <PageLayout skipLabel="tap to skip">
       <p
