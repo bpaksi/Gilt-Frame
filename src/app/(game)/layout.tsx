@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import TabBar, { type TabConfig } from "../../components/ui/TabBar";
 import { resolveTrack } from "@/lib/track";
 import { getQuestState } from "@/lib/actions/quest";
+import { colors } from "@/components/ui/tokens";
 
 const GAME_TABS: TabConfig[] = [
   { label: "Pursuit", href: "/pursuit", icon: "marker" },
@@ -43,7 +44,7 @@ export default async function GameLayout({
     <div
       style={{
         minHeight: "100dvh",
-        background: "#0a0a0a",
+        background: colors.bg,
         display: "flex",
         flexDirection: "column",
         paddingBottom: showNav

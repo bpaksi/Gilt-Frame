@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getMomentByShareToken } from "@/lib/actions/moments";
 import { gameConfig } from "@/config";
 import MarkerSVG from "@/components/ui/MarkerSVG";
+import { colors } from "@/components/ui/tokens";
 
 export async function generateMetadata({
   params,
@@ -49,7 +50,7 @@ export default async function SharedMomentPage({
       <div
         style={{
           minHeight: "100dvh",
-          background: "#0a0a0a",
+          background: colors.bg,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -96,7 +97,7 @@ export default async function SharedMomentPage({
     <div
       style={{
         minHeight: "100dvh",
-        background: "#0a0a0a",
+        background: colors.bg,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

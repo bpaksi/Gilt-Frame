@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getMomentByShareToken } from "@/lib/actions/moments";
 import { gameConfig } from "@/config";
+import { colors, fontFamily } from "@/components/ui/tokens";
 
 export const runtime = "edge";
 
@@ -28,7 +29,7 @@ export async function GET(
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "#0a0a0a",
+          background: colors.bg,
           padding: "60px",
           gap: "32px",
         }}
@@ -42,22 +43,22 @@ export async function GET(
         >
           <rect
             x="0.7" y="0.7" width="38.6" height="50.6" rx="1"
-            fill="none" stroke="#C8A54B" strokeWidth="1.4"
+            fill="none" stroke={colors.gold} strokeWidth="1.4"
           />
-          <path d="M 12,12 C 12,26 28,22 28,36" fill="none" stroke="#C8A54B" strokeWidth="1" />
-          <path d="M 28,12 C 28,26 12,22 12,36" fill="none" stroke="#C8A54B" strokeWidth="1" />
-          <circle cx="18" cy="35" r="1" fill="#C8A54B" />
-          <circle cx="22" cy="35" r="1" fill="#C8A54B" />
-          <circle cx="20" cy="32" r="1" fill="#C8A54B" />
-          <circle cx="20" cy="16" r="1" fill="#C8A54B" />
+          <path d="M 12,12 C 12,26 28,22 28,36" fill="none" stroke={colors.gold} strokeWidth="1" />
+          <path d="M 28,12 C 28,26 12,22 12,36" fill="none" stroke={colors.gold} strokeWidth="1" />
+          <circle cx="18" cy="35" r="1" fill={colors.gold} />
+          <circle cx="22" cy="35" r="1" fill={colors.gold} />
+          <circle cx="20" cy="32" r="1" fill={colors.gold} />
+          <circle cx="20" cy="16" r="1" fill={colors.gold} />
         </svg>
 
         {chapterName && (
           <p
             style={{
-              color: "rgba(200, 165, 75, 0.5)",
+              color: colors.gold50,
               fontSize: "18px",
-              fontFamily: "Georgia, serif",
+              fontFamily,
               textTransform: "uppercase",
               letterSpacing: "4px",
             }}
@@ -68,9 +69,9 @@ export async function GET(
 
         <p
           style={{
-            color: "rgba(200, 165, 75, 0.85)",
+            color: colors.gold85,
             fontSize: "28px",
-            fontFamily: "Georgia, serif",
+            fontFamily,
             fontStyle: "italic",
             textAlign: "center",
             lineHeight: 1.6,
