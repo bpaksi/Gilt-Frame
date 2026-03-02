@@ -1,6 +1,6 @@
 import { readdir } from "fs/promises";
 import { join } from "path";
-import { getPlayerState } from "@/lib/admin/actions";
+import { getPlayerState, getAllChapterProgress } from "@/lib/admin/actions";
 import { gameConfig } from "@/config";
 import TestingClient from "./TestingClient";
 
@@ -14,14 +14,25 @@ async function getEmailTemplates(): Promise<string[]> {
 }
 
 export default async function TestingPage() {
-  const [templates, state] = await Promise.all([
+  const [templates, state, allProgress] = await Promise.all([
     getEmailTemplates(),
     getPlayerState("test"),
+    getAllChapterProgress("test"),
   ]);
 
   const testPlayerEmail = gameConfig.tracks.test.player.email;
-  const firstChapterId = Object.keys(gameConfig.chapters)[0];
-  const chapterId = state.chapterId ?? firstChapterId;
+  const allChapterIds = Object.keys(gameConfig.chapters);
+
+  // If a chapter is active, use it. Otherwise find the first chapter not yet completed
+  // so "Complete Chapter" advances through the sequence rather than looping on ch0.
+  const completedIds = new Set(
+    allProgress.filter((cp) => cp.completed_at !== null).map((cp) => cp.chapter_id)
+  );
+  const chapterId =
+    state.chapterId ??
+    allChapterIds.find((id) => !completedIds.has(id)) ??
+    allChapterIds[0];
+
   const chapter = gameConfig.chapters[chapterId];
   const chapterName = state.chapterName ?? chapter?.name ?? chapterId;
 

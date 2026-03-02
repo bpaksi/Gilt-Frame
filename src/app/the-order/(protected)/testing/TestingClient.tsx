@@ -95,6 +95,34 @@ export default function TestingClient({
   const [dataLoading, setDataLoading] = useState(false);
   const [dataError, setDataError] = useState("");
 
+  // ── Activate chapter ──────────────────────────────────────────────────────
+  const [activating, setActivating] = useState(false);
+  const [activateResult, setActivateResult] = useState<{ ok: boolean; message: string } | null>(null);
+
+  async function handleActivate() {
+    if (activating) return;
+    setActivating(true);
+    setActivateResult(null);
+    try {
+      const res = await adminFetch("/api/admin/chapter/activate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ track: "test", chapterId }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setActivateResult({ ok: true, message: `${chapterName} activated` });
+        setTimeout(() => router.refresh(), 800);
+      } else {
+        setActivateResult({ ok: false, message: data.error ?? "Activate failed." });
+      }
+    } catch {
+      setActivateResult({ ok: false, message: "Network error." });
+    } finally {
+      setActivating(false);
+    }
+  }
+
   async function handleReset() {
     if (dataLoading) return;
     setDataLoading(true);
@@ -255,6 +283,33 @@ export default function TestingClient({
           </div>
         ) : (
           <div className="divide-y divide-admin-border">
+            <button
+              onClick={handleActivate}
+              disabled={activating}
+              className="admin-focus w-full flex items-center gap-3 px-4 py-3.5 text-left cursor-pointer group transition-colors duration-150 hover:bg-white/70 border-none bg-transparent font-inherit disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span
+                className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-150 group-hover:bg-white"
+                style={{ background: "rgba(34,120,60,0.10)", color: "#2e7d32" }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg>
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="text-[13px] font-medium text-admin-text-dark">
+                  {activating ? "Activating…" : "Activate Chapter"}
+                </div>
+                <div className="text-[11px] mt-0.5 truncate">
+                  {activateResult ? (
+                    <span className={activateResult.ok ? "text-admin-green" : "text-admin-red"}>
+                      {activateResult.message}
+                    </span>
+                  ) : (
+                    <span className="text-admin-text-faint">{chapterName}</span>
+                  )}
+                </div>
+              </div>
+              <span className="text-admin-text-faint text-[13px] opacity-0 group-hover:opacity-100 transition-opacity duration-150">→</span>
+            </button>
             <button
               onClick={() => setConfirmAction("complete")}
               className="admin-focus w-full flex items-center gap-3 px-4 py-3.5 text-left cursor-pointer group transition-colors duration-150 hover:bg-white/70 border-none bg-transparent font-inherit"
