@@ -1,6 +1,9 @@
 import { createHmac, timingSafeEqual } from "crypto";
 
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN!;
+const SKIP_VALIDATION =
+  process.env.NODE_ENV === "development" &&
+  process.env.TWILIO_SKIP_SIGNATURE_VALIDATION === "true";
 
 /**
  * Validate Twilio webhook request signature (HMAC-SHA1).
@@ -11,6 +14,7 @@ export function validateTwilioSignature(
   params: Record<string, string>,
   signature: string
 ): boolean {
+  if (SKIP_VALIDATION) return true;
   // Sort param keys alphabetically and append key+value to URL
   const data = Object.keys(params)
     .sort()

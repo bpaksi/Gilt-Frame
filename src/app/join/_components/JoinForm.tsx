@@ -159,10 +159,11 @@ export default function JoinForm() {
             color: colors.gold60,
           }}
         >
-          I agree to receive automated text messages from Gilt Frame about
-          puzzle clues and game updates. Approximately 1–4 messages per month.
-          Msg&amp;Data rates may apply. Reply STOP to cancel, HELP for help.
-          Consent is not a condition of purchase. View our{" "}
+          By checking this box, you agree to receive recurring text messages
+          about The Order of the Gilt Frame from Gilt Frame at the phone number
+          provided. Message frequency varies. Message and data rates may apply.
+          Reply STOP to opt out, HELP for help. Consent is not a condition of
+          purchase. See our{" "}
           <a href="/terms" style={{ color: colors.gold80, textDecoration: "underline" }}>
             Terms
           </a>{" "}

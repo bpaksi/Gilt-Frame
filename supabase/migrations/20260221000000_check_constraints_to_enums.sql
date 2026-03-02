@@ -82,7 +82,6 @@ DECLARE
   v_sp_id uuid;
   v_step_id text;
   v_recipient text;
-  v_idx int;
 BEGIN
   IF p_track <> 'test' THEN
     RAISE EXCEPTION 'Complete chapter is only allowed on the test track.';

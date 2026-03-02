@@ -80,6 +80,14 @@ export async function POST(request: NextRequest) {
   // Send confirmation SMS
   const result = await sendSms(e164, CONFIRMATION_SMS);
 
+  if (!result.success) {
+    console.error("[Join] Failed to send confirmation SMS:", result.error);
+    return NextResponse.json(
+      { error: "Failed to send confirmation message. Please try again." },
+      { status: 502 }
+    );
+  }
+
   // Log conversation + activity in parallel (independent writes)
   await Promise.all([
     logConversation({

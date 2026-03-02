@@ -15,7 +15,7 @@ export function detectKeyword(body: string): KeywordType {
 }
 
 export const CONFIRMATION_SMS =
-  "Gilt Frame: You're in. Expect puzzle clues & game updates, ~1-4 msgs/mo. Reply STOP to opt out. Msg&Data rates may apply.";
+  "The Order of the Gilt Frame: You're now opted in to game updates and alerts. Message frequency varies. Msg & data rates may apply. Reply STOP to opt out, HELP for help.";
 
 export const HELP_RESPONSE =
   "Gilt Frame: A location-based puzzle game. ~1-4 msgs/mo. Reply STOP to cancel. Email bpaksi@gmail.com for help. Msg&Data rates may apply.";

@@ -450,9 +450,6 @@ export type Database = {
     Enums: {
       activity_source: "player" | "admin" | "system"
       message_status: "pending" | "scheduled" | "sent" | "delivered" | "failed"
-      sms_direction: "inbound" | "outbound"
-      sms_keyword_type: "stop" | "start" | "help" | "info" | "none"
-      sms_subscriber_status: "active" | "opted_out"
       moment_type:
         | "quest_complete"
         | "chapter_start"
@@ -463,6 +460,9 @@ export type Database = {
         | "bearing_aligned"
         | "questions_answered"
         | "find_confirmed"
+      sms_direction: "inbound" | "outbound"
+      sms_keyword_type: "stop" | "start" | "help" | "info" | "none"
+      sms_subscriber_status: "active" | "opted_out"
       track_type: "test" | "live"
     }
     CompositeTypes: {
@@ -596,9 +596,6 @@ export const Constants = {
     Enums: {
       activity_source: ["player", "admin", "system"],
       message_status: ["pending", "scheduled", "sent", "delivered", "failed"],
-      sms_direction: ["inbound", "outbound"],
-      sms_keyword_type: ["stop", "start", "help", "info", "none"],
-      sms_subscriber_status: ["active", "opted_out"],
       moment_type: [
         "quest_complete",
         "chapter_start",
@@ -610,6 +607,9 @@ export const Constants = {
         "questions_answered",
         "find_confirmed",
       ],
+      sms_direction: ["inbound", "outbound"],
+      sms_keyword_type: ["stop", "start", "help", "info", "none"],
+      sms_subscriber_status: ["active", "opted_out"],
       track_type: ["test", "live"],
     },
   },
