@@ -115,6 +115,7 @@ export default async function AdminCurrentPage() {
           messageProgress={currentStepProgress}
           scheduledAt={currentStepScheduledAt}
           location={chapter?.location ?? null}
+          isChapterActive={!!state.chapterId}
         />
       )}
 

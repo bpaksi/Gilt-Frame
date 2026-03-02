@@ -15,6 +15,7 @@ type Props = {
   messageProgress: MessageProgressRow | null;
   scheduledAt: string | null;
   location: string | null;
+  isChapterActive: boolean;
 };
 
 export default function CurrentStepAction({
@@ -24,12 +25,39 @@ export default function CurrentStepAction({
   messageProgress,
   scheduledAt,
   location,
+  isChapterActive,
 }: Props) {
   const router = useRouter();
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
+  const [completingStep, setCompletingStep] = useState(false);
+  const [completeStepError, setCompleteStepError] = useState("");
   const { confirmPending, gate } = useLiveConfirm();
+
+  async function handleCompleteStep() {
+    if (completingStep) return;
+    setCompletingStep(true);
+    setCompleteStepError("");
+    try {
+      const res = await adminFetch("/api/admin/complete-step", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ track, chapterId, stepId: step.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setCompleteStepError(data.error ?? "Complete step failed.");
+      } else {
+        setCompleteStepError("");
+        setTimeout(() => router.refresh(), 800);
+      }
+    } catch {
+      setCompleteStepError("Network error.");
+    } finally {
+      setCompletingStep(false);
+    }
+  }
 
   const isLetter = step.type === "letter";
   const isOffline = step.type !== "website";
@@ -137,6 +165,24 @@ export default function CurrentStepAction({
             Waiting for player...
           </span>
         </div>
+        {track === "test" && isChapterActive && (
+          <div className="mt-2">
+            <button
+              onClick={handleCompleteStep}
+              disabled={completingStep}
+              className={`admin-btn admin-focus w-full h-9 rounded-md text-[13px] font-bold tracking-[0.5px] text-white border-none font-inherit transition-colors duration-150 ${
+                completingStep
+                  ? "bg-admin-blue-disabled cursor-not-allowed"
+                  : "bg-admin-blue hover:bg-admin-blue-hover cursor-pointer"
+              }`}
+            >
+              {completingStep ? "Processing..." : "COMPLETE STEP"}
+            </button>
+            {completeStepError && (
+              <div className="text-xs text-admin-red mt-2">{completeStepError}</div>
+            )}
+          </div>
+        )}
       </div>
     );
   }
