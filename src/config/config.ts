@@ -635,8 +635,8 @@ export const gameConfig: GameConfig = {
           type: "website",
           component: "FindByGps",
           config: {
-            target_lat: 42.37345556338881,
-            target_lng: -85.4026548342655,
+            target_lat: 42.373428,
+            target_lng: -85.402722,
             geofence_radius: 15,
             wayfinding_text: "Follow the needle, Sparrow.",
             distance_gates: [

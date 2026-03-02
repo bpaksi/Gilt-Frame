@@ -46,6 +46,12 @@ export default function FindByGps({
 
   const [debugDistanceFt, setDebugDistanceFt] = useState<number | null>(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
+  const [gateMessage, setGateMessage] = useState<string | null>(null);
+  const [gateVisible, setGateVisible] = useState(false);
+  const prevGateTextRef = useRef<string>("");
+  const gateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => { if (gateTimeoutRef.current) clearTimeout(gateTimeoutRef.current); }, []);
 
   // Auto-skip permission screen if permissions are already granted (e.g. page refresh)
   const autoCheckedRef = useRef(false);
@@ -97,8 +103,19 @@ export default function FindByGps({
   const handleFrame = useCallback(
     ({ distance }: NavigateFrameData) => {
       if (distance === null) return;
-      setDistanceText(thematicDistanceText(distance, config.distance_gates));
+      const newText = thematicDistanceText(distance, config.distance_gates);
+      setDistanceText(newText);
       if (track === "test") setDebugDistanceFt(Math.round(distance * 3.28084));
+
+      // Show full-screen gate message when the distance zone changes
+      if (newText && newText !== prevGateTextRef.current) {
+        prevGateTextRef.current = newText;
+        if (gateTimeoutRef.current) clearTimeout(gateTimeoutRef.current);
+        setGateMessage(newText);
+        setGateVisible(true);
+        gateTimeoutRef.current = setTimeout(() => setGateVisible(false), 3000);
+      }
+
       if (config.geofence_radius && distance < config.geofence_radius && !geofenceTriggeredRef.current) {
         geofenceTriggeredRef.current = true;
         setShowArrived(true);
@@ -196,6 +213,7 @@ export default function FindByGps({
     return (
       <div
         style={{
+          position: "relative",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -211,7 +229,7 @@ export default function FindByGps({
         {config.wayfinding_text && (
           <p
             style={{
-              color: colors.gold70,
+              color: colors.gold90,
               fontFamily: fontFamily,
               fontSize: "17px",
               fontStyle: "italic",
@@ -219,6 +237,7 @@ export default function FindByGps({
               letterSpacing: "1.5px",
               lineHeight: "1.6",
               maxWidth: "280px",
+              textShadow: "0 1px 8px rgba(0,0,0,0.9)",
             }}
           >
             {config.wayfinding_text}
@@ -237,13 +256,14 @@ export default function FindByGps({
         {track === "test" && (
           <p
             style={{
-              color: colors.gold40,
+              color: "rgba(255,255,255,0.9)",
               fontFamily: "monospace",
               fontSize: "13px",
               textAlign: "center",
               letterSpacing: "1px",
               lineHeight: "1.6",
               margin: "-12px 0 0",
+              textShadow: "0 1px 4px rgba(0,0,0,0.9)",
             }}
           >
             {debugDistanceFt !== null && <>{debugDistanceFt.toLocaleString()} ft<br /></>}
@@ -254,12 +274,13 @@ export default function FindByGps({
         {distanceText && (
           <p
             style={{
-              color: colors.gold60,
+              color: colors.gold,
               fontFamily: fontFamily,
               fontSize: "15px",
               fontStyle: "italic",
               textAlign: "center",
               letterSpacing: "1px",
+              textShadow: "0 1px 8px rgba(0,0,0,0.9)",
             }}
           >
             {distanceText}
@@ -283,6 +304,39 @@ export default function FindByGps({
             initialRevealedTiers={revealedHintTiers}
             onHintReveal={onHintReveal}
           />
+        )}
+
+        {/* Full-screen gate message overlay — appears for 3s when distance zone changes */}
+        {gateMessage && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "40px 32px",
+              backgroundColor: colors.bg,
+              opacity: gateVisible ? 1 : 0,
+              transition: "opacity 0.5s ease",
+              pointerEvents: "none",
+            }}
+          >
+            <p
+              style={{
+                color: colors.gold90,
+                fontFamily: fontFamily,
+                fontSize: "22px",
+                fontStyle: "italic",
+                textAlign: "center",
+                letterSpacing: "2px",
+                lineHeight: "1.7",
+                textShadow: "0 2px 12px rgba(0,0,0,0.9)",
+              }}
+            >
+              {gateMessage}
+            </p>
+          </div>
         )}
       </div>
     );
