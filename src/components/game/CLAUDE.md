@@ -177,7 +177,7 @@ style={{ color: "rgba(200, 165, 75, 0.9)" }}
 | `colors.gold` | `rgba(200, 165, 75, 1)` | Primary accent, active states |
 | `colors.gold90` … `colors.gold08` | opacity variants | Borders, backgrounds, disabled states |
 | `colors.errorRed70`, `colors.errorRed50` | error red variants | Error/shake states |
-| `colors.bg` | `#0a0a0a` | Page background |
+| `colors.bg` | `#1a1816` | Page background |
 | `colors.surface` | `#111111` | Card/panel backgrounds |
 | `fontFamily.serif` | Georgia, serif | All narrative text |
 | `MIN_TAP_TARGET` | `"44px"` | Minimum interactive element size |

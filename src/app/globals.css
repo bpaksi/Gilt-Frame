@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-gold: rgba(200, 165, 75, 1);
-  --color-gold-90: rgba(200, 165, 75, 0.9);
-  --color-gold-60: rgba(200, 165, 75, 0.6);
-  --color-gold-35: rgba(200, 165, 75, 0.35);
-  --color-gold-25: rgba(200, 165, 75, 0.25);
-  --color-gold-12: rgba(200, 165, 75, 0.12);
-  --color-bg: #0a0a0a;
+  --gold-rgb: 220, 185, 95;             /* ← tune here; matches colorBases.gold in tokens.ts */
+  --color-gold:    rgba(var(--gold-rgb), 1);
+  --color-gold-90: rgba(var(--gold-rgb), 0.9);
+  --color-gold-60: rgba(var(--gold-rgb), 0.6);
+  --color-gold-35: rgba(var(--gold-rgb), 0.35);
+  --color-gold-25: rgba(var(--gold-rgb), 0.25);
+  --color-gold-12: rgba(var(--gold-rgb), 0.12);
+  --color-bg: #1a1816;                  /* ← tune here; matches colors.bg in tokens.ts */
   --color-surface: rgba(30, 25, 18, 0.8);
   --font-family-serif: Georgia, 'Times New Roman', serif;
 
@@ -99,30 +100,31 @@
 
 @layer base {
   :root {
-    --color-gold: rgba(200, 165, 75, 1);
-    --color-gold-90: rgba(200, 165, 75, 0.9);
-    --color-gold-60: rgba(200, 165, 75, 0.6);
-    --color-gold-35: rgba(200, 165, 75, 0.35);
-    --color-gold-25: rgba(200, 165, 75, 0.25);
-    --color-gold-12: rgba(200, 165, 75, 0.12);
-    --color-bg: #0a0a0a;
+    --gold-rgb: 220, 185, 95;
+    --color-gold:    rgba(var(--gold-rgb), 1);
+    --color-gold-90: rgba(var(--gold-rgb), 0.9);
+    --color-gold-60: rgba(var(--gold-rgb), 0.6);
+    --color-gold-35: rgba(var(--gold-rgb), 0.35);
+    --color-gold-25: rgba(var(--gold-rgb), 0.25);
+    --color-gold-12: rgba(var(--gold-rgb), 0.12);
+    --color-bg: #1a1816;
     --color-surface: rgba(30, 25, 18, 0.8);
   }
 
   html {
     height: 100%;
-    background: #0a0a0a;
+    background: var(--color-bg);
     -webkit-text-size-adjust: 100%;
   }
 
   body {
     min-height: 100%;
-    background: #0a0a0a;
-    color: rgba(200, 165, 75, 0.9);
+    background: var(--color-bg);
+    color: rgba(var(--gold-rgb), 1);
     font-family: Georgia, 'Times New Roman', serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-shadow: 0 0 12px rgba(200, 165, 75, 0.15);
+    text-shadow: 0 0 12px rgba(var(--gold-rgb), 0.35);
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
@@ -135,16 +137,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #0a0a0a;
+    background: var(--color-bg);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(200, 165, 75, 0.2);
+    background: rgba(var(--gold-rgb), 0.2);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(200, 165, 75, 0.4);
+    background: rgba(var(--gold-rgb), 0.4);
   }
 
   .shake {
