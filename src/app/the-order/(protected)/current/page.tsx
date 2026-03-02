@@ -6,59 +6,39 @@ import {
   getAllChapterProgress,
 } from "@/lib/admin/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { gameConfig, getOrderedSteps, formatStepKey } from "@/config";
+import { gameConfig, getOrderedSteps } from "@/config";
 import PlayerStateCard from "@/components/admin/PlayerStateCard";
 import CurrentStepAction from "@/components/admin/CurrentStepAction";
+import ActivateChapterButton from "@/components/admin/ActivateChapterButton";
 
 export default async function AdminCurrentPage() {
   const track = await getAdminTrack();
   const state = await getPlayerState(track);
 
-  // When idle, find the first incomplete chapter (not the first chapter overall)
-  let chapterId: string;
-  let stepIndex: number;
-
-  if (state.chapterId) {
-    chapterId = state.chapterId;
-    stepIndex = state.stepIndex;
-  } else {
-    const chapterProgress = await getAllChapterProgress(track);
-    const completedIds = new Set(
-      chapterProgress.filter((cp) => !!cp.completed_at).map((cp) => cp.chapter_id)
-    );
-    const chapterIds = Object.keys(gameConfig.chapters);
-    chapterId = chapterIds.find((id) => !completedIds.has(id)) ?? chapterIds[0];
-    stepIndex = 0;
-  }
-
-  const messageProgress = chapterId
-    ? await getChapterMessageProgress(track, chapterId)
-    : [];
-
-  // Resolve current step + its message_progress row
+  // ── Active chapter: resolve current step + its message progress ───────────
   let currentStep = null;
   let currentStepProgress = null;
   let currentStepScheduledAt: string | null = null;
-  if (chapterId) {
-    const chapter = gameConfig.chapters[chapterId];
+
+  if (state.chapterId) {
+    const chapter = gameConfig.chapters[state.chapterId];
     if (chapter) {
       const orderedSteps = getOrderedSteps(chapter);
-      currentStep = orderedSteps[stepIndex] ?? null;
+      currentStep = orderedSteps[state.stepIndex] ?? null;
 
       if (currentStep && currentStep.type !== "website") {
-        // Find message_progress by step_id (player's message)
+        const messageProgress = await getChapterMessageProgress(track, state.chapterId);
         currentStepProgress =
           messageProgress.find(
             (mp) => mp.step_id === currentStep!.id && mp.to === currentStep!.config.to
           ) ?? null;
 
-        // Check step_progress for scheduled_at
         const supabase = createAdminClient();
         const { data: cp } = await supabase
           .from("chapter_progress")
           .select("id")
           .eq("track", track)
-          .eq("chapter_id", chapterId)
+          .eq("chapter_id", state.chapterId)
           .single();
 
         if (cp) {
@@ -71,51 +51,47 @@ export default async function AdminCurrentPage() {
           currentStepScheduledAt = sp?.scheduled_at ?? null;
         }
       }
-
     }
   }
 
-  // Enrich state with defaults so PlayerStateCard always shows chapter info
-  const chapter = gameConfig.chapters[chapterId];
-  let enrichedState = state;
+  // ── Idle: find next chapter to activate ───────────────────────────────────
+  let nextChapterId: string | null = null;
+  let nextChapterName: string | null = null;
 
   if (!state.chapterId) {
-    // Fetch last activity even when idle
-    const supabase = createAdminClient();
-    const { data: lastEvent } = await supabase
-      .from("activity_log")
-      .select("created_at")
-      .eq("track", track)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
-
-    enrichedState = {
-      ...state,
-      chapterId,
-      chapterName: chapter?.name ?? chapterId,
-      location: chapter?.location ?? null,
-      stepName: currentStep ? formatStepKey(currentStep.id) : null,
-      status: "pending",
-      lastActivity: lastEvent?.created_at ?? null,
-    };
+    const chapterProgress = await getAllChapterProgress(track);
+    const completedIds = new Set(
+      chapterProgress.filter((cp) => !!cp.completed_at).map((cp) => cp.chapter_id)
+    );
+    const chapterIds = Object.keys(gameConfig.chapters);
+    nextChapterId = chapterIds.find((id) => !completedIds.has(id)) ?? chapterIds[0];
+    const nextChapter = nextChapterId ? gameConfig.chapters[nextChapterId] : null;
+    nextChapterName = nextChapter?.name ?? nextChapterId;
   }
 
   return (
     <div className="p-4 max-w-2xl">
-      <PlayerStateCard state={enrichedState} />
+      <PlayerStateCard state={state} />
 
-      {currentStep && (
+      {state.chapterId && currentStep && (
         <CurrentStepAction
-          key={`${chapterId}-${stepIndex}`}
+          key={`${state.chapterId}-${state.stepIndex}`}
           step={currentStep}
           track={track}
-          chapterId={chapterId}
-          stepIndex={stepIndex}
+          chapterId={state.chapterId}
+          stepIndex={state.stepIndex}
           messageProgress={currentStepProgress}
           scheduledAt={currentStepScheduledAt}
-          location={chapter?.location ?? null}
-          isChapterActive={!!state.chapterId}
+          location={gameConfig.chapters[state.chapterId]?.location ?? null}
+          isChapterActive={true}
+        />
+      )}
+
+      {!state.chapterId && nextChapterId && (
+        <ActivateChapterButton
+          chapterId={nextChapterId}
+          chapterName={nextChapterName!}
+          track={track}
         />
       )}
 

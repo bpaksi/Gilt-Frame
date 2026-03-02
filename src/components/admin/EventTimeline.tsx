@@ -117,7 +117,7 @@ export default function EventTimeline({
   const chapterStepIndex = useMemo(() => {
     if (!chapterFilter) return 0;
     const cp = chapterProgress.find((c) => c.chapter_id === chapterFilter);
-    if (!cp) return 0;
+    if (!cp) return -1;
     if (cp.completed_at !== null) {
       const chapter = gameConfig.chapters[chapterFilter];
       return chapter ? getOrderedSteps(chapter).length : 0;
