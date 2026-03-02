@@ -2,8 +2,9 @@
 -- array_length() returns NULL for an empty array, making `1..NULL` crash.
 -- Use COALESCE(..., 0) so the FOR loop range becomes `1..0` (executes 0 times).
 --
--- Preserves all changes from 20260221000000_check_constraints_to_enums.sql:
--- SET search_path = '', public. table prefixes, and p_track::public.track_type cast.
+-- Preserves all changes from prior migrations:
+-- - 20260221: SET search_path = '', public. table prefixes, p_track::public.track_type cast
+-- - 20260226: current_step_id = NULL on completion
 
 CREATE OR REPLACE FUNCTION complete_chapter(
   p_track text,
@@ -27,10 +28,10 @@ BEGIN
     RAISE EXCEPTION 'Complete chapter is only allowed on the test track.';
   END IF;
 
-  INSERT INTO public.chapter_progress (track, chapter_id, completed_at)
-  VALUES (p_track::public.track_type, p_chapter_id, now())
+  INSERT INTO public.chapter_progress (track, chapter_id, completed_at, current_step_id)
+  VALUES (p_track::public.track_type, p_chapter_id, now(), NULL)
   ON CONFLICT (track, chapter_id)
-  DO UPDATE SET completed_at = now()
+  DO UPDATE SET completed_at = now(), current_step_id = NULL
   RETURNING id INTO v_cp_id;
 
   -- COALESCE handles empty arrays (array_length returns NULL for length-0 arrays)
