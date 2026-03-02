@@ -1,0 +1,100 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createRateLimiter, getClientIp } from "@/lib/rate-limit";
+import { toE164, isValidUSE164, sendSms, redactPhone } from "@/lib/messaging/twilio";
+import { findSubscriberByPhone, createSubscriber, resubscribe } from "@/lib/sms/subscribers";
+import { logConversation } from "@/lib/sms/conversations";
+import { CONFIRMATION_SMS } from "@/lib/sms/keywords";
+import { logActivity } from "@/lib/admin/log";
+
+const limiter = createRateLimiter(5, 15 * 60 * 1000); // 5 per 15 min
+
+export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+
+  if (!limiter.check(ip)) {
+    return NextResponse.json(
+      { error: "Too many attempts. Please try again later." },
+      { status: 429 }
+    );
+  }
+  limiter.record(ip);
+
+  let body: { phone?: string; name?: string; consent?: boolean };
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+  }
+
+  const { phone, name, consent } = body;
+
+  if (!phone || !consent) {
+    return NextResponse.json(
+      { error: "Phone number and consent are required." },
+      { status: 400 }
+    );
+  }
+
+  const e164 = toE164(phone);
+  if (!isValidUSE164(e164)) {
+    return NextResponse.json(
+      { error: "Please enter a valid US phone number." },
+      { status: 400 }
+    );
+  }
+
+  // Check existing subscriber
+  const existing = await findSubscriberByPhone(e164);
+
+  if (existing?.status === "active") {
+    return NextResponse.json({ alreadySubscribed: true });
+  }
+
+  let subscriberId: string;
+  try {
+    if (existing?.status === "opted_out") {
+      await resubscribe(existing.id);
+      subscriberId = existing.id;
+    } else {
+      const subscriber = await createSubscriber({
+        phone: e164,
+        name: name || undefined,
+        consent_ip: ip,
+        consent_ua: request.headers.get("user-agent") ?? "",
+      });
+      subscriberId = subscriber.id;
+    }
+  } catch (err: unknown) {
+    // Unique constraint race condition — treat as already subscribed
+    if (
+      err &&
+      typeof err === "object" &&
+      "code" in err &&
+      (err as { code: string }).code === "23505"
+    ) {
+      return NextResponse.json({ alreadySubscribed: true });
+    }
+    throw err;
+  }
+
+  // Send confirmation SMS
+  const result = await sendSms(e164, CONFIRMATION_SMS);
+
+  // Log conversation + activity in parallel (independent writes)
+  await Promise.all([
+    logConversation({
+      phone: e164,
+      direction: "outbound",
+      body: CONFIRMATION_SMS,
+      twilio_sid: result.sid,
+      subscriber_id: subscriberId,
+    }),
+    logActivity("system", "sms_join", {
+      phone: redactPhone(e164),
+      name: name || null,
+      resubscribed: existing?.status === "opted_out",
+    }),
+  ]);
+
+  return NextResponse.json({ success: true });
+}
