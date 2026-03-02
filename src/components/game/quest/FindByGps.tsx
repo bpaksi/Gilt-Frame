@@ -247,9 +247,7 @@ export default function FindByGps({
             }}
           >
             {debugDistanceFt !== null && <>{debugDistanceFt.toLocaleString()} ft<br /></>}
-            hdg: {orientation.heading !== null ? orientation.heading.toFixed(1) : "null"}°
-            {" · "}
-            {orientation.debugSource}
+            {geo.lat != null ? geo.lat.toFixed(6) : "—"}, {geo.lng != null ? geo.lng.toFixed(6) : "—"}
           </p>
         )}
 
