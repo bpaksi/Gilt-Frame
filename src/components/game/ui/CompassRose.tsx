@@ -110,6 +110,7 @@ export default function CompassRose(props: CompassRoseProps) {
   const maxCWRef = useRef(0);
   const maxCCWRef = useRef(0);
   const holdStartRef = useRef<number | null>(null);
+  const offTargetSinceRef = useRef<number | null>(null);
 
   // Store all props + orientation in refs so the RAF loop always reads the latest
   // values without needing to restart on every prop/heading change.
@@ -264,8 +265,12 @@ export default function CompassRose(props: CompassRoseProps) {
         const hasRotatedEnough =
           maxCWRef.current >= minRotation && maxCCWRef.current <= -minRotation;
 
+        // Grace period: brief off-target jitter (< 300ms) doesn't reset hold
+        const HOLD_GRACE_MS = 300;
+
         let holdProgress = 0;
         if (isOnTarget && hasRotatedEnough) {
+          offTargetSinceRef.current = null;
           if (holdStartRef.current === null) {
             holdStartRef.current = performance.now();
           } else {
@@ -278,7 +283,17 @@ export default function CompassRose(props: CompassRoseProps) {
             }
           }
         } else {
-          holdStartRef.current = null;
+          if (offTargetSinceRef.current === null) {
+            offTargetSinceRef.current = performance.now();
+          }
+          const offDuration = performance.now() - offTargetSinceRef.current;
+          if (offDuration > HOLD_GRACE_MS) {
+            holdStartRef.current = null;
+          } else if (holdStartRef.current !== null) {
+            // Within grace — keep counting hold progress for visual feedback
+            const held = (performance.now() - holdStartRef.current) / 1000;
+            holdProgress = clamp(held / holdSeconds, 0, 1);
+          }
         }
 
         // Ramping shake during hold

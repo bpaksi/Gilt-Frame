@@ -59,7 +59,7 @@ function updateDebugSource() {
     const t = ((gpsSpeed - SPEED_LOW) / (SPEED_HIGH - SPEED_LOW) * 100).toFixed(0);
     debugSource = `blend:${t}% gps`;
   } else if (magnetHeading !== null) {
-    debugSource = `mag:${magnetHeading.toFixed(0)}`;
+    debugSource = `${magnetSource}:${magnetHeading.toFixed(0)}`;
   } else {
     debugSource = "none";
   }
@@ -71,10 +71,51 @@ function getEventName(): string {
     : "deviceorientation";
 }
 
+// Track the heading source for debug display
+let magnetSource: "webkit" | "euler" | "alpha" | "none" = "none";
+
+/**
+ * Compute compass heading from all three Euler angles (ZXY convention per W3C spec).
+ * Works regardless of phone orientation (upright, flat, tilted) by projecting
+ * the device's -Y axis (screen top) into the horizontal plane.
+ */
+function computeHeadingFromEuler(alpha: number, beta: number, gamma: number): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const a = toRad(alpha);
+  const b = toRad(beta);
+  const g = toRad(gamma);
+
+  // Rotation matrix R = Rz(alpha) * Rx(beta) * Ry(gamma) — W3C ZXY convention
+  // Device -Y axis in world coordinates: (-R[0][1], -R[1][1])
+  // These give east and north components for atan2 heading
+  const sA = Math.sin(a), cA = Math.cos(a);
+  const sB = Math.sin(b);
+  const sG = Math.sin(g), cG = Math.cos(g);
+
+  // East component of device -Y in world frame
+  const east = cA * sG + sA * sB * cG;
+  // North component of device -Y in world frame
+  const north = -sA * sG + cA * sB * cG;
+
+  // atan2(east, north) gives clockwise-from-north heading
+  return ((Math.atan2(east, north) * 180) / Math.PI + 360) % 360;
+}
+
 function handleOrientationEvent(e: DeviceOrientationEvent) {
   const webkit = (e as DeviceOrientationEvent & { webkitCompassHeading?: number })
     .webkitCompassHeading;
-  magnetHeading = webkit ?? (e.alpha !== null ? (360 - e.alpha) % 360 : null);
+
+  if (webkit != null) {
+    magnetHeading = webkit;
+    magnetSource = "webkit";
+  } else if (e.alpha !== null && e.beta !== null && e.gamma !== null) {
+    magnetHeading = computeHeadingFromEuler(e.alpha, e.beta, e.gamma);
+    magnetSource = "euler";
+  } else if (e.alpha !== null) {
+    magnetHeading = (360 - e.alpha) % 360;
+    magnetSource = "alpha";
+  }
+
   heading = blendHeading();
   updateDebugSource();
   error = null;

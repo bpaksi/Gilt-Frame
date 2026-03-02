@@ -171,9 +171,9 @@ export const gameConfig: GameConfig = {
           type: "website",
           component: "FindByGps",
           config: {
-            target_lat: 42.405278,
-            target_lng: -85.402778,
-            geofence_radius: 9,
+            target_lat: 42.405352,
+            target_lng: -85.402878,
+            geofence_radius: 20,
             wayfinding_text: "Travel to the timekeeper, Sparrow.",
             distance_gates: [
               { above: 200, text: "The Marker is far. Keep searching." },
@@ -226,9 +226,9 @@ export const gameConfig: GameConfig = {
           component: "AlignBearing",
           config: {
             compass_target: 255,
-            compass_tolerance: 8,
+            compass_tolerance: 15,
             min_rotation: 45,
-            hold_seconds: 1.5,
+            hold_seconds: 2.0,
             permission_lines: [
               "This bird casts its shadow over time.",
               "So will you, Sparrow, cast yours.",
@@ -619,6 +619,38 @@ export const gameConfig: GameConfig = {
         description: "The archive reveals its secrets.",
       },
       steps: {},
+    },
+
+    // ── Chapter 4 (TEST) ──────────────────────────────────────────────────────
+    // Short-range FindByGPS test puzzle (~50m walk). For playtesting GPS
+    // compass, distance gates, geofence, and proximity feedback.
+    // Start: 42.37341, -85.40206 → Target: 42.37346, -85.40265
+    ch4: {
+      name: "GPS Test",
+      location: "Test location",
+      window: "Testing",
+      steps: {
+        ch4_gps_test: {
+          order: 0,
+          type: "website",
+          component: "FindByGps",
+          config: {
+            target_lat: 42.37345556338881,
+            target_lng: -85.4026548342655,
+            geofence_radius: 15,
+            wayfinding_text: "Follow the needle, Sparrow.",
+            distance_gates: [
+              { above: 50, text: "The Marker is far. Keep searching." },
+              { above: 35, text: "The path unfolds before you." },
+              { above: 25, text: "You draw closer. The Marker stirs." },
+              { above: 15, text: "The air grows heavy with purpose." },
+              { above: 8, text: "The Marker grows warm. You are near." },
+              { above: 0, text: "The Marker burns bright. You have arrived." },
+            ],
+            instruction: "Test marker found",
+          },
+        },
+      },
     },
   },
 };

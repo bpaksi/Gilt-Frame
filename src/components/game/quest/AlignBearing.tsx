@@ -42,7 +42,7 @@ export default function AlignBearing({ config, onAdvance }: AlignBearingProps) {
       const textEl = statusTextRef.current;
 
       if (markerEl) {
-        const glowBlur = proximity > 0.3 ? 15 + proximity * 50 + holdProgress * 30 : 0;
+        const glowBlur = proximity > 0.3 ? 15 + proximity * 50 + holdProgress * 60 : 0;
         const glowColor = isOnTarget
           ? `rgba(${colorBases.goldBright}, ${0.4 + holdProgress * 0.4})`
           : `rgba(${colorBases.gold}, ${proximity * 0.3})`;
