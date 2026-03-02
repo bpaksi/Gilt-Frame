@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Giltframe",
-  description: "Privacy policy for the Giltframe game application.",
+  title: "Privacy Policy — Gilt Frame",
+  description: "Privacy policy for the Gilt Frame game application.",
 };
 
 export default function PrivacyPage() {
@@ -18,7 +18,8 @@ export default function PrivacyPage() {
 
         <div className="mt-10 space-y-10 text-base leading-8 text-gray-700">
           <p>
-            Giltframe is a private hobby game application operated by Bob Paksi.
+            Gilt Frame is a private hobby game application operated by Bob
+            Paksi.
           </p>
 
           <section>

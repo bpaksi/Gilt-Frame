@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms and Conditions — Giltframe",
-  description: "Terms and conditions for the Giltframe game notifications.",
+  title: "Terms and Conditions — Gilt Frame",
+  description: "Terms and conditions for the Gilt Frame game notifications.",
 };
 
 export default function TermsPage() {
@@ -19,7 +19,7 @@ export default function TermsPage() {
         <div className="mt-10 space-y-10 text-base leading-8 text-gray-700">
           <div>
             <p>
-              <strong>Program:</strong> Giltframe Game Notifications
+              <strong>Program:</strong> Gilt Frame Game Notifications
             </p>
             <p>
               <strong>Operated by:</strong> Bob Paksi
@@ -27,11 +27,9 @@ export default function TermsPage() {
           </div>
 
           <section>
-            <h2 className="text-lg font-semibold text-gray-900">
-              Description
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-900">Description</h2>
             <p className="mt-3">
-              Giltframe sends MMS game notifications and updates to a small
+              Gilt Frame sends MMS game notifications and updates to a small
               private group of consenting participants.
             </p>
           </section>
