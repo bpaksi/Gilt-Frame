@@ -108,15 +108,14 @@ export default function FindByGps({
       setDistanceText(newText);
       if (track === "test") setDebugDistanceFt(Math.round(distance * 3.28084));
 
-      // Gate message overlay: trigger only when genuinely closer (not GPS noise or initial fix).
-      // 5m hysteresis prevents oscillation at zone boundaries.
-      const HYSTERESIS_M = 5;
+      // Gate message overlay: trigger only when moving closer, never backward.
+      // Min-distance tracking prevents GPS oscillation from re-firing a zone.
       if (prevGateTextRef.current === null) {
         // First reading — silently initialize without showing any overlay
         prevGateTextRef.current = newText;
         minDistanceRef.current = distance;
-      } else if (distance < minDistanceRef.current - HYSTERESIS_M && newText !== prevGateTextRef.current) {
-        // Player moved meaningfully closer AND crossed a zone boundary
+      } else if (distance < minDistanceRef.current && newText !== prevGateTextRef.current) {
+        // Moved to a new closer zone — show full-screen gate message
         minDistanceRef.current = distance;
         prevGateTextRef.current = newText;
         if (gateTimeoutRef.current) clearTimeout(gateTimeoutRef.current);
@@ -129,6 +128,10 @@ export default function FindByGps({
 
       if (config.geofence_radius && distance < config.geofence_radius && !geofenceTriggeredRef.current) {
         geofenceTriggeredRef.current = true;
+        // Take over the gate overlay as a persistent arrived screen (no auto-dismiss)
+        if (gateTimeoutRef.current) clearTimeout(gateTimeoutRef.current);
+        setGateMessage(newText);
+        setGateVisible(true);
         setShowArrived(true);
       }
       if (!config.geofence_radius && distance < 50) {
@@ -298,15 +301,6 @@ export default function FindByGps({
           </p>
         )}
 
-        {showArrived && (
-          <GhostButton
-            onClick={() => setPhase("marker")}
-            style={{ opacity: 0, animation: "fade-in 0.8s ease forwards" }}
-          >
-            {config.arrived_label ?? "I have arrived"}
-          </GhostButton>
-        )}
-
         {config.hints && (
           <HintSystem
             hints={config.hints}
@@ -317,20 +311,22 @@ export default function FindByGps({
           />
         )}
 
-        {/* Full-screen gate message overlay — appears for 3s when distance zone changes */}
+        {/* Full-screen gate message overlay — 3s for zone crossings, persistent for arrived */}
         {gateMessage && (
           <div
             style={{
               position: "absolute",
               inset: 0,
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
+              gap: "40px",
               padding: "40px 32px",
               backgroundColor: colors.bg,
               opacity: gateVisible ? 1 : 0,
               transition: "opacity 0.5s ease",
-              pointerEvents: "none",
+              pointerEvents: showArrived ? "auto" : "none",
             }}
           >
             <p
@@ -347,6 +343,11 @@ export default function FindByGps({
             >
               {gateMessage}
             </p>
+            {showArrived && (
+              <GhostButton onClick={() => setPhase("marker")}>
+                {config.arrived_label ?? "I have arrived"}
+              </GhostButton>
+            )}
           </div>
         )}
       </div>
