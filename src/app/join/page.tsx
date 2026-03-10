@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { colors } from "@/components/ui/tokens";
+import ComplianceHeader from "@/components/ui/ComplianceHeader";
+import ComplianceFooter from "@/components/ui/ComplianceFooter";
 import JoinForm from "./_components/JoinForm";
 
 export const metadata: Metadata = {
@@ -10,17 +11,30 @@ export const metadata: Metadata = {
 
 export default function JoinPage() {
   return (
-    <main
-      style={{
-        minHeight: "100dvh",
-        background: colors.bg,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "40px 20px",
-      }}
-    >
-      <JoinForm />
-    </main>
+    <div className="flex min-h-dvh flex-col bg-white">
+      <ComplianceHeader />
+
+      <main className="flex flex-1 items-center justify-center px-6 py-16">
+        <div className="w-full max-w-md">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Join Gilt Frame
+            </h1>
+            <p className="mt-3 text-base text-gray-600">
+              Sign up to receive SMS puzzle clues and game updates from The
+              Order of the Gilt Frame.
+            </p>
+          </div>
+
+          <div className="mt-10">
+            <JoinForm />
+          </div>
+        </div>
+      </main>
+
+      <div className="mx-auto w-full max-w-md px-6">
+        <ComplianceFooter />
+      </div>
+    </div>
   );
 }

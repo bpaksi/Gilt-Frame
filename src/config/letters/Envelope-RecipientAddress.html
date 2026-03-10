@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Recipient Address Label — The Order of the Gilt Frame</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  @page {
+    size: 4in 2in;
+    margin: 0;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --ink-brown: #2E231A;
+  }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    color: var(--ink-brown);
+    width: 4in;
+    height: 2in;
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: white;
+  }
+
+  .recipient-block {
+    text-align: left;
+  }
+
+  .recipient-name {
+    font-style: italic;
+    font-size: 13pt;
+    font-weight: 500;
+    letter-spacing: 0.3pt;
+    margin-bottom: 3pt;
+  }
+
+  .recipient-address {
+    font-size: 12pt;
+    line-height: 1.65;
+    font-weight: 600;
+  }
+
+  @media print {
+    body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="recipient-block">
+    <div class="recipient-name">Christine McCarthy &middot; Sparrow</div>
+    <div class="recipient-address">
+      7781 N. 37th St.<br>
+      Richland, MI 49083
+    </div>
+  </div>
+
+</body>
+</html>

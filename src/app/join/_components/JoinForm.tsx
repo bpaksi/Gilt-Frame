@@ -1,25 +1,15 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import GoldText from "@/components/ui/GoldText";
-import OrnateDivider from "@/components/ui/OrnateDivider";
-import GhostButton from "@/components/ui/GhostButton";
-import { colors, fontFamily } from "@/components/ui/tokens";
+import Link from "next/link";
 
-type FormState = "idle" | "submitting" | "success" | "already-subscribed" | "error" | "rate-limited";
-
-const inputStyle = {
-  background: "transparent",
-  border: `1px solid ${colors.gold30}`,
-  color: colors.gold90,
-  fontFamily,
-  fontSize: "16px",
-  fontStyle: "italic" as const,
-  padding: "12px 16px",
-  width: "100%",
-  outline: "none",
-  borderRadius: 0,
-};
+type FormState =
+  | "idle"
+  | "submitting"
+  | "success"
+  | "already-subscribed"
+  | "error"
+  | "rate-limited";
 
 export default function JoinForm() {
   const [phone, setPhone] = useState("");
@@ -39,7 +29,11 @@ export default function JoinForm() {
       const res = await fetch("/api/join", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: phone.trim(), name: name.trim() || undefined, consent }),
+        body: JSON.stringify({
+          phone: phone.trim(),
+          name: name.trim() || undefined,
+          consent,
+        }),
       });
 
       if (res.status === 429) {
@@ -69,130 +63,124 @@ export default function JoinForm() {
 
   if (state === "success") {
     return (
-      <div style={{ textAlign: "center", maxWidth: 400 }}>
-        <GoldText variant="heading">Welcome, Sparrow.</GoldText>
-        <OrnateDivider style={{ margin: "24px auto" }} />
-        <GoldText variant="hint">
-          A confirmation has been sent to your phone. The Order will reach you when the time comes.
-        </GoldText>
+      <div className="rounded-lg border border-green-200 bg-green-50 p-8 text-center">
+        <h2 className="text-xl font-semibold text-gray-900">
+          Welcome, Sparrow.
+        </h2>
+        <p className="mt-3 text-base text-gray-600">
+          A confirmation has been sent to your phone. The Order will reach you
+          when the time comes.
+        </p>
       </div>
     );
   }
 
   if (state === "already-subscribed") {
     return (
-      <div style={{ textAlign: "center", maxWidth: 400 }}>
-        <GoldText variant="heading">You are already known to us.</GoldText>
-        <OrnateDivider style={{ margin: "24px auto" }} />
-        <GoldText variant="hint">
+      <div className="rounded-lg border border-blue-200 bg-blue-50 p-8 text-center">
+        <h2 className="text-xl font-semibold text-gray-900">
+          You are already known to us.
+        </h2>
+        <p className="mt-3 text-base text-gray-600">
           This number is already enrolled. Watch for messages from The Order.
-        </GoldText>
+        </p>
       </div>
     );
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "24px",
-        maxWidth: 400,
-        width: "100%",
-      }}
-    >
-      <GoldText variant="heading">Join the Order</GoldText>
-      <OrnateDivider />
-      <GoldText variant="hint" style={{ maxWidth: 340 }}>
-        Receive puzzle clues and game updates via SMS.
-      </GoldText>
-
-      <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "16px" }}>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Phone number */}
+      <div>
+        <label
+          htmlFor="phone"
+          className="block text-sm font-medium text-gray-900"
+        >
+          Phone number
+        </label>
         <input
+          id="phone"
           type="tel"
           inputMode="tel"
           autoComplete="tel"
-          placeholder="Phone number"
+          placeholder="(555) 555-1234"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           required
-          style={inputStyle}
-        />
-        <input
-          type="text"
-          autoComplete="name"
-          placeholder="Name (optional)"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={inputStyle}
+          className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
       </div>
 
-      <label
-        style={{
-          display: "flex",
-          gap: "12px",
-          alignItems: "flex-start",
-          cursor: "pointer",
-          width: "100%",
-        }}
-      >
-        <input
-          type="checkbox"
-          checked={consent}
-          onChange={(e) => setConsent(e.target.checked)}
-          style={{
-            marginTop: "4px",
-            accentColor: colors.gold,
-            flexShrink: 0,
-            width: "18px",
-            height: "18px",
-          }}
-        />
-        <span
-          style={{
-            fontFamily,
-            fontSize: "13px",
-            lineHeight: 1.6,
-            color: colors.gold60,
-          }}
+      {/* Name (optional) */}
+      <div>
+        <label
+          htmlFor="name"
+          className="block text-sm font-medium text-gray-900"
         >
-          By checking this box, you agree to receive recurring text messages
-          about The Order of the Gilt Frame from Gilt Frame at the phone number
-          provided. Message frequency varies. Message and data rates may apply.
-          Reply STOP to opt out, HELP for help. Consent is not a condition of
-          purchase. See our{" "}
-          <a href="/terms" style={{ color: colors.gold80, textDecoration: "underline" }}>
+          Name{" "}
+          <span className="font-normal text-gray-400">(optional)</span>
+        </label>
+        <input
+          id="name"
+          type="text"
+          autoComplete="name"
+          placeholder="Your name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        />
+      </div>
+
+      {/* SMS Consent — standalone, unchecked by default */}
+      <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
+        <label className="flex cursor-pointer items-start gap-3">
+          <input
+            type="checkbox"
+            checked={consent}
+            onChange={(e) => setConsent(e.target.checked)}
+            className="mt-0.5 h-5 w-5 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span className="text-sm leading-relaxed text-gray-700">
+            I agree to receive recurring SMS/MMS text messages about The Order
+            of the Gilt Frame from Gilt Frame at the phone number provided.
+            Message frequency varies; up to 10 messages per month. Message and
+            data rates may apply. Reply STOP to opt out, HELP for help.
+            Consent is not a condition of purchase.
+          </span>
+        </label>
+        <p className="mt-3 pl-8 text-xs text-gray-500">
+          See our{" "}
+          <Link href="/terms" className="text-blue-600 underline hover:text-blue-800">
             Terms
-          </a>{" "}
+          </Link>{" "}
           and{" "}
-          <a href="/privacy" style={{ color: colors.gold80, textDecoration: "underline" }}>
+          <Link href="/privacy" className="text-blue-600 underline hover:text-blue-800">
             Privacy Policy
-          </a>
+          </Link>
           .
-        </span>
-      </label>
+        </p>
+      </div>
 
+      {/* Error states */}
       {state === "error" && (
-        <GoldText variant="muted" style={{ color: colors.errorRed70 }}>
+        <p className="rounded-md bg-red-50 p-3 text-sm text-red-700">
           {errorMsg}
-        </GoldText>
+        </p>
       )}
-
       {state === "rate-limited" && (
-        <GoldText variant="muted" style={{ color: colors.errorRed70 }}>
+        <p className="rounded-md bg-red-50 p-3 text-sm text-red-700">
           Too many attempts. Please try again later.
-        </GoldText>
+        </p>
       )}
 
-      <GhostButton
+      {/* Submit */}
+      <button
         type="submit"
         disabled={state === "submitting" || !consent || !phone.trim()}
+        className="w-full rounded-md bg-gray-900 px-6 py-3 text-base font-medium text-white shadow-sm transition-colors hover:bg-gray-800 focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500"
       >
-        {state === "submitting" ? "Joining..." : "Join the Order"}
-      </GhostButton>
+        {state === "submitting" ? "Joining…" : "Sign Up for SMS Updates"}
+      </button>
     </form>
   );
 }
