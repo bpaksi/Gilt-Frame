@@ -35,7 +35,8 @@ export default function TermsPage() {
               <h2 className="text-lg font-semibold text-gray-900">Description</h2>
               <p className="mt-3">
                 Gilt Frame sends SMS/MMS game notifications and updates to a small
-                private group of consenting participants.
+                private group of consenting participants. Message and data rates
+                may apply.
               </p>
             </section>
 
