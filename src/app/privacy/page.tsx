@@ -23,8 +23,8 @@ export default function PrivacyPage() {
 
           <div className="mt-10 space-y-10 text-base leading-8 text-gray-700">
             <p>
-              Gilt Frame is a private hobby game application operated by Bob
-              Paksi.
+              Gilt Frame is a private hobby game application operated by
+              Robert J Paksi Jr.
             </p>
 
             <section>

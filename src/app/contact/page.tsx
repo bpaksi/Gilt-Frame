@@ -51,8 +51,8 @@ export default function ContactPage() {
                 Operated By
               </h2>
               <p className="mt-3">
-                Gilt Frame is a private hobby game application operated by Bob
-                Paksi. We typically respond to inquiries within 48 hours.
+                Gilt Frame is a private hobby game application operated by
+                Robert J Paksi Jr. We typically respond to inquiries within 48 hours.
               </p>
             </section>
           </div>

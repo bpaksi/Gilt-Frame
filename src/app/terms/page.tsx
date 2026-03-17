@@ -27,7 +27,7 @@ export default function TermsPage() {
                 <strong>Program:</strong> Gilt Frame Game Notifications
               </p>
               <p>
-                <strong>Operated by:</strong> Bob Paksi
+                <strong>Operated by:</strong> Robert J Paksi Jr.
               </p>
             </div>
 
