@@ -62,7 +62,10 @@ export default function PrivacyPage() {
                 marketing. No mobile information collected as part of the SMS
                 opt-in process — including your phone number and consent data —
                 will be shared with or sold to third parties or affiliates for
-                their own marketing or promotional purposes.
+                their own marketing or promotional purposes. All other
+                categories exclude text messaging originator opt-in data and
+                consent; this information will not be shared with any third
+                parties.
               </p>
             </section>
 

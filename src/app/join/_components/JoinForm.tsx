@@ -14,13 +14,14 @@ type FormState =
 export default function JoinForm() {
   const [phone, setPhone] = useState("");
   const [name, setName] = useState("");
-  const [consent, setConsent] = useState(false);
+  const [smsConsent, setSmsConsent] = useState(false);
+  const [termsConsent, setTermsConsent] = useState(false);
   const [state, setState] = useState<FormState>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!consent || !phone.trim()) return;
+    if (!termsConsent || !phone.trim()) return;
 
     setState("submitting");
     setErrorMsg("");
@@ -32,7 +33,7 @@ export default function JoinForm() {
         body: JSON.stringify({
           phone: phone.trim(),
           name: name.trim() || undefined,
-          consent,
+          consent: smsConsent,
         }),
       });
 
@@ -68,8 +69,9 @@ export default function JoinForm() {
           Welcome, Sparrow.
         </h2>
         <p className="mt-3 text-base text-gray-600">
-          A confirmation has been sent to your phone. The Order will reach you
-          when the time comes.
+          {smsConsent
+            ? "A confirmation has been sent to your phone. The Order will reach you when the time comes."
+            : "You have been registered. Check back at giltframe.org for updates."}
         </p>
       </div>
     );
@@ -111,6 +113,24 @@ export default function JoinForm() {
         />
       </div>
 
+      {/* SMS Consent — optional, unchecked by default, directly below phone */}
+      <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
+        <label className="flex cursor-pointer items-start gap-3">
+          <input
+            type="checkbox"
+            checked={smsConsent}
+            onChange={(e) => setSmsConsent(e.target.checked)}
+            className="mt-0.5 h-5 w-5 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span className="text-sm leading-relaxed text-gray-700">
+            I agree to receive recurring SMS/MMS text messages from Gilt Frame
+            at the phone number provided. Message frequency varies; up to 10
+            messages per month. Message and data rates may apply. Reply STOP to
+            opt out, HELP for help. Consent is not a condition of purchase.
+          </span>
+        </label>
+      </div>
+
       {/* Name (optional) */}
       <div>
         <label
@@ -131,35 +151,32 @@ export default function JoinForm() {
         />
       </div>
 
-      {/* SMS Consent — standalone, unchecked by default */}
-      <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
-        <label className="flex cursor-pointer items-start gap-3">
-          <input
-            type="checkbox"
-            checked={consent}
-            onChange={(e) => setConsent(e.target.checked)}
-            className="mt-0.5 h-5 w-5 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-          />
-          <span className="text-sm leading-relaxed text-gray-700">
-            I agree to receive recurring SMS/MMS text messages about The Order
-            of the Gilt Frame from Gilt Frame at the phone number provided.
-            Message frequency varies; up to 10 messages per month. Message and
-            data rates may apply. Reply STOP to opt out, HELP for help.
-            Consent is not a condition of purchase.
-          </span>
-        </label>
-        <p className="mt-3 pl-8 text-xs text-gray-500">
-          See our{" "}
-          <Link href="/terms" className="text-blue-600 underline hover:text-blue-800">
-            Terms
+      {/* Terms & Privacy — required */}
+      <label className="flex cursor-pointer items-start gap-3">
+        <input
+          type="checkbox"
+          checked={termsConsent}
+          onChange={(e) => setTermsConsent(e.target.checked)}
+          className="mt-0.5 h-5 w-5 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+        />
+        <span className="text-sm leading-relaxed text-gray-700">
+          I agree to the{" "}
+          <Link
+            href="/terms"
+            className="text-blue-600 underline hover:text-blue-800"
+          >
+            Terms and Conditions
           </Link>{" "}
           and{" "}
-          <Link href="/privacy" className="text-blue-600 underline hover:text-blue-800">
+          <Link
+            href="/privacy"
+            className="text-blue-600 underline hover:text-blue-800"
+          >
             Privacy Policy
           </Link>
           .
-        </p>
-      </div>
+        </span>
+      </label>
 
       {/* Error states */}
       {state === "error" && (
@@ -173,13 +190,13 @@ export default function JoinForm() {
         </p>
       )}
 
-      {/* Submit */}
+      {/* Submit — only requires Terms, not SMS consent */}
       <button
         type="submit"
-        disabled={state === "submitting" || !consent || !phone.trim()}
+        disabled={state === "submitting" || !termsConsent || !phone.trim()}
         className="w-full rounded-md bg-gray-900 px-6 py-3 text-base font-medium text-white shadow-sm transition-colors hover:bg-gray-800 focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500"
       >
-        {state === "submitting" ? "Joining…" : "Sign Up for SMS Updates"}
+        {state === "submitting" ? "Joining…" : "Sign Up"}
       </button>
     </form>
   );
