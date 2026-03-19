@@ -70,8 +70,8 @@ export default function JoinForm() {
         </h2>
         <p className="mt-3 text-base text-gray-600">
           {smsConsent
-            ? "A confirmation has been sent to your phone. The Order will reach you when the time comes."
-            : "You have been registered. Check back at giltframe.org for updates."}
+            ? "You have been registered! You will be contacted when needed."
+            : "You have been registered! Please check back often for messages."}
         </p>
       </div>
     );

@@ -6,7 +6,7 @@ import JoinForm from "./_components/JoinForm";
 export const metadata: Metadata = {
   title: "Join | The Order of the Gilt Frame",
   description:
-    "Sign up for SMS puzzle clues and game updates from The Order of the Gilt Frame.",
+    "Register to join The Order of the Gilt Frame and optionally receive SMS puzzle clues and game updates.",
 };
 
 export default function JoinPage() {
@@ -21,8 +21,8 @@ export default function JoinPage() {
               Join Gilt Frame
             </h1>
             <p className="mt-3 text-base text-gray-600">
-              Sign up to receive SMS puzzle clues and game updates from The
-              Order of the Gilt Frame.
+              Register to join The Order of the Gilt Frame. You may also opt in
+              to receive SMS puzzle clues and game updates.
             </p>
           </div>
 
