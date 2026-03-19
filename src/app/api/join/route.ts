@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRateLimiter, getClientIp } from "@/lib/rate-limit";
 import { toE164, isValidUSE164, sendSms, redactPhone } from "@/lib/messaging/twilio";
-import { findSubscriberByPhone, createSubscriber, resubscribe } from "@/lib/sms/subscribers";
+import { findSubscriberByPhone, createSubscriber, resubscribe, updateSubscriber } from "@/lib/sms/subscribers";
 import { logConversation } from "@/lib/sms/conversations";
 import { CONFIRMATION_SMS } from "@/lib/sms/keywords";
 import { logActivity } from "@/lib/admin/log";
@@ -55,14 +55,20 @@ export async function POST(request: NextRequest) {
   // User opted in to SMS — create subscriber and send confirmation
   const existing = await findSubscriberByPhone(e164);
 
+  // Already active — update name if provided and acknowledge
   if (existing?.status === "active") {
-    return NextResponse.json({ alreadySubscribed: true });
+    const nameChanged = name && name !== existing.name;
+    if (nameChanged) {
+      await updateSubscriber(existing.id, { name });
+    }
+    return NextResponse.json({ updated: true });
   }
 
   let subscriberId: string;
   try {
     if (existing?.status === "opted_out") {
       await resubscribe(existing.id);
+      if (name) await updateSubscriber(existing.id, { name });
       subscriberId = existing.id;
     } else {
       const subscriber = await createSubscriber({
@@ -81,7 +87,7 @@ export async function POST(request: NextRequest) {
       "code" in err &&
       (err as { code: string }).code === "23505"
     ) {
-      return NextResponse.json({ alreadySubscribed: true });
+      return NextResponse.json({ updated: true });
     }
     throw err;
   }

@@ -7,7 +7,7 @@ type FormState =
   | "idle"
   | "submitting"
   | "success"
-  | "already-subscribed"
+  | "updated"
   | "error"
   | "rate-limited";
 
@@ -50,8 +50,8 @@ export default function JoinForm() {
         return;
       }
 
-      if (data.alreadySubscribed) {
-        setState("already-subscribed");
+      if (data.updated) {
+        setState("updated");
         return;
       }
 
@@ -77,14 +77,14 @@ export default function JoinForm() {
     );
   }
 
-  if (state === "already-subscribed") {
+  if (state === "updated") {
     return (
       <div className="rounded-lg border border-blue-200 bg-blue-50 p-8 text-center">
         <h2 className="text-xl font-semibold text-gray-900">
-          You are already known to us.
+          Welcome back, Sparrow.
         </h2>
         <p className="mt-3 text-base text-gray-600">
-          This number is already enrolled. Watch for messages from The Order.
+          Your preferences have been updated.
         </p>
       </div>
     );

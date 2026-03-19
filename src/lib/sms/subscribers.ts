@@ -63,3 +63,22 @@ export async function resubscribe(subscriberId: string): Promise<void> {
 
   if (error) throw error;
 }
+
+export async function updateSubscriber(
+  subscriberId: string,
+  params: { name?: string }
+): Promise<boolean> {
+  const supabase = createAdminClient();
+  const updates: Record<string, unknown> = {
+    updated_at: new Date().toISOString(),
+  };
+  if (params.name !== undefined) updates.name = params.name || null;
+
+  const { error } = await supabase
+    .from("sms_subscribers")
+    .update(updates)
+    .eq("id", subscriberId);
+
+  if (error) throw error;
+  return true;
+}
