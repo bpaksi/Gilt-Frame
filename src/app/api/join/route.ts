@@ -28,9 +28,9 @@ export async function POST(request: NextRequest) {
 
   const { phone, name, consent } = body;
 
-  if (!phone || !consent) {
+  if (!phone) {
     return NextResponse.json(
-      { error: "Phone number and consent are required." },
+      { error: "Phone number is required." },
       { status: 400 }
     );
   }
@@ -43,7 +43,16 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Check existing subscriber
+  // If user did not opt in to SMS, just acknowledge the form submission
+  if (!consent) {
+    await logActivity("system", "join_no_sms", {
+      phone: redactPhone(e164),
+      name: name || null,
+    });
+    return NextResponse.json({ success: true });
+  }
+
+  // User opted in to SMS — create subscriber and send confirmation
   const existing = await findSubscriberByPhone(e164);
 
   if (existing?.status === "active") {
