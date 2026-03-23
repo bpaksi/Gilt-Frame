@@ -101,7 +101,7 @@ export default function JoinForm() {
           htmlFor="email"
           className="block text-sm font-medium text-gray-900"
         >
-          Email address
+          Email address <span className="text-red-500">*</span>
         </label>
         <input
           id="email"
@@ -160,7 +160,7 @@ export default function JoinForm() {
               htmlFor="phone"
               className="block text-sm font-medium text-gray-900"
             >
-              Phone number
+              Phone number <span className="text-red-500">*</span>
             </label>
             <input
               id="phone"
@@ -186,7 +186,7 @@ export default function JoinForm() {
           className="mt-0.5 h-5 w-5 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
         <span className="text-sm leading-relaxed text-gray-700">
-          I agree to the{" "}
+          <span className="text-red-500">*</span> I agree to the{" "}
           <Link
             href="/terms"
             className="text-blue-600 underline hover:text-blue-800"
