@@ -1,9 +1,6 @@
 "use server";
 
-import {
-  gameConfig,
-  getOrderedSteps,
-} from "@/config";
+import { gameConfig, getOrderedSteps } from "@/config";
 
 /**
  * Returns fake IDs so quest components can mount in the gallery
@@ -20,7 +17,10 @@ export async function gallerySetup(
   if (!chapter) throw new Error(`Unknown chapter: ${chapterId}`);
   const orderedSteps = getOrderedSteps(chapter);
   const step = orderedSteps[stepIndex];
-  if (!step) throw new Error(`Step index ${stepIndex} out of range for chapter ${chapterId}`);
+  if (!step)
+    throw new Error(
+      `Step index ${stepIndex} out of range for chapter ${chapterId}`,
+    );
 
   return {
     chapterProgressId: `gallery-cp-${chapterId}`,
@@ -73,13 +73,8 @@ export async function galleryRevealHint(
  * No-op in gallery mode — accepts the call signature so
  * quest components work unchanged.
  */
-export async function galleryRecordAnswer(
-  _chapterId: string,
-  _stepIndex: number,
-  _questionIndex: number,
-  _selectedOption: string,
-  _correct: boolean,
-): Promise<void> {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function galleryRecordAnswer(chapterId: string, stepIndex: number, questionIndex: number, selectedOption: string, correct: boolean): Promise<void> {}
 
 /**
  * Validates a passphrase against the config value (case-insensitive).
@@ -88,7 +83,9 @@ export async function galleryValidatePassphrase(
   passphrase: string,
   configPassphrase: string,
 ): Promise<{ success: boolean; error?: string }> {
-  if (passphrase.trim().toLowerCase() === configPassphrase.trim().toLowerCase()) {
+  if (
+    passphrase.trim().toLowerCase() === configPassphrase.trim().toLowerCase()
+  ) {
     return { success: true };
   }
   return { success: false, error: "The words are not yet known to you." };
@@ -97,6 +94,5 @@ export async function galleryValidatePassphrase(
 /**
  * No-op in gallery mode — nothing to clean up.
  */
-export async function galleryCleanup(
-  _stepProgressId: string,
-): Promise<void> {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function galleryCleanup(stepProgressId: string): Promise<void> {}

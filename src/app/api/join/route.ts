@@ -19,18 +19,35 @@ export async function POST(request: NextRequest) {
   }
   limiter.record(ip);
 
-  let body: { phone?: string; name?: string; consent?: boolean };
+  let body: { email?: string; phone?: string; name?: string; consent?: boolean };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  const { phone, name, consent } = body;
+  const { email, phone, name, consent } = body;
 
+  if (!email || !email.includes("@")) {
+    return NextResponse.json(
+      { error: "Email address is required." },
+      { status: 400 }
+    );
+  }
+
+  // If user did not opt in to SMS, just acknowledge the registration
+  if (!consent) {
+    await logActivity("system", "join_no_sms", {
+      email,
+      name: name || null,
+    });
+    return NextResponse.json({ success: true });
+  }
+
+  // User opted in to SMS — phone is required
   if (!phone) {
     return NextResponse.json(
-      { error: "Phone number is required." },
+      { error: "Phone number is required for SMS opt-in." },
       { status: 400 }
     );
   }
@@ -43,16 +60,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // If user did not opt in to SMS, just acknowledge the form submission
-  if (!consent) {
-    await logActivity("system", "join_no_sms", {
-      phone: redactPhone(e164),
-      name: name || null,
-    });
-    return NextResponse.json({ success: true });
-  }
-
-  // User opted in to SMS — create subscriber and send confirmation
+  // Create subscriber and send confirmation
   const existing = await findSubscriberByPhone(e164);
 
   // Already active — update name if provided and acknowledge
@@ -113,6 +121,7 @@ export async function POST(request: NextRequest) {
       subscriber_id: subscriberId,
     }),
     logActivity("system", "sms_join", {
+      email,
       phone: redactPhone(e164),
       name: name || null,
       resubscribed: existing?.status === "opted_out",
