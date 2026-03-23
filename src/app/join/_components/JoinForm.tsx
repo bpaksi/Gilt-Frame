@@ -138,6 +138,11 @@ export default function JoinForm() {
 
       {/* SMS Consent — optional, unchecked by default */}
       <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
+        <p className="mb-3 text-sm text-gray-500">
+          SMS notifications enhance your experience with real-time puzzle
+          clues, but are not required to play. Messages may include story
+          updates, images, and links to giltframe.org.
+        </p>
         <label className="flex cursor-pointer items-start gap-3">
           <input
             type="checkbox"
