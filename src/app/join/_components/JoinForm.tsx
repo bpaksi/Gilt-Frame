@@ -74,7 +74,7 @@ export default function JoinForm() {
         <p className="mt-3 text-base text-gray-600">
           {smsConsent
             ? "You have been registered! You will be contacted when needed."
-            : "You have been registered! Please check back often for messages."}
+            : "You have been registered! Visit giltframe.org to follow your progress."}
         </p>
       </div>
     );
