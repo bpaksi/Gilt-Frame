@@ -60,7 +60,7 @@ export default function PrivacyPage() {
               <p className="mt-3">
                 If you opted in to SMS notifications, your phone number is used
                 solely to send you SMS/MMS game notifications and updates
-                related to The Order of the Gilt Frame. Message frequency
+                related to Gilt Frame. Message frequency
                 varies; up to 10 messages per month.
               </p>
             </section>

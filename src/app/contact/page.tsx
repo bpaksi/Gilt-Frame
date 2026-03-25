@@ -24,7 +24,7 @@ export default function ContactPage() {
                 General Inquiries
               </h2>
               <p className="mt-3">
-                For questions about The Order of the Gilt Frame, messaging, or
+                For questions about Gilt Frame, messaging, or
                 this website, please email:{" "}
                 <a
                   href="mailto:bpaksi@gmail.com"

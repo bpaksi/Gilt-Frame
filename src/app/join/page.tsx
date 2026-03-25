@@ -4,9 +4,9 @@ import ComplianceFooter from "@/components/ui/ComplianceFooter";
 import JoinForm from "./_components/JoinForm";
 
 export const metadata: Metadata = {
-  title: "Join | The Order of the Gilt Frame",
+  title: "Join | Gilt Frame",
   description:
-    "Register to join The Order of the Gilt Frame — an immersive puzzle game experience.",
+    "Register to join Gilt Frame — an immersive puzzle game experience.",
 };
 
 export default function JoinPage() {
@@ -21,9 +21,9 @@ export default function JoinPage() {
               Join Gilt Frame
             </h1>
             <p className="mt-3 text-base text-gray-600">
-              Register to join The Order of the Gilt Frame — an immersive
-              puzzle game experience. You may also opt in to receive SMS
-              puzzle clues and game updates.
+              Register to join Gilt Frame — an immersive puzzle game
+              experience. You may also opt in to receive SMS puzzle clues
+              and game updates.
             </p>
           </div>
 

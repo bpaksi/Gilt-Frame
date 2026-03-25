@@ -47,8 +47,8 @@ export default function TermsPage() {
                 Description of Service
               </h2>
               <p className="mt-3">
-                The Order of the Gilt Frame is a private, invitation-based
-                puzzle game experience. The game involves interactive
+                Gilt Frame is a private, invitation-based puzzle game
+                experience. The game involves interactive
                 storytelling, puzzle-solving, and location-based activities
                 delivered through our website and, optionally, via SMS/MMS
                 notifications.
@@ -110,7 +110,7 @@ export default function TermsPage() {
               </h2>
               <p className="mt-3">
                 All content, puzzles, artwork, and narratives associated with
-                The Order of the Gilt Frame are the property of the operator
+                Gilt Frame are the property of the operator
                 and may not be reproduced or distributed without permission.
               </p>
             </section>
