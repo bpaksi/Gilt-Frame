@@ -138,7 +138,10 @@ export default function JoinForm() {
 
       {/* SMS Consent — optional, unchecked by default */}
       <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
-        <p className="mb-3 text-sm text-gray-500">
+        <h3 className="text-sm font-semibold text-gray-900">
+          SMS Notifications (Optional)
+        </h3>
+        <p className="mt-1 mb-3 text-sm text-gray-500">
           SMS notifications enhance your experience with real-time puzzle
           clues, but are not required to play. Messages may include story
           updates, images, and links to giltframe.org.
@@ -158,28 +161,31 @@ export default function JoinForm() {
           </span>
         </label>
 
-        {/* Phone number — only shown when SMS consent is checked */}
-        {smsConsent && (
-          <div className="mt-4">
-            <label
-              htmlFor="phone"
-              className="block text-sm font-medium text-gray-900"
-            >
-              Phone number <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="phone"
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              placeholder="(555) 555-1234"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-              className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
-        )}
+        {/* Phone number — always visible, disabled unless SMS consent is checked */}
+        <div className="mt-4">
+          <label
+            htmlFor="phone"
+            className={`block text-sm font-medium ${smsConsent ? "text-gray-900" : "text-gray-400"}`}
+          >
+            Phone number {smsConsent && <span className="text-red-500">*</span>}
+          </label>
+          <input
+            id="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder="(555) 555-1234"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            disabled={!smsConsent}
+            required={smsConsent}
+            className={`mt-2 block w-full rounded-md border px-4 py-3 text-base shadow-sm focus:outline-none ${
+              smsConsent
+                ? "border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                : "border-gray-200 bg-gray-100 text-gray-400 placeholder-gray-300 cursor-not-allowed"
+            }`}
+          />
+        </div>
       </div>
 
       {/* Terms & Privacy — required */}
