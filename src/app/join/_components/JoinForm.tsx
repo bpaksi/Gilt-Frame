@@ -155,9 +155,10 @@ export default function JoinForm() {
           />
           <span className="text-sm leading-relaxed text-gray-700">
             I agree to receive recurring SMS/MMS text messages from Gilt Frame
-            at the phone number provided. Message frequency varies; up to 10
-            messages per month. Message and data rates may apply. Reply STOP to
-            opt out, HELP for help. Consent is not a condition of purchase.
+            regarding game clues, puzzle updates, and story notifications at
+            the phone number provided. Message frequency may vary; up to 10
+            messages per month. Message and data rates may apply. Reply STOP
+            to opt out, HELP for help. Consent is not a condition of purchase.
           </span>
         </label>
 
