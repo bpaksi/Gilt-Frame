@@ -20,7 +20,7 @@ export default function ComplianceFooter() {
           </Link>
         ))}
       </nav>
-      <p className="mt-3">&copy; {new Date().getFullYear()} Gilt Frame</p>
+      <p className="mt-3">&copy; {new Date().getFullYear()} Gilt Frame &mdash; operated by Robert J Paksi Jr.</p>
     </footer>
   );
 }
