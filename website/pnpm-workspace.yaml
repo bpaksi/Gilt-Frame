@@ -1,0 +1,12 @@
+allowBuilds:
+  esbuild: true
+  ngrok: true
+  sharp: true
+  supabase: true
+  unrs-resolver: true
+onlyBuiltDependencies:
+  - esbuild
+  - ngrok
+  - sharp
+  - supabase
+  - unrs-resolver

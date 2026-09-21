@@ -609,6 +609,9 @@ export const gameConfig: GameConfig = {
     },
 
     // ── Future Chapters (steps TBD) ─────────────────────────────────────────
+    // STUB: name/location predate the current canon and are placeholders, not
+    // decisions. Real status lives in docs/Story/Chapter_Map.md — do not treat
+    // this as a confirmed stop until a Location & Person Card exists for it.
 
     ch3: {
       name: "The Keeper's Archive",
@@ -621,16 +624,18 @@ export const gameConfig: GameConfig = {
       steps: {},
     },
 
-    // ── Chapter 4 (TEST) ──────────────────────────────────────────────────────
+    // ── Developer fixture (NOT a story chapter) ──────────────────────────────
     // Short-range FindByGPS test puzzle (~50m walk). For playtesting GPS
     // compass, distance gates, geofence, and proximity feedback.
     // Start: 42.37341, -85.40206 → Target: 42.37346, -85.40265
-    ch4: {
+    // Keyed outside the chN sequence so it is never mistaken for a story beat
+    // (see docs/Story/Chapter_Map.md).
+    dev_gps_test: {
       name: "GPS Test",
       location: "Test location",
       window: "Testing",
       steps: {
-        ch4_gps_test: {
+        gps_test: {
           order: 0,
           type: "website",
           component: "FindByGps",
