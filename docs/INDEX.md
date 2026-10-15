@@ -33,6 +33,7 @@ Visual/tonal design, independent of story content — works entirely off the Ton
 | File | Description |
 |------|-------------|
 | [Build_Schedule.md](Build_Schedule.md) | Backward plan from launch: story build + technical revival, phased. Spans both tracks, so it stays at the root. |
+| [sdlc.md](sdlc.md) | How this repo runs the AI-native SDLC: Wright coordinates, one cloud agent per step, tests and CI before any auto-merge, Vercel preview on `main`, production only on Bob's go. |
 
 ## Archive
 
