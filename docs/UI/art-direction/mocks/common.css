@@ -1,0 +1,13 @@
+@font-face{font-family:"Cormorant Garamond";src:url(fonts/CormorantGaramondwght.ttf);font-weight:300 700}
+@font-face{font-family:"Cormorant Garamond";src:url(fonts/CormorantGaramond-Italicwght.ttf);font-style:italic;font-weight:300 700}
+@font-face{font-family:"EB Garamond";src:url(fonts/EBGaramondwght.ttf);font-weight:400 800}
+@font-face{font-family:"EB Garamond";src:url(fonts/EBGaramond-Italicwght.ttf);font-style:italic;font-weight:400 800}
+:root{--nocturne:#0b0704;--umber:#140d06;--lamp:#241708;--ink:#efdcbc;--ink-dim:#b79f78;--ink-faint:#7d6a4c;--gilt:#e0aa5a;--gilt-hi:#f3d58e;--gilt-deep:#8a6328;--ring:#3a2c1a;--wax:#7a1e1e;--wax-hi:#a83a2e;--parch:#efe4cc;--parch-lo:#dccba6;--sepia:#3b2a18}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"EB Garamond",serif;color:var(--ink);background:radial-gradient(ellipse 90% 60% at 50% 18%,var(--lamp),var(--umber) 55%,var(--nocturne));overflow:hidden;-webkit-font-smoothing:antialiased}
+.grain{position:absolute;inset:0;pointer-events:none;opacity:.22;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .9 0 0 0 0 .7 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
+.gilt-text{background:linear-gradient(100deg,var(--gilt-deep) 0%,var(--gilt) 30%,var(--gilt-hi) 48%,var(--gilt) 62%,var(--gilt-deep) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.label{font-family:"EB Garamond";font-variant:all-small-caps;letter-spacing:.32em;color:var(--ink-dim)}
+.frame{position:absolute;border:2px solid var(--gilt-deep);box-shadow:inset 0 0 0 10px transparent,inset 0 0 0 11px rgba(224,170,90,.35),0 0 80px rgba(224,170,90,.06)}
+.frame:before{content:"";position:absolute;inset:18px;border:1px solid rgba(224,170,90,.28)}
+.corner{position:absolute;width:120px;height:120px}
