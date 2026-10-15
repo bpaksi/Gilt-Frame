@@ -60,13 +60,22 @@ export default function PassphraseEntry({
     }
   }
 
-  const submitLabel = config.submit_label ?? "Submit to the Order";
+  const submitLabel = config.submit_label ?? "Speak it";
   const hints = config.hints ?? [];
   const showButton = hasText && status !== "success" && status !== "error";
   const placeholder = config.placeholder ?? "Speak the words.";
+  // Per-puzzle key for the "intro already seen" flag. Derived from the hint
+  // text (never the passphrase) so the answer isn't written to storage.
+  const introKey = `passphrase:${hashKey(
+    `${placeholder}|${hints.join("|")}`
+  )}`;
 
   return (
-    <PageLayout skipLabel="tap to skip" onComplete={() => setInputReady(true)}>
+    <PageLayout
+      skipLabel="tap to skip"
+      introKey={introKey}
+      onComplete={() => setInputReady(true)}
+    >
       <div
         className={fontVariables}
         style={{
@@ -223,6 +232,13 @@ export default function PassphraseEntry({
   );
 }
 
+/** Tiny non-cryptographic string hash (djb2) for storage keys. */
+function hashKey(input: string): string {
+  let h = 5381;
+  for (let i = 0; i < input.length; i++) h = (h * 33) ^ input.charCodeAt(i);
+  return (h >>> 0).toString(36);
+}
+
 /** Small gilt lozenge pips at the four corners of the well (SVG, no raster). */
 function GiltCorners() {
   const pip = (pos: CSSProperties) => (
@@ -258,7 +274,7 @@ export const showcase: ShowcaseDefinition<PassphraseEntryProps> = {
       passphrase: "gilded",
       placeholder: "Speak the words.",
       error_message: "The Order does not recognize these words.",
-      submit_label: "Submit to the Order",
+      submit_label: "Speak it",
       hints: [
         "The answer hides in plain sight within the letter.",
         "Read the first word of each paragraph carefully.",
