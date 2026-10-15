@@ -18,18 +18,18 @@ The `check` job runs from `website/`:
 - `pnpm test` (Vitest)
 - `pnpm build`
 
-The **first build step** is adding that suite and that workflow, and making `check` a required status check. No later build step starts until that step has merged and the protection is on. Until then the coordinator does not squash-merge and does not enable auto-merge. A green local run is not a substitute. A missing workflow is not a green check.
+The **first build step** is adding that suite and that workflow, making `check` a required status check, and adding the send guard in [Send safety](#send-safety). No later build step starts until that step has merged and the protection is on. Until then the coordinator does not squash-merge and does not enable auto-merge. A green local run is not a substitute. A missing workflow is not a green check.
 
 `pnpm build` runs `website/scripts/generate-contacts.ts`. GitHub Actions sets `CI=true`, and in CI that script requires `CONTACTS_JSON` and writes `website/src/config/contacts.ts` (gitignored PII). The check job supplies a non-live fixture. It does not use Christine's phone or email, and it does not commit real contacts or API keys.
 
 Spell the step like this in the first plan:
 
 ```markdown
-### Step 1: Tests and CI
+### Step 1: Tests, CI and the send guard
 - Depends on: G-plan
-- Touches: website/package.json, website/pnpm-lock.yaml, website/**/*.test.ts, website/vitest.config.ts, .github/workflows/check.yml
+- Touches: website/package.json, website/pnpm-lock.yaml, website/**/*.test.ts, website/vitest.config.ts, .github/workflows/check.yml, website/src/lib/messaging/**
 - Deps change: yes
-- Done when: `pnpm test` runs Vitest; the workflow job is named `check` and runs lint, typecheck, Vitest and build from `website/` with a non-live `CONTACTS_JSON`; branch protection on `main` requires `check` and an up-to-date branch. Auto-merge stays off until that protection is on.
+- Done when: `pnpm test` runs Vitest; the workflow job is named `check` and runs lint, typecheck, Vitest and build from `website/` with a non-live `CONTACTS_JSON`; branch protection on `main` requires `check` and an up-to-date branch. Auto-merge stays off until that protection is on. The same step adds the send guard below: every SMS, email and QStash publish goes through it, with unit tests for a dry-run of a non-allowlisted preview recipient and a real send to an allowlisted one.
 ```
 
 ## The live track reaches Christine
@@ -40,6 +40,37 @@ The `live` track is Christine's real game. SMS, MMS and email on it go to her. I
 - **Production deploys only on Bob's explicit go** (gate G-prod). Promoting a preview, or starting a production deployment, is that go. No agent, workflow or merge does it.
 - While a push to `main` would still deploy Vercel production, the coordinator does not merge. Wiring preview-only on `main` is part of making the rule true, alongside the first build step.
 - **No pull request may send real SMS or email to a live player.** The PR's code, CI, the Vercel preview, a QStash schedule and any agent command are all inside that rule. They use the `test` track only. A diff that can deliver Twilio or Resend traffic to Christine, or enqueue a live-track QStash job, does not merge.
+
+## Send safety
+
+Two controls sit in front of every message. Preview and development never hold the live send keys. One code guard is the only path that may publish an SMS, an email, or a QStash job.
+
+### Vercel environments (gate G-send-env)
+
+Vercel **Preview** and **Development** use test Twilio, Resend and QStash credentials, or leave those variables unset. They do not hold the live keys (`TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`, `RESEND_API_KEY`, `QSTASH_TOKEN`, and the QStash signing keys) that production uses to reach Christine. Bob checks this in the Vercel project settings once, before the first preview deployment, and records the sign-off. That check is gate **G-send-env**. It happens once.
+
+### The send guard (part of build step 1)
+
+Build step 1 adds one send guard under `website/src/lib/messaging/` and routes every SMS, every email, and every QStash publish through it. Today's call sites are included: `sendSms` in `twilio.ts`, `sendEmail` in `resend.ts`, `publishJSON` inside `enqueueDelayedStep` in `qstash.ts`, and every caller of those (`send.ts`, the inbound SMS webhook, the join route, the admin test-email route, and the QStash delivery webhook). A new send path calls the same guard.
+
+The guard decides per recipient:
+
+1. When `VERCEL_ENV === 'production'` and `SENDS_ENABLED=true`, it sends.
+2. Outside production it denies by default and logs a dry-run.
+3. Outside production it allows a real send only when that recipient's phone number or email is listed in `SEND_ALLOWLIST`. The value is a comma-separated list of phone numbers and emails, meant to hold only Bob's own, so he can playtest on his own phone. `SENDS_ENABLED` on a preview does not open sends to anyone else. An allowlisted send uses that environment's test credentials. With those variables unset, the guard logs a dry-run and does not call Twilio, Resend or QStash.
+4. The guard checks every recipient. An allowlisted recipient sends. A recipient who is absent from the list is a dry-run.
+5. A QStash-scheduled send re-checks the allowlist when it is delivered. The delivery webhook resolves the recipients and calls the guard again before Twilio or Resend. The check at schedule time does not stand in for the check at delivery.
+
+Unit tests ship in the same step:
+
+- A non-allowlisted recipient on preview is a dry-run.
+- An allowlisted recipient sends.
+- Production sends only when `VERCEL_ENV === 'production'` and `SENDS_ENABLED=true`. Any other production configuration dry-runs.
+- A QStash delivery re-checks the allowlist at delivery time, including a recipient who was added or removed after the job was scheduled.
+
+Live SMS to an allowlisted number may still be carrier-filtered until the 10DLC campaign is approved. The guard allowing the send does not mean the carrier will deliver it.
+
+`adversary-bugs` treats any SMS, email, or QStash publish that skips the guard as blocking.
 
 ## The loop
 
@@ -58,7 +89,7 @@ The merge arrow stays closed until the `check` job exists and is required. A mer
 |---|---|---|---|
 | 1. Plan | New ideas and changes get an intent file in Bob's words. Story, design and art ideas included. | `docs/intent/NNNN-*.md` | Accept intent |
 | 2. Design | Wright drafts or updates the spec and flags conflicts with the story canon and with `CLAUDE.md`. Decisions go in the spec's decision log. A decision that changes canon updates `Foundation_Bible.md`, `Story_Spine.md` or `Chapter_Map.md` in the same PR. | `docs/spec.md` (with decision log) | Approve spec |
-| 3. Build | Plan mode first. Bob approves the plan before any code. One plan per milestone; each step is one cloud agent, one branch, one PR. Steps carry `Depends on`, `Touches` and `Deps change`, and the plan groups them into batches. Deviations update the plan **in the same commit**. The first build step is tests and CI. | `docs/plans/Mx-*.md`, root `CLAUDE.md`, `.claude/` | Approve plan (gate G-plan), before code |
+| 3. Build | Plan mode first. Bob approves the plan before any code. One plan per milestone; each step is one cloud agent, one branch, one PR. Steps carry `Depends on`, `Touches` and `Deps change`, and the plan groups them into batches. Deviations update the plan **in the same commit**. The first build step is tests, CI and the send guard. | `docs/plans/Mx-*.md`, root `CLAUDE.md`, `.claude/` | Approve plan (gate G-plan), before code |
 | 4. Test | The developer runs the checks that exist and puts the output in the PR body. Once the workflow exists, GitHub Actions runs the `check` job on the PR. The verifier runs on the PR branch and posts its result. | Vitest, `.github/workflows/check.yml` | Only at a named gate (playtest, judgement) |
 | 5. Deploy → **Merge** | Every change reaches `main` through a PR on `bpaksi/Gilt-Frame`, including story, design and art. The `adversary-bugs` and `adversary-prd` agents post findings, and the developer fixes them, for up to 3 rounds, then `needs-bob`. After `check` is required, Wright squash-merges one PR at a time when CI is green and both adversaries report no blocking findings. That merge deploys a Vercel preview only. | PRs, `.claude/agents/adversary-*.md` | G-prod for production. Bob may look at any PR; that look is optional. Nobody commits to `main` directly. |
 | 6. Maintain | Findings become gap entries or a new intent. Live-track incidents are recorded, not patched in place on `main`. | Gap notes in the plan's Results, or a new intent | — |
@@ -111,6 +142,8 @@ Bloodtower enforces many of these with Claude hooks and lefthook. Those hooks ar
 | No auto-merge before required CI | The coordinator does not squash-merge and does not enable auto-merge until `.github/workflows/check.yml` has a job named `check` (lint, typecheck, Vitest, build) and branch protection requires it. |
 | Preview on `main`, production on Bob's go | A merge to `main` deploys a Vercel preview. G-prod is the production deploy. While a push to `main` would deploy production, the coordinator does not merge. |
 | No real SMS or email to a live player | No PR, CI run, preview, agent command or QStash job sends Twilio or Resend traffic to Christine or any live player. Test track only. `adversary-bugs` checks the diff. |
+| Send guard | Every SMS, email and QStash publish goes through one guard. It sends in production only when `VERCEL_ENV === 'production'` and `SENDS_ENABLED=true`. Outside production it dry-runs, except a recipient on `SEND_ALLOWLIST`. A path that skips the guard is blocking. |
+| Preview and development keys | Vercel Preview and Development hold test Twilio, Resend and QStash credentials, or leave them unset. Bob confirms that once (G-send-env). |
 | Live data stays | No PR resets, mocks or rewrites live-track rows. `reset_track` stays test-only. |
 | No edits to `docs/intent/**` by agents (Bob's words) | Agents draft spec and plan. They do not rewrite an accepted intent. `adversary-bugs` checks the diff. |
 | No direct commits on `main` | `main` changes only by a squash-merged PR. |
@@ -127,7 +160,7 @@ Bloodtower enforces many of these with Claude hooks and lefthook. Those hooks ar
 | Id | Criterion |
 |---|---|
 | SC-1 | **Track isolation.** The test track delivers only to Bob. The live track is Christine's game. A test-track send cannot reach a live player. |
-| SC-2 | **No live send from a PR.** No pull request, CI run, Vercel preview, agent or QStash schedule sends real SMS, MMS or email to a live player, and none enqueues one on the live track. |
+| SC-2 | **No live send from a PR.** No pull request, CI run, Vercel preview, agent or QStash schedule sends real SMS, MMS or email to a live player, and none enqueues one on the live track. Outside production the send guard dry-runs every recipient who is absent from `SEND_ALLOWLIST`, and it re-checks that list when a scheduled send is delivered. |
 | SC-3 | **Live data.** Nothing resets, mocks or rewrites live-track rows. `reset_track` stays test-only. |
 | SC-4 | **Secrets and PII.** The service-role key, Twilio, Resend and QStash secrets, and `contacts.ts`, never reach the browser bundle, a public page, a log line or a commit. |
 | SC-5 | **Canon and tone.** Story, design and art stay consistent with `Foundation_Bible.md`, `Story_Spine.md` and `Chapter_Map.md` (the chapter map wins on slot status). Tone follows `Tone_North_Star.md`. Bob judges taste; the adversary reports risks. |
@@ -181,7 +214,7 @@ Approving the plan (G-plan) approves its batches. A step starts only once its ba
 |---|---|
 | Dev server | `pnpm dev` in `website/` uses port 3501. A second local checkout offsets the port. Cloud agents each have their own machine. |
 | Supabase | Local only (`pnpm db:start` from `website/`, Docker). Never the hosted project Christine's game uses. Never `reset_track` on `live`. |
-| Twilio, Resend, QStash | Test-track credentials only, delivering to Bob. No live-player send. No live-track QStash enqueue. |
+| Twilio, Resend, QStash | Preview and development use test credentials or leave them unset (G-send-env). Every publish goes through the send guard. Outside production a real send reaches only an address on `SEND_ALLOWLIST`. |
 | `CONTACTS_JSON` / `contacts.ts` | Local and gitignored, or a non-live CI fixture. Never committed. |
 | `pnpm-lock.yaml` / any `package.json` | Only the one step per batch marked `Deps change: yes`. |
 | Generated files | Stay inside the clone. Never written into Bob's checkout. |
@@ -228,6 +261,7 @@ Bob signs off at named gates. Each gate is a step in the plan, owned by Bob, and
 | Gate | When | What Bob does |
 |---|---|---|
 | G-plan | Before any code, and before story, design or art steps of that plan | Approves the plan: steps, batches, `Touches`, open questions. This is the approval before code. |
+| G-send-env | Once, before the first preview deployment | In Vercel settings, confirms Preview and Development have test Twilio, Resend and QStash credentials, or those variables unset. They do not hold the live keys. |
 | G-playtest | After the first end-to-end run is buildable | Plays on the **test** track. Messages go to Bob. Writes notes. The live track stays untouched. |
 | G-judgement | Where a success criterion needs a human verdict | Records the verdict (canon, tone, puzzle fairness) in the playtest notes. SC-5 risks wait here. |
 | G-prod | When a preview should become the live site | Explicit go to deploy Vercel production. The only production deploy. |
