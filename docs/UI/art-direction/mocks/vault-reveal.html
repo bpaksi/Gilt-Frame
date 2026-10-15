@@ -1,0 +1,51 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="common.css"><style>
+body{width:1170px;height:2532px;position:relative}
+.top{position:absolute;top:210px;width:100%;text-align:center}
+.top .label{font-size:34px}
+.top h1{font-family:"Cormorant Garamond";font-weight:300;font-style:italic;font-size:104px;margin-top:22px;line-height:1}
+.frag{position:absolute;left:135px;width:900px;padding:46px 64px;background:linear-gradient(170deg,var(--parch),var(--parch-lo));color:var(--sepia);font-size:40px;line-height:1.5;box-shadow:0 30px 60px rgba(0,0,0,.55);transition:none}
+.frag .n{display:block;font-family:"Cormorant Garamond";font-weight:600;font-size:30px;letter-spacing:.3em;color:var(--gilt-deep);margin-bottom:6px}
+.frag i{font-style:italic}
+.seam{position:absolute;left:135px;width:900px;height:4px;background:linear-gradient(90deg,transparent,var(--gilt-hi),transparent);box-shadow:0 0 30px 6px rgba(243,213,142,.7)}
+.letter{position:absolute;left:105px;top:560px;width:960px;height:1420px;background:linear-gradient(175deg,#f3ead5,#e3d3b0);color:var(--sepia);padding:120px 100px;box-shadow:0 40px 120px rgba(0,0,0,.7),0 0 160px rgba(224,170,90,.25)}
+.letter:before{content:"";position:absolute;inset:28px;border:3px solid var(--gilt);box-shadow:inset 0 0 0 8px #f3ead5,inset 0 0 0 9px var(--gilt-deep)}
+.letter p{font-size:47px;line-height:1.62;margin-bottom:26px;text-indent:1.2em;position:relative}
+.letter p.first{text-indent:0}
+.letter .cap{float:left;font-family:"Cormorant Garamond";font-weight:600;font-size:150px;line-height:.8;margin:12px 16px 0 0}
+.letter p.i{font-style:italic}
+.seal{position:absolute;left:50%;bottom:-70px;transform:translateX(-50%);width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 38% 34%,var(--wax-hi),var(--wax) 55%,#4a0e10);box-shadow:0 14px 30px rgba(0,0,0,.5),inset 0 -8px 18px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center}
+.seal img{width:70px;opacity:.75;filter:sepia(1) brightness(.75)}
+.cap-note{position:absolute;bottom:150px;width:100%;text-align:center}
+.cap-note .label{font-size:30px}
+.cap-note p{font-family:"Cormorant Garamond";font-style:italic;font-size:44px;color:var(--ink-dim);margin-top:14px}
+.motes span{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--gilt-hi);box-shadow:0 0 18px 4px rgba(243,213,142,.6)}
+</style></head><body><div class="grain"></div>
+<div class="top"><div class="label">The Vault &middot; Sealed in six</div><h1 id="title"></h1></div>
+<div id="stage"></div><div class="motes" id="motes"></div>
+<div class="cap-note"><div class="label" id="step"></div><p id="note"></p></div>
+<script>
+const F=+location.hash.slice(1)||1;
+const frags=["We saw how you looked, and how long you stayed.","We watched you step forward when the way was dark.","You wagered something of yourself, and did not flinch.","You let yourself be seen. We noted it.","You carried a loss and still came to the door.","And I have kept this until you could read it."];
+const roman=["I","II","III","IV","V","VI"];
+document.getElementById('title').textContent=["Six commendations","They remember each other","One hand"][F-1];
+document.getElementById('step').textContent=["Frame I of III · 0.0 s","Frame II of III · 2.4 s","Frame III of III · 5.0 s"][F-1];
+document.getElementById('note').textContent=["The fragments rest as she earned them, scattered.","Drawn together; the seams take gilt as they close.","The letter stands whole. The seal settles last."][F-1];
+const st=document.getElementById('stage');
+if(F<3){
+ const scat=[[ -60,560,-7],[90,800,5],[-20,1040,-3],[70,1290,8],[-80,1530,-5],[40,1780,4]];
+ frags.forEach((t,i)=>{const d=document.createElement('div');d.className='frag';
+  let [dx,y,r]=scat[i];
+  if(F==2){dx=dx*.15;r=r*.12;y=560+i*232}
+  d.style.top=y+'px';d.style.transform=`translateX(${dx}px) rotate(${r}deg)`;
+  d.style.opacity=F==1?(.55+i*.05):.95;
+  if(F==1) d.style.filter='blur(.6px) brightness(.8)';
+  d.style.clipPath=`polygon(0 ${4+i%3*3}%,${30+i*5}% 0,100% ${2+i%2*5}%,${97-i%3}% 100%,${60-i*4}% ${96+i%2*4}%,0 100%)`;
+  d.innerHTML=`<span class="n">${roman[i]}</span>${i==5?'<i>'+t+'</i>':t}`;st.appendChild(d);
+  if(F==2&&i>0){const s=document.createElement('div');s.className='seam';s.style.top=(y-8)+'px';s.style.opacity=.4+i*.12;st.appendChild(s)}
+ });
+}else{
+ st.innerHTML=`<div class="letter"><p class="first"><span class="cap gilt-text">W</span>e saw how you looked, and how long you stayed. We watched you step forward when the way was dark.</p><p>You wagered something of yourself, and did not flinch. You let yourself be seen. We noted it.</p><p>You carried a loss and still came to the door.</p><p class="i">And I have kept this until you could read it.</p><p class="i" style="text-align:right;margin-top:60px;color:#8a6328">&mdash;</p><div class="seal"><img src="marker-v3-gold.svg"></div></div>`;
+}
+const m=document.getElementById('motes');const n=F==1?6:F==2?22:14;
+for(let i=0;i<n;i++){const s=document.createElement('span');s.style.left=(150+((i*397)%870))+'px';s.style.top=(500+((i*683)%1700))+'px';s.style.opacity=(.25+((i*37)%60)/100);m.appendChild(s)}
+</script></body></html>
