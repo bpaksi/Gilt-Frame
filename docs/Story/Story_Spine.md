@@ -90,6 +90,7 @@ The final chapter is wherever the last slot lands (the gazebo, by boat, is a bea
 3. The voice narrows from *we* to *I* exactly as she reads, so the recognition is paced, not dumped. By fragment 6 she is no longer reading the Order.
 4. The Camus line lands. Then the private line lands. She looks up. Nothing is signed.
 5. The old epilogue survives, recast. "Watch for us in the light" was a threat in Story 1. Now it is a promise between the two of you, in one voice, still unsigned. Leave it.
+6. **The coda.** The epilogue is not delivered at the reveal. It arrives as a physical letter on the anniversary, March 3, 2028, months after the game seems to have ended. (See §7.3.)
 
 The Order does not die and does not confess. It simply stops being a stranger. That is the entire difference this ending makes: the mystery is intact, and the letter is delivered, and both are true at once.
 
@@ -133,8 +134,8 @@ The recognition ending is powerful in exact proportion to how personal the hooks
 
 1. **Fragment 6, the closing line.** The one sentence, in your words, that only you would say to her. This is the sentence that removes all doubt. Everything above it is built to make this line land.
 2. **One shared memory, seeded mid-arc.** Somewhere around beat 4 (being seen), a single concrete detail from your life together, dressed in the Order's voice, so that on second reading she realizes the Order was describing a real day. It should be invisible as Story 1 and unmistakable as Story 2.
-3. **The anniversary anchor.** March 3 already appears in the design. Decide whether the reveal deliberately falls on or near it, and whether fragment 6 quietly marks it.
-4. **How much of your shared history to let in.** How you met, how long, the ordinary specifics. A little goes a long way. One true detail per fragment beats a paragraph of them.
+3. **The anniversary anchor.** March 3. **Decided 2026-10-08:** the reveal stays at the end of the summer run, and fragment 6 quietly marks the date. Then one last unsigned letter, the recast epilogue ("Watch for us in the light"), arrives by post on **March 3, 2028**, so the game ends twice: first the reveal, then the coda on the anniversary. *Still open: what form the mark in fragment 6 takes.* (The original design had Chapter 1 at Kellogg on March 3, 2026. The mid-June 2027 launch ended that, and the `ch1` window in `config.ts` is stale.)
+4. **How much of your shared history to let in.** How you met, how long, the ordinary specifics. A little goes a long way. One true detail per fragment beats a paragraph of them. **Decided 2026-10-08: back-loaded.** Fragments 1 to 3 stay in the Order's voice with no personal detail. Fragment 4 carries the one seeded memory (hook 2), and fragment 6 carries the closing line and the anniversary mark (hooks 1 and 3). The personal weight builds exactly where the voice narrows from *we* to *I*, which keeps the risk of tipping her early as low as possible.
 
 Give me these and I will thread them in. Until then the draft stands on its own, and the architecture underneath it will hold whatever you put in.
 
