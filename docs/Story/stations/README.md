@@ -16,7 +16,7 @@ Start from [STATION-CARD-TEMPLATE.md](STATION-CARD-TEMPLATE.md).
 | [kia.md](kia.md) | Anna Louise Raymond | Local | PassphraseEntry (Thursday) | Candidate |
 | [crystal-bridges.md](crystal-bridges.md) | Alice Walton (with Cassatt's *The Reader*) | Planned trip (AR) | FindByText, MultipleChoice; backup PassphraseEntry "52" | Candidate (old stop) |
 | [meijer-gardens.md](meijer-gardens.md) | Lena Meijer | Michigan day trip | FindByGps, AlignBearing (windmill), MultipleChoice | Candidate (old stop) |
-| [shedd.md](shedd.md) | Helen Shedd Keith (proposed, thin) or Bridget Coughlin | Planned trip (Chicago) | FindByGps, MultipleChoice | Candidate (old stop, least ready) |
+| [shedd.md](shedd.md) | Helen Shedd Keith (proposed, thin) or Bridget Coughlin | Planned trip (Chicago) | FindByGps, MultipleChoice | Candidate, not dealable until Helen Shedd Keith is confirmed |
 
 ### Candidates without a card
 - **Edsel & Eleanor Ford House**, Grosse Pointe Shores: Eleanor Clay Ford (1896-1976). Sourced in `/workspace/gilt-frame-ch3-6-candidates.md`. No card yet.
@@ -28,6 +28,7 @@ Start from [STATION-CARD-TEMPLATE.md](STATION-CARD-TEMPLATE.md).
 - The new model needs a woman at every station. Kellogg's canon figure is W. K. Kellogg, so Carrie Staines Kellogg is proposed (web-sourced).
 - Cards live in `docs/Story/stations/` to match the repo's existing `docs/Story` casing.
 - **Next-stop pointers** are added by the slot at play time, never by a station or a Vault key (Gamewright ruling #3). No card contains one. An AlignBearing inside a station (such as the Kellogg windmill backup) is only a local find.
+- **Dealing rule:** a deal must not pick a station whose woman is unconfirmed. Today that blocks `shedd.md` (Helen Shedd Keith not confirmed), and Kellogg until Bob confirms Carrie Staines Kellogg (open question 2).
 - **Companion messages** stay at slot level and never go on cards (Gamewright ruling #8).
 - `Chapter_Map.md` and `config.ts` are not changed. They still describe the old fixed-chapter model.
 

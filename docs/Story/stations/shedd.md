@@ -1,6 +1,6 @@
 # Station: Shedd Aquarium
 
-**Status:** Candidate (old stop with no puzzle content in the repo; this card is new work)
+**Status:** Candidate, not dealable until Helen Shedd Keith is confirmed (old stop with no puzzle content in the repo; this card is new work)
 **Travel tier:** Planned trip (Chicago, Museum Campus on Lake Michigan)
 **Address & GPS:** Shedd Aquarium, 1200 S. DuSable Lake Shore Dr, Chicago [address UNVERIFIED]. GPS not scouted.
 
