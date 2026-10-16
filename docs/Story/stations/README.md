@@ -37,10 +37,10 @@ Start from [STATION-CARD-TEMPLATE.md](STATION-CARD-TEMPLATE.md).
 5. **Which station hosts the Final Frame?** The research file recommends KIA. The Spine floated the Kellogg gazebo by boat.
 6. **Supporting women** (Cassatt, Wood, Hull, Walton). Do they get gallery portraits or only caption mentions?
 7. **Fragment 6 private line.** Only Bob can write it.
+8. **Companion messages.** These are slot-level today (in `config.ts`). Confirm they stay out of station cards.
 9. **Living women** (Alice Walton, Bridget Coughlin). Should real living people be gallery portraits, and how do we handle images and permission? Should the Walton family tragedies from the old lore stay out?
 10. **Shedd's woman.** Helen Shedd Keith, Coughlin, or drop Shedd?
 11. **Lena Meijer's dementia** (from repo notes, not sourced to a URL). Leave it out?
-8. **Companion messages.** These are slot-level today (in `config.ts`). Confirm they stay out of station cards.
 
 ## Source gaps (do not use in player copy until confirmed)
 - Ruth Webster window: wording and location (LLA).
