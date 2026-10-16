@@ -24,20 +24,22 @@ Start from [STATION-CARD-TEMPLATE.md](STATION-CARD-TEMPLATE.md).
 
 ## Assumptions
 - Beat names, fragments, and bird degrees come from `Story_Spine.md` and `Chapter_Map.md`. Each card has a base paragraph plus an overlay for beats 1 through 5. Beat 6 is the Final Frame slot, so a station only supplies a setting line for it.
-- Puzzle content for Kellogg and AIC is reused from `website/src/config/config.ts` (`ch1`, `ch2`), with slot and bearing ties removed in the copy.
+- Puzzle content for Kellogg and AIC is reused from `website/src/config/config.ts` (`ch1`, `ch2`), with slot ties and the 255 degree bearing removed.
 - The new model needs a woman at every station. Kellogg's canon figure is W. K. Kellogg, so Carrie Staines Kellogg is proposed (web-sourced).
 - Cards live in `docs/Story/stations/` to match the repo's existing `docs/Story` casing.
+- **Next-stop pointers** are added by the slot at play time, never by a station or a Vault key (Gamewright ruling #3). No card contains one. An AlignBearing inside a station (such as the Kellogg windmill backup) is only a local find.
+- **Companion messages** stay at slot level and never go on cards (Gamewright ruling #8).
 - `Chapter_Map.md` and `config.ts` are not changed. They still describe the old fixed-chapter model.
 
 ## Open questions for Bob
 1. **Christine's include/exclude list.** Which places should never be used (for example, KIA, where she is a docent, or a cemetery)? Which places should she not see coming?
 2. **Kellogg woman.** Is Carrie Staines Kellogg right? Or should W. K. Kellogg stay as the figure even though he breaks the "chain of women"?
-3. **The 255 degree bearing.** It currently points Kellogg toward Chicago. In order-free play no station can promise what comes next. Options: drop it, make it a Vault key, or let the slot add a pointer.
+3. ~~**The 255 degree bearing.**~~ **Closed (Gamewright #3):** removed from the Kellogg and AIC cards. Pointers belong to the slot at play time.
 4. **Stone duplicate.** She anchors both Ladies' Library and Mountain Home. Should the cemetery use Caroline Bartlett Crane, or should Stone get one portrait and two stations?
-5. **Which station hosts the Final Frame?** The research file recommends KIA. The Spine floated the Kellogg gazebo by boat.
+5. **Which station hosts the Final Frame?** **Tracked by Gamewright** (Gamewright's question to Bob). Options on file: the research file recommends KIA; the Spine floated the Kellogg gazebo by boat.
 6. **Supporting women** (Cassatt, Wood, Hull, Walton). Do they get gallery portraits or only caption mentions?
 7. **Fragment 6 private line.** Only Bob can write it.
-8. **Companion messages.** These are slot-level today (in `config.ts`). Confirm they stay out of station cards.
+8. ~~**Companion messages.**~~ **Closed (Gamewright #8):** they stay at slot level, not on cards.
 9. **Living women** (Alice Walton, Bridget Coughlin). Should real living people be gallery portraits, and how do we handle images and permission? Should the Walton family tragedies from the old lore stay out?
 10. **Shedd's woman.** Helen Shedd Keith, Coughlin, or drop Shedd?
 11. **Lena Meijer's dementia** (from repo notes, not sourced to a URL). Leave it out?

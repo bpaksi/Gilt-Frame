@@ -17,7 +17,7 @@
 
 ## Puzzle
 **Suggested type:** FindByText (find the portrait: "Mrs. Potter Palmer, Anders Zorn") -> MultipleChoice (observation: "An ivory gavel"; where painted: "Chicago") -> FindByText (Cassatt, *The Child's Bath*) -> MultipleChoice ("From above, looking down"; "Japanese woodblock prints") -> RevealNarrative. All authored in `config.ts`.
-**Order-free change:** the "Chicago" question currently cites "where the 255 degree bearing led you." Reword to stand alone: "The inscription names the city where she was painted. Name it."
+**Order-free change:** the "Chicago" question in `config.ts` cites the 255 degree bearing. Remove that reference (Gamewright ruling #3) and reword to stand alone: "The inscription names the city where she was painted. Name it."
 **Difficulty knobs:** hint text naming the gallery number; distractor count.
 
 ## Backup spot
@@ -48,4 +48,4 @@ Cassatt: *On a Balcony* if *The Child's Bath* is off view (already noted in conf
 - Zorn fallback if off display.
 - Bertha Palmer's birth year (for the gallery caption) needs a source.
 - AIC open-access status of the Zorn image.
-- Companion messages in `ch2` ("She is exposed now...") stay slot-level, not station-level.
+- Companion messages stay at slot level, not on cards (Gamewright ruling #8).
