@@ -33,14 +33,15 @@ type Station = {
   wayfinding: { text: string; distance_gates?: DistanceGate[]; hints: string[] };
   inbound_clue: string;          // "how to find me": the text/email clue that sends her here
   core_story: string;            // the woman's story, 1-2 paragraphs, beat-neutral
-  beat_paragraphs: Record<Beat, string>; // one short paragraph per beat; the slot picks one
+  beat_paragraphs: Record<MiddleBeat, string>; // one short paragraph per beat 1-5; the slot picks; no love_anyway (Final Frame only)
   puzzles: StationPuzzles;       // content per puzzle type, see below
   portrait: { image: string; caption: string; credit?: string }; // used in the finale gallery
   logistics: { vetted: boolean; vetted_on?: string; notes: string; access?: string; risks?: string };
   backup: { name: string; coordinates?: LatLng; note: string }; // fallback if the main spot is closed
+  difficulty_floor?: DifficultyLevel; // never plays below this level, whatever slot it is dealt into (decision 4)
 };
 
-type StationPuzzles = {           // content only; difficulty comes from the slot
+type StationPuzzles = {           // content only; difficulty comes from the slot, raised to the station's floor
   find_by_gps?:   { title_lines?: string[]; instruction: string; questions?: PoolQuestionItem[] };
   find_by_text?:  { guidance_text: string; hints: string[]; question: PoolQuestionItem };
   multiple_choice?: { instruction?: string; questions: PoolQuestionItem[] };
@@ -59,19 +60,27 @@ One file: `src/config/slots.ts`.
 
 ```ts
 type Beat = "attention" | "courage" | "risk" | "being_seen" | "loss" | "love_anyway";
+type MiddleBeat = Exclude<Beat, "love_anyway">; // love_anyway lives only in the fixed Final Frame (Story_Spine §6)
+
+type DifficultyLevel = 1 | 2 | 3 | 4 | 5;
+type DifficultyKnobs = {
+  hint_count: number;            // how many station hints are shown (taken from the front of the list)
+  wrong_answer_allowance: number; // misses before an extra hint or a softer path
+  num_distractors: number;       // overrides MultipleChoice wrong-option count
+  geofence_radius_m: number;
+  compass_tolerance_deg: number;
+  hold_seconds: number;
+};
+const DIFFICULTY: Record<DifficultyLevel, DifficultyKnobs>; // one table; level 5 is hardest
 
 type Slot = {
   index: number;                 // 1..N (0 = Prologue and N+1 = Final Frame are separate fixed defs)
-  beat: Beat;
-  fragment: number;              // which piece of the frame she earns
-  difficulty: {
-    hint_count: number;          // how many station hints are shown (taken from the front of the list)
-    wrong_answer_allowance: number; // misses before an extra hint or a softer path
-    num_distractors: number;     // overrides MultipleChoice wrong-option count
-    geofence_radius_m: number;
-    compass_tolerance_deg: number;
-    hold_seconds: number;
-  };
+  kind: "beat" | "connective";
+  beats: MiddleBeat[];           // "beat": one beat, or two adjacent beats folded together (courage + risk);
+                                 // "connective": the one beat already in play, deepened, not advanced
+  fragment: number | null;       // which piece of the frame she earns; one per "beat" slot, even when folded;
+                                 // null for "connective" (adds nothing to the letter)
+  difficulty: DifficultyLevel;   // rises by slot; effective level = max(slot.difficulty, station.difficulty_floor ?? 1)
   seal: { name: string; description?: string };
   messages: SlotMessage[];       // slot-level texts/emails, templated (see section 6)
 };
@@ -80,17 +89,20 @@ type SlotMessage = {
   id: string;                    // "briefing", "summons", "arrival", "post_solve", "debrief"
   type: "sms" | "email" | "letter";
   to: Recipient;
-  trigger: "manual" | "auto";
-  delay_minutes?: number;
-  when: "before_station" | "on_arrival" | "after_solve";
+  when: "before_station" | "on_arrival" | "after_solve"; // when it becomes ready; Bob still sends it by hand
   subject?: string;
   body_or_template: string;      // text with placeholders, or an email template name
   companion_message?: CompanionMessage;
 };
 ```
 
-The slot sets the order Christine feels: beat 1 → 6, fragments 1 → 6, difficulty rising.
-The station supplies the place and the words.
+The slot sets the order Christine feels: beats 1 → 5 across the middle slots, beat 6 (love anyway) and its
+fragment only in the fixed Final Frame, difficulty rising. Folding and connective slots follow Story_Spine §6
+and decision 1. The station supplies the place and the words. For a folded slot both beat paragraphs play, in
+beat order.
+
+Slot messages have no trigger, delay or schedule. Each one is ready once its `when` is reached, and it goes out
+only when Bob sends it from the admin (decision 9). Slot messages do not use QStash delayed delivery.
 
 ### Pointers belong to the slot
 A direction pointer from one stop to the next (a bearing, a heading, or a 'look toward' clue) belongs to the slot, never to a station card. The deal decides which stations end up next to each other, so a pointer can only be written once both neighbors are dealt. For that reason the 255° bearing has been taken off the Kellogg station card. If a slot needs a pointer, it is written when the deal is made and saved in the deal record.
@@ -103,7 +115,7 @@ config default for tests.
 type Deal = {
   track: "test" | "live";
   slots: Record<number, string>;  // slot index -> station id
-  locked_through?: number;        // slots already played can't be re-dealt
+  clue_sent: Record<number, string>; // slot index -> when its inbound clue went out; that slot is locked
   updated_at: string;
 };
 ```
@@ -112,8 +124,11 @@ Checks (run by `validate:config` for the config default and by the admin before 
 - Every slot 1..N has a station.
 - No station is used twice.
 - Every station in the live deal has `logistics.vetted = true`.
-- Each station has content for every puzzle type in its `sequence`, and a paragraph for the slot's beat.
-- Slots that are already played or in progress can't change (`locked_through`).
+- Each station has content for every puzzle type in its `sequence`, and a paragraph for each of the slot's beats.
+- A slot whose inbound clue has been sent can't change (`clue_sent`, decision 3). Sending the clue writes
+  the entry, and from then on that slot keeps its station even if it hasn't started.
+- Slot shape: a `beat` slot has one beat, or two adjacent beats, and a fragment; a
+  `connective` slot has one beat already in play and no fragment. No middle slot has `love_anyway`.
 - Warning only: the station needs coordinates if its sequence uses FindByGps with navigation.
 
 ## 6. Template placeholders
@@ -139,9 +154,10 @@ RevealNarrative and the admin preview.
 
 ## 7. Progress keyed by slot
 - `chapter_progress.chapter_id` becomes `slot_index` (plus `prologue` / `finale`), with a
-  `station_id` column recorded when the slot starts. The station is data, not the key.
+  `station_id` column recorded when the slot's inbound clue is sent. The station is data, not the key.
 - `step_progress.step_id` becomes `"<slot>:<step>"`, e.g. `3:find_by_text`, `3:msg:arrival`.
-- When a slot starts, the station is frozen into the progress row, so later re-deals can't change history.
+- When a slot's inbound clue is sent, the slot locks in the deal and its station is frozen into the progress
+  row, so later re-deals can't change history.
 - `advanceQuest` gets the built chapter from `slot + frozen station`. While we're in there, it should
   also check answers on the server (review finding).
 
@@ -150,7 +166,8 @@ RevealNarrative and the admin preview.
   `checkable_fact`, the beat paragraph she read).
 - The cards appear one by one, ending with an empty gilt frame that becomes **Christine's frame**,
   last. Copy comes from the fixed finale def and uses `{played_women}`, `{first_place}` and so on.
-- Fragments collected = the slots' fragment numbers. The finale checks that all fragments are earned.
+- Fragments collected = the middle slots' fragment numbers, then fragment 6 (love anyway), which belongs to the
+  Final Frame itself. The finale checks that all middle fragments are earned.
 
 ## 9. Gallery and Testing page
 - **Gallery** (`/the-order/gallery`): presets list **Station × Slot**. Pick a station, pick a slot
