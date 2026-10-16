@@ -14,6 +14,13 @@ Start from [STATION-CARD-TEMPLATE.md](STATION-CARD-TEMPLATE.md).
 | [cranbrook.md](cranbrook.md) | Ellen Scripps Booth | Michigan day trip | PassphraseEntry or MultipleChoice | Candidate |
 | [mountain-home-cemetery.md](mountain-home-cemetery.md) | Lucinda Hinsdale Stone (or Caroline Bartlett Crane) | Local | FindByGps, AlignBearing, FindByText | Candidate |
 | [kia.md](kia.md) | Anna Louise Raymond | Local | PassphraseEntry (Thursday) | Candidate |
+| [crystal-bridges.md](crystal-bridges.md) | Alice Walton (with Cassatt's *The Reader*) | Planned trip (AR) | FindByText, MultipleChoice; backup PassphraseEntry "52" | Candidate (old stop) |
+| [meijer-gardens.md](meijer-gardens.md) | Lena Meijer | Michigan day trip | FindByGps, AlignBearing (windmill), MultipleChoice | Candidate (old stop) |
+| [shedd.md](shedd.md) | Helen Shedd Keith (proposed, thin) or Bridget Coughlin | Planned trip (Chicago) | FindByGps, MultipleChoice | Candidate (old stop, least ready) |
+
+### Candidates without a card
+- **Edsel & Eleanor Ford House**, Grosse Pointe Shores: Eleanor Clay Ford (1896-1976). Sourced in `/workspace/gilt-frame-ch3-6-candidates.md`. No card yet.
+- Sleeping Bear Dunes: an old stop with no real woman identified. No card.
 
 ## Assumptions
 - Beat names, fragments, and bird degrees come from `Story_Spine.md` and `Chapter_Map.md`. Each card has a base paragraph plus an overlay for beats 1 through 5. Beat 6 is the Final Frame slot, so a station only supplies a setting line for it.
@@ -30,6 +37,9 @@ Start from [STATION-CARD-TEMPLATE.md](STATION-CARD-TEMPLATE.md).
 5. **Which station hosts the Final Frame?** The research file recommends KIA. The Spine floated the Kellogg gazebo by boat.
 6. **Supporting women** (Cassatt, Wood, Hull, Walton). Do they get gallery portraits or only caption mentions?
 7. **Fragment 6 private line.** Only Bob can write it.
+9. **Living women** (Alice Walton, Bridget Coughlin). Should real living people be gallery portraits, and how do we handle images and permission? Should the Walton family tragedies from the old lore stay out?
+10. **Shedd's woman.** Helen Shedd Keith, Coughlin, or drop Shedd?
+11. **Lena Meijer's dementia** (from repo notes, not sourced to a URL). Leave it out?
 8. **Companion messages.** These are slot-level today (in `config.ts`). Confirm they stay out of station cards.
 
 ## Source gaps (do not use in player copy until confirmed)
@@ -43,3 +53,6 @@ Start from [STATION-CARD-TEMPLATE.md](STATION-CARD-TEMPLATE.md).
 - Licensable portraits for every gallery woman.
 - AIC: no fallback if the Zorn portrait is off display.
 - Carrie Staines Kellogg facts come from search summaries (MSU, KBS, Adventist encyclopedia, Find a Grave). Load the pages to confirm.
+- Crystal Bridges: *The Reader* has been listed "Not on view". Is the spring's 52 F posted on site? Facts come from repo research notes with no URLs, so re-check them.
+- Meijer: which Degas bronze is on view and where; the windmill bearing; Lena Meijer portrait licensing.
+- Shedd: Helen Shedd Keith's dates and relation to the Shedd family; opening date conflict (May 30 1930 vs Dec 1929, not used); street address; any plaque. Facts come from search summaries.
