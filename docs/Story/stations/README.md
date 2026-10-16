@@ -1,0 +1,45 @@
+# Station Cards (order-free)
+
+Under Gamewright's station/slot model, play is order-free. A **station** holds what belongs to its place: the woman, the facts, the puzzle, a backup spot, an inbound clue, the beat overlays, and its art. A **slot** holds what belongs to play order: beat, vault fragment, difficulty, and bird degree. Only **Prologue** and **Final Frame** are fixed slots. The Vault gallery collects the women in the order Christine meets them. The finale shows them in that order, with Christine's frame last.
+
+Beats and fragments come from [Story_Spine.md](../Story_Spine.md): 1 Attention, 2 Courage, 3 Risk, 4 Being seen, 5 Loss, 6 Love anyway. Fragment texts belong to slots and are unchanged. **Fragment 6's private line is still a placeholder for Bob:** `[HOOK: BOB WRITES THIS LINE. Do not sign it.]` No station card fills it.
+
+Start from [STATION-CARD-TEMPLATE.md](STATION-CARD-TEMPLATE.md).
+
+| Card | Woman | Tier | Suggested puzzle | Status |
+|---|---|---|---|---|
+| [kellogg.md](kellogg.md) | Dr. Carrie Staines Kellogg (proposed) | Local | FindByGps, MultipleChoice, AlignBearing | Locked content, woman proposed |
+| [aic.md](aic.md) | Bertha Palmer | Planned trip | FindByText, MultipleChoice | Locked content |
+| [ladies-library.md](ladies-library.md) | Lucinda Hinsdale Stone | Local | PassphraseEntry (Webster window) | Candidate |
+| [cranbrook.md](cranbrook.md) | Ellen Scripps Booth | Michigan day trip | PassphraseEntry or MultipleChoice | Candidate |
+| [mountain-home-cemetery.md](mountain-home-cemetery.md) | Lucinda Hinsdale Stone (or Caroline Bartlett Crane) | Local | FindByGps, AlignBearing, FindByText | Candidate |
+| [kia.md](kia.md) | Anna Louise Raymond | Local | PassphraseEntry (Thursday) | Candidate |
+
+## Assumptions
+- Beat names, fragments, and bird degrees come from `Story_Spine.md` and `Chapter_Map.md`. Each card has a base paragraph plus an overlay for beats 1 through 5. Beat 6 is the Final Frame slot, so a station only supplies a setting line for it.
+- Puzzle content for Kellogg and AIC is reused from `website/src/config/config.ts` (`ch1`, `ch2`), with slot and bearing ties removed in the copy.
+- The new model needs a woman at every station. Kellogg's canon figure is W. K. Kellogg, so Carrie Staines Kellogg is proposed (web-sourced).
+- Cards live in `docs/Story/stations/` to match the repo's existing `docs/Story` casing.
+- `Chapter_Map.md` and `config.ts` are not changed. They still describe the old fixed-chapter model.
+
+## Open questions for Bob
+1. **Christine's include/exclude list.** Which places should never be used (for example, KIA, where she is a docent, or a cemetery)? Which places should she not see coming?
+2. **Kellogg woman.** Is Carrie Staines Kellogg right? Or should W. K. Kellogg stay as the figure even though he breaks the "chain of women"?
+3. **The 255 degree bearing.** It currently points Kellogg toward Chicago. In order-free play no station can promise what comes next. Options: drop it, make it a Vault key, or let the slot add a pointer.
+4. **Stone duplicate.** She anchors both Ladies' Library and Mountain Home. Should the cemetery use Caroline Bartlett Crane, or should Stone get one portrait and two stations?
+5. **Which station hosts the Final Frame?** The research file recommends KIA. The Spine floated the Kellogg gazebo by boat.
+6. **Supporting women** (Cassatt, Wood, Hull, Walton). Do they get gallery portraits or only caption mentions?
+7. **Fragment 6 private line.** Only Bob can write it.
+8. **Companion messages.** These are slot-level today (in `config.ts`). Confirm they stay out of station cards.
+
+## Source gaps (do not use in player copy until confirmed)
+- Ruth Webster window: wording and location (LLA).
+- Stone plot location (Section E, Lot 176 comes from a search summary) and Mountain Home gate hours.
+- AlignBearing angles at Kellogg's windmill backup and Mountain Home. Measure on site.
+- Dates for Anna Louise Raymond, Kathryn Wood, Blanche Hull, Caroline Bartlett Crane, and Bertha Palmer's birth year.
+- Which KIA Cassatt prints are on view. Any KIA donor wall naming Raymond.
+- Any on-site plaque at Cranbrook showing 1 June 1908.
+- Whether today's Kellogg sundial is the one from the rose garden.
+- Licensable portraits for every gallery woman.
+- AIC: no fallback if the Zorn portrait is off display.
+- Carrie Staines Kellogg facts come from search summaries (MSU, KBS, Adventist encyclopedia, Find a Grave). Load the pages to confirm.
