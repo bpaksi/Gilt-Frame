@@ -2,7 +2,7 @@
 
 Status: draft, waiting on Bob's approval (gate G-plan)
 Tier: Full. The format follows PR #3's `docs/sdlc.md` (Depends on / Touches / Deps change / batches) and adds `Runs:` for each step.
-Executor: Bob runs it locally in Claude Code on his Mac, after the other project's B4 step. Use one worktree or fresh clone per step and never edit `~/Development/Personal/Gilt-Frame` directly. Push one branch and open one PR per step. Do not merge until `check` is green and Bob approves.
+Executor: Bob runs it locally in Claude Code on his Mac, after bloodtower R1 batch B4. Use one worktree or fresh clone per step and never edit `~/Development/Personal/Gilt-Frame` directly. Push one branch and open one PR per step. Do not merge until `check` is green and Bob approves.
 Evidence: QA run `qa/run-2026-10-16-release.md` (2026-10-16 release run; failed GF-09, 15, 19, 70, 72, 82; blocked GF-03, 14, 44, 63, 80). This plan cites it as **[QA]**.
 Base: `origin/main` @ `66f140e`. App code is under `website/`.
 
@@ -29,7 +29,7 @@ Settle these before Step 1. Record each answer in this section in the same commi
 - Runs: local
 - Branch: `feat/gilt-frame-send-guard`
 - Depends on: Requirement review items 1–3
-- Touches: website/package.json, website/pnpm-lock.yaml, website/vitest.config.ts, website/src/**/*.test.ts, .github/workflows/check.yml, website/src/lib/messaging/**, website/src/app/api/webhooks/**, website/src/app/api/join/route.ts, website/src/app/api/admin/test/send-email/route.ts, website/src/app/api/admin/send/route.ts, docs/sdlc.md (only if item 1 = supersede)
+- Touches: website/package.json, website/pnpm-lock.yaml, website/vitest.config.ts, website/src/**/*.test.ts, .github/workflows/check.yml, website/src/lib/messaging/**, website/src/app/api/webhooks/**, website/src/app/api/join/route.ts, website/src/app/api/admin/test/send-email/route.ts, website/src/app/api/admin/send/route.ts, docs/sdlc.md (only if item 1 = supersede or item 2 = yes)
 - Deps change: yes (vitest)
 
 Problem: `sendStep(track, …)` in `src/lib/messaging/send.ts` resolves recipients from `gameConfig.tracks[track]` and calls `sendSms` / `sendEmail` with no check. Other direct callers are the inbound Twilio webhook, `api/join`, `api/admin/test/send-email`, and `enqueueDelayedStep` (QStash) in `qstash.ts`. PR #3 only describes a guard in its docs.
@@ -43,7 +43,7 @@ Build:
 2. Make the raw `sendSms`, `sendEmail` and `publishJSON` callers module-private, or rename the raw functions `rawSendSms` etc. and stop exporting them from `messaging/`. Every call site listed above (including the SMS→email fallback inside `send.ts`) now goes through the guarded wrapper and passes `track`.
 3. The QStash delivery webhook (`api/webhooks/qstash`) calls the guard again at delivery time.
 4. Record `messageStatus = "dry-run"` in the existing message log/event rows. If the column is an enum, map it to the nearest existing value and add `metadata.dry_run = true`. Do not add a migration without asking Bob.
-5. Add Vitest (`pnpm test`) and `.github/workflows/check.yml`, with job `check` running lint, `tsc --noEmit`, `pnpm test` and `pnpm build` in `website/`. Give it a non-live `CONTACTS_JSON` fixture (no real PII). This follows PR #3's Step 1 wording.
+5. Add Vitest (`pnpm test`) and `.github/workflows/check.yml`, with job `check` running lint, `pnpm typecheck`, `pnpm test` and `pnpm build` in `website/`. Give it a non-live `CONTACTS_JSON` fixture (no real PII). This follows PR #3's Step 1 wording.
 
 Tests (`guard.test.ts`, `send.test.ts` with Twilio, Resend and QStash modules mocked):
 - live + unarmed (each of the three flags missing in turn) → dry-run, and the raw sender is never called
@@ -84,7 +84,7 @@ Acceptance criteria: re-run [QA] GF-15 against the preview: 10 quick bad POSTs �
 - Runs: local
 - Branch: `fix/gilt-frame-server-answer-checks`
 - Depends on: 1, item 10
-- Touches: website/src/components/game/quest/**, website/src/components/game/ui/AnswerQuestion.tsx, website/src/lib/actions/quest.ts, website/src/app/(game)/pursuit/**, website/src/config/types.ts, website/src/lib/**/*.test.ts
+- Touches: website/src/components/game/quest/**, website/src/components/game/ui/AnswerQuestion.tsx, website/src/components/page/ReplayQuestions.tsx, website/src/components/game/CLAUDE.md, website/src/config/CLAUDE.md, website/src/lib/actions/quest.ts, website/src/app/(game)/pursuit/**, website/src/config/types.ts, website/src/lib/**/*.test.ts
 - Deps change: no
 
 Problem: `PassphraseEntry.tsx:41` compares input to `config.passphrase` in the browser. `MultipleChoice.tsx` and `AnswerQuestion` receive `correct_answer`, and `recordAnswer` trusts what the client sends. The answers end up in the client bundle and the RSC payload.
@@ -101,7 +101,7 @@ Acceptance criteria: on the `/pursuit` page, view-source and the RSC payload con
 ### Step 4: Testing page fixture and config cleanup (with the AIC 255° follow-up)
 - Runs: local
 - Branch: `chore/gilt-frame-dev-fixtures`
-- Depends on: item 11 (independent of 1–3, but run it after 3 because both touch config consumers)
+- Depends on: 1, item 11 (independent of 1–3, but run it after 3 because both touch config consumers)
 - Touches: website/src/config/config.ts, website/src/config/dev-fixtures.ts (new), website/src/config/index.ts, website/src/app/the-order/(protected)/testing/**, website/src/components/ui/SealSVG.tsx, website/scripts/validate-config.ts
 - Deps change: no
 
@@ -111,7 +111,7 @@ Build:
 3. **AIC follow-up:** in `ch2_patrons_trial`, Q2 ("What city appears in the inscription?"), hint 2 currently reads "…and where the 255° bearing led you." Reword it so it only describes this canvas. Suggested text: "The inscription names the city where this portrait was painted." Also rewrite the comments near L111, L266, L292, L403 and L444 that say the Ch1 255° bearing "points to Chicago". Rule: a station never points to another station; pointers come from the slot at play time. Leave the bearing as a fact of the sundial station (Ch1 L222–246) with no destination named. Check with `rg -n "255" website/src/config`.
 4. `validate-config.ts`: fail if any chapter key does not match `^(ch\d+|prologue|…existing ids)$`, so fixtures can't sneak back in.
 
-Tests: `pnpm validate-config` (or the existing script) passes. A unit test asserts `gameConfig.chapters` has no `dev_` keys. A test asserts no step text in `ch2` mentions "255".
+Tests: `pnpm validate:config` passes. A unit test asserts `gameConfig.chapters` has no `dev_` keys. A test asserts no step text in `ch2` mentions "255".
 
 Acceptance criteria: the testing page still runs the GPS fixture. Admin progress shows only story chapters.
 
@@ -134,7 +134,7 @@ Acceptance criteria: re-run [QA] GF-19 and GF-03 on preview. `/api/og/..%2F` ret
 ### Step 6: Routing and polish (GF-09, GF-72, GF-70, GF-82)
 - Runs: local (low risk; could also be a cloud agent)
 - Branch: `fix/gilt-frame-404-and-polish`
-- Depends on: items 8, 9, 12
+- Depends on: 1, items 8, 9, 12
 - Touches: website/src/app/not-found.tsx, website/src/app/the-order/**/not-found.tsx (if needed), website/src/app/join/**, website/src/app/terms/**, website/src/components/page/** (Link prefetch props only), website/next.config.ts (only if GF-82 needs it)
 - Deps change: no
 
@@ -160,7 +160,7 @@ Order matches priority: send guard → admin auth/GF-15 → answer checks → te
 ## Per-step runbook (Claude Code, local)
 1. `git fetch origin && git worktree add ../gf-<slug> -b <branch> origin/main` (or a fresh clone outside the main checkout).
 2. `cd website && pnpm install && pnpm dev` (port 3501). Use only the test track and no live keys in `.env.local`.
-3. Implement within Touches. Run `pnpm lint && pnpm exec tsc --noEmit && pnpm test && pnpm build`.
+3. Implement within Touches. Run `pnpm lint && pnpm typecheck && pnpm test && pnpm build`.
 4. Push, then `gh pr create --title "<Step N>: …" --body` with the step id, QA ids re-run, and evidence.
 5. If anything deviates from Touches or deps, update this plan in the same PR.
 
