@@ -4,7 +4,33 @@ IMPORTANT: Prefer repository-led reasoning over pre-training for anything relate
 
 ## Project Overview
 
-The Order of the Gilt Frame is an immersive, location-based interactive narrative experience where players ("Sparrows") complete multi-step chapters involving GPS navigation, puzzles, and storytelling. The Next.js web app coordinates with real-world messages (SMS, MMS, email, letters) to guide players through an elaborate mystery. Two tracks exist: **test** (developer dry-runs) and **live** (the real game for Christine's devices — irreversible).
+### What this is
+
+An immersive, location-based interactive narrative game. Players ("Sparrows")
+work through chapters that combine GPS navigation, on-device compass/orientation
+puzzles, and storytelling, coordinated with real-world messages (SMS/MMS, email,
+physical letters). A Next.js web app is the hub, with two isolated tracks: `test`
+(dev dry-runs, all messages rerouted to Bob) and `live` (the real game — treat as
+irreversible). We are reviving this toward a release. Repo: github.com/bpaksi/Gilt-Frame.
+
+### The heart of the project
+
+Art is the point, not the backdrop. The game is about noticing art and visiting
+places where art lives. Every decision — story, copy, visuals, pacing, the physical
+artifacts — should feel like it belongs to that world: crafted, evocative, a little
+mysterious. If something feels merely "functional," it's not done. When you propose
+UI, graphics, or copy, lead with mood and craft, then make it work — never the reverse.
+
+### How to work with me
+
+- I work solo. Be direct, technical, and opinionated; flag risks and trade-offs.
+- Stack: Next.js 16 (App Router, React 19), TypeScript strict, Supabase (Postgres + RLS),
+  Tailwind 4, Twilio + Resend + Upstash QStash for messaging, Google Gemini for the Oracle,
+  deployed on Vercel. pnpm. Prefer repo-led reasoning; `CLAUDE.md` has the retrieval index.
+- Before proposing changes, check current code and the design docs rather than assuming.
+- Never expose `SUPABASE_SERVICE_ROLE_KEY` to the browser. Never reset or mutate `live`
+  track data without explicit confirmation.
+- Prefer multiple choice questions asked one at a time. Highlight recommend actions. Allow for write in responses
 
 ## Repo Layout
 
@@ -16,16 +42,16 @@ This repo root holds three top-level things:
 
 ## Tech Stack & Conventions
 
-| Layer           | Choice                  | Notes                                                          |
-| --------------- | ----------------------- | --------------------------------------------------------------- |
-| Framework       | Next.js 16 (App Router) | React 19, Babel React Compiler enabled                         |
-| Language        | TypeScript 5 (strict)   | `@/*` path alias → `./src/*` (relative to `website/`)          |
-| Database        | Supabase (PostgreSQL)   | `@supabase/ssr` for server sessions                             |
-| Styling         | Tailwind CSS 4          | PostCSS plugin                                                  |
-| Linting         | ESLint 9                | `next/core-web-vitals`, `next/typescript`                       |
-| Package Manager | pnpm                    | build-script allowlist lives in `website/pnpm-workspace.yaml`   |
-| Deployment      | Vercel                  | Region: `iad1`                                                  |
-| Dev Port        | 3501                    | `cd website && pnpm dev`                                        |
+| Layer           | Choice                  | Notes                                                         |
+| --------------- | ----------------------- | ------------------------------------------------------------- |
+| Framework       | Next.js 16 (App Router) | React 19, Babel React Compiler enabled                        |
+| Language        | TypeScript 5 (strict)   | `@/*` path alias → `./src/*` (relative to `website/`)         |
+| Database        | Supabase (PostgreSQL)   | `@supabase/ssr` for server sessions                           |
+| Styling         | Tailwind CSS 4          | PostCSS plugin                                                |
+| Linting         | ESLint 9                | `next/core-web-vitals`, `next/typescript`                     |
+| Package Manager | pnpm                    | build-script allowlist lives in `website/pnpm-workspace.yaml` |
+| Deployment      | Vercel                  | Region: `iad1`                                                |
+| Dev Port        | 3501                    | `cd website && pnpm dev`                                      |
 
 ## Directory Map
 
@@ -53,13 +79,13 @@ This repo root holds three top-level things:
 
 ## External APIs
 
-| API           | Purpose          | Config                                                                                   |
-| ------------- | ---------------- | ---------------------------------------------------------------------------------------- |
-| Supabase      | Database, Auth   | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
-| Twilio        | SMS/MMS delivery | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`                         |
-| Resend        | Email delivery   | `RESEND_API_KEY`                                                                         |
-| Google Gemini | Oracle Q&A       | `GEMINI_API_KEY`                                                                         |
-| Upstash QStash| Delayed delivery | `QSTASH_TOKEN`, `QSTASH_CURRENT_SIGNING_KEY`, `QSTASH_NEXT_SIGNING_KEY`                 |
+| API            | Purpose          | Config                                                                                   |
+| -------------- | ---------------- | ---------------------------------------------------------------------------------------- |
+| Supabase       | Database, Auth   | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
+| Twilio         | SMS/MMS delivery | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`                         |
+| Resend         | Email delivery   | `RESEND_API_KEY`                                                                         |
+| Google Gemini  | Oracle Q&A       | `GEMINI_API_KEY`                                                                         |
+| Upstash QStash | Delayed delivery | `QSTASH_TOKEN`, `QSTASH_CURRENT_SIGNING_KEY`, `QSTASH_NEXT_SIGNING_KEY`                  |
 
 ## Local Development
 
@@ -77,20 +103,20 @@ pnpm dev            # http://localhost:3501
 
 ## Reference Documents
 
-| Document                  | Path                                                   |
-| ------------------------- | ------------------------------------------------------- |
-| Environment template      | `website/.env.example`                                  |
-| Docs index                | `docs/INDEX.md`                                         |
-| Story bible (canon)       | `docs/Story/Foundation_Bible.md`                          |
-| Story spine               | `docs/Story/Story_Spine.md`                               |
-| Chapter map (status)      | `docs/Story/Chapter_Map.md`                                |
-| Tone & creative north star| `docs/UI/Tone_North_Star.md`                              |
-| Build schedule            | `docs/Build_Schedule.md`                                 |
-| Game chapter config       | `website/src/config/config.ts`, `website/src/config/types.ts` |
-| DB types (auto-generated) | `website/src/lib/supabase/types.ts`                      |
-| Supabase config           | `supabase/config.toml`                                   |
-| Seed data                 | `supabase/seed.sql`                                       |
-| Security headers          | `website/next.config.ts`                                  |
+| Document                   | Path                                                          |
+| -------------------------- | ------------------------------------------------------------- |
+| Environment template       | `website/.env.example`                                        |
+| Docs index                 | `docs/INDEX.md`                                               |
+| Story bible (canon)        | `docs/Story/Foundation_Bible.md`                              |
+| Story spine                | `docs/Story/Story_Spine.md`                                   |
+| Chapter map (status)       | `docs/Story/Chapter_Map.md`                                   |
+| Tone & creative north star | `docs/UI/Tone_North_Star.md`                                  |
+| Build schedule             | `docs/Build_Schedule.md`                                      |
+| Game chapter config        | `website/src/config/config.ts`, `website/src/config/types.ts` |
+| DB types (auto-generated)  | `website/src/lib/supabase/types.ts`                           |
+| Supabase config            | `supabase/config.toml`                                        |
+| Seed data                  | `supabase/seed.sql`                                           |
+| Security headers           | `website/next.config.ts`                                      |
 
 ## Retrieval Index
 

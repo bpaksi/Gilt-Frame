@@ -116,6 +116,26 @@ The letter templates (`website/src/config/letters/*.html`) already use Cormorant
    4. **Remaining Field components** — `FindByGps`, `MultipleChoice`, `FindByText`, using the Verification/Waypoint artifacts as reference.
    5. **Motion pass** — existing animations against the principles in #5 (Field doesn't glow).
 
+## Clickable prototype — [The Sparrow's Phone](https://claude.ai/artifact/XF3qWpybeMNi52Q47EepKx)
+
+A 12-screen click-through of the Summons and Chapter I across both surfaces (built 2026-09-26). Screen numbers (#1–#12) are the reference for feedback. Decisions and follow-ups from review:
+
+- **Marker rendering (#2).** The Marker is drawn as a hairline at every size (≈2px frame, ≈1px curves in screen pixels), not scaled up from the 40×52 icon, and never carries a blur glow; warmth goes in a lamp *behind* it. The intro ceremony is one pass (frame draws from top centre both ways, curves top to bottom, sand, then the grain), no loop. **Follow-up:** re-export `website/public/marker/*` (incl. `marker-v3-gold-512.png`, the MMS image) from the hairline Marker once approved.
+- **Intro copy (#2), decided 2026-09-26.** Enrolled players see **"You see what others do not."** Unenrolled visitors keep "You are not the one." Code today: `/` shows `IntroPage` to unenrolled visitors only (enrolled redirect to `/pursuit`), and the enrolled replay at `/journey/beginning` shows no line — add the line there, and decide whether first entry after enrollment (`/e/[token]`) plays the ceremony.
+- **One instrument (#6 / #8).** FindByGps and AlignBearing share one dial (rings, ticks, cardinals, grain waymark, needle). #6 heading-up: the rose turns with her, a fixed pointer marks ahead, the needle points at the destination. #8 north-up: the rose holds, the needle is her heading. The bearing's destination is never labelled on the dial (no "CHICAGO").
+
+## Design system — [The Gilt Frame](https://claude.ai/artifact/Bmn1pWA3g4Mc9gwtmQBjKc) (2026-10-03)
+
+The decisions above, consolidated into one design-system artifact for the whole site: brand book, tokens, type scale, and 19 components with live previews. It's now the reference for porting.
+
+- **Four surfaces, one token set.** Every colour is a semantic token (`ground`, `raise`, `ink`, `ink-dim`, `ink-faint`, `line`, `line-strong`, `accent`, `cta-*`, `grain`, `glow`…) with a value per surface, so a component changes surface by changing `data-surface`. Gallery and Field values come from The Sparrow's Phone (09-26), the newest study.
+- **Decided 2026-10-03: the system spans the whole site, in three tiers.** On top of Gallery and Field:
+  - **Ledger** for `/join`, `/terms`, `/privacy`, `/contact`: the letter's cardstock (`#f4eee2`) and ink-brown (`#2e231a`), brass links, boxed form fields, plain language. Replaces the gray Tailwind compliance look.
+  - **Desk** for `/the-order/*`: warm neutrals, system sans, brass primary actions in place of `admin-blue`, status pills that always carry a word. Test = `info` (cobalt violet), Live = `danger` (blood).
+- **Contrast flags (source values, kept):** `ink-faint` on the Gallery (4.2:1) and Field (4.06:1) grounds; Gallery `line-strong` (2.0:1).
+- **To retire when porting:** the `shake`, `screenFlash` and `supernovaFlash` keyframes, `OptionButton`'s red `wrong` state, the body `text-shadow`, the Georgia stack, `MarkerSVG`'s `pulse-soft`.
+- Port steps 6 (Ledger) and 7 (Desk) are added after the existing five; see the artifact's "In the codebase" section.
+
 ## Summary — where to start
 
 The design is further along than the code suggests. Type, the two-surface model, the Field style (Museum Placard) and the Gallery style (Candlelight) are all decided; none of it has been ported. All four open decisions are settled; the next step is port step 1 (type + Candlelight retune).

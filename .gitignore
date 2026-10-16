@@ -19,3 +19,6 @@ yarn-error.log*
 # root-level env files, if any (e.g. tooling shared across website/ and supabase/)
 .env*
 !.env.example
+
+# Sensitive Twilio / account docs — do not push
+docs/Twillio/
