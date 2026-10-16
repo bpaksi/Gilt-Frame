@@ -78,7 +78,7 @@ type Slot = {
   kind: "beat" | "connective";
   beats: MiddleBeat[];           // "beat": one beat, or two adjacent beats folded together (courage + risk);
                                  // "connective": the one beat already in play, deepened, not advanced
-  fragment: number | null;       // which piece of the frame she earns; one per "beat" slot, even when folded;
+  fragment: number | null;       // which piece of the frame she earns; one per "beat" slot, even when folded (numbering: §11 Q10);
                                  // null for "connective" (adds nothing to the letter)
   difficulty: DifficultyLevel;   // rises by slot; effective level = max(slot.difficulty, station.difficulty_floor ?? 1)
   seal: { name: string; description?: string };
@@ -143,7 +143,7 @@ Resolved at send/render time from the deal + progress, never baked into copy.
 | `{seal}` | slot seal name |
 | `{inbound_clue}` | current station |
 | `{first_place}`, `{first_woman}` | station in slot 1 |
-| `{prev_place}`, `{prev_woman}` | station in the previous slot (empty for slot 1) |
+| `{prev_place}`, `{prev_woman}` | station in the previous slot. **Blocked in slot 1**: there is no previous station, so any slot 1 send that uses either one is blocked, as for an empty placeholder |
 | `{next_clue}` | next slot's station inbound_clue |
 | `{played_women}` | list of women in played stations |
 | `{site_url}` | env |
@@ -163,7 +163,7 @@ RevealNarrative and the admin preview.
 
 ## 8. Finale (Final Frame)
 - Built from the played slots in order: one gallery card per station (`portrait`, `woman`,
-  `checkable_fact`, the beat paragraph she read).
+  `checkable_fact`, the beat paragraph or paragraphs she read: both, in beat order, for a folded slot).
 - The cards appear one by one, ending with an empty gilt frame that becomes **Christine's frame**,
   last. Copy comes from the fixed finale def and uses `{played_women}`, `{first_place}` and so on.
 - Fragments collected = the middle slots' fragment numbers, then fragment 6 (love anyway), which belongs to the
@@ -212,6 +212,7 @@ templates resolver → Gallery/Testing → finale.
 7. Do companions get per-slot messages, per-station ones, or both?
 8. Finale location: fixed place, or the last played station?
 9. Dates: drop the `window` field and schedule only from the admin, or keep target dates per slot?
+10. **Fragment numbers for folded slots.** A folded slot (courage + risk) has one fragment (§4, Story Spine §6), but fragments are numbered by beat (Story Spine §3) and fragment 6 is always love anyway. With a fold these cannot all hold. Options: (a) keep beat numbers, so a folded slot shows its first beat's number and the sequence has a gap (1, 2, 4, 5, 6); (b) renumber the middle fragments 1 to k in play order and keep the Final Frame as the last number, which moves fragment 6 whenever N is below 6; (c) a folded slot carries two fragment numbers. `{fragment}` and `{fragments_total}` (§6) depend on the answer.
 
 ## Addendum: station art fields (Illusionist)
 Every station card also carries `art.still`, `art.share_card` and `art.gallery_portrait`. Art always belongs to the station, never to a slot, so it moves with the station into whichever slot it's dealt into. The finale gallery is built from the gallery portraits of the stations she actually played. Validation fails a live deal if any dealt station is missing one of the three, and each asset must fit the size limits in the per-stop asset kit.
