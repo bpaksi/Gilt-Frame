@@ -92,6 +92,9 @@ type SlotMessage = {
 The slot sets the order Christine feels: beat 1 → 6, fragments 1 → 6, difficulty rising.
 The station supplies the place and the words.
 
+### Pointers belong to the slot
+A direction pointer from one stop to the next (a bearing, a heading, or a 'look toward' clue) belongs to the slot, never to a station card. The deal decides which stations end up next to each other, so a pointer can only be written once both neighbors are dealt. For that reason the 255° bearing has been taken off the Kellogg station card. If a slot needs a pointer, it is written when the deal is made and saved in the deal record.
+
 ## 5. Deal record (per track)
 Stored in Supabase (`deals` table) so Bob can re-deal from the admin without a deploy, with a
 config default for tests.
@@ -213,3 +216,14 @@ How to fold an old stop into a card:
 - Facts that aren't confirmed stay out of player copy, as on the other cards.
 
 Already carded from the Oct 15 research: Ladies' Library, KIA, Cranbrook, Mountain Home Cemetery. Edsel & Eleanor Ford House (5B) stays a candidate without a card until Bob wants it.
+
+## Addendum: Bob's decisions (Oct 16 2026)
+1. The number of middle slots equals the number of stops the 2027 trips support. If there are fewer stops than beats, beats double up as the Story Spine §6 says: courage pairs with risk, and loss never pairs with love. If there are more stops than beats, the extra stops become connective stops.
+2. The deal adapts to the travel plans. Each trip's stops fill the middle slots, and beats are assigned in trip order.
+3. A slot can be re-dealt to a different station only until Christine's inbound clue for it goes out. Once that clue is sent, the slot is locked.
+4. Puzzle difficulty rises by slot. Some stations have a difficulty floor they never play below.
+5. A fragment's art and text come from its slot and are fixed by the slot's place in the story. The fragment sequence stays the same whichever station is dealt.
+6. The Prologue passphrase is a new acrostic. The physical letter stays.
+7. Companion messages are tied to the slot, not the station. This follows from decision 5.
+8. The Final Frame is a fixed place: the Kellogg gazebo, reached by boat. It is a fixed final slot and is never dealt.
+9. Slots have no dates. Every send happens only when Bob triggers it by hand from the admin.
