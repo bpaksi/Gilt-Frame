@@ -195,3 +195,21 @@ templates resolver → Gallery/Testing → finale.
 
 ## Addendum: station art fields (Illusionist)
 Every station card also carries `art.still`, `art.share_card` and `art.gallery_portrait`. Art always belongs to the station, never to a slot, so it moves with the station into whichever slot it's dealt into. The finale gallery is built from the gallery portraits of the stations she actually played. Validation fails a live deal if any dealt station is missing one of the three, and each asset must fit the size limits in the per-stop asset kit.
+
+## Addendum: old Chapter 3-6 stops become station candidates (Bob, Oct 16 2026)
+Bob ruled: "Fold them into the new station design." The old chapter plan (archive/chapters/INDEX.md) is no longer an order. Each old stop is only a candidate station. It gets a station card like any other, or it is dropped.
+
+| Old chapter | Place | Station status |
+|---|---|---|
+| Ch3 The Keeper's Archive | Crystal Bridges, Bentonville AR | Candidate, needs a card. Reuse its puzzle (acrostic) and the Walton/Cassatt facts. |
+| Ch4 The Southern Vault | Frederik Meijer Gardens, Grand Rapids | Candidate, needs a card (Degas bronzes). Also in the Oct 15 research as 4C/5C. |
+| Ch5 The Windmill Key | Kellogg Manor windmill | Not a separate station. It is already the backup spot on the Kellogg card. Keep it there. |
+| Ch6 The Living Gallery | Shedd Aquarium, Chicago | Candidate, needs a card. Its woman and puzzle are not designed yet. |
+
+How to fold an old stop into a card:
+- Keep the place, its woman, the sourced facts, the puzzle and the art fields.
+- Strip anything that names an order, a date, a chapter number, or the next stop (for example the "Ch3 -> Ch4" Degas hand-off). If that hand-off is wanted, it becomes a pointer the slot adds when the stops are dealt (section 4).
+- Old beat labels (Risk, Being Seen, Loss, Love Anyway) belong to slots, not stations. A card can list the beats it suits.
+- Facts that aren't confirmed stay out of player copy, as on the other cards.
+
+Already carded from the Oct 15 research: Ladies' Library, KIA, Cranbrook, Mountain Home Cemetery. Edsel & Eleanor Ford House (5B) stays a candidate without a card until Bob wants it.
