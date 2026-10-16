@@ -34,7 +34,6 @@ The Dutch windmill on the estate (two 1817 mills combined and re-erected) [5]. A
 - **Beat 3 Risk:** The Keeper lost his sight in this house. She watched it go. To love someone who sees is to know that seeing can be taken. You looked hard at this place anyway. The Order has always asked that of its own.
 - **Beat 4 Being seen:** A physician learns to see what a patient will not say. She watched quietly, for years, in rooms like the ones above you. You have been watched like that too, Sparrow. Kindly. For longer than you know.
 - **Beat 5 Loss:** The roses she knew are gone. The dial stayed. Nothing in a garden keeps, and that is why people plant them. We bring you here to stand where something beautiful was, and to notice that it still is.
-- **Final Frame setting line:** Evening on the stairway, the lake below, the garden where the dial once stood among roses.
 
 ## Art
 - **Station still:** The sundial in low gold light, four maiden figures in soft focus, Gull Lake as a blue band beyond. No people. Gilt corner frame.

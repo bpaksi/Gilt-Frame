@@ -36,7 +36,6 @@ The lakefront outside the aquarium, which faces Lake Michigan. FindByGps to the 
 - **Beat 3 Risk:** Everything in this building is alive, and everything alive can be lost. It is the most fragile gallery in the city. They built it anyway, beside the lake.
 - **Beat 4 Being seen:** The creatures behind the glass do not know how many people have stood and watched them. You have been watched like that too, Sparrow, with wonder, through glass you did not know was there.
 - **Beat 5 Loss:** He did not live to see it. Nothing here stays the same from one hour to the next. The light on the water will not fall the same way tomorrow. That is not the tragedy. That is the reason to look.
-- **Final Frame setting line:** The terrace behind the aquarium at dusk, Lake Michigan to the horizon.
 
 ## Art
 - **Station still:** The white marble facade with the lake beyond, morning light, gilt frame.

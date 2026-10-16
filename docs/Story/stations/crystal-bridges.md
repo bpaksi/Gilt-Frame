@@ -35,7 +35,6 @@
 - **Beat 3 Risk:** She nearly lost everything once. She built anyway, and filled it with things that can be lost. That is the bargain the Order has always made. Love what can be taken. Keep it open to everyone.
 - **Beat 4 Being seen:** The reader does not know she is being watched. She has been watched for well over a century, kindly, by strangers who stop in front of her. You have been seen like that, Sparrow, while you were busy with something you loved.
 - **Beat 5 Loss:** The painting comes and goes from the walls. The spring outside never changes. Everything we keep, we keep for a while. That is why we bring you to see it now.
-- **Final Frame setting line:** The bridges over the water at dusk, glass glowing in the woods.
 
 ## Art
 - **Station still:** The museum's glass-and-copper bridges over the ponds in the woods at dusk, gilt frame.

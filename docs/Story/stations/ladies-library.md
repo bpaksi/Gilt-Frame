@@ -36,7 +36,6 @@ If the interior is unavailable: FindByGps to the steps, then MultipleChoice on t
 - **Beat 3 Risk:** She lost her school. Then she lost her house to fire. Each time she built again, knowing what building costs. Everything you allow yourself to truly see, you give the power to hurt you. She chose to see anyway.
 - **Beat 4 Being seen:** She took young women across an ocean to stand in front of paintings, because she believed they were worth the trouble. Someone once believed that about you, Sparrow. You were noticed long before you were asked.
 - **Beat 5 Loss:** The women who raised this hall are gone. The window for the one who gave the ground still holds the light. The Order keeps the names that the world lets slip.
-- **Final Frame setting line:** The upstairs hall, built by women for women, late light through colored glass.
 
 ## Art
 - **Station still:** The building's facade on Park Street at golden hour, empty sidewalk, gilt frame.
@@ -48,7 +47,7 @@ If the interior is unavailable: FindByGps to the steps, then MultipleChoice on t
 2. KPL, "Ladies' Library Association": https://www.kpl.gov/local-history/kalamazoo-history/women/ladies-library-association/ (search summary, via candidates file)
 3. Ladies' Library Association: https://ladieslibrarykzoo.org/our-history/ and https://ladieslibrarykzoo.org/inquire-about-tours-and-rentals/ (search summary). Tours by arrangement, (269) 344-3710.
 4. NRHP: https://npgallery.nps.gov/AssetDetail/NRIS/70000274
-All via `/workspace/gilt-frame-ch3-6-candidates.md` (research pass Oct 15 2026).
+From the Oct 15 2026 research pass. Its notes file is not in the repo, so the URLs above are the sources of record.
 
 ## Open items
 - Book a private visit; no walk-in hours.

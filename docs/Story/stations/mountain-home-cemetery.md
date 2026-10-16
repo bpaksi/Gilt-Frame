@@ -34,7 +34,6 @@ The 1878 receiving vault itself: MultipleChoice on its style ("Gothic") with Rev
 - **Beat 3 Risk:** She risked everything she had for what she believed, and lost it more than once. Even her grave was nearly lost. To be fully seen is also to be fully forgettable. She was neither, in the end.
 - **Beat 4 Being seen:** Strangers saw her a hundred years after she was gone and decided she mattered. You are seen like that, Sparrow, and not by strangers. Someone has been tending you for a long time.
 - **Beat 5 Loss:** Every soul the Order has loved was taken from it. This is where that becomes plain. The light that falls on this hill today will not fall the same way tomorrow. That is not the tragedy. That is why we brought you here.
-- **Final Frame setting line:** The hill at dusk, old stones, the receiving vault's arch in shadow. (Probably too somber for the reveal; listed for completeness.)
 
 ## Art
 - **Station still:** Old trees and weathered stones in late light, the Gothic vault arch small in the distance, gilt frame. No legible names.
@@ -45,7 +44,7 @@ The 1878 receiving vault itself: MultipleChoice on its style ("Gothic") with Rev
 1. KPL, "Mountain Home Cemetery": https://www.kpl.gov/local-history/cemeteries/kzoo-city/mountain-home-cemetery/ (loaded, via candidates file)
 2. City of Kalamazoo, Mountain Home Cemetery: https://www.kalamazoocity.org/Community/Cemeteries/Mountain-Home-Cemetery (gate hours [UNVERIFIED]; City 311 / (269) 337-8000)
 3. KPL, "Stone, Lucinda Hinsdale" (dates): https://www.kpl.gov/local-history/kalamazoo-history/biographies/stone-lucinda-hinsdale/
-All via `/workspace/gilt-frame-ch3-6-candidates.md`.
+From the Oct 15 2026 research pass. Its notes file is not in the repo, so the URLs above are the sources of record.
 
 ## Open items
 - Gate hours; confirm plot location with cemetery office.

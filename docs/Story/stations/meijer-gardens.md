@@ -35,7 +35,6 @@ The Lena Meijer Tropical Conservatory (indoor, weather-proof). FindByGps to the 
 - **Beat 3 Risk:** Gardens are the most fragile art there is. Frost, drought, one bad season. She built one anyway, the largest she could. Everything we love fully, we agree to lose. She planted it anyway.
 - **Beat 4 Being seen:** She lived to be a hundred and two, and this garden grew up around her the whole time. She was watched over, and loved, long before she knew how much. So have you been, Sparrow.
 - **Beat 5 Loss:** She is gone now. Her roses still bloom by the door of the house she came from. Nothing that matters lasts. The roses come back each year anyway. That is the point.
-- **Final Frame setting line:** The farmhouse and windmill at evening, roses by the door, the garden emptying.
 
 ## Art
 - **Station still:** The farmhouse replica with its windmill at golden hour, roses in the foreground, gilt frame.
@@ -43,7 +42,7 @@ The Lena Meijer Tropical Conservatory (indoor, weather-proof). FindByGps to the 
 - **Gallery portrait:** Photograph of Lena Meijer (Meijer Gardens or press archives; licensing [UNVERIFIED]). Caption: "The Gardener. Lena Meijer, 1919-2022."
 
 ## Sources
-1. `/workspace/gilt-frame-ch3-6-candidates.md` (research pass Oct 15 2026): https://www.meijergardens.org/gardens/ ; https://www.metcalfandjonkhoff.com/obituary/Lena-Meijer ; https://www.mlive.com/news/2022/01/lena-meijer-philanthropist-wife-of-grocery-entrepreneur-fred-meijer-dies-at-102.html
+1. Oct 15 2026 research pass (notes file not in the repo): https://www.meijergardens.org/gardens/ ; https://www.metcalfandjonkhoff.com/obituary/Lena-Meijer ; https://www.mlive.com/news/2022/01/lena-meijer-philanthropist-wife-of-grocery-entrepreneur-fred-meijer-dies-at-102.html
 2. Repo: `docs/Story/archive/chapters/chapter-3-the-keepers-archive/ch3-research-notes.md` (dates, birthplace, conservatory, farmhouse replica).
 3. Repo: same ch3 research notes (Degas bronzes in permanent collection; cashier at Greenville store; married 1946); `Chapter_4_The_Southern_Vault_Design.docx`.
 

@@ -35,7 +35,6 @@ Exterior on Park St: MultipleChoice on the founding story ("Where did the KIA fi
 - **Beat 3 Risk:** It nearly closed. One gift saved it. Everything built for love can fail. They built it anyway, and someone stepped forward when it mattered.
 - **Beat 4 Being seen:** You have stood in these galleries and taught others to look. Someone has been watching you do it, Sparrow. The chain you have been following runs through this building. It always ran through you.
 - **Beat 5 Loss:** The women who founded this place are gone. Exhibitions come and go. The walls change every season. What stays is the practice of seeing, carried by people. You are one of them.
-- **Final Frame setting line:** A gallery after the visitors have left, a Thursday evening, the doors still open. (Research file recommends this place for the reveal; that is a slot decision, not this card's.)
 
 ## Art
 - **Station still:** The KIA entrance on Park St at evening, warm interior light through the glass, gilt frame.
@@ -47,7 +46,7 @@ Exterior on Park St: MultipleChoice on the founding story ("Where did the KIA fi
 2. KIA centennial: https://www.kiarts.org/100-2/ ; KPL: https://www.kpl.gov/local-history/kalamazoo-history/arts-entertainment/kalamazoo-institute-of-arts/
 3. KIA Plan Your Visit: https://www.kiarts.org/connect-visit/plan-your-visit/
 4. KIA "Passion on Paper": https://www.kiarts.org/exhibition/passion-on-paper-masterly-prints-from-the-kia-collection/
-All via `/workspace/gilt-frame-ch3-6-candidates.md`.
+From the Oct 15 2026 research pass. Its notes file is not in the repo, so the URLs above are the sources of record.
 
 ## Open items
 - Raymond, Wood, Hull dates; Raymond portrait.

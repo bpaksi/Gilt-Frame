@@ -34,7 +34,6 @@ Gardens (open 8-5 [2]) if the house tour is full or off-season: FindByGps to the
 - **Beat 3 Risk:** To give in secret is to risk never being known for it. She took that risk her whole life. Everything given fully can be lost without a trace. She gave anyway.
 - **Beat 4 Being seen:** Her gifts were seen only after, in her own careful hand. Every one of them had been seen by her, and remembered. You have been seen that way too, quietly, for years, and someone has been keeping the account.
 - **Beat 5 Loss:** She was gone before anyone opened the books. The thanks came too late for her to hear. Nothing lasts long enough. That is not the tragedy. That is the reason to say it now.
-- **Final Frame setting line:** The gardens in late afternoon, the house behind, quiet.
 
 ## Art
 - **Station still:** Cranbrook House from the gardens, soft summer light, gilt frame.
@@ -44,7 +43,7 @@ Gardens (open 8-5 [2]) if the house tour is full or off-season: FindByGps to the
 ## Sources
 1. Cranbrook Center for Collections and Research, "Ellen Scripps Booth": https://center.cranbrook.edu/discover/people-cranbrook/ellen-scripps-booth (loaded, via candidates file)
 2. Cranbrook House & Gardens tour info: https://www.housegardens.cranbrook.edu/tourinfo (75-minute tours May-October plus some later dates; book ahead)
-All via `/workspace/gilt-frame-ch3-6-candidates.md`.
+From the Oct 15 2026 research pass. Its notes file is not in the repo, so the URLs above are the sources of record.
 
 ## Open items
 - Tour season (May-Oct, limited later dates); book ahead.

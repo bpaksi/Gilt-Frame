@@ -19,11 +19,11 @@ Start from [STATION-CARD-TEMPLATE.md](STATION-CARD-TEMPLATE.md).
 | [shedd.md](shedd.md) | Helen Shedd Keith (proposed, thin) or Bridget Coughlin | Planned trip (Chicago) | FindByGps, MultipleChoice | Candidate, not dealable until Helen Shedd Keith is confirmed |
 
 ### Candidates without a card
-- **Edsel & Eleanor Ford House**, Grosse Pointe Shores: Eleanor Clay Ford (1896-1976). Sourced in `/workspace/gilt-frame-ch3-6-candidates.md`. No card yet.
+- **Edsel & Eleanor Ford House**, Grosse Pointe Shores: Eleanor Clay Ford (1896-1976). Named in the Oct 15 2026 research pass, whose notes file was never added to the repo, so it has no source on file. Find sources before writing a card.
 - Sleeping Bear Dunes: an old stop with no real woman identified. No card.
 
 ## Assumptions
-- Beat names, fragments, and bird degrees come from `Story_Spine.md` and `Chapter_Map.md`. Each card has a base paragraph plus an overlay for beats 1 through 5. Beat 6 is the Final Frame slot, so a station only supplies a setting line for it.
+- Beat names, fragments, and bird degrees come from `Story_Spine.md` and `Chapter_Map.md`. Each card has a base paragraph plus an overlay for beats 1 through 5. Beat 6 belongs to the Final Frame, a fixed slot at the Kellogg gazebo (reached by boat) that is never dealt, so stations write nothing for it.
 - Puzzle content for Kellogg and AIC is reused from `website/src/config/config.ts` (`ch1`, `ch2`), with slot ties and the 255 degree bearing removed.
 - The new model needs a woman at every station. Kellogg's canon figure is W. K. Kellogg, so Carrie Staines Kellogg is proposed (web-sourced).
 - Cards live in `docs/Story/stations/` to match the repo's existing `docs/Story` casing.
@@ -37,7 +37,7 @@ Start from [STATION-CARD-TEMPLATE.md](STATION-CARD-TEMPLATE.md).
 2. **Kellogg woman.** Is Carrie Staines Kellogg right? Or should W. K. Kellogg stay as the figure even though he breaks the "chain of women"?
 3. ~~**The 255 degree bearing.**~~ **Closed (Gamewright #3):** removed from the Kellogg and AIC cards. Pointers belong to the slot at play time.
 4. **Stone duplicate.** She anchors both Ladies' Library and Mountain Home. Should the cemetery use Caroline Bartlett Crane, or should Stone get one portrait and two stations?
-5. **Which station hosts the Final Frame?** **Tracked by Gamewright** (Gamewright's question to Bob). Options on file: the research file recommends KIA; the Spine floated the Kellogg gazebo by boat.
+5. ~~**Which station hosts the Final Frame?**~~ **Closed (Bob's decision 8, `station-slot-design.md`):** no station hosts it. The Final Frame is a fixed slot at the Kellogg gazebo, reached by boat, and is never dealt.
 6. **Supporting women** (Cassatt, Wood, Hull, Walton). Do they get gallery portraits or only caption mentions?
 7. **Fragment 6 private line.** Only Bob can write it.
 8. ~~**Companion messages.**~~ **Closed (Gamewright #8):** they stay at slot level, not on cards.

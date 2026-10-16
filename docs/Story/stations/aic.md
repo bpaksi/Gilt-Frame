@@ -33,7 +33,6 @@ Cassatt: *On a Balcony* if *The Child's Bath* is off view (already noted in conf
 - **Beat 3 Risk:** She gave her eye to this building and the building kept her collection. She did not keep herself. The Order lost her in 1918. Everything we love fully, we agree to lose.
 - **Beat 4 Being seen:** Zorn painted her as she was, not as she posed. To be seen like that is rare. Somewhere in this building, someone once stood where you stand and saw her. We have been watching you the same way.
 - **Beat 5 Loss:** The mural she commissioned is gone. No one knows where. Her portrait remains, and the women whose work she hung are still on these walls. Nothing that matters is permanent. That is why it matters.
-- **Final Frame setting line:** The Zorn portrait, the gallery nearly empty, her gavel catching the light.
 
 ## Art
 - **Station still:** Grand staircase or the lions at the Michigan Avenue entrance at dusk, gilt frame. Avoid showing the portrait itself (the reveal is the find).
