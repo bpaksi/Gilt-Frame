@@ -58,7 +58,7 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Send shortly after letter should arrive. Or 3-4 days after the letter if she's stuck. SMS with Marker image attached.",
             body: "The sign has arrived. giltframe.org",
-            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v4-gold-512.png",
           },
         },
         prologue_passphrase: {
@@ -100,7 +100,7 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Auto-sends 5 minutes after passphrase is completed via QStash delayed delivery.",
             body: "The Order has noted your acceptance. Prepare yourself. The first trial is near.",
-            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v4-gold-512.png",
           },
         },
       },
@@ -143,7 +143,7 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Send morning of March 3 while at/near Kellogg Manor for anniversary. MMS with coordinates and Marker image.",
             body: "The Order has marked a site at 42.406256, -85.402025. Your first trial begins now. giltframe.org",
-            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v4-gold-512.png",
           },
         },
         ch1_arrival: {
@@ -155,7 +155,7 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Admin monitors player location (Find My). Send when player arrives at Kellogg Manor parking lot.",
             body: "The timekeeper awaits, Sparrow. Begin your trial. giltframe.org",
-            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v4-gold-512.png",
           },
         },
         // GPS compass from PIN (42.406256, -85.402025) to sundial (42.405278, -85.402778). ~125m walk.
@@ -256,7 +256,7 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Auto-fires after StoryReveal completes. Or manual from admin.",
             body: "The Order sees clearly. Your first fragment has been placed in the vault.",
-            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v4-gold-512.png",
           },
         },
       },
@@ -324,7 +324,7 @@ export const gameConfig: GameConfig = {
             to: "player",
             _trigger_note: "Day before or morning of museum visit.",
             body: "The lions are waiting, Sparrow.",
-            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v4-gold-512.png",
             companion_message: {
               to: "companion2",
               channel: "sms",
@@ -341,7 +341,7 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Send when Find My shows her at or near the AIC. The big moment. Also triggers quest on Current tab.",
             body: "You are close. Ascend to the second floor. Gallery 273. She is waiting. giltframe.org",
-            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v4-gold-512.png",
             companion_message: {
               to: "companion2",
               channel: "sms",
@@ -566,7 +566,7 @@ export const gameConfig: GameConfig = {
             _trigger_note:
               "Send evening of museum day or next morning — NOT immediately after the reward screen. The website reward already confirms completion; an instant SMS on top of it makes the Order feel like a marketing platform. Delay gives breathing room.",
             body: "You see what others have not. Your Chronicle has been updated. The Council is watching with growing interest.",
-            image: "https://giltframe.org/marker/marker-v3-gold-512.png",
+            image: "https://giltframe.org/marker/marker-v4-gold-512.png",
             companion_message: {
               to: "companion2",
               channel: "sms",

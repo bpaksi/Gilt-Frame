@@ -336,14 +336,14 @@ export default function OrbAnimation({ onComplete, skipLabel, delayMs = 800 }: O
           />
           <path
             ref={curve1Ref}
-            d="M 64,65 C 64,130 136,112 136,176"
-            fill="none" stroke={colors.gold} strokeWidth="1.5"
+            d="M 61.98,65.0 C 56.8,129.75 128.8,111.25 133.98,176.0 L 138.03,176.0 C 143.2,111.25 71.2,129.75 66.03,65.0 Z M 59.5,65.0 a 4.5,4.5 0 1,0 9.0,0 a 4.5,4.5 0 1,0 -9.0,0 Z M 131.5,176.0 a 4.5,4.5 0 1,0 9.0,0 a 4.5,4.5 0 1,0 -9.0,0 Z"
+            fill={colors.gold}
             style={{ opacity: 0 }}
           />
           <path
             ref={curve2Ref}
-            d="M 136,65 C 136,130 64,112 64,176"
-            fill="none" stroke={colors.gold} strokeWidth="1.5"
+            d="M 138.03,65.0 C 143.2,129.75 71.2,111.25 66.03,176.0 L 61.98,176.0 C 56.8,111.25 128.8,129.75 133.98,65.0 Z M 131.5,65.0 a 4.5,4.5 0 1,0 9.0,0 a 4.5,4.5 0 1,0 -9.0,0 Z M 59.5,176.0 a 4.5,4.5 0 1,0 9.0,0 a 4.5,4.5 0 1,0 -9.0,0 Z"
+            fill={colors.gold}
             style={{ opacity: 0 }}
           />
           {([
