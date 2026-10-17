@@ -70,7 +70,7 @@ export const gameConfig: GameConfig = {
             placeholder: "Speak the words.",
             passphrase: "I SEE CLEARLY",
             error_message: "The Order does not recognize these words.",
-            submit_label: "Submit to the Order",
+            submit_label: "Speak it",
             hints: [
               "The letter holds more than its words suggest. Look at its structure.",
               "Each paragraph begins with purpose. Read only the beginnings.",

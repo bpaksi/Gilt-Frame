@@ -12,6 +12,16 @@
   --color-surface: rgba(30, 25, 18, 0.8);
   --font-family-serif: Georgia, 'Times New Roman', serif;
 
+  /* Art direction: Candlelight palette (docs/UI/art-direction/art-direction.md §3) */
+  --color-ink: #efdcbc;
+  --color-ink-dim: #b79f78;
+  --color-ink-faint: #7d6a4c;
+  --color-ring: #3a2c1a;
+  --color-gilt: #e0aa5a;
+  --color-gilt-hi: #f3d58e;
+  --color-gilt-deep: #8a6328;
+  --ease-reveal: cubic-bezier(.2,.7,.1,1);
+
   --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
   --animate-drift: drift 6s ease-in-out infinite;
   --animate-fade-in: fade-in 2s ease forwards;
@@ -169,6 +179,77 @@
 }
 
 @layer components {
+  /* ── Gilt "well" frame (art-direction §4 gallery frame, scaled for phones) ──
+     2px gilt-deep outer line, gap, 1px gilt @35% inner line. Pure CSS; the
+     corner pips are inline SVG in the component. */
+  .gilt-well {
+    position: relative;
+    border: 2px solid var(--color-gilt-deep);
+    box-shadow: 0 0 60px rgba(224, 170, 90, 0.05);
+    transition: border-color 0.6s var(--ease-reveal), box-shadow 0.6s var(--ease-reveal);
+  }
+  .gilt-well::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(224, 170, 90, 0.35);
+    pointer-events: none;
+    transition: border-color 0.6s var(--ease-reveal);
+  }
+  .gilt-well[data-state="success"] {
+    border-color: var(--color-gilt);
+    box-shadow: 0 0 48px rgba(255, 214, 140, 0.18);
+  }
+  .gilt-well[data-state="success"]::before {
+    border-color: rgba(243, 213, 142, 0.6);
+  }
+  .gilt-well:focus-within {
+    border-color: var(--color-gilt);
+  }
+  .gilt-well__input::placeholder {
+    color: var(--color-ink-faint);
+    opacity: 1;
+  }
+  .gilt-well__input:focus-visible {
+    outline: none;
+  }
+  .gilt-well:has(.gilt-well__input:focus-visible) {
+    outline: 2px solid rgba(243, 213, 142, 0.55);
+    outline-offset: 4px;
+  }
+  .gilt-cta:focus-visible {
+    outline: 2px solid rgba(243, 213, 142, 0.55);
+    outline-offset: 3px;
+  }
+  .gilt-cta:hover {
+    border-color: var(--color-gilt);
+    color: var(--color-gilt-hi);
+  }
+
+  /* Wrong answer: the field quietly withdraws (dim). No shake, no red.
+     The drift only plays when the player hasn't asked for reduced motion. */
+  .withdraw {
+    opacity: 0.6;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .withdraw {
+      opacity: 1;
+      animation: withdraw 1.6s var(--ease-reveal) both;
+    }
+    .gilt-fade {
+      animation: gilt-fade 0.5s var(--ease-reveal) both;
+    }
+  }
+  @keyframes withdraw {
+    0%   { opacity: 1;   transform: translateY(0); }
+    25%  { opacity: 0.4; transform: translateY(4px); }
+    100% { opacity: 1;   transform: translateY(0); }
+  }
+  @keyframes gilt-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
   /* Admin focus ring */
   .admin-focus:focus-visible {
     outline: 2px solid var(--color-admin-focus);

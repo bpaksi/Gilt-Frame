@@ -57,6 +57,27 @@ export const colors = {
 
 export const fontFamily = "Georgia, 'Times New Roman', serif";
 
+// Art-direction type pair (docs/UI/art-direction/art-direction.md §2).
+// The CSS variables are set by the next/font loaders in ./fonts.ts; the
+// fallbacks keep Georgia-era screens looking right before the font swaps in.
+export const fontDisplay =
+  "var(--font-display), 'Cormorant Garamond', Garamond, Georgia, serif";
+export const fontText =
+  "var(--font-text), 'EB Garamond', Garamond, Georgia, serif";
+
+// Candlelight (Gallery) palette — art-direction.md §3. Mirrors the
+// --color-* entries in globals.css @theme.
+export const candle = {
+  ink: "#efdcbc",
+  inkDim: "#b79f78",
+  inkFaint: "#7d6a4c",
+  ring: "#3a2c1a",
+  gilt: "#e0aa5a",
+  gilt35: "rgba(224, 170, 90, 0.35)",
+  giltHi: "#f3d58e",
+  giltDeep: "#8a6328",
+} as const;
+
 // ── Layout ──────────────────────────────────────────────────────────────
 
 export const MIN_TAP_TARGET = "44px";

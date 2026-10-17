@@ -7,6 +7,8 @@ interface OrbAnimationProps {
   onComplete: () => void;
   skipLabel: string;
   delayMs?: number;
+  /** Skip the intro and render the settled Marker immediately. */
+  settled?: boolean;
 }
 
 function easeInOut(t: number) { return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; }
@@ -43,7 +45,7 @@ const TRAIL_OPACITIES = [0.35, 0.25, 0.18, 0.12, 0.07];
 
 const SKIP_SHOW_MS = 4000;
 
-export default function OrbAnimation({ onComplete, skipLabel, delayMs = 800 }: OrbAnimationProps) {
+export default function OrbAnimation({ onComplete, skipLabel, delayMs = 800, settled = false }: OrbAnimationProps) {
   const orbRef = useRef<SVGCircleElement>(null);
   const orbPathRef = useRef<SVGPathElement>(null);
   const afterglowRef = useRef<SVGRectElement>(null);
@@ -82,11 +84,19 @@ export default function OrbAnimation({ onComplete, skipLabel, delayMs = 800 }: O
   }, [onComplete]);
 
   useEffect(() => {
-    const skipTimer = setTimeout(() => setShowSkip(true), delayMs + SKIP_SHOW_MS);
-    return () => clearTimeout(skipTimer);
-  }, [delayMs]);
+    if (!settled) return;
+    const id = requestAnimationFrame(handleSkip);
+    return () => cancelAnimationFrame(id);
+  }, [settled, handleSkip]);
 
   useEffect(() => {
+    if (settled) return;
+    const skipTimer = setTimeout(() => setShowSkip(true), delayMs + SKIP_SHOW_MS);
+    return () => clearTimeout(skipTimer);
+  }, [delayMs, settled]);
+
+  useEffect(() => {
+    if (settled) return;
     const timer = setTimeout(() => {
       const orb = orbRef.current;
       const orbPath = orbPathRef.current;
@@ -240,7 +250,7 @@ export default function OrbAnimation({ onComplete, skipLabel, delayMs = 800 }: O
     }, delayMs);
 
     return () => clearTimeout(timer);
-  }, [onComplete, delayMs]);
+  }, [onComplete, delayMs, settled]);
 
   return (
     <>
