@@ -18,7 +18,7 @@ Audited at `origin/main` @ 05edc6c. Note: the repo is flat (`src/`, `public/`), 
 ### Assets (`public/`)
 | Asset | Notes |
 |---|---|
-| `marker/marker-v3-{gold,dark,white}.svg` + PNG 32–512 | Canon hourglass Marker (Foundation Bible §7). Good: keep it as the hero symbol |
+| `marker/marker-v4-{gold,dark,white}.svg` (+ `marker-v4-small-*` for <=24px) + PNG 32–512; v3 kept for already-sent emails | Canon hourglass Marker (Foundation Bible §7). Good: keep it as the hero symbol |
 | `marker/seal-v1-{64,128,256,512}.png` | The only wax-seal raster. There is no SVG, so it can't be recoloured or animated |
 | `og-default.png` 1200×630 | A single generic share image, used in `layout.tsx` metadata |
 | `favicon.{ico,svg}`, `apple-touch-icon.{png,svg}` | Present |
