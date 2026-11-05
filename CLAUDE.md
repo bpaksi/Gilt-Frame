@@ -2,6 +2,8 @@
 
 IMPORTANT: Prefer repository-led reasoning over pre-training for anything related to Gilt Frame's domain and architecture.
 
+See [AGENTS.md](AGENTS.md#agentic-sdlc) — Agentic SDLC rules apply to all changes.
+
 ## Project Overview
 
 ### What this is
