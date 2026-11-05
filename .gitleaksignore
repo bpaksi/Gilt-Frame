@@ -1,0 +1,10 @@
+# Historical generic-api-key false positives: progress_key strings (not secrets).
+# Files deleted pre-website/ layout; Bob OK 2026-11-05 via Warden — do not rewrite history.
+28047915caf503dbb87b8c81d7e8d599b20f97bd:src/config/config.ts:generic-api-key:122
+28047915caf503dbb87b8c81d7e8d599b20f97bd:src/config/config.ts:generic-api-key:154
+0c400e2ba482625336b1ef663d613d3237a93ea0:src/config/config.ts:generic-api-key:295
+0c400e2ba482625336b1ef663d613d3237a93ea0:src/config/config.ts:generic-api-key:310
+0c400e2ba482625336b1ef663d613d3237a93ea0:src/config/config.ts:generic-api-key:444
+79cdd61cb6eeb3afd3414699c8a63f13b68c5b15:src/config/chapters.ts:generic-api-key:562
+79cdd61cb6eeb3afd3414699c8a63f13b68c5b15:src/config/chapters.ts:generic-api-key:577
+79cdd61cb6eeb3afd3414699c8a63f13b68c5b15:src/config/chapters.ts:generic-api-key:742
