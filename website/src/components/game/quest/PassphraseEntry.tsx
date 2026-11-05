@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type CSSProperties } from "react";
 import PageLayout from "../ui/PageLayout";
 import HintSystem from "../ui/HintSystem";
 import OrnateDivider from "@/components/ui/OrnateDivider";
-import { colors, fontFamily, MIN_TAP_TARGET } from "@/components/ui/tokens";
+import { candle, fontDisplay, fontText, MIN_TAP_TARGET } from "@/components/ui/tokens";
+import { fontVariables } from "@/components/ui/fonts";
 import type { PassphraseEntryConfig } from "@/config";
 import type { ShowcaseDefinition } from "@/components/showcase";
 
@@ -23,7 +24,6 @@ export default function PassphraseEntry({
 }: PassphraseEntryProps) {
   const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
   const [errorMsg, setErrorMsg] = useState("");
-  const [shaking, setShaking] = useState(false);
   const [inputReady, setInputReady] = useState(false);
   const [hasText, setHasText] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -45,12 +45,10 @@ export default function PassphraseEntry({
       setTimeout(() => onAdvance(), 800);
     } else {
       setStatus("error");
-      setShaking(true);
       setHasText(false);
       setErrorMsg(
         config.error_message ?? "The Order does not recognize these words."
       );
-      setTimeout(() => setShaking(false), 400);
       setTimeout(() => {
         setErrorMsg("");
         setStatus("idle");
@@ -62,126 +60,206 @@ export default function PassphraseEntry({
     }
   }
 
-  const submitLabel = config.submit_label ?? "Submit to the Order";
+  const submitLabel = config.submit_label ?? "Speak it";
   const hints = config.hints ?? [];
   const showButton = hasText && status !== "success" && status !== "error";
+  const placeholder = config.placeholder ?? "Speak the words.";
+  // Per-puzzle key for the "intro already seen" flag. Derived from the hint
+  // text (never the passphrase) so the answer isn't written to storage.
+  const introKey = `passphrase:${hashKey(
+    `${placeholder}|${hints.join("|")}`
+  )}`;
 
   return (
-    <PageLayout skipLabel="tap to skip" onComplete={() => setInputReady(true)}>
-      <input
-        ref={inputRef}
-        type="text"
-        autoComplete="off"
-        spellCheck={false}
-        placeholder={config.placeholder ?? "Speak the words."}
-        disabled={status === "success"}
-        className={shaking ? "shake" : ""}
-        style={{
-          background: "transparent",
-          border: "none",
-          borderBottom: `1px solid ${
-            status === "error" ? colors.gold50 : colors.gold40
-          }`,
-          color: colors.gold,
-          fontFamily: fontFamily,
-          fontSize: "18px",
-          fontStyle: "italic",
-          letterSpacing: "2px",
-          textAlign: "center",
-          padding: "12px 20px",
-          width: "280px",
-          height: "48px",
-          outline: "none",
-          transition: "border-color 0.4s ease",
-        }}
-        onInput={(e) => {
-          setHasText((e.target as HTMLInputElement).value.length > 0);
-        }}
-        onFocus={(e) => {
-          setTimeout(() => {
-            e.target.scrollIntoView({ behavior: "smooth", block: "center" });
-          }, 300);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            handleSubmit((e.target as HTMLInputElement).value);
-          }
-        }}
-      />
-
-      {/* Submit button / error message occupy the same space */}
+    <PageLayout
+      skipLabel="tap to skip"
+      introKey={introKey}
+      onComplete={() => setInputReady(true)}
+    >
       <div
+        className={fontVariables}
         style={{
-          minHeight: MIN_TAP_TARGET,
-          marginTop: "20px",
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
+          width: "100%",
         }}
       >
-        {errorMsg ? (
-          <div
-            style={{
-              color: colors.gold55,
-              fontFamily: fontFamily,
-              fontSize: "14px",
-              fontStyle: "italic",
-              maxWidth: "300px",
-              lineHeight: "1.6",
-              textAlign: "center",
-              animation: "fadeIn 0.4s ease",
-            }}
-          >
-            {errorMsg}
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => {
-              if (inputRef.current) {
-                handleSubmit(inputRef.current.value);
-              }
-            }}
-            style={{
-              background: "transparent",
-              border: `1px solid ${colors.gold30}`,
-              color: colors.gold70,
-              fontFamily: fontFamily,
-              fontSize: "14px",
-              fontStyle: "italic",
-              letterSpacing: "1.5px",
-              padding: "10px 28px",
-              minHeight: MIN_TAP_TARGET,
-              cursor: "pointer",
-              transition: "opacity 0.4s ease, border-color 0.3s ease",
-              opacity: showButton ? 1 : 0,
-              pointerEvents: showButton ? "auto" : "none",
-            }}
-          >
-            {submitLabel}
-          </button>
-        )}
-      </div>
-
-      {hints.length > 0 && (
-        <>
-          <OrnateDivider
+        <div
+          className={`gilt-well ${status === "error" ? "withdraw" : ""}`}
+          data-state={status}
+          style={{
+            width: "min(320px, calc(100vw - 48px))",
+            padding: "14px 16px",
+          }}
+        >
+          <GiltCorners />
+          <input
+            ref={inputRef}
+            type="text"
+            autoComplete="off"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            enterKeyHint="go"
+            aria-label={placeholder}
+            aria-describedby="passphrase-status"
+            placeholder={placeholder}
+            disabled={status === "success"}
+            className="gilt-well__input"
             style={{
               display: "block",
-              opacity: 0.3,
-              margin: "8px auto",
+              width: "100%",
+              background: "transparent",
+              border: "none",
+              color: status === "success" ? candle.giltHi : candle.ink,
+              fontFamily: fontDisplay,
+              fontWeight: 300,
+              fontStyle: "italic",
+              // >=16px keeps iOS Safari from zooming on focus
+              fontSize: "24px",
+              lineHeight: 1.2,
+              letterSpacing: "0.02em",
+              textAlign: "center",
+              padding: "6px 4px",
+              minHeight: MIN_TAP_TARGET,
+              outline: "none",
+              transition: "color 0.6s ease",
+            }}
+            onInput={(e) => {
+              setHasText((e.target as HTMLInputElement).value.length > 0);
+            }}
+            onFocus={(e) => {
+              const reduce = window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+              ).matches;
+              setTimeout(() => {
+                e.target.scrollIntoView({
+                  behavior: reduce ? "auto" : "smooth",
+                  block: "center",
+                });
+              }, 300);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSubmit((e.target as HTMLInputElement).value);
+              }
             }}
           />
-          <HintSystem
-            hints={hints}
-            requestLabel="Request a Hint"
-            loadingLabel="Revealing..."
-            initialRevealedTiers={revealedHintTiers}
-            onHintReveal={onHintReveal}
-          />
-        </>
-      )}
+        </div>
+
+        {/* Submit button / error message occupy the same space */}
+        <div
+          id="passphrase-status"
+          aria-live="polite"
+          style={{
+            minHeight: MIN_TAP_TARGET,
+            marginTop: "24px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {errorMsg ? (
+            <p
+              className="gilt-fade"
+              style={{
+                margin: 0,
+                color: candle.inkDim,
+                fontFamily: fontText,
+                fontSize: "16px",
+                fontStyle: "italic",
+                maxWidth: "300px",
+                lineHeight: 1.5,
+                textAlign: "center",
+              }}
+            >
+              {errorMsg}
+            </p>
+          ) : (
+            <button
+              type="button"
+              className="gilt-cta"
+              aria-hidden={!showButton}
+              tabIndex={showButton ? 0 : -1}
+              onClick={() => {
+                if (inputRef.current) {
+                  handleSubmit(inputRef.current.value);
+                }
+              }}
+              style={{
+                background: "transparent",
+                border: `1px solid ${candle.giltDeep}`,
+                color: candle.gilt,
+                fontFamily: fontText,
+                fontSize: "16px",
+                fontVariant: "all-small-caps",
+                letterSpacing: "0.3em",
+                padding: "8px 24px 10px",
+                minHeight: MIN_TAP_TARGET,
+                cursor: "pointer",
+                transition:
+                  "opacity 0.4s ease, border-color 0.3s ease, color 0.3s ease",
+                opacity: showButton ? 1 : 0,
+                pointerEvents: showButton ? "auto" : "none",
+              }}
+            >
+              {submitLabel}
+            </button>
+          )}
+        </div>
+
+        {hints.length > 0 && (
+          <>
+            <OrnateDivider
+              style={{
+                display: "block",
+                opacity: 0.3,
+                margin: "8px auto",
+              }}
+            />
+            <HintSystem
+              hints={hints}
+              requestLabel="Request a Hint"
+              loadingLabel="Revealing..."
+              initialRevealedTiers={revealedHintTiers}
+              onHintReveal={onHintReveal}
+            />
+          </>
+        )}
+      </div>
     </PageLayout>
+  );
+}
+
+/** Tiny non-cryptographic string hash (djb2) for storage keys. */
+function hashKey(input: string): string {
+  let h = 5381;
+  for (let i = 0; i < input.length; i++) h = (h * 33) ^ input.charCodeAt(i);
+  return (h >>> 0).toString(36);
+}
+
+/** Small gilt lozenge pips at the four corners of the well (SVG, no raster). */
+function GiltCorners() {
+  const pip = (pos: CSSProperties) => (
+    <svg
+      aria-hidden="true"
+      width="10"
+      height="10"
+      viewBox="0 0 10 10"
+      style={{ position: "absolute", ...pos }}
+    >
+      <path d="M5 0 L10 5 L5 10 L0 5 Z" fill={candle.giltDeep} />
+      <circle cx="5" cy="5" r="1.4" fill={candle.giltHi} />
+    </svg>
+  );
+  return (
+    <>
+      {pip({ top: -6, left: -6 })}
+      {pip({ top: -6, right: -6 })}
+      {pip({ bottom: -6, left: -6 })}
+      {pip({ bottom: -6, right: -6 })}
+    </>
   );
 }
 
@@ -196,7 +274,7 @@ export const showcase: ShowcaseDefinition<PassphraseEntryProps> = {
       passphrase: "gilded",
       placeholder: "Speak the words.",
       error_message: "The Order does not recognize these words.",
-      submit_label: "Submit to the Order",
+      submit_label: "Speak it",
       hints: [
         "The answer hides in plain sight within the letter.",
         "Read the first word of each paragraph carefully.",

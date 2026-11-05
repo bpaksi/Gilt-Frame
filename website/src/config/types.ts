@@ -136,7 +136,7 @@ export type PassphraseEntryConfig = {
   hints?: string[];
   /** Error message shown on wrong passphrase. Default: "The Order does not recognize these words." */
   error_message?: string;
-  /** Label for the submit button shown once text is entered. Default: "Submit to the Order" */
+  /** Label for the submit button shown once text is entered. Default: "Speak it" */
   submit_label?: string;
 };
 
