@@ -60,4 +60,6 @@ jobs:
           cache-dependency-path: website/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
+      - name: Stub gitignored contacts.ts for typecheck
+        run: cp src/config/contacts.example.ts src/config/contacts.ts
       - run: pnpm typecheck
